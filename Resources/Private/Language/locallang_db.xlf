@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-01-09T17:34:09Z" product-name="messenger">
+		<header/>
+		<body>
+
+			<trans-unit id="tx_messenger_domain_model_sentmessage">
+				<source>Sent Message</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.user">
+				<source>User</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.message">
+				<source>Message</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.content">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.sent_time">
+				<source>Sent Time</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

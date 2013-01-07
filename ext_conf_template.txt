@@ -1,0 +1,5 @@
+# cat=basic//3; type=string; label= User Repository name : The user repository must implement Tx_Extbase_Persistence_Repository
+userRepository = Tx_Extbase_Persistence_Repository
+
+# cat=basic//3; type=string; label= User Repository method : Define what method will be called from the user repository. By default findAll() method will be called.
+userRepositoryMethod = findAll

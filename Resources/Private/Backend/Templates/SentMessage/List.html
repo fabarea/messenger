@@ -1,0 +1,42 @@
+<f:layout name="Default" />
+
+This Template is responsible for creating a table of domain objects.
+
+If you modify this template, do not forget to change the overwrite settings
+in /Configuration/ExtensionBuilder/settings.yaml:
+  Resources:
+    Private:
+      Templates:
+        List.html: keep
+
+Otherwise your changes will be overwritten the next time you save the extension in the extension builder
+
+<f:section name="content">
+<h1>Listing for SentMessage</h1>
+
+<f:flashMessages />
+
+<table  class="tx_messenger" >
+	<tr>
+		<th><f:translate key="tx_messenger_domain_model_sentmessage.user" /></th>
+		<th><f:translate key="tx_messenger_domain_model_sentmessage.message" /></th>
+		<th><f:translate key="tx_messenger_domain_model_sentmessage.content" /></th>
+		<th><f:translate key="tx_messenger_domain_model_sentmessage.sent_time" /></th>
+		<th> </th>
+		<th> </th>
+	</tr>
+
+	<f:for each="{sentMessages}" as="sentMessage">
+		<tr>
+			<td><f:link.action action="show" arguments="{sentMessage : sentMessage}"> {sentMessage.user}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{sentMessage : sentMessage}"> {sentMessage.message}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{sentMessage : sentMessage}"> {sentMessage.content}</f:link.action></td>
+			<td><f:link.action action="show" arguments="{sentMessage : sentMessage}"> {sentMessage.sentTime}</f:link.action></td>
+			<td><f:link.action action="edit" arguments="{sentMessage : sentMessage}">Edit</f:link.action></td>
+			<td><f:link.action action="delete" arguments="{sentMessage : sentMessage}">Delete</f:link.action></td>
+		</tr>
+	</f:for>
+</table>
+
+<f:link.action action="new">New SentMessage</f:link.action>
+</f:section>
