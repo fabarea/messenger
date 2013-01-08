@@ -1,0 +1,17 @@
+body {
+	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+.form-dropdown {
+	height: auto;
+	margin: 10px;
+	width: 350px;
+}
+
+.row-navbar {
+	margin-top: 8px;
+}
+
+.dropdown-inline {
+	display: inline;
+}
