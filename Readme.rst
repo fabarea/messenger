@@ -1,15 +1,41 @@
-Extension Manual
+Configuration
+==============
+
+Extension can be configured in the Extension Manager.
+
+Table structure
+================
+
+In order to have a table of users displayed in the BE module a "table structure" must be provided where it is defined
+what sort of that should be displayed.
+
+
+Table header
+--------------
+
+* propertyName - mandatory - the name of the property
+* label - mandatory - the label of the property - example: LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:email,
+* width - optional - a width for the column - "example: 30%"
+* style - optional - a style for the column - "background-color: red"
+* className - optional - class names for the column - "foo bar"
+
+Note that the table structure is validate against a table structure validator.
+
+PHP interface for User
+=======================
+
+A User (programming) interface is provided making sure a user can be correctly displayed within the table. This is
+
+* interface: email, uid
+
+Todo (long term)
 =================
 
-This is a template manual aiming to pave the way to developers when it comes about documentation. The template provides a structure that a developer can take over and, in addition, many useful snippets and examples. Documentation is written in reST format. Refer to Help writing reStructuredText to get some more insight about the syntax and available reST editors. For instance, you might be particularly interested how you can :
++ Add a possible "Mailing" Domain Model object.
++ Add filtering possibility.
++ Add an option to load or not the BE module.
 
-* generate the documentation using on-line services (@todo to write) 
-* `make links`_ accros projects
-* how you should write TypoScript reference.
+Development
+=============
 
-Any idea or suggestion for improving this template `can be drop`_ to our team_. And remember: documentation is like gift wrapping, it looks like superfluous, but your friend tends to be rather disappointed when their presents arrive in supermarket carrier bags. (Documentation-Driven Design quote)
-
-.. _can be drop: http://forge.typo3.org/projects/typo3v4-official_extension_template/issues
-.. _team: http://forge.typo3.org/projects/typo3v4-official_extension_template
-.. _make links: RestructuredtextHelp.html#cross-linking
-.. _can write TypoScript: RestructuredtextHelp.html#typoscript-reference
+Current repository is at https://github.com/gebruederheitz/messenger

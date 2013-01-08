@@ -19,7 +19,33 @@
 			<trans-unit id="tx_messenger_domain_model_sentmessage.sent_time">
 				<source>sentTime</source>
 			</trans-unit>
-			
+			<trans-unit id="development_mode">
+				<source>Development mode! All email will be forwarded by default to %s</source>
+			</trans-unit>
+			<trans-unit id="message">
+				<source>Message</source>
+			</trans-unit>
+			<trans-unit id="user">
+				<source>User</source>
+			</trans-unit>
+			<trans-unit id="users">
+				<source>Users</source>
+			</trans-unit>
+			<trans-unit id="send">
+				<source>Send</source>
+			</trans-unit>
+			<trans-unit id="first_name">
+				<source>First name</source>
+			</trans-unit>
+			<trans-unit id="last_name">
+				<source>Last name</source>
+			</trans-unit>
+			<trans-unit id="email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="send_selected">
+				<source>Send email for selected users</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

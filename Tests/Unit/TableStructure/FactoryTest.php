@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Media development team <typo3-project-media@lists.typo3.org>
  *
  *  All rights reserved
  *
@@ -25,36 +25,26 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Controller_SentMessageController.
+ * Test case for class Tx_Messenger_Utility_ConfigurationTest.
  *
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
- * @subpackage Send a message to a group of people
- *
- * @author Fabien Udriot <fabien.udriot@gebruederheitz.de>
+ * @subpackage media
  */
-class Tx_Messenger_Controller_SentMessageControllerTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
-	/**
-	 * @var Tx_Messenger_Domain_Model_SentMessage
-	 */
-	protected $fixture;
+class Tx_Messenger_TableStructure_FactoryTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Domain_Model_SentMessage();
 	}
 
 	public function tearDown() {
-		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function dummyMethod() {
+	public function getInstanceMethodOfTableStructureReturnsAnInstanceOfATableStructureInterface() {
+		$instance = Tx_Messenger_TableStructure_Factory::getInstance('Tx_Messenger_TableStructure_DemoTableStructure');
+		$this->assertTrue($instance instanceof Tx_Messenger_Interface_TableStructureInterface);
 	}
-
 }
 ?>

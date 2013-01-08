@@ -1,18 +1,112 @@
-<f:layout name="Default" />
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
+      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers"
+      xmlns:m="http://typo3.org/ns/messenger/ViewHelpers">
 
-This Template is responsible for creating a table of domain objects.
+<f:layout name="Default"/>
 
-If you modify this template, do not forget to change the overwrite settings
-in /Configuration/ExtensionBuilder/settings.yaml:
-  Resources:
-    Private:
-      Templates:
-        List.html: keep
-
-Otherwise your changes will be overwritten the next time you save the extension in the extension builder
-
-<f:section name="content">
-<h1>Listing Backend</h1>
+<f:section name="main">
 
 
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+
+				<div class="nav-collapse collapse">
+					<div id="navbar-main" class="nav">
+						<div class="row-fluid row-navbar">
+							<div class="span6">
+								<m:render.developmentMessage/>
+							</div>
+							<div class="span6">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container container-main">
+
+		<div>
+			<h1>
+				<f:translate key="message"></f:translate>
+			</h1>
+
+			<div>
+				<span>Lorem ipsum dolor sit amet, consectetur adipiscing</span> <span class="muted">elit Praesent et justo turpis. Nunc non felis ante. Vestibulum
+				quis blandit augue. Sed tempor purus sit amet lorem suscipit elementum. Vivamus sed nunc tortor. ....</span>
+
+				<!--<button type="button" class="btn">-->
+				<!--<i class="icon-pencil"></i>-->
+				<!--</button>-->
+
+				<div class="dropdown dropdown-inline">
+					<a class="dropdown-toggle btn" data-toggle="dropdown" href="#"><i class="icon-envelope"></i></a>
+
+					<div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<form class="form-inline form-dropdown">
+							<div class="control-group">
+								<div class="controls">
+									<input class="span3"
+									       id="inputIcon"
+									       placeholder="test@email.com"
+									       type="text">
+									<button type="submit" class="btn">
+										<f:translate key="send"></f:translate>
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr>
+
+		<div>
+			<h1>
+				<f:translate key="users"></f:translate>
+			</h1>
+			<table id="table-users" class="table table-striped table-hover">
+				<thead>
+				<tr>
+					<th style="width: 10px">
+						<input class="checkbox-row-top" type="checkbox">
+					</th>
+					<m:table.header/>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+
+				<f:for each="{users}" as="user">
+					<tr data-uid="{user.uid}">
+						<td>
+							<f:form.checkbox name="" value="{user.uid}" class="checkbox-row"/>
+						</td>
+						<m:table.row object="{user}"/>
+						<td>
+							<button type="button" class="btn">
+								<i class="icon-envelope"></i>
+							</button>
+						</td>
+					</tr>
+				</f:for>
+				</tbody>
+			</table>
+			<button type="button" class="btn btn-primary" id="btn-send">
+				<f:translate key="send_selected"></f:translate>
+			</button>
+			<input type="hidden" name="itest" id="field-selected-users" />
+		</div>
+	</div>
 </f:section>
+</html>
+{namespace m=Tx_Messenger_ViewHelpers}

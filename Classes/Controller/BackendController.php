@@ -34,21 +34,9 @@
 class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
 
 	/**
-	 * userRepository
-	 *
-	 * @var Tx_Extbase_Persistence_Repository
+	 * @var Tx_Messenger_Interface_TableStructureInterface
 	 */
-	protected $userRepository;
-
-	/**
-	 * injectUserRepository
-	 *
-	 * @param Tx_Extbase_Persistence_Repository $userRepository
-	 * @return void
-	 */
-	public function injectUserRepository(Tx_Extbase_Persistence_Repository $userRepository) {
-		$this->userRepository = $userRepository;
-	}
+	protected $tableStructure;
 
 	/**
 	 * Initializes the controller before invoking an action method.
@@ -58,14 +46,13 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 * @return void
 	 */
 	public function initializeAction() {
-		$className = $this->configuration['userRepository'];
 
-		if (class_exists($className)) {
-			/** @var $userRepository Tx_Extbase_Persistence_Repository */
-			$userRepository = t3lib_div::makeInstance($className);
+		$this->tableStructure = Tx_Messenger_TableStructure_Factory::getInstance();
 
-			$this->injectUserRepository($userRepository);
-		}
+		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
+		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
+
+		$validator->validate($this->tableStructure);
 	}
 
 	/**
@@ -75,18 +62,13 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 */
 	public function indexAction() {
 
-//
 //		$uid = $this->configuration['messageUid'];
 //		$message = $this->messageRepository->findByUid($uid);
-//
 //		$users = $this->userRepository->findAll();
-//
-//		// @todo default filter
-//
-//		$this->view->assign('users', $users);
+		$users = $this->tableStructure->getUsers();
+		$this->view->assign('users', $users);
+
 //		$this->view->assign('message', $message);
-
 	}
-
 }
 ?>

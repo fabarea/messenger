@@ -4,7 +4,7 @@
  *  Copyright notice
  *
  *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
- *  			
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -53,56 +53,12 @@ class Tx_Messenger_Domain_Model_SentMessageTest extends Tx_Extbase_Tests_Unit_Ba
 	/**
 	 * @test
 	 */
-	public function getUserReturnsInitialValueForInteger() { 
-		$this->assertSame(
-			0,
-			$this->fixture->getUser()
-		);
-	}
-
-	/**
-	 * @test
-	 */
-	public function setUserForIntegerSetsUser() { 
-		$this->fixture->setUser(12);
-
-		$this->assertSame(
-			12,
-			$this->fixture->getUser()
-		);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function getMessageReturnsInitialValueForInteger() { 
-		$this->assertSame(
-			0,
-			$this->fixture->getMessage()
-		);
-	}
-
-	/**
-	 * @test
-	 */
-	public function setMessageForIntegerSetsMessage() { 
-		$this->fixture->setMessage(12);
-
-		$this->assertSame(
-			12,
-			$this->fixture->getMessage()
-		);
-	}
-	
-	/**
-	 * @test
-	 */
 	public function getContentReturnsInitialValueForString() { }
 
 	/**
 	 * @test
 	 */
-	public function setContentForStringSetsContent() { 
+	public function setContentForStringSetsContent() {
 		$this->fixture->setContent('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -110,7 +66,7 @@ class Tx_Messenger_Domain_Model_SentMessageTest extends Tx_Extbase_Tests_Unit_Ba
 			$this->fixture->getContent()
 		);
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -120,6 +76,6 @@ class Tx_Messenger_Domain_Model_SentMessageTest extends Tx_Extbase_Tests_Unit_Ba
 	 * @test
 	 */
 	public function setSentTimeForIntSetsSentTime() { }
-	
+
 }
 ?>

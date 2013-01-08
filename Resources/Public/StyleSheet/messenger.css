@@ -15,3 +15,17 @@ body {
 .dropdown-inline {
 	display: inline;
 }
+
+.container-main {
+	margin-left: 10px;
+}
+
+.container-fluid {
+	padding-left: 10px;
+}
+
+.selected td {
+	background-color: #339FD6 !important;
+	color: rgb(255, 255, 255);
+}
+
