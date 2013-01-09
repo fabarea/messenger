@@ -25,22 +25,15 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_ViewHelpers_Table_RowViewHelper.
+ * Test case for class Tx_Messenger_Utility_ConfigurationTest.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_ViewHelpers_Table_RowViewHelperTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
-
-	/**
-	 * @var Tx_Messenger_ViewHelpers_Table_RowViewHelper
-	 */
-	private $fixture;
+class Tx_Messenger_ListManager_FactoryTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_ViewHelpers_Table_RowViewHelper();
-
 	}
 
 	public function tearDown() {
@@ -49,32 +42,9 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelperTest extends Tx_Extbase_Tests_
 	/**
 	 * @test
 	 */
-	public function renderReturnsStringThatContainsThTags() {
-		$recipients = Tx_Messenger_ListManager_Factory::getInstance()->getRecords();
-		$actual = $this->fixture->render($recipients[0]);
-
-		$expected = count(Tx_Messenger_ListManager_Factory::getInstance()->getFields());
-		$this->assertEquals($expected, preg_match_all('/<td/isU', $actual, $matches));
+	public function getInstanceMethodOfTableStructureReturnsAnInstanceOfATableStructureInterface() {
+		$instance = Tx_Messenger_ListManager_Factory::getInstance('Tx_Messenger_ListManager_DemoListManager');
+		$this->assertTrue($instance instanceof Tx_Messenger_Interface_ListableInterface);
 	}
-
-	/**
-	 * @test
-	 */
-	public function getStyleAttributesReturnsValidAttribute() {
-		$tableHeader = array(
-			'width' => '60px',
-			'style' => 'background-color: red',
-		);
-
-		$method = new ReflectionMethod(
-			'Tx_Messenger_ViewHelpers_Table_RowViewHelper', 'getStyleAttribute'
-		);
-		$method->setAccessible(TRUE);
-		$actual = $method->invokeArgs($this->fixture, array($tableHeader));
-
-		$expected = 'style="background-color: red;width: 60px"';
-		$this->assertEquals($expected, $actual);
-	}
-
 }
 ?>

@@ -23,24 +23,24 @@
 ***************************************************************/
 
 /**
- * A factory for table structure.
+ * A factory for list manager.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  media
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_TableStructure_Factory {
+class Tx_Messenger_ListManager_Factory {
 
 	/**
-	 * @var Tx_Messenger_Interface_TableStructureInterface
+	 * @var Tx_Messenger_Interface_ListableInterface
 	 */
 	static protected $instance = NULL;
 
 	/**
-	 * Get an instance of a table structure interface
+	 * Get an instance of a list manager interface
 	 *
-	 * @return Tx_Messenger_Interface_TableStructureInterface
+	 * @return Tx_Messenger_Interface_ListableInterface
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {

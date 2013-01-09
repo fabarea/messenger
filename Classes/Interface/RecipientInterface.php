@@ -25,48 +25,24 @@
  ***************************************************************/
 
 /**
- *
- *
  * @package messenger
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+interface Tx_Messenger_Interface_RecipientInterface {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
-	 */
-	protected $listManager;
-
-	/**
-	 * Initializes the controller before invoking an action method.
-	 * Override this method to solve tasks which all actions have in
-	 * common.
+	 * get an uid
 	 *
-	 * @return void
+	 * @return int
 	 */
-	public function initializeAction() {
-
-		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
-
-		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
-
-		$validator->validate($this->listManager);
-	}
+	public function getUid();
 
 	/**
-	 * Action list
+	 * get a string
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public function indexAction() {
-
-//		$uid = $this->configuration['messageUid'];
-//		$message = $this->messageRepository->findByUid($uid);
-		$records = $this->listManager->getRecords();
-		$this->view->assign('recipients', $records);
-//		$this->view->assign('message', $message);
-	}
+	public function getEmail();
 }
 ?>

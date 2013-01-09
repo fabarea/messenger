@@ -3,14 +3,14 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Media development team <typo3-project-media@lists.typo3.org>
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
+ *  the Free Software Foundation; either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  The GNU General Public License can be found at
@@ -25,26 +25,14 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Utility_ConfigurationTest.
  *
- * @author Fabien Udriot <fabien.udriot@typo3.org>
- * @package TYPO3
- * @subpackage media
+ *
+ * @package messenger
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ *
  */
-class Tx_Messenger_TableStructure_FactoryTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class Tx_Messenger_Exception_RecordNotFoundException extends Exception {
 
-	public function setUp() {
-	}
-
-	public function tearDown() {
-	}
-
-	/**
-	 * @test
-	 */
-	public function getInstanceMethodOfTableStructureReturnsAnInstanceOfATableStructureInterface() {
-		$instance = Tx_Messenger_TableStructure_Factory::getInstance('Tx_Messenger_TableStructure_DemoTableStructure');
-		$this->assertTrue($instance instanceof Tx_Messenger_Interface_TableStructureInterface);
-	}
 }
+
 ?>

@@ -23,34 +23,34 @@
 ***************************************************************/
 
 /**
- * A demo table structure.
+ * A demo list manager.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  media
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_TableStructure_DemoTableStructure implements Tx_Messenger_Interface_TableStructureInterface {
+class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface_ListableInterface {
 
 	/**
 	 * @var array
 	 */
-	protected $users = array();
+	protected $records = array();
 
 	/**
 	 * @var array
 	 */
-	protected $tableHeader = array(
+	protected $fields = array(
 		array(
-			'propertyName' => 'firstName',
+			'fieldName' => 'firstName',
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:first_name',
 		),
 		array(
-			'propertyName' => 'lastName',
+			'fieldName' => 'lastName',
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:last_name',
 		),
 		array(
-			'propertyName' => 'email',
+			'fieldName' => 'email',
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:email',
 		),
 	);
@@ -58,11 +58,11 @@ class Tx_Messenger_TableStructure_DemoTableStructure implements Tx_Messenger_Int
 	/**
 	 * Constructor
 	 *
-	 * @return Tx_Messenger_TableStructure_DemoTableStructure
+	 * @return Tx_Messenger_ListManager_DemoListManager
 	 */
 	public function __construct(){
 		foreach (array(1, 2, 3, 4) as $uid) {
-			$this->users[] = array(
+			$this->records[] = array(
 				'uid' => $uid,
 				'firstName' => uniqid('first'),
 				'lastName' => uniqid('last'),
@@ -72,12 +72,12 @@ class Tx_Messenger_TableStructure_DemoTableStructure implements Tx_Messenger_Int
 	}
 
 	/**
-	 * Returns a set of users.
+	 * Returns a set of recipients.
 	 *
 	 * @return array
 	 */
-	public function getUsers() {
-		return $this->users;
+	public function getRecords() {
+		return $this->records;
 	}
 
 	/**
@@ -85,8 +85,8 @@ class Tx_Messenger_TableStructure_DemoTableStructure implements Tx_Messenger_Int
 	 *
 	 * @return array
 	 */
-	public function getTableHeaders() {
-		return $this->tableHeader;
+	public function getFields() {
+		return $this->fields;
 	}
 }
 

@@ -31,15 +31,15 @@
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_TableStructure_DemoTableStructureTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_TableStructure_DemoTableStructure
+	 * @var Tx_Messenger_ListManager_DemoListManager
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_TableStructure_DemoTableStructure();
+		$this->fixture = new Tx_Messenger_ListManager_DemoListManager();
 	}
 
 	public function tearDown() {
@@ -48,15 +48,15 @@ class Tx_Messenger_TableStructure_DemoTableStructureTest extends Tx_Extbase_Test
 	/**
 	 * @test
 	 */
-	public function getUsersReturnANotEmptySetOfUsers() {
-		$this->assertNotEmpty($this->fixture->getUsers());
+	public function getRecordsReturnANotEmptySetOfUsers() {
+		$this->assertNotEmpty($this->fixture->getRecords());
 	}
 
 	/**
 	 * @test
 	 */
 	public function getTableHeaderReturnANotEmptySet() {
-		$this->assertNotEmpty($this->fixture->getTableHeaders());
+		$this->assertNotEmpty($this->fixture->getFields());
 	}
 }
 ?>

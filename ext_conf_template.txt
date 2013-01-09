@@ -1,8 +1,8 @@
-# cat=basic//3; type=string; label= Table Structure name : A table structure describes how users should be displayed.
-tableStructure = Tx_Messenger_TableStructure_DemoTableStructure
+# cat=basic//3; type=string; label= List Manager name : A list manager describes how recipients should be displayed.
+tableStructure = Tx_Messenger_ListManager_DemoListManager
 
 # cat=basic//3; type=string; label= List of development emails: A comma separated list of emails.
 developmentEmails = john@doe.com, jane@doe.com
 
-# cat=basic//3; type=string; label= Context name: @todo add select box for value "production" or "development".
-context = development
+# cat=basic//3; type=string; label= Context name: @todo add select box for value "Production" or "Development".
+context = Development

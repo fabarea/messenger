@@ -49,7 +49,7 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 	 * @test
 	 */
 	public function validateTheDefaultTableStructure() {
-		$tableStructure = Tx_Messenger_TableStructure_Factory::getInstance();
+		$tableStructure = Tx_Messenger_ListManager_Factory::getInstance();
 		$this->fixture->validate($tableStructure);
 	}
 
@@ -57,7 +57,7 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 	 * @test
 	 */
 	public function validateTableHeaderRaisesNoExceptionWhenItComesFromTableStructureFactory() {
-		$tableHeaders = Tx_Messenger_TableStructure_Factory::getInstance()->getTableHeaders();
+		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 
 		$method = new ReflectionMethod(
 			'Tx_Messenger_Validator_TableStructureValidator', 'validateTableHeader'

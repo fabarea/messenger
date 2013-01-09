@@ -4,7 +4,7 @@ $(document).ready(function () {
 	// Bind action on the top checkbox to (un)select all rows at once.
 	$('.checkbox-row-top').click(function () {
 		var rows;
-		rows = $('#table-users').find('tbody tr');
+		rows = $('#table-recipients').find('tbody tr');
 		if ($(this).is(':checked')) {
 			rows.filter(':not(:has(:checkbox:checked))').click();
 		} else {
@@ -13,7 +13,7 @@ $(document).ready(function () {
 	});
 
 	// Bind action when a row get clicked -> the row is selected.
-	$('#table-users').find('tbody tr')
+	$('#table-recipients').find('tbody tr')
 		.filter(':has(:checkbox:checked)')
 		.addClass('selected')
 		.end()
@@ -31,9 +31,9 @@ $(document).ready(function () {
 		var selectedUsers;
 
 		selectedUsers = [];
-		$('#table-users').find('tbody tr').filter(':has(:checkbox:checked)').each(function () {
+		$('#table-recipients').find('tbody tr').filter(':has(:checkbox:checked)').each(function () {
 			selectedUsers.push($(this).data('uid'))
 		});
-		$('#field-selected-users').val(selectedUsers.join(','));
+		$('#field-selected-recipients').val(selectedUsers.join(','));
 	});
 });

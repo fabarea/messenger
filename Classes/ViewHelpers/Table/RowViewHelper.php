@@ -23,7 +23,7 @@
 ***************************************************************/
 
 /**
- * View helper that a render a table header.
+ * View helper that a render a table row.
  *
  * @category    ViewHelpers
  * @package     TYPO3
@@ -33,29 +33,27 @@
 class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
-	 * Render a message in development context.
+	 * Render a row of a table given an object as input.
 	 *
-	 * Note: this view helper could be programmed in a more generic way by translating a string given a number of input value arguments.
-	 *
-	 * @param object $object
+	 * @param Object $object
 	 * @return string
 	 */
 	public function render($object) {
 
 		$result = '';
 		$template = '<td %s %s>%s</td>';
-		$tableHeaders = Tx_Messenger_TableStructure_Factory::getInstance()->getTableHeaders();
+		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			if (is_array($object)) {
-				$value = $this->getValueForArray($object, $tableHeader['propertyName']);
+				$value = $this->getValueForArray($object, $tableHeader['fieldName']);
 			} elseif (is_object($object)) {
-				$value = $this->getValueForObject($object, $tableHeader['propertyName']);
+				$value = $this->getValueForObject($object, $tableHeader['fieldName']);
 			}
 
 			$result .= sprintf($template . PHP_EOL,
 				$this->getStyleAttribute($tableHeader),
-				empty($tableHeader['className']) ? '' : $tableHeader['className'],
+				empty($tableHeader['class']) ? '' : $tableHeader['class'],
 				$value
 			);
 		}
@@ -63,7 +61,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	}
 
 	/**
-	 * Get a value for an array.
+	 * Get a value for an array given a key.
 	 *
 	 * @throws Tx_Messenger_Exception_UnknownMethodException
 	 * @param array $array
@@ -78,15 +76,15 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	}
 
 	/**
-	 * Get a value for an array.
+	 * Get a value for an object given a property name.
 	 *
 	 * @throws Tx_Messenger_Exception_UnknownMethodException
 	 * @param Object $object
-	 * @param string $key
+	 * @param string $propertyName
 	 * @return string
 	 */
-	protected function getValueForObject($object, $key) {
-		$getter = 'get' . ucfirst($key);
+	protected function getValueForObject($object, $propertyName) {
+		$getter = 'get' . ucfirst($propertyName);
 		if (! method_exists($object, $getter)) {
 			throw new Tx_Messenger_Exception_UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
 		}

@@ -49,4 +49,66 @@ $TCA['tx_messenger_domain_model_sentmessage'] = array(
 	),
 );
 
+t3lib_extMgm::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
+$TCA['tx_messenger_domain_model_messagetemplate'] = array(
+	'ctrl' => array(
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
+		'label' => 'subject',
+		'label_alt' => 'identifier',
+		'label_alt_force' => 1,
+		'default_sortby' => 'ORDER BY identifier ASC',
+		'tstamp' => 'tstamp',
+		'crdate' => 'crdate',
+		'cruser_id' => 'cruser_id',
+		'dividers2tabs' => TRUE,
+
+		'origUid' => 't3_origuid',
+		'languageField' => 'sys_language_uid',
+		'transOrigPointerField' => 'l10n_parent',
+		'transOrigDiffSourceField' => 'l10n_diffsource',
+		'delete' => 'deleted',
+		'enablecolumns' => array(
+			'disabled' => 'hidden'
+		),
+		'searchFields' => 'identifier, subject,body,',
+		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/MessageTemplate.php',
+		'typeicon_classes' => array(
+			'default' => 'extensions-messenger-messagetemplate',
+		),
+	),
+);
+
+t3lib_extMgm::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
+$TCA['tx_messenger_domain_model_messagelayout'] = array(
+	'ctrl' => array(
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout',
+		'label' => 'identifier',
+		'default_sortby' => 'ORDER BY identifier ASC',
+		'tstamp' => 'tstamp',
+		'crdate' => 'crdate',
+		'cruser_id' => 'cruser_id',
+		'dividers2tabs' => TRUE,
+
+		'origUid' => 't3_origuid',
+		'languageField' => 'sys_language_uid',
+		'transOrigPointerField' => 'l10n_parent',
+		'transOrigDiffSourceField' => 'l10n_diffsource',
+		'delete' => 'deleted',
+		'enablecolumns' => array(
+			'disabled' => 'hidden'
+		),
+		'searchFields' => 'identifier, content,',
+		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/MessageLayout.php',
+		'typeicon_classes' => array(
+			'default' => 'extensions-messenger-messagelayout',
+		),
+	),
+);
+
+$icons = array(
+	'messagetemplate' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.gif',
+	'messagelayout' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
+);
+t3lib_SpriteManager::addSingleIcons($icons, $_EXTKEY);
+
 ?>

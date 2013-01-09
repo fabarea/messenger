@@ -42,12 +42,12 @@ class Tx_Messenger_ViewHelpers_Table_HeaderViewHelper extends Tx_Fluid_Core_View
 	public function render() {
 		$result = '';
 		$template = '<th %s %s>%s</th>';
-		$tableHeaders = Tx_Messenger_TableStructure_Factory::getInstance()->getTableHeaders();
+		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			$result .= sprintf($template . PHP_EOL,
 				$this->getStyleAttribute($tableHeader),
-				empty($tableHeader['className']) ? '' : $tableHeader['className'],
+				empty($tableHeader['class']) ? '' : $tableHeader['class'],
 				Tx_Extbase_Utility_Localization::translate($tableHeader['label'], '')
 			);
 		}

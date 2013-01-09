@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -31,42 +31,27 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Messenger_Validator_Email {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
-	 */
-	protected $listManager;
-
-	/**
-	 * Initializes the controller before invoking an action method.
-	 * Override this method to solve tasks which all actions have in
-	 * common.
+	 * Validate emails to be used in the Swiftmailer framework
 	 *
-	 * @return void
+	 * @throws Tx_Messenger_Exception_InvalidEmailFormatException
+	 * @param $emails
+	 * @return boolean
 	 */
-	public function initializeAction() {
-
-		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
-
-		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
-
-		$validator->validate($this->listManager);
-	}
-
-	/**
-	 * Action list
-	 *
-	 * @return void
-	 */
-	public function indexAction() {
-
-//		$uid = $this->configuration['messageUid'];
-//		$message = $this->messageRepository->findByUid($uid);
-		$records = $this->listManager->getRecords();
-		$this->view->assign('recipients', $records);
-//		$this->view->assign('message', $message);
+	public function validate($emails) {
+		foreach ($emails as $email => $name) {
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$message = sprintf('Email provided is not valid, given value "%s"', $email);
+				throw new Tx_Messenger_Exception_InvalidEmailFormatException($message, 1350297165);
+			}
+			if (strlen($name) <= 0) {
+				$message = sprintf('Name should not be empty, given value "%s"', $name);
+				throw new Tx_Messenger_Exception_InvalidEmailFormatException($message, 1350297170);
+			}
+		}
+		return TRUE;
 	}
 }
 ?>

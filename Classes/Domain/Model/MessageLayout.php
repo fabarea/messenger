@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -31,42 +31,53 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Messenger_Domain_Model_MessageLayout extends Tx_Extbase_DomainObject_AbstractEntity {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
+	 * @var string
 	 */
-	protected $listManager;
+	protected $identifier;
 
 	/**
-	 * Initializes the controller before invoking an action method.
-	 * Override this method to solve tasks which all actions have in
-	 * common.
-	 *
-	 * @return void
+	 * @var string
 	 */
-	public function initializeAction() {
+	protected $content;
 
-		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
-
-		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
-
-		$validator->validate($this->listManager);
+	/**
+	 * Constructor
+	 */
+	public function __construct(array $data = array()) {
+		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
+		$this->content = !empty($data['content']) ? $data['content'] : '';
 	}
 
 	/**
-	 * Action list
-	 *
-	 * @return void
+	 * @return string
 	 */
-	public function indexAction() {
-
-//		$uid = $this->configuration['messageUid'];
-//		$message = $this->messageRepository->findByUid($uid);
-		$records = $this->listManager->getRecords();
-		$this->view->assign('recipients', $records);
-//		$this->view->assign('message', $message);
+	public function getIdentifier() {
+		return $this->identifier;
 	}
+
+	/**
+	 * @param string $identifier
+	 */
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getContent() {
+		return $this->content;
+	}
+
+	/**
+	 * @param string $content
+	 */
+	public function setContent($content) {
+		$this->content = $content;
+	}
+
 }
 ?>

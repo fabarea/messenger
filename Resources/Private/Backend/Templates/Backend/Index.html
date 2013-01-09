@@ -72,9 +72,9 @@
 
 		<div>
 			<h1>
-				<f:translate key="users"></f:translate>
+				<f:translate key="recipients"></f:translate>
 			</h1>
-			<table id="table-users" class="table table-striped table-hover">
+			<table id="table-recipients" class="table table-striped table-hover">
 				<thead>
 				<tr>
 					<th style="width: 10px">
@@ -86,12 +86,12 @@
 				</thead>
 				<tbody>
 
-				<f:for each="{users}" as="user">
-					<tr data-uid="{user.uid}">
+				<f:for each="{recipients}" as="recipient">
+					<tr data-uid="{recipient.uid}">
 						<td>
-							<f:form.checkbox name="" value="{user.uid}" class="checkbox-row"/>
+							<f:form.checkbox name="" value="{recipient.uid}" class="checkbox-row"/>
 						</td>
-						<m:table.row object="{user}"/>
+						<m:table.row object="{recipient}"/>
 						<td>
 							<button type="button" class="btn">
 								<i class="icon-envelope"></i>
@@ -104,7 +104,7 @@
 			<button type="button" class="btn btn-primary" id="btn-send">
 				<f:translate key="send_selected"></f:translate>
 			</button>
-			<input type="hidden" name="itest" id="field-selected-users" />
+			<input type="hidden" name="itest" id="field-selected-recipients" />
 		</div>
 	</div>
 </f:section>

@@ -41,9 +41,9 @@ class Tx_Messenger_Utility_Configuration {
 	 * @var array
 	 */
 	static protected $defaultSettings = array(
-		'tableStructure' => 'Tx_Messenger_TableStructure_DemoTableStructure',
+		'tableStructure' => 'Tx_Messenger_ListManager_DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
-		'context' => 'development',
+		'context' => 'Development',
 	);
 
 	/**

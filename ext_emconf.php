@@ -11,8 +11,8 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Send a message to a group of users',
-	'description' => 'Send a custom message to a group of users.',
+	'title' => 'Send a message to a group of configurable recipients',
+	'description' => 'Send a custom message to a group of configurable recipients.',
 	'category' => 'plugin',
 	'author' => 'Fabien Udriot',
 	'author_email' => 'fabien.udriot@gebruederheitz.de',

@@ -23,41 +23,131 @@
 ***************************************************************/
 
 /**
- * A class dealing with configuration.
+ * A class dealing with context.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  media
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Context {
+class Tx_Messenger_Utility_Context implements t3lib_Singleton {
 
 	/**
-	 * @return bool
+	 * @var string
 	 */
-	public static function isProduction() {
-		return Tx_Messenger_Utility_Configuration::get('context') == 'Production';
+	protected $name;
+
+	/**
+	 * @var int
+	 */
+	protected $language = NULL;
+
+	/**
+	 * @var array
+	 */
+	protected $sendingEmailContexts;
+
+	/**
+	 * Returns a class instance
+	 *
+	 * @return Tx_Messenger_Utility_Context
+	 */
+	static public function getInstance() {
+		return t3lib_div::makeInstance('Tx_Messenger_Utility_Context');
+	}
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$settings = Tx_Messenger_Utility_Configuration::getSettings();
+		if (isset($GLOBALS['TSFE'])) {
+			$settings = t3lib_div::array_merge($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_messenger.']['settings.'], $settings);
+		}
+		$this->name = empty($settings['context']) ? 'Development' : $settings['context'];
+		$this->sendingEmailContexts = t3lib_div::trimExplode(',', $settings['listOfContextsSendingEmails']);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLanguage() {
+		if ($this->language === NULL) {
+			$this->language = $GLOBALS['TSFE']->sys_language_content;
+		}
+		return intval($this->language);
+	}
+
+	/**
+	 * @param int $language
+	 */
+	public function setLanguage($language) {
+		$this->language = $language;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	public function setName($name) {
+		$this->name = $name;
+	}
+
+	/**
+	 * Tell whether the context is a debug one
+	 *
+	 * @return boolean
+	 */
+	public function isContextSendingEmails() {
+		return in_array($this->getName(), $this->sendingEmailContexts);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getSendingEmailContexts() {
+		return $this->sendingEmailContexts;
+	}
+
+	/**
+	 * @param array $sendingEmailContexts
+	 */
+	public function setSendingEmailContexts($sendingEmailContexts) {
+		$this->sendingEmailContexts = $sendingEmailContexts;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function isNotProduction() {
-		return Tx_Messenger_Utility_Configuration::get('context') != 'Production';
+	public function isProduction() {
+		return $this->name === 'Production';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function isDevelopment() {
-		return Tx_Messenger_Utility_Configuration::get('context') == 'Development';
+	public function isNotProduction() {
+		return $this->name !== 'Production';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function isNotDevelopment() {
-		return Tx_Messenger_Utility_Configuration::get('context') != 'Development';
+	public function isDevelopment() {
+		return $this->name === 'Development';
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isNotDevelopment() {
+		return $this->name !== 'Development';
 	}
 
 }

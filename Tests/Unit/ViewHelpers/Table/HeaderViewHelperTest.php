@@ -49,7 +49,7 @@ class Tx_Messenger_ViewHelpers_Table_HeaderViewHelperTest extends Tx_Extbase_Tes
 	 * @test
 	 */
 	public function renderReturnsStringThatContainsThTags() {
-		$expected = count(Tx_Messenger_TableStructure_Factory::getInstance()->getTableHeaders());
+		$expected = count(Tx_Messenger_ListManager_Factory::getInstance()->getFields());
 		$actual = $this->fixture->render();
 		$this->assertEquals($expected, preg_match_all('/<th/isU', $actual, $matches));
 	}

@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -27,22 +27,26 @@
 /**
  * @package messenger
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @see http://www.chuggnutt.com/html2text
  *
  */
-interface Tx_Messenger_Interface_TableStructureInterface {
+
+interface Tx_Messenger_Strategy_Html2Text_StrategyInterface {
 
 	/**
-	 * Returns a set of users.
+	 * Convert a given HTML input to Text
 	 *
-	 * @return mixed
+	 * @param string $input
+	 * @return string
 	 */
-	public function getUsers();
+	public function convert($input);
 
 	/**
-	 * Get headers for the table.
+	 * Whether the converter is available
 	 *
-	 * @return array
+	 * @return boolean
 	 */
-	public function getTableHeaders();
+	public function available();
 }
+
 ?>

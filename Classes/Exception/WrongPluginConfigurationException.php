@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -25,24 +25,14 @@
  ***************************************************************/
 
 /**
+ *
+ *
  * @package messenger
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-interface Tx_Messenger_Interface_UserInterface {
+class Tx_Messenger_Exception_WrongPluginConfigurationException extends Exception {
 
-	/**
-	 * get an uid
-	 *
-	 * @return int
-	 */
-	public function getUid();
-
-	/**
-	 * get a string
-	 *
-	 * @return string
-	 */
-	public function getEmail();
 }
+
 ?>

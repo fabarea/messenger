@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -31,42 +31,45 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Messenger_Utility_Marker {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
+	 * @var Tx_Fluid_View_StandaloneView
 	 */
-	protected $listManager;
+	protected $view;
 
 	/**
-	 * Initializes the controller before invoking an action method.
-	 * Override this method to solve tasks which all actions have in
-	 * common.
-	 *
-	 * @return void
+	 * @var tslib_cObj
 	 */
-	public function initializeAction() {
+	protected $contentObject;
 
-		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
-
-		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
-
-		$validator->validate($this->listManager);
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
+		$this->contentObject = t3lib_div::makeInstance('tslib_cObj');
 	}
 
 	/**
-	 * Action list
+	 * Substitute markers
 	 *
-	 * @return void
+	 * @param string $input
+	 * @param array $markers
+	 * @param string $format can be format
+	 * @return string the formatted string
 	 */
-	public function indexAction() {
+	public function substitute($input, array $markers, $format = 'text/html') {
 
-//		$uid = $this->configuration['messageUid'];
-//		$message = $this->messageRepository->findByUid($uid);
-		$records = $this->listManager->getRecords();
-		$this->view->assign('recipients', $records);
-//		$this->view->assign('message', $message);
+		if ($format == 'text/html') {
+			$config['parseFunc.'] = $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
+			$config['value'] = $input;
+			$input = $this->contentObject->TEXT($config);
+		}
+
+		$this->view->setTemplateSource($input);
+		$this->view->assignMultiple($markers);
+		return $this->view->render();
 	}
 }
 ?>

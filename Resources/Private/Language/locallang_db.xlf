@@ -20,6 +20,28 @@
 				<source>Sent Time</source>
 			</trans-unit>
 
+			<trans-unit id="tx_messenger_domain_model_messagetemplate">
+				<source>Email template</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.identifier">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.body">
+				<source>Body</source>
+			</trans-unit>
+
+			<trans-unit id="tx_messenger_domain_model_messagelayout">
+				<source>Email layout</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagelayout.identifier">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagelayout.content">
+				<source>Content</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

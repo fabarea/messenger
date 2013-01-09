@@ -25,11 +25,8 @@
 			<trans-unit id="message">
 				<source>Message</source>
 			</trans-unit>
-			<trans-unit id="user">
-				<source>User</source>
-			</trans-unit>
-			<trans-unit id="users">
-				<source>Users</source>
+			<trans-unit id="recipients">
+				<source>Recipients</source>
 			</trans-unit>
 			<trans-unit id="send">
 				<source>Send</source>
@@ -44,7 +41,7 @@
 				<source>Email</source>
 			</trans-unit>
 			<trans-unit id="send_selected">
-				<source>Send email for selected users</source>
+				<source>Send email for selected recipients</source>
 			</trans-unit>
 		</body>
 	</file>

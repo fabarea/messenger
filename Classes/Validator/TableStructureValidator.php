@@ -23,7 +23,7 @@
 ***************************************************************/
 
 /**
- * Class dealing with table structure validation.
+ * Class dealing with list manager validation.
  *
  * @category    ViewHelpers
  * @package     TYPO3
@@ -33,14 +33,14 @@
 class Tx_Messenger_Validator_TableStructureValidator {
 
 	/**
-	 * Validate a table structure.
+	 * Validate a list manager.
 	 *
-	 * @param Tx_Messenger_Interface_TableStructureInterface $tableStructure
+	 * @param Tx_Messenger_Interface_ListableInterface $tableStructure
 	 * @return void
 	 */
-	public function validate(Tx_Messenger_Interface_TableStructureInterface $tableStructure) {
+	public function validate(Tx_Messenger_Interface_ListableInterface $tableStructure) {
 
-		$tableHeaders = Tx_Messenger_TableStructure_Factory::getInstance()->getTableHeaders();
+		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 		$this->validateTableHeader($tableHeaders);
 	}
 
@@ -57,15 +57,13 @@ class Tx_Messenger_Validator_TableStructureValidator {
 
 		foreach ($tableHeaders as $tableHeader) {
 
-			if (empty($tableHeader['propertyName'])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException('Missing key in table header "propertyName".', 1357656663);
+			if (empty($tableHeader['fieldName'])) {
+				throw new Tx_Messenger_Exception_MissingKeyInArrayException('Missing key in table header "fieldName ".', 1357656663);
 			}
 
 			if (empty($tableHeader['label'])) {
 				throw new Tx_Messenger_Exception_MissingKeyInArrayException('Missing key in table header "label".', 1357656664);
 			}
-
-
 		}
 	}
 

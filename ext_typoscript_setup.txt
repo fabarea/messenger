@@ -9,3 +9,41 @@ module.tx_messenger {
 		layoutRootPath = {$module.tx_messenger.view.layoutRootPath}
 	}
 }
+
+config.tx_extbase{
+	# This configuration has not effect since currently not using the Extbase persistence...
+    persistence{
+        classes{
+
+            Tx_Messenger_Domain_Model_EmailTemplate {
+                mapping {
+                    tableName = tx_messenger_domain_model_messagetemplate
+                    recordType = Tx_Messenger_Template
+                }
+            }
+
+    	}
+    }
+}
+
+# Plugin configuration
+plugin.tx_messenger {
+	settings {
+
+		 # Name of the sender
+		senderName = {$plugin.tx_messenger.settings.senderName}
+
+		 # Email of the sender
+		senderEmail = {$plugin.tx_messenger.settings.senderEmail}
+
+		debug {
+			recipientName = John Does
+			recipientEmail = john@doe.com
+		}
+
+		listOfContextsSendingEmails = Production
+
+		# Corresponds to the marker going to be replaced by the template body in a Layout object
+		markerReplacedInLayout = template
+	}
+}
