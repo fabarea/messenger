@@ -69,7 +69,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	 * @return string
 	 */
 	protected function getValueForArray($array, $key) {
-		if (empty($array[$key])) {
+		if (! isset($array[$key])) {
 			throw new Tx_Messenger_Exception_UnknownMethodException('Array does not contain a key: ' . $key, 1357668817);
 		}
 		return $array[$key];
@@ -88,7 +88,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 		if (! method_exists($object, $getter)) {
 			throw new Tx_Messenger_Exception_UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
 		}
-		return $object->$getter;
+		return call_user_func($object, $getter);
 	}
 
 	/**
