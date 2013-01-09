@@ -56,11 +56,11 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 	/**
 	 * @test
 	 */
-	public function validateTableHeaderRaisesNoExceptionWhenItComesFromTableStructureFactory() {
+	public function validateFieldsRaisesNoExceptionWhenItComesFromTableStructureFactory() {
 		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateTableHeader'
+			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -71,11 +71,11 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 	 * @test
 	 * @expectedException Tx_Messenger_Exception_MissingKeyInArrayException
 	 */
-	public function validateTableHeaderRaisesMissingKeyExceptionForIncompleteArray() {
+	public function validateFieldsRaisesMissingKeyExceptionForIncompleteArray() {
 		$tableHeaders = array(array());
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateTableHeader'
+			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -86,11 +86,11 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 	 * @test
 	 * @expectedException Tx_Messenger_Exception_EmptyArrayException
 	 */
-	public function validateTableHeaderRaisesEmptyExceptionForEmptyArray() {
+	public function validateFieldsRaisesEmptyExceptionForEmptyArray() {
 		$tableHeaders = array();
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateTableHeader'
+			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);

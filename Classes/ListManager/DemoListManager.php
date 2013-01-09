@@ -25,9 +25,6 @@
 /**
  * A demo list manager.
  *
- * @category    ViewHelpers
- * @package     TYPO3
- * @subpackage  media
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
 class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface_ListableInterface {
@@ -81,7 +78,7 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	}
 
 	/**
-	 * Get headers for the table.
+	 * Get the fields
 	 *
 	 * @return array
 	 */

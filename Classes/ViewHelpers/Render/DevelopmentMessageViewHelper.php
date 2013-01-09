@@ -27,7 +27,7 @@
  *
  * @category    ViewHelpers
  * @package     TYPO3
- * @subpackage  media
+ * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
 class Tx_Messenger_ViewHelpers_Render_DevelopmentMessageViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
