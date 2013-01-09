@@ -30,11 +30,10 @@
  * @package messenger
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
- * @todo move class to be a Domain Model
- * @todo remove language handling from the class which should be done outside - or not?
+ * @todo remove language handling from the class which should be managed outside - or not?
  *
  */
-class Tx_Messenger_Utility_Message {
+class Tx_Messenger_Domain_Model_Message {
 
 	/**
 	 * @var string
@@ -248,7 +247,7 @@ class Tx_Messenger_Utility_Message {
 	 *
 	 * @throws Tx_Messenger_Exception_MissingFileException
 	 * @param string $attachment an absolute path to a file
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function addAttachment($attachment) {
 
@@ -274,7 +273,7 @@ class Tx_Messenger_Utility_Message {
 
 	/**
 	 * @param string $identifier
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setIdentifier($identifier) {
 		$this->identifier = $identifier;
@@ -290,7 +289,7 @@ class Tx_Messenger_Utility_Message {
 
 	/**
 	 * @param array $markers
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setMarkers($markers) {
 		$this->markers = $markers;
@@ -306,7 +305,7 @@ class Tx_Messenger_Utility_Message {
 
 	/**
 	 * @param int $language
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setLanguage($language) {
 		Tx_Messenger_Utility_Context::getInstance()->setLanguage($language);
@@ -322,7 +321,7 @@ class Tx_Messenger_Utility_Message {
 
 	/**
 	 * @param boolean $dryRun
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setDryRun($dryRun) {
 		$this->dryRun = $dryRun;
@@ -340,7 +339,7 @@ class Tx_Messenger_Utility_Message {
 	 * Set recipients
 	 *
 	 * @param array $recipients
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setRecipients($recipients) {
 		// normally should be a tag @validate...
@@ -360,7 +359,7 @@ class Tx_Messenger_Utility_Message {
 	 * Re-set default sender
 	 *
 	 * @param array $sender
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setSender(array $sender) {
 		$this->emailValidator->validate($this->sender);
@@ -379,7 +378,7 @@ class Tx_Messenger_Utility_Message {
 	 * Corresponds to a layout identifier
 	 *
 	 * @param string $layout
-	 * @return Tx_Messenger_Utility_Message
+	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setLayout($layout) {
 		$this->layout = $layout;

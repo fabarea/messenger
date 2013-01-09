@@ -23,64 +23,48 @@
 ***************************************************************/
 
 /**
- * A class dealing with configuration.
+ * A class dealing with BE User preference.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Configuration {
+class Tx_Messenger_Utility_BeUserPreference {
 
 	/**
-	 * @var array
-	 */
-	static protected $settings = array();
-
-	/**
-	 * @var string
-	 */
-	static protected $extensionKey = 'messenger';
-
-	/**
-	 * @var array
-	 */
-	static protected $defaultSettings = array(
-		'tableStructure' => 'Tx_Messenger_ListManager_DemoListManager',
-		'developmentEmails' => 'john@doe.com, jane@doe.com',
-		'context' => 'Development',
-		'messageUid' => '',
-	);
-
-	/**
-	 * Returns a configuration key.
+	 * Returns a configuration key for the current BE User.
 	 *
 	 * @param string $key
 	 * @return mixed
 	 */
 	static public function get($key) {
+		$result = '';
+		/** @var $user t3lib_beUserAuth */
+		$user = $GLOBALS['BE_USER'];
+		if ($user && !empty($user->uc[$key])) {
+			$result = $user->uc[$key];
 
-		if (empty(self::$settings)) {
-			$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::$extensionKey]);
-			self::$settings = t3lib_div::array_merge(self::$defaultSettings, $settings);
 		}
-		return isset(self::$settings[$key]) ? self::$settings[$key] : '';
+		return $result;
 	}
 
 	/**
-	 * @return array
+	 * Set a configuration for the current BE User.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
 	 */
-	public static function getSettings() {
-		return self::$settings;
-	}
+	static public function set($key, $value) {
 
-	/**
-	 * @param array $settings
-	 */
-	public static function setSettings($settings) {
-		self::$settings = $settings;
+		/** @var $user t3lib_beUserAuth */
+		$user = $GLOBALS['BE_USER'];
+		if ($user) {
+			$user->uc[$key] = $value;
+			$user->writeUC();
+		}
 	}
-
 }
 
 ?>

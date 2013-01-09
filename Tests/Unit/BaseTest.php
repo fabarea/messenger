@@ -30,7 +30,7 @@
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @package TYPO3
- * @subpackage Email templates
+ * @subpackage messenger
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
 class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {

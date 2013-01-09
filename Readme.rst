@@ -45,29 +45,6 @@ be implemented since a recipient can be in the form of an array. However, a mini
 An exception will be raised on the run time if something goes wrong.
 
 
-Todo (long term)
-=================
-
-+ Improve message management in the BE module (create new one, pick existing, ...)
-+ Add support for multi-language in the BE module
-+ Add a possible "Mailing" Domain Model object.
-+ Add filtering capability (to be provided by the list manager).
-+ Add an option to load or not the BE module since the extension can be used as library for sending templated message.
-+ Implement queue method part of the message API
-
-::
-
-	$message = t3lib_div::makeInstance('Tx_Messenger_Utility_Message')
-	$message->setIdentifier($identifierString),
-		->setRecipients($arrayOfRecipients),
-		->setMarkers($arrayOfMarkers),
-		->setDryRun($dryRunFlag),
-		->setLanguage($languageUid),
-		->addAttachment($pathToFile),
-		->setLayout($identifierString),
-		->queue()
-
-
 Message API
 =================
 
@@ -81,7 +58,7 @@ Usage::
 	  'last_name' => 'Doe',
 	);
 
-	$message = t3lib_div::makeInstance('Tx_Messenger_Utility_Message')
+	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message')
 	$message->setIdentifier($identifierString),
 		->setRecipients($arrayOfRecipients),
 		->setMarkers($arrayOfMarkers),
@@ -95,7 +72,29 @@ Usage::
 There are two mandatory methods to set for sending a message::
 
 	+ setRecipients()
-	+ setIdentifier()
+	+ setIdentifier() or setUid() one of them.
 
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
+
+Todo (long term)
+=================
+
++ Improve message management in the BE module (create new one, pick existing, ...)
++ Add support for multi-language in the BE module
++ Add a possible "Mailing" Domain Model object.
++ Add filtering capability (to be provided by the list manager).
++ Add an option to load or not the BE module since the extension can be used as library for sending templated message.
++ Implement queue method part of the message API
+
+::
+
+	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message')
+	$message->setIdentifier($identifierString),
+		->setRecipients($arrayOfRecipients),
+		->setMarkers($arrayOfMarkers),
+		->setDryRun($dryRunFlag),
+		->setLanguage($languageUid),
+		->addAttachment($pathToFile),
+		->setLayout($identifierString),
+		->queue()

@@ -36,4 +36,21 @@ $(document).ready(function () {
 		});
 		$('#field-selected-recipients').val(selectedUsers.join(','));
 	});
+
+	// bind submit handler to form
+	$('#send-message-test-action').on('submit', function (e) {
+		e.preventDefault(); // prevent native submit
+		$(this).ajaxSubmit({
+			beforeSubmit: function () {
+				$('#send-message-test-button').addClass('disabled')
+			},
+			success: function (data) {
+				if (data == 'ok') {
+					$('#send-message-test-button').removeClass('disabled')
+				} else {
+					alert('Something went wrong with message: ' + data);
+				}
+			}
+		})
+	});
 });

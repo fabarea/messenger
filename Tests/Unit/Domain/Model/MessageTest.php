@@ -27,17 +27,17 @@
 require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class Tx_Messenger_Utility_Message.
+ * Test case for class Tx_Messenger_Domain_Model_Message.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  * @package TYPO3
- * @subpackage Email templates
+ * @subpackage messenger
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
+class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @var Tx_Phpunit_Framework
@@ -45,7 +45,7 @@ class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
 	protected $testingFramework;
 
 	/**
-	 * @var Tx_Messenger_Utility_Message
+	 * @var Tx_Messenger_Domain_Model_Message
 	 */
 	protected $fixture;
 
@@ -72,7 +72,7 @@ class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
 			'first_name' => uniqid('first_name_'),
 			'last_name' => uniqid('last_name_'),
 		);
-		$this->fixture = new Tx_Messenger_Utility_Message();
+		$this->fixture = new Tx_Messenger_Domain_Model_Message();
 		$this->attachment = t3lib_extMgm::extPath('messenger') . 'Tests/Resources/Sample.pdf';
 	}
 
@@ -120,7 +120,7 @@ class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateObjectReturnsCorrectValue() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Utility_Message', 'getTemplateObject'
+			'Tx_Messenger_Domain_Model_Message', 'getTemplateObject'
 		);
 
 		$method->setAccessible(TRUE);
@@ -136,7 +136,7 @@ class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateObjectRaisesException() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Utility_Message', 'getTemplateObject'
+			'Tx_Messenger_Domain_Model_Message', 'getTemplateObject'
 		);
 
 		$method->setAccessible(TRUE);
@@ -225,7 +225,7 @@ class Tx_Messenger_Utility_MessageTest extends Tx_Messenger_BaseTest {
 	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
 		$method = $setterName . ucfirst($propertyName);
 		$actual = call_user_func_array(array($this->fixture, $method), array($value));
-		$this->assertTrue($actual instanceof Tx_Messenger_Utility_Message);
+		$this->assertTrue($actual instanceof Tx_Messenger_Domain_Model_Message);
 	}
 
 	/**

@@ -38,34 +38,48 @@
 			<h1>
 				<f:translate key="message"></f:translate>
 			</h1>
-
 			<div>
-				<span>Lorem ipsum dolor sit amet, consectetur adipiscing</span> <span class="muted">elit Praesent et justo turpis. Nunc non felis ante. Vestibulum
-				quis blandit augue. Sed tempor purus sit amet lorem suscipit elementum. Vivamus sed nunc tortor. ....</span>
+				<f:if condition="{message}">
+					<f:then>
+						<span>{message.subject}</span> <span class="muted">{message.body -> f:format.stripTags() -> f:format.crop(maxCharacters: 500)}</span>
 
-				<!--<button type="button" class="btn">-->
-				<!--<i class="icon-pencil"></i>-->
-				<!--</button>-->
+						<!--<button type="button" class="btn">-->
+						<!--<i class="icon-pencil"></i>-->
+						<!--</button>-->
 
-				<div class="dropdown dropdown-inline">
-					<a class="dropdown-toggle btn" data-toggle="dropdown" href="#"><i class="icon-envelope"></i></a>
+						<div class="dropdown dropdown-inline">
+							<a class="dropdown-toggle btn" data-toggle="dropdown" href="#"><i class="icon-envelope"></i></a>
 
-					<div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						<form class="form-inline form-dropdown">
-							<div class="control-group">
-								<div class="controls">
-									<input class="span3"
-									       id="inputIcon"
-									       placeholder="test@email.com"
-									       type="text">
-									<button type="submit" class="btn">
-										<f:translate key="send"></f:translate>
-									</button>
-								</div>
+							<div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<f:form method="post" action="sendMessageTest" arguments="{format: 'json'}"
+								        id="send-message-test-action"
+								        class="form-inline form-dropdown">
+
+									<div class="control-group">
+										<div class="controls">
+
+											<f:form.hidden name="messageUid" value="{message.uid}"/>
+											<f:form.textfield name="testEmail" class="span3"
+											                  id="inputIcon"
+											                  placeholder="test@email.com"
+											                  value="{m:be.userPreference(key:'messenger_testing_email')}"
+											                  type="text"/>
+											<button type="submit" class="btn" id="send-message-test-button">
+												<f:translate key="send"></f:translate>
+											</button>
+										</div>
+									</div>
+								</f:form>
+
 							</div>
-						</form>
-					</div>
-				</div>
+						</div>
+
+					</f:then>
+					<f:else>
+						No message defined yet! Create one Message Template record and set its uid as configuration in the
+						Extension Manager.
+					</f:else>
+				</f:if>
 			</div>
 		</div>
 		<hr>
@@ -104,7 +118,7 @@
 			<button type="button" class="btn btn-primary" id="btn-send">
 				<f:translate key="send_selected"></f:translate>
 			</button>
-			<input type="hidden" name="itest" id="field-selected-recipients" />
+			<input type="hidden" name="itest" id="field-selected-recipients"/>
 		</div>
 	</div>
 </f:section>

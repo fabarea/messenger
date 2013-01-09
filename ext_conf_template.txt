@@ -6,3 +6,7 @@ developmentEmails = john@doe.com, jane@doe.com
 
 # cat=basic//3; type=string; label= Context name: @todo add select box for value "Production" or "Development".
 context = Development
+
+# cat=basic//3; type=string; label= A message uid : @todo implement that feature in the BE module level.
+messageUid = 1
+

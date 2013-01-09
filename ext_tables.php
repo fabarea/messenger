@@ -14,7 +14,7 @@ if (TYPO3_MODE === 'BE') {
 		'm1',	// Submodule key
 		'',						// Position
 		array(
-			'Backend' => 'index',
+			'Backend' => 'index, sendMessage, sendMessageTest',
 		),
 		array(
 			'access' => 'user,group',
