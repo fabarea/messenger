@@ -2,14 +2,13 @@
 Messenger Extension
 =====================
 
-TYPO3 extension for listing recipients in a flexible way and send them messages (AKA emails). A message is composed by a message template and
-a possible layout to wrap the template. This can be useful if the message must be wrapped with a footer / header containing logo, default text and so forth.
+Messenger Extension is a TYPO3 extension for listing recipients in a flexible way and send them emails to them. A message (or email) is composed by a message template and
+a possible layout which will wrap the template. This can be useful if the message must be surrounded by a footer / header containing a logo or some default text.
 
-@todo add a little screenshot
-
-.. image:: https://raw.github.com/altercation/solarized/master/img/solarized-palette.png
+.. image:: https://raw.github.com/gebruederheitz/messenger/master/Documentation/Screenshot.png
 
 Development goes at https://github.com/gebruederheitz/messenger
+
 
 Configuration
 ==============
@@ -46,12 +45,10 @@ A recipient interface is provided making sure a user can be correctly displayed 
 be implemented since a recipient can be in the form of an array. However, a minimum of ``uid`` and ``email`` must be provided.
 An exception will be raised on the run time if something goes wrong.
 
-
 Message API
 =================
 
 Usage::
-
 
 	$identifier = 'foo';
 	$recipients = array('john@doe.com', 'John Doe');
@@ -79,7 +76,6 @@ There are two mandatory methods to set for sending a message::
 
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
-
 Todo (long term)
 =================
 
@@ -90,6 +86,8 @@ Todo (long term)
 + Add an option to load or not the BE module since the extension can be used as library for sending templated message.
 + Implement queue method part of the message API.
 + A message can be sent in various language.
++ Add configuration for setting root pid to parse RTE configuration
+  $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
 
 ::
 
@@ -102,3 +100,13 @@ Todo (long term)
 		->addAttachment($pathToFile)
 		->setLayout($identifierString)
 		->queue();
+
+
+Sponsors
+==============
+
+* `Gebrüderheitz`_ – Agentur für Webkommunikation
+* `Cobweb`_ Agence web spécialisée dans le conseil web, le webdesign et la réalisation de sites internet
+
+.. _Gebrüderheitz: http://gebruederheitz.de/
+.. _Cobweb: http://www.cobweb.ch/
