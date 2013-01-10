@@ -52,5 +52,14 @@ interface Tx_Messenger_Interface_ListableInterface {
 	 * @return mixed
 	 */
 	public function getRecord($identifier);
+
+	/**
+	 * Return recipient info according to an identifier. The returned array must look like:
+	 * array('email' => 'recipient name');
+	 *
+	 * @param mixed $identifier an identifier for the record.
+	 * @return mixed
+	 */
+	public function getRecipientInfo($identifier);
 }
 ?>

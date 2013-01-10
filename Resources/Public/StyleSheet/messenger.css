@@ -29,3 +29,7 @@ body {
 	color: rgb(255, 255, 255);
 }
 
+.form-reset-style {
+	margin: 0;
+	padding: 0;
+}

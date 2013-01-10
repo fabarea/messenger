@@ -222,7 +222,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 
 		$method->setAccessible(TRUE);
 		$actual = $method->invokeArgs($this->fixture, array(uniqid()));
-		$this->assertContains('this message is a simulation.', $actual);
+		$this->assertContains('this message is for testing purposes.', $actual);
 	}
 
 	/**

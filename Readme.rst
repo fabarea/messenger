@@ -79,15 +79,18 @@ Notice the debug method. When set, the email will be sent to a debug email inste
 Todo (long term)
 =================
 
-+ Improve message management in the BE module (create new one, pick existing, ...)
++ Add flash message when user interact with the GUI
++ Improve message management in the BE module (create new one from scratch, edit, select, ...)
++ Improve recipient management in the BE module (select new source)
 + Add support for multi-language in the BE module
 + Add a possible "Mailing" Domain Model object.
-+ Add filtering capability (to be provided by the list manager).
++ Add filtering capability to be provided by the list manager.
 + Add an option to load or not the BE module since the extension can be used as library for sending templated message.
-+ Implement queue method part of the message API.
 + A message can be sent in various language.
 + Add configuration for setting root pid to parse RTE configuration
   $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
++ Release side extensions for "fronted_user_messenger", "backend_user_messenger" and "web_page_messenger" which implement the list manager
++ Implement queue method part of the message API.
 
 ::
 

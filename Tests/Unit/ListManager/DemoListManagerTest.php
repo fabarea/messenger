@@ -58,5 +58,19 @@ class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit
 	public function getTableHeaderReturnANotEmptySet() {
 		$this->assertNotEmpty($this->fixture->getFields());
 	}
+
+	/**
+	 * @test
+	 */
+	public function getRecordReturnsNotEmptyArrayForUidEqualsOne() {
+		$this->assertNotEmpty($this->fixture->getRecord(1));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getRecipientInfoReturnsNotEmptyArrayForUidEqualsOne() {
+		$this->assertNotEmpty($this->fixture->getRecipientInfo(1));
+	}
 }
 ?>

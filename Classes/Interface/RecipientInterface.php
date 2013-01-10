@@ -44,5 +44,6 @@ interface Tx_Messenger_Interface_RecipientInterface {
 	 * @return string
 	 */
 	public function getEmail();
+
 }
 ?>

@@ -99,6 +99,19 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 		}
 		return $this->records[$uid];
 	}
+
+	/**
+	 * Return recipient info according to an identifier. The returned array must look like:
+	 *
+	 * array('email' => 'recipient name');
+	 *
+	 * @param mixed $identifier an identifier for the record.
+	 * @return mixed
+	 */
+	public function getRecipientInfo($identifier) {
+		$record = $this->getRecord($identifier);
+		return array($record['email'] => $record['firstName'] . ' ' . $record['lastName']);
+	}
 }
 
 ?>

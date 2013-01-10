@@ -64,7 +64,7 @@
 											                  placeholder="test@email.com"
 											                  value="{m:be.userPreference(key:'messenger_testing_email')}"
 											                  type="text"/>
-											<button type="submit" class="btn" id="send-message-test-button">
+											<button type="submit" class="btn" id="send-message-test-submit">
 												<f:translate key="send"></f:translate>
 											</button>
 										</div>
@@ -82,6 +82,7 @@
 			</div>
 		</div>
 		<hr>
+
 
 		<div>
 			<h1>
@@ -102,24 +103,38 @@
 				<f:for each="{recipients}" as="recipient">
 					<tr data-uid="{recipient.uid}">
 						<td>
-							<f:form.checkbox name="" value="{recipient.uid}" class="checkbox-row"/>
+							<input class="checkbox-row" name="" value="1" type="checkbox">
 						</td>
 						<m:table.row object="{recipient}"/>
 						<td>
-							<button type="button" class="btn">
-								<i class="icon-envelope"></i>
-							</button>
+							<f:form method="post" action="sendMessage" arguments="{format: 'json'}"
+							        class="send-message-action form-reset-style">
+								<f:form.hidden name="recipientUid" value="{recipient.uid}"/>
+								<f:form.hidden name="messageTemplateUid" value="{message.uid}"/>
+								<button type="submit" class="btn send-message-submit">
+									<i class="icon-envelope"></i>
+								</button>
+							</f:form>
 						</td>
 					</tr>
 				</f:for>
 				</tbody>
 			</table>
-			<button type="button" class="btn btn-primary" id="btn-send">
-				<f:translate key="send_selected"></f:translate>
-			</button>
-			<input type="hidden" name="itest" id="field-selected-recipients"/>
+
+
+			<f:form method="post" action="sendMessage" arguments="{format: 'json'}"
+			        class="send-message-action form-reset-style">
+
+				<button type="submit" class="btn btn-primary disabled" id="btn-send">
+					<f:translate key="send_selected"></f:translate>
+				</button>
+				<f:form.hidden name="recipientUid" value="{recipient.uid}" id="field-selected-recipients"/>
+				<f:form.hidden name="messageTemplateUid" value="{message.uid}"/>
+			</f:form>
+
 		</div>
 	</div>
+
 </f:section>
 </html>
 {namespace m=Tx_Messenger_ViewHelpers}

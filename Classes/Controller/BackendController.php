@@ -70,12 +70,37 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	/**
 	 * send a message
 	 *
-	 * @param int $messageUid
-	 * @param string $recipients
+	 * @param int $messageTemplateUid
+	 * @param string $recipientUid
 	 * @return void
 	 */
-	public function sendMessageAction($messageUid, $recipients = '') {
+	public function sendMessageAction($messageTemplateUid, $recipientUid = '') {
 
+		$result = 'The message could not be sent!';
+		if ($messageTemplateUid > 0) {
+
+			$recipients = t3lib_div::trimExplode(',', $recipientUid);
+			foreach ($recipients as $recipient) {
+				$markers = $this->listManager->getRecord($recipient);
+				$recipient = $this->listManager->getRecipientInfo($recipient);
+
+				/** @var $message Tx_Messenger_Domain_Model_Message */
+				$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
+				$isSent = $message->setMessageTemplate($messageTemplateUid)
+					->setRecipients($recipient)
+					->setMarkers($markers)
+					->send();
+
+				if ($isSent) {
+					$result = 'ok';
+				} else {
+					$result = 'The message could not be sent for recipient uid ' . $recipient;
+					break;
+				}
+			}
+
+		}
+		return $result;
 	}
 
 	/**
@@ -87,13 +112,11 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 */
 	public function sendMessageTestAction($messageTemplateUid = 0, $testEmail = '') {
 
-		$result = 'The message could not be sent! Missing parameters.';
-		if ($messageTemplateUid > 0) {
+		$result = 'The message could not be sent! Missing email?';
+		if ($messageTemplateUid > 0 && $testEmail != '') {
 
 			/** @var $message Tx_Messenger_Domain_Model_Message */
 			$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
-
-			// @todo message factory - sender
 			$isSent = $message->setMessageTemplate($messageTemplateUid)
 				->setRecipients($testEmail)
 				->send();
