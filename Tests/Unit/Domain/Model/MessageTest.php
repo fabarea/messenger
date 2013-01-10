@@ -64,6 +64,11 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	protected $markers;
 
+	/**
+	 * @var string
+	 */
+	protected $mboxFile;
+
 	public function setUp() {
 		parent::setUp();
 		$name = uniqid('name');
@@ -74,27 +79,31 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 		);
 		$this->fixture = new Tx_Messenger_Domain_Model_Message();
 		$this->attachment = t3lib_extMgm::extPath('messenger') . 'Tests/Resources/Sample.pdf';
+
+		// Compute temporary directory.
+		$temporaryDirectory = PATH_site . 'typo3temp'; // ini_get('upload_tmp_dir');
+		if (!is_dir($temporaryDirectory)) {
+			$temporaryDirectory = sys_get_temp_dir();
+		}
+		$this->mboxFile = $temporaryDirectory . '/mbox';
+
+		// configuration for SwiftMail
+		$GLOBALS['TYPO3_CONF_VARS']['MAIL']['transport'] = 'mbox';
+		$GLOBALS['TYPO3_CONF_VARS']['MAIL']['transport_mbox_file'] = $this->mboxFile;
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->fixture);
+		if (file_exists($this->mboxFile)) {
+			unlink($this->mboxFile);
+		}
 	}
 
 	/**
 	 * @test
 	 */
-	public function checkSettingsPropertyIsSet() {
-		$this->assertAttributeNotEmpty(
-			'settings',
-			$this->fixture
-		);
-	}
-
-	/**
-	 * @test
-	 */
-	public function checkSenderPropertyIsSet() {
+	public function checkSenderPropertyIsNotEmptyByDefault() {
 		$this->assertAttributeNotEmpty(
 			'sender',
 			$this->fixture
@@ -104,9 +113,9 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setSenderReturnsCorrectValue() {
+	public function setSenderCanBeSetWithRandomValue() {
 		$name = uniqid('name');
-		$sender = array("$name@domain.ch" => $name);
+		$sender = array($name . "@domain.ch" => $name);
 		$this->fixture->setSender($sender);
 		$this->assertAttributeEquals(
 			$sender,
@@ -118,15 +127,45 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getTemplateObjectReturnsCorrectValue() {
+	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeInt() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getTemplateObject'
+			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
 		);
 
+		$this->fixture->setMessageTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
-
 		$this->assertInstanceOf(
-			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invokeArgs($this->fixture, array($this->identifier))
+			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeString() {
+		$method = new ReflectionMethod(
+			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
+		);
+
+		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
+		$method->setAccessible(TRUE);
+		$this->assertInstanceOf(
+			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function getMessageTemplateReturnsMessageTemplateForIdentifier() {
+		$method = new ReflectionMethod(
+			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
+		);
+
+		$this->fixture->setMessageTemplate($this->identifier);
+		$method->setAccessible(TRUE);
+		$this->assertInstanceOf(
+			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -134,28 +173,56 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 * @expectedException Tx_Messenger_Exception_RecordNotFoundException
 	 */
-	public function getTemplateObjectRaisesException() {
+	public function setMessageTemplateRaisesException() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getTemplateObject'
+			'Tx_Messenger_Domain_Model_Message', 'setMessageTemplate'
 		);
 
 		$method->setAccessible(TRUE);
-		$method->invokeArgs($this->fixture, array(uniqid('identifier_')));
+		$method->invokeArgs($this->fixture, array(uniqid()));
 	}
 
 	/**
 	 * @test
 	 */
-	public function setDebugAffectRecipients() {
+	public function setRecipientPropertyIsSetBySetRecipientMethod() {
 		$this->fixture->setRecipients($this->recipients);
 		$this->assertAttributeEquals($this->recipients, 'recipients', $this->fixture);
+	}
 
-		$templateObject = new Tx_Messenger_Domain_Model_MessageTemplate();
+	/**
+	 * @test
+	 */
+	public function setRecipientPropertyCanBeSetWithEmail() {
+		$email = uniqid() . '@test.com';
+		$this->fixture->setRecipients($email);
+	}
 
-		$this->fixture->setDebug(TRUE, $templateObject);
+	/**
+	 * @test
+	 */
+	public function getRecipientsForSimulationIsNotEmptyByDefault() {
+		$this->fixture->setRecipients($this->recipients);
 
-		$this->assertTrue(is_int(strpos($templateObject->getBody(), 'DEBUG MODE')));
-		$this->assertAttributeNotEquals($this->recipients, 'recipients', $this->fixture);
+		$method = new ReflectionMethod(
+			'Tx_Messenger_Domain_Model_Message', 'getRecipientsForSimulation'
+		);
+
+		$method->setAccessible(TRUE);
+		$this->assertNotEmpty($method->invoke($this->fixture));
+	}
+
+	/**
+	 * @test
+	 */
+	public function getMessageBodyForSimulationPrependsBodyMessage() {
+		$method = new ReflectionMethod(
+			'Tx_Messenger_Domain_Model_Message', 'getMessageBodyForSimulation'
+		);
+
+		$method->setAccessible(TRUE);
+		$actual = $method->invokeArgs($this->fixture, array(uniqid()));
+		$this->assertContains('this message is a simulation.', $actual);
 	}
 
 	/**
@@ -177,11 +244,32 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function canSendMessageWithDebugFlag() {
-		$mailSent = $this->fixture->setIdentifier($this->identifier)
+	public function canSendMessageWithSimulateFlagUsingMboxTransport() {
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
-			->setDryRun(TRUE)
+			->simulate()
+			->send();
+		$this->assertTrue($mailSent);
+	}
+
+	/**
+	 * @test
+	 */
+	public function canSendMessageWithSetMarkers() {
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+			->setRecipients($this->recipients)
+			->setMarkers($this->markers)
+			->send();
+		$this->assertTrue($mailSent);
+	}
+
+	/**
+	 * @test
+	 */
+	public function canSendMessageWithNoSetMarkers() {
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+			->setRecipients($this->recipients)
 			->send();
 		$this->assertTrue($mailSent);
 	}
@@ -191,10 +279,10 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne() {
 		$language = 1;
-		$mailSent = $this->fixture->setIdentifier($this->identifier)
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
-			->setDryRun(TRUE)
+			->simulate()
 			->setLanguage($language)
 			->send();
 		$this->assertTrue($mailSent);
@@ -236,10 +324,8 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 			array('markers', NULL),
 			array('language', NULL),
 			array('layout', NULL),
-			array('identifier', NULL),
 			array('markers', NULL),
 			array('attachment', t3lib_extMgm::extPath('messenger') . 'Tests/Resources/Sample.pdf', 'add'),
-			array('dryRun', NULL),
 		);
 	}
 }

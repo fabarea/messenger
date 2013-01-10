@@ -47,7 +47,7 @@
 						<!--<i class="icon-pencil"></i>-->
 						<!--</button>-->
 
-						<div class="dropdown dropdown-inline">
+						<div id="send-message-test-dropdown" class="dropdown dropdown-inline">
 							<a class="dropdown-toggle btn" data-toggle="dropdown" href="#"><i class="icon-envelope"></i></a>
 
 							<div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -58,7 +58,7 @@
 									<div class="control-group">
 										<div class="controls">
 
-											<f:form.hidden name="messageUid" value="{message.uid}"/>
+											<f:form.hidden name="messageTemplateUid" value="{message.uid}"/>
 											<f:form.textfield name="testEmail" class="span3"
 											                  id="inputIcon"
 											                  placeholder="test@email.com"
@@ -70,7 +70,6 @@
 										</div>
 									</div>
 								</f:form>
-
 							</div>
 						</div>
 

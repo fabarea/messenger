@@ -80,6 +80,17 @@ class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 	 */
 	protected $layoutContentTranslated;
 
+	/**
+	 * @var int
+	 */
+	protected $uidTemplate;
+
+	/**
+	 * @var int
+	 */
+	protected $uidLayout;
+
+
 	public function setUp() {
 		$this->testingFramework = new Tx_Phpunit_Framework('tx_messenger');
 
@@ -130,7 +141,7 @@ class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 			)
 		);
 
-		$this->testingFramework->createRecord(
+		$this->uidTemplate = $this->testingFramework->createRecord(
 			'tx_messenger_domain_model_messagetemplate',
 			array(
 				'subject' => $this->subjectTranslated,
@@ -156,7 +167,7 @@ class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 			)
 		);
 
-		$this->testingFramework->createRecord(
+		$this->uidLayout = $this->testingFramework->createRecord(
 			'tx_messenger_domain_model_messagelayout',
 			array(
 				'content' => $this->layoutContentTranslated,

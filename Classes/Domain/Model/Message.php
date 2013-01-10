@@ -36,19 +36,14 @@
 class Tx_Messenger_Domain_Model_Message {
 
 	/**
-	 * @var string
+	 * @var int
 	 */
-	protected $identifier;
+	protected $uid;
 
 	/**
 	 * @var t3lib_mail_Message
 	 */
 	protected $message;
-
-	/**
-	 * @var array
-	 */
-	protected $settings = array('senderEmail' => 'john@doe.com', 'senderName' => 'John Doe');
 
 	/**
 	 * @var array
@@ -73,7 +68,7 @@ class Tx_Messenger_Domain_Model_Message {
 	/**
 	 * @var array
 	 */
-	protected $markers;
+	protected $markers = array();
 
 	/**
 	 * @var int
@@ -88,7 +83,7 @@ class Tx_Messenger_Domain_Model_Message {
 	/**
 	 * @var boolean
 	 */
-	protected $dryRun = FALSE;
+	protected $simulate = FALSE;
 
 	/**
 	 * @var array
@@ -101,6 +96,31 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $templateRepository;
 
 	/**
+	 * @var Tx_Messenger_Domain_Model_MessageTemplate
+	 */
+	protected $messageTemplate;
+
+	/**
+	 * @var string
+	 */
+	protected $messageSubject;
+
+	/**
+	 * @var string
+	 */
+	protected $messageBody;
+
+	/**
+	 * @var Tx_Messenger_Utility_Configuration
+	 */
+	protected $configurationManager;
+
+	/**
+	 * @var Tx_Messenger_Utility_Context
+	 */
+	protected $context;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -108,12 +128,13 @@ class Tx_Messenger_Domain_Model_Message {
 		$this->templateRepository = t3lib_div::makeInstance('Tx_Messenger_Domain_Repository_MessageTemplateRepository');
 		$this->emailValidator = t3lib_div::makeInstance('Tx_Messenger_Validator_Email');
 		$this->markerUtility = t3lib_div::makeInstance('Tx_Messenger_Utility_Marker');
+		$this->configurationManager = Tx_Messenger_Utility_Configuration::getInstance();
+		$this->context = Tx_Messenger_Utility_Context::getInstance();
 
-		if (isset($GLOBALS['TSFE'])) {
-			$this->settings = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_messenger.']['settings.'];
-		}
+		$this->sender = array(
+			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
+		);
 
-		$this->sender = array($this->settings['senderEmail'] => $this->settings['senderName']);
 		$this->emailValidator->validate($this->sender);
 	}
 
@@ -127,39 +148,36 @@ class Tx_Messenger_Domain_Model_Message {
 	 */
 	public function send() {
 
-		$identifier = $this->getIdentifier();
-		if (empty($identifier)) {
-			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Property "identifier" is not defined', 1354536584);
+		// Substitute markers
+		$messageTemplate = $this->getMessageTemplate();
+		if (empty($messageTemplate)) {
+			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
 		}
 
 		$recipients = $this->getRecipients();
 		if (empty($recipients)) {
-			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Property "recipients" is not defined', 1354536585);
+			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
 		}
 
-		$templateObject = $this->getTemplateObject($identifier);
-
-		// Substitute markers
-		$subject = $this->markerUtility->substitute($templateObject->getSubject(), $this->getMarkers(), 'text/plain');
-		$templateObject->setSubject($subject);
-
-		$body = $this->markerUtility->substitute($templateObject->getBody(), $this->getMarkers());
-		$templateObject->setBody($body);
+		$subject = $this->markerUtility->substitute($messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
+		#$body = $this->markerUtility->substitute($messageTemplate->getBody(), $this->getMarkers());
+		$body = $messageTemplate->getBody();
 
 		// Set debug flag for not production context
-		if (! Tx_Messenger_Utility_Context::getInstance()->isContextSendingEmails()) {
-			$this->setDryRun(TRUE);
+		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
+			$body = $this->getMessageBodyForSimulation($body);
+			$recipients = $this->getRecipientsForSimulation();
 		}
-		$this->setDebug($this->getDryRun(), $templateObject);
+		$body = $this->markerUtility->substitute($body, $this->getMarkers());
 
-		$this->message->setTo($this->recipients)
+		$this->message->setTo($recipients)
 			->setFrom($this->sender)
-			->setSubject($templateObject->getSubject())
-			->setBody($templateObject->getBody(), 'text/html');
+			->setSubject($subject)
+			->setBody($body, 'text/html');
 
 		// Attach plain text version if HTML tags are found in body
-		if ($this->hasHtml($templateObject->getBody())) {
-			$text = Tx_Messenger_Utility_Html2Text::getInstance()->convert($templateObject->getBody());
+		if ($this->hasHtml($body)) {
+			$text = Tx_Messenger_Utility_Html2Text::getInstance()->convert($body);
 			$this->message->addPart($text, 'text/plain');
 		}
 
@@ -178,52 +196,44 @@ class Tx_Messenger_Domain_Model_Message {
 	}
 
 	/**
-	 * Set debug mode.
-	 * Visibility of the method set to public for unit testing cause of the passed object as reference.
-	 * Method is considered as internal, though.
+	 * Get a body message when email is simulated.
 	 *
-	 * @internal
-	 * @param boolean $debug
-	 * @param Tx_Messenger_Domain_Model_MessageTemplate $templateObject
-	 * @return void
+	 * @param string $content
+	 * @return string
 	 */
-	public function setDebug($debug, Tx_Messenger_Domain_Model_MessageTemplate &$templateObject) {
-		if ($debug) {
-			$recipients = array($this->settings['debug.']['recipientEmail'] => $this->settings['debug.']['recipientName']);
-			$recipientsList = '';
-			$x = 0;
-			foreach ($this->recipients AS $email => $name) {
-				if ($x > 0) $recipientsList .= ', ';
-				$recipientsList .= $name . ' (' . $email . ')';
-				$x++;
-			}
-			$templateObject->setBody("DEBUG MODE : This message is send to debuggers... It should be send to  " . $recipientsList . "<br/>\n" . $templateObject->getBody());
-			$this->emailValidator->validate($recipients);
-			$this->recipients = $recipients;
-		}
+	protected function getMessageBodyForSimulation($content) {
+		$messageBody = sprintf("%s CONTEXT: this message is a simulation.... In reality, it will be sent to %s <br /><br />%s",
+			strtoupper($this->context->getName()),
+			$this->configurationManager->get('developmentEmails'),
+			$content
+		);
+		return $messageBody;
 	}
 
 	/**
-	 * Retrieves the template object
+	 * Get the recipients whe email is simulated.
+	 *
+	 * @return array
+	 */
+	protected function getRecipientsForSimulation() {
+		$emails = t3lib_div::trimExplode(',', $this->configurationManager->get('developmentEmails'));
+
+		$recipients = array();
+		foreach ($emails as $email) {
+			$recipients[$email] = $email;
+		}
+		$this->emailValidator->validate($recipients);
+		return $recipients;
+	}
+
+	/**
+	 * Retrieves the message template object
 	 *
 	 * @throws Tx_Messenger_Exception_RecordNotFoundException
-	 * @param string $identifier
 	 * @return Tx_Messenger_Domain_Model_MessageTemplate
 	 */
-	protected function getTemplateObject($identifier) {
-
-		/** @var $templateObject Tx_Messenger_Domain_Model_MessageTemplate */
-		$templateObject = $this->templateRepository->findByIdentifier($identifier);
-
-		if (!$templateObject) {
-			$message = sprintf('No Email Template record was found for identity "%s"', $identifier);
-			throw new Tx_Messenger_Exception_RecordNotFoundException($message, 1350124207);
-		}
-
-		// Attach a layout to the email template
-		$templateObject->setLayout($this->getLayout());
-
-		return $templateObject;
+	public function getMessageTemplate() {
+		return $this->messageTemplate;
 	}
 
 	/**
@@ -243,7 +253,7 @@ class Tx_Messenger_Domain_Model_Message {
 	}
 
 	/**
-	 * Add an attachment
+	 * Add an attachment.
 	 *
 	 * @throws Tx_Messenger_Exception_MissingFileException
 	 * @param string $attachment an absolute path to a file
@@ -261,22 +271,6 @@ class Tx_Messenger_Domain_Model_Message {
 			$message = sprintf('File not found "%s"', $attachment);
 			throw new Tx_Messenger_Exception_MissingFileException($message, 1350124207);
 		}
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return $this->identifier;
-	}
-
-	/**
-	 * @param string $identifier
-	 * @return Tx_Messenger_Domain_Model_Message
-	 */
-	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
 		return $this;
 	}
 
@@ -308,23 +302,16 @@ class Tx_Messenger_Domain_Model_Message {
 	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setLanguage($language) {
-		Tx_Messenger_Utility_Context::getInstance()->setLanguage($language);
+		$this->context->setLanguage($language);
 		return $this;
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function getDryRun() {
-		return $this->dryRun;
-	}
-
-	/**
-	 * @param boolean $dryRun
+	 * @param boolean $simulate
 	 * @return Tx_Messenger_Domain_Model_Message
 	 */
-	public function setDryRun($dryRun) {
-		$this->dryRun = $dryRun;
+	public function simulate($simulate = TRUE) {
+		$this->simulate = $simulate;
 		return $this;
 	}
 
@@ -336,13 +323,17 @@ class Tx_Messenger_Domain_Model_Message {
 	}
 
 	/**
-	 * Set recipients
+	 * Set recipients.
+	 * Can be an array('email' => 'name') or an email address.
 	 *
-	 * @param array $recipients
+	 * @param mixed $recipients
 	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setRecipients($recipients) {
-		// normally should be a tag @validate...
+		if (is_string($recipients)) {
+			$recipients = array($recipients => $recipients);
+		}
+		// could be implemented as tag @validate...
 		$this->emailValidator->validate($recipients);
 		$this->recipients = $recipients;
 		return $this;
@@ -382,6 +373,47 @@ class Tx_Messenger_Domain_Model_Message {
 	 */
 	public function setLayout($layout) {
 		$this->layout = $layout;
+		return $this;
+	}
+
+	/**
+	 * Set a message template.
+	 *
+	 * Can take as parameter:
+	 *
+	 *      + Tx_Messenger_Domain_Model_MessageTemplate $messageTemplate
+	 *      + int $messageTemplate which corresponds to an uid
+	 *      + string $messageTemplate which corresponds to a value for property "identifier".
+	 *
+	 * @throws Tx_Messenger_Exception_RecordNotFoundException
+	 * @param mixed $messageTemplate
+	 * @return Tx_Messenger_Domain_Model_Message
+	 */
+	public function setMessageTemplate($messageTemplate) {
+
+
+		if ($messageTemplate instanceof Tx_Messenger_Domain_Model_MessageTemplate) {
+			$object = $messageTemplate;
+		} else {
+
+			// try to convert message template to a possible uid.
+			if ((int) $messageTemplate > 0) {
+				$messageTemplate = (int) $messageTemplate;
+			}
+			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByIdentifier';
+			$object = call_user_func_array(array($this->templateRepository, $methodName), array($messageTemplate));
+
+			// Attach a layout to the email template
+			// @todo: add setMessageLayout method()
+			#$messageTemplate->setLayout($this->getLayout());
+		}
+
+		if (is_null($object)) {
+			$message = sprintf('No Email Template record was found for identifier "%s"', $messageTemplate);
+			throw new Tx_Messenger_Exception_RecordNotFoundException($message, 1350124207);
+		}
+
+		$this->messageTemplate = $object;
 		return $this;
 	}
 }

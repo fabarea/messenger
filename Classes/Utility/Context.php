@@ -58,12 +58,11 @@ class Tx_Messenger_Utility_Context implements t3lib_Singleton {
 
 	/**
 	 * Constructor
+	 *
+	 * @return Tx_Messenger_Utility_Context
 	 */
 	public function __construct() {
-		$settings = Tx_Messenger_Utility_Configuration::getSettings();
-		if (isset($GLOBALS['TSFE'])) {
-			$settings = t3lib_div::array_merge($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_messenger.']['settings.'], $settings);
-		}
+		$settings = Tx_Messenger_Utility_Configuration::getInstance()->getSettings();
 		$this->name = empty($settings['context']) ? 'Development' : $settings['context'];
 		$this->sendingEmailContexts = t3lib_div::trimExplode(',', $settings['listOfContextsSendingEmails']);
 	}
@@ -106,6 +105,15 @@ class Tx_Messenger_Utility_Context implements t3lib_Singleton {
 	 */
 	public function isContextSendingEmails() {
 		return in_array($this->getName(), $this->sendingEmailContexts);
+	}
+
+	/**
+	 * Tell whether the context is not sending email
+	 *
+	 * @return boolean
+	 */
+	public function isContextNotSendingEmails() {
+		return ! $this->isContextSendingEmails();
 	}
 
 	/**

@@ -59,7 +59,7 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	 */
 	public function __construct(){
 		foreach (array(1, 2, 3, 4) as $uid) {
-			$this->records[] = array(
+			$this->records[$uid] = array(
 				'uid' => $uid,
 				'firstName' => uniqid('first'),
 				'lastName' => uniqid('last'),
@@ -84,6 +84,20 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	 */
 	public function getFields() {
 		return $this->fields;
+	}
+
+	/**
+	 * Get data about a particular record.
+	 *
+	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
+	 * @param int $uid an identifier for the record.
+	 * @return array
+	 */
+	public function getRecord($uid) {
+		if (empty($this->records[$uid])) {
+			throw new Tx_Messenger_Exception_MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
+		}
+		return $this->records[$uid];
 	}
 }
 

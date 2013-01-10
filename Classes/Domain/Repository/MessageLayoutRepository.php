@@ -26,7 +26,28 @@
  */
 class Tx_Messenger_Domain_Repository_MessageLayoutRepository extends Tx_Extbase_Persistence_Repository {
 
-//	/**
+	/**
+	 * Finds an object matching the given identifier.
+	 *
+	 * @param string $identifier The identifier of the object to find
+	 * @return object The matching object if found, otherwise NULL
+	 * @api
+	 */
+	public function findByIdentifier($identifier) {
+		$query = $this->createQuery();
+		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
+		$query->getQuerySettings()->setRespectStoragePage(FALSE);
+		$object = $query
+			->matching(
+			$query->equals('identifier', $identifier)
+		)
+			->execute()
+			->getFirst();
+		return $object;
+	}
+
+
+//	/** @todo resolve overlays of record
 //	 * Finds a layout record by its identifier.
 //	 *
 //	 * @param string $identifier

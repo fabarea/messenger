@@ -20,7 +20,7 @@
 				<source>sentTime</source>
 			</trans-unit>
 			<trans-unit id="development_mode">
-				<source>Development mode! All email will be forwarded by default to %s</source>
+				<source>Development context: all emails will be forwarded to %s, except for the testing emails in the Message box which are user-defined.</source>
 			</trans-unit>
 			<trans-unit id="message">
 				<source>Message</source>

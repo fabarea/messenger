@@ -81,24 +81,28 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	/**
 	 * send a message for testing
 	 *
-	 * @param int $messageUid
+	 * @param int $messageTemplateUid
 	 * @param string $testEmail
 	 * @return void
 	 */
-	public function sendMessageTestAction($messageUid = 0, $testEmail = '') {
+	public function sendMessageTestAction($messageTemplateUid = 0, $testEmail = '') {
 
-		/** @var $messageTemplate Tx_Messenger_Domain_Model_MessageTemplate */
-		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
-		if ($messageTemplate) {
+		$result = 'The message could not be sent! Missing parameters.';
+		if ($messageTemplateUid > 0) {
+
 			/** @var $message Tx_Messenger_Domain_Model_Message */
 			$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
 
+			// @todo message factory - sender
+			$isSent = $message->setMessageTemplate($messageTemplateUid)
+				->setRecipients($testEmail)
+				->send();
+			$result = $isSent ? 'ok' : 'The message could not be sent! Contact an administrator.';
+
 			// save email address as preference
 			Tx_Messenger_Utility_BeUserPreference::set('messenger_testing_email', $testEmail);
-
 		}
-
-		return 'ok';
+		return $result;
 	}
 
 	/**
@@ -114,7 +118,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 */
 	public function indexAction() {
 
-		$messageUid = Tx_Messenger_Utility_Configuration::get('messageUid');
+		$messageUid = Tx_Messenger_Utility_Configuration::getInstance()->get('messageUid');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
 
 		$records = $this->listManager->getRecords();

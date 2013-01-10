@@ -44,7 +44,7 @@ class Tx_Messenger_ListManager_Factory {
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
-			$className = Tx_Messenger_Utility_Configuration::get('tableStructure');
+			$className = Tx_Messenger_Utility_Configuration::getInstance()->get('tableStructure');
 			self::$instance = t3lib_div::makeInstance($className);
 		}
 		return self::$instance;

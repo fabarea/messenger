@@ -30,27 +30,52 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Configuration {
+class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 
 	/**
 	 * @var array
 	 */
-	static protected $settings = array();
+	protected $settings = array();
 
 	/**
 	 * @var string
 	 */
-	static protected $extensionKey = 'messenger';
+	protected $extensionKey = 'messenger';
 
 	/**
+	 * Returns a class instance
+	 *
+	 * @return Tx_Messenger_Utility_Configuration
+	 */
+	static public function getInstance() {
+		return t3lib_div::makeInstance('Tx_Messenger_Utility_Configuration');
+	}
+
+	/**
+	 * Default settings in case it is not set in the Extension Manager.
+	 *
 	 * @var array
 	 */
-	static protected $defaultSettings = array(
+	protected $defaultSettings = array(
 		'tableStructure' => 'Tx_Messenger_ListManager_DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
 		'messageUid' => '',
+		'senderName' => 'John Doe',
+		'senderEmail' => 'john@doe.com',
+		'markerReplacedInLayout' => 'template',
+		'listOfContextsSendingEmails' => 'Production',
 	);
+
+	/**
+	 * Constructor
+	 *
+	 * @return Tx_Messenger_Utility_Configuration
+	 */
+	public function __construct() {
+		$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extensionKey]);
+		$this->settings = t3lib_div::array_merge($this->defaultSettings, $settings);
+	}
 
 	/**
 	 * Returns a configuration key.
@@ -58,29 +83,23 @@ class Tx_Messenger_Utility_Configuration {
 	 * @param string $key
 	 * @return mixed
 	 */
-	static public function get($key) {
-
-		if (empty(self::$settings)) {
-			$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][self::$extensionKey]);
-			self::$settings = t3lib_div::array_merge(self::$defaultSettings, $settings);
-		}
-		return isset(self::$settings[$key]) ? self::$settings[$key] : '';
+	public function get($key) {
+		return isset($this->settings[$key]) ? $this->settings[$key] : '';
 	}
 
 	/**
 	 * @return array
 	 */
-	public static function getSettings() {
-		return self::$settings;
+	public function getSettings() {
+		return $this->settings;
 	}
 
 	/**
 	 * @param array $settings
 	 */
-	public static function setSettings($settings) {
-		self::$settings = $settings;
+	public function setSettings(array $settings = array()) {
+		$this->settings = $settings;
 	}
-
 }
 
 ?>

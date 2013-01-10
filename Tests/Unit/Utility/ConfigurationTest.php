@@ -33,17 +33,24 @@
  */
 class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
+	/**
+	 * @var Tx_Messenger_Utility_Configuration
+	 */
+	private $fixture;
+
 	public function setUp() {
+		$this->fixture = new Tx_Messenger_Utility_Configuration();
 	}
 
 	public function tearDown() {
+		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
 	public function getSettingsReturnAnArray() {
-		$actual = Tx_Messenger_Utility_Configuration::getSettings();
+		$actual = $this->fixture->getSettings();
 		$this->assertTrue(is_array($actual));
 	}
 
@@ -52,7 +59,7 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 	 */
 	public function getFooValueReturnsEmpty() {
 		$expected = '';
-		$actual = Tx_Messenger_Utility_Configuration::get(uniqid('foo'));
+		$actual = $this->fixture->get(uniqid('foo'));
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -60,9 +67,9 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @test
 	 */
 	public function configurationArrayNotEmptyAfterGetARandomValue() {
-		Tx_Messenger_Utility_Configuration::get(uniqid('foo'));
+		$this->fixture->get(uniqid('foo'));
 
-		$actual = Tx_Messenger_Utility_Configuration::getSettings();
+		$actual = $this->fixture->getSettings();
 		$this->assertTrue(count($actual) > 0);
 	}
 
@@ -71,7 +78,7 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @dataProvider configurationProvider
 	 */
 	public function defaultSettingsMustNotBeEmpty($setting) {
-		$this->assertNotEmpty(Tx_Messenger_Utility_Configuration::get($setting));
+		$this->assertNotEmpty($this->fixture->get($setting));
 	}
 
 	/**
@@ -82,6 +89,10 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 			array('tableStructure'),
 			array('developmentEmails'),
 			array('context'),
+			array('senderName'),
+			array('senderEmail'),
+			array('markerReplacedInLayout'),
+			array('listOfContextsSendingEmails'),
 		);
 	}
 }

@@ -46,7 +46,8 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				if (data == 'ok') {
-					$('#send-message-test-button').removeClass('disabled')
+					$('#send-message-test-button').removeClass('disabled');
+					$('#send-message-test-dropdown').removeClass('open');
 				} else {
 					alert('Something went wrong with message: ' + data);
 				}

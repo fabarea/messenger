@@ -42,7 +42,7 @@ class Tx_Messenger_ViewHelpers_Render_DevelopmentMessageViewHelper extends Tx_Fl
 	public function render() {
 		$value = '';
 		if (Tx_Messenger_Utility_Context::getInstance()->isNotProduction()) {
-			$emails = Tx_Messenger_Utility_Configuration::get('developmentEmails');
+			$emails = Tx_Messenger_Utility_Configuration::getInstance()->get('developmentEmails');
 			$label = sprintf(Tx_Extbase_Utility_Localization::translate('development_mode', 'messenger'), $emails);
 			$value = sprintf('<span class="label">%s</span>', $label);
 		}

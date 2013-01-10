@@ -32,6 +32,13 @@
 interface Tx_Messenger_Interface_ListableInterface {
 
 	/**
+	 * Get fields being displayed in the list.
+	 *
+	 * @return array
+	 */
+	public function getFields();
+
+	/**
 	 * Returns a set of records.
 	 *
 	 * @return mixed
@@ -39,10 +46,11 @@ interface Tx_Messenger_Interface_ListableInterface {
 	public function getRecords();
 
 	/**
-	 * Get fields being displayed in the list.
+	 * Get data about a particular record.
 	 *
-	 * @return array
+	 * @param mixed $identifier an identifier for the record.
+	 * @return mixed
 	 */
-	public function getFields();
+	public function getRecord($identifier);
 }
 ?>

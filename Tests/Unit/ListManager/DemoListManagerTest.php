@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Utility_ConfigurationTest.
+ * Test case for class Tx_Messenger_ListManager_DemoListManager.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3

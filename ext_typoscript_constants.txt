@@ -15,9 +15,7 @@ module.tx_messenger {
 
 plugin.tx_messenger {
 	settings {
-		 # cat=plugin.tx_messenger/a; type=string; label=Name of the sender
-		senderName = John Doe
-		 # cat=plugin.tx_messenger/a; type=email; label=Email of the sender
-		senderEmail = john@doe.com
+		# cat=plugin.tx_messenger/a; type=string; label=Name of the sender
+		# key = John Doe
 	}
 }

@@ -3,9 +3,11 @@ Messenger Extension
 =====================
 
 TYPO3 extension for listing recipients in a flexible way and send them messages (AKA emails). A message is composed by a message template and
-a possible layout to wrap the template. This can be useful if the message must be wrapped with a footer / header containing logo, default text and so forth. A message can be translated in different language.
+a possible layout to wrap the template. This can be useful if the message must be wrapped with a footer / header containing logo, default text and so forth.
 
 @todo add a little screenshot
+
+.. image:: https://raw.github.com/altercation/solarized/master/img/solarized-palette.png
 
 Development goes at https://github.com/gebruederheitz/messenger
 
@@ -58,21 +60,22 @@ Usage::
 	  'last_name' => 'Doe',
 	);
 
-	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message')
-	$message->setIdentifier($identifierString),
-		->setRecipients($arrayOfRecipients),
-		->setMarkers($arrayOfMarkers),
-		->setDryRun($dryRunFlag),
-		->setLanguage($languageUid),
-		->addAttachment($pathToFile),
-		->setLayout($identifierString),
+	$objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_Manager');
+	$message = $objectManager->get('Tx_Messenger_Domain_Model_Message');
+	$message->setMessageTemplate($identifierString)
+		->setRecipients($arrayOfRecipients)
+		->setMarkers($arrayOfMarkers)
+		->setLanguage($languageUid)
+		->addAttachment($pathToFile)
+		->setLayout($identifierString)
+		->simulate()
 		->send()
 
 
 There are two mandatory methods to set for sending a message::
 
 	+ setRecipients()
-	+ setIdentifier() or setUid() one of them.
+	+ setMessageTemplate() which can accept an object, a uid or an identifier property.
 
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
@@ -85,16 +88,17 @@ Todo (long term)
 + Add a possible "Mailing" Domain Model object.
 + Add filtering capability (to be provided by the list manager).
 + Add an option to load or not the BE module since the extension can be used as library for sending templated message.
-+ Implement queue method part of the message API
++ Implement queue method part of the message API.
++ A message can be sent in various language.
 
 ::
 
 	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message')
-	$message->setIdentifier($identifierString),
-		->setRecipients($arrayOfRecipients),
-		->setMarkers($arrayOfMarkers),
-		->setDryRun($dryRunFlag),
-		->setLanguage($languageUid),
-		->addAttachment($pathToFile),
-		->setLayout($identifierString),
-		->queue()
+	$message->setIdentifier($identifierString)
+		->setRecipients($arrayOfRecipients)
+		->setMarkers($arrayOfMarkers)
+		->setSimulate(simulate)
+		->setLanguage($languageUid)
+		->addAttachment($pathToFile)
+		->setLayout($identifierString)
+		->queue();

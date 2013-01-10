@@ -153,11 +153,7 @@ class Tx_Messenger_Domain_Model_MessageTemplate extends Tx_Extbase_DomainObject_
 	 * @return string
 	 */
 	protected function getMarkerTemplate() {
-
-		if (isset($GLOBALS['TSFE'])) {
-			$settings = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_messenger.']['settings.'];
-		}
-		$marker = empty($settings['markerReplacedInLayout']) ? 'template' : $settings['markerReplacedInLayout'];
+		$marker = Tx_Messenger_Utility_Configuration::getInstance()->get('markerReplacedInLayout');
 		return sprintf('{%s}', $marker);
 	}
 

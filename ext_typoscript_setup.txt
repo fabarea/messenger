@@ -30,20 +30,5 @@ config.tx_extbase{
 plugin.tx_messenger {
 	settings {
 
-		 # Name of the sender
-		senderName = {$plugin.tx_messenger.settings.senderName}
-
-		 # Email of the sender
-		senderEmail = {$plugin.tx_messenger.settings.senderEmail}
-
-		debug {
-			recipientName = John Does
-			recipientEmail = john@doe.com
-		}
-
-		listOfContextsSendingEmails = Production
-
-		# Corresponds to the marker going to be replaced by the template body in a Layout object
-		markerReplacedInLayout = template
 	}
 }
