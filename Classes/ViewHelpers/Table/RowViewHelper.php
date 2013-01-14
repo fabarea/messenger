@@ -88,7 +88,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 		if (! method_exists($object, $getter)) {
 			throw new Tx_Messenger_Exception_UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
 		}
-		return call_user_func($object, $getter);
+		return call_user_func(array($object, $getter));
 	}
 
 	/**
