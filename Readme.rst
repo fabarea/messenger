@@ -2,20 +2,27 @@
 Messenger Extension
 =====================
 
-Messenger Extension is a TYPO3 extension for listing recipients in a flexible way and send them emails to them. A message (or email) is composed by a message template and
-a possible layout which will wrap the template. This can be useful if the message must be surrounded by a footer / header containing a logo or some default text.
+Messenger Extension is a TYPO3 extension for listing recipients in a flexible way and send them emails to them. A message (AKA email) is composed by a message template and
+a possible wrapping layout. This can be useful if the message must be surrounded by a footer / header containing a logo or some default text.
 
 .. image:: https://raw.github.com/gebruederheitz/messenger/master/Documentation/Screenshot.png
 
 Development goes at https://github.com/gebruederheitz/messenger
 
+@todo publish fe_users_messenger
+@todo publish be_users_messenger
 
-Configuration
+Setting up
 ==============
 
-Extension have settings in the Extension Manager and also TypoScript.
+Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
+Though, **pay attention** to define a ``messageUid``. This can be achieved in the BE list view of TYPO3.
 
-For more details, check file ``ext_typoscript_setup.txt`` and ``ext_typoscript_constants.txt``.
+Web > List > Select a folder / page > Create new record (at the bottom) > Email template
+
+
+Also the ``tableStructure`` setting will likely to be re-defined according to your need. See next chapter.
+
 
 List Manager
 ================
@@ -82,6 +89,7 @@ Todo (long term)
 + Add flash message when user interact with the GUI
 + Improve message management in the BE module (create new one from scratch, edit, select, ...)
 + Improve recipient management in the BE module (select new source)
++ Add GUI to support layout wrapping
 + Add support for multi-language in the BE module
 + Add a possible "Mailing" Domain Model object.
 + Add filtering capability to be provided by the list manager.
