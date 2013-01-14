@@ -65,6 +65,7 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 		'senderEmail' => 'john@doe.com',
 		'markerReplacedInLayout' => 'template',
 		'listOfContextsSendingEmails' => 'Production',
+		'rootPageUid' => '',
 	);
 
 	/**

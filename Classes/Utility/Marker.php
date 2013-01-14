@@ -62,7 +62,14 @@ class Tx_Messenger_Utility_Marker {
 	public function substitute($input, array $markers, $format = 'text/html') {
 
 		if ($format == 'text/html') {
-			$config['parseFunc.'] = $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
+
+			$config['parseFunc.'] = array();
+			if (TYPO3_MODE == 'BE') {
+				$config['parseFunc.'] = $this->getRteConfiguration();
+			} elseif (TYPO3_MODE == 'FE') {
+				$config['parseFunc.'] = $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
+
+			}
 			$config['value'] = $input;
 			$input = $this->contentObject->TEXT($config);
 		}
@@ -71,5 +78,23 @@ class Tx_Messenger_Utility_Marker {
 		$this->view->assignMultiple($markers);
 		return $this->view->render();
 	}
+
+	/**
+	 * Load the TypoScript in the Backend and returns the RTE configuration.
+	 *
+	 * @return array
+	 */
+	protected function getRteConfiguration() {
+		$pageUid = Tx_Messenger_Utility_Configuration::getInstance()->get('rootPageUid');
+		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
+		$rootLine = $sysPageObj->getRootLine($pageUid);
+		$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
+		$TSObj->tt_track = 0;
+		$TSObj->init();
+		$TSObj->runThroughTemplates($rootLine);
+		$TSObj->generateConfig();
+		return $TSObj->setup['lib.']['parseFunc_RTE.'];
+	}
+
 }
 ?>

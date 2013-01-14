@@ -121,5 +121,20 @@ class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 		$this->assertGreaterThan(0, strpos($output, $this->marker1));
 		$this->assertGreaterThan(0, strpos($output, $this->marker2));
 	}
+
+	/**
+	 * @test
+	 */
+	public function getRteConfigurationReturnsANotEmptyArray() {
+
+		$method = new ReflectionMethod(
+			'Tx_Messenger_Utility_Marker', 'getRteConfiguration'
+		);
+
+		$method->setAccessible(TRUE);
+		$actual = $method->invoke($this->fixture);
+		$this->assertNotEmpty($actual);
+	}
+
 }
 ?>

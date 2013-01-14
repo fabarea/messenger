@@ -16,3 +16,5 @@ context = Development
 # cat=basic//3; type=string; label= A message uid : @todo implement that feature in the BE module level.
 messageUid = 1
 
+# cat=basic//3; type=string; label= A root page uid : Define what is the root page of the website. This setting is mandatory to have the RTE settings loaded and be able to send HTML email.
+rootPageUid = 1
