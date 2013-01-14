@@ -160,7 +160,6 @@ class Tx_Messenger_Domain_Model_Message {
 		}
 
 		$subject = $this->markerUtility->substitute($messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
-		#$body = $this->markerUtility->substitute($messageTemplate->getBody(), $this->getMarkers());
 		$body = $messageTemplate->getBody();
 
 		// Set debug flag for not production context
@@ -282,10 +281,17 @@ class Tx_Messenger_Domain_Model_Message {
 	}
 
 	/**
-	 * @param array $markers
+	 * @param mixed $markers
 	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setMarkers($markers) {
+		if (is_object($markers)) {
+			if (method_exists($markers, 'toArray')) {
+				$markers = $markers->toArray();
+			} else {
+				$markers = Tx_Messenger_Utility_Object::toArray($markers);
+			}
+		}
 		$this->markers = $markers;
 		return $this;
 	}

@@ -308,6 +308,16 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @test
+	 */
+	public function setMarkerWithObjectConvertItToArray() {
+		$fakeObject = new stdClass();
+		$fakeObject->foo = uniqid();
+		$this->fixture->setMarkers($fakeObject);
+		$this->assertArrayHasKey('foo', $this->fixture->getMarkers());
+	}
+
+	/**
+	 * @test
 	 * @dataProvider propertyProvider
 	 */
 	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
