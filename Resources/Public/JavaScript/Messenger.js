@@ -79,12 +79,26 @@ $(document).ready(function () {
 	 * Send message (to recipients) action
 	 */
 	$('.send-message-submit').click(function (e) {
+		var messageUid;
+
 		// Gui update
 		$(this).addClass('disabled');
+
+		// Get the message uid which must be set!
+		messageUid = $(this).closest('form')
+			.find('.hidden-message-template-uid')
+			.val();
 
 		// Send request
 		$($(this).closest('form')).ajaxSubmit({
 			context: this,
+			beforeSubmit: function () {
+				if (messageUid <= 0) {
+					alert("No message template was selected. Please set one \"uid\" in the Extension Manager. \n\n" +
+						"A proper template message picker is in the pipeline but he's waiting for a sponsor opportunity...");
+					return false;
+				}
+			},
 			success: function (data) {
 				if (data == 'ok') {
 					$(this).removeClass('disabled');

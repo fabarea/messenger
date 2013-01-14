@@ -74,7 +74,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 * @param string $recipientUid
 	 * @return void
 	 */
-	public function sendMessageAction($messageTemplateUid, $recipientUid = '') {
+	public function sendMessageAction($messageTemplateUid = 0, $recipientUid = '') {
 
 		$result = 'The message could not be sent!';
 		if ($messageTemplateUid > 0) {

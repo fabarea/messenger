@@ -109,8 +109,8 @@
 						<td>
 							<f:form method="post" action="sendMessage" arguments="{format: 'json'}"
 							        class="send-message-action form-reset-style">
-								<f:form.hidden name="recipientUid" value="{recipient.uid}"/>
-								<f:form.hidden name="messageTemplateUid" value="{message.uid}"/>
+								<f:form.hidden class="hidden-recipient-uid" name="recipientUid" value="{recipient.uid}"/>
+								<f:form.hidden class="hidden-message-template-uid" name="messageTemplateUid" value="{message.uid}"/>
 								<button type="submit" class="btn send-message-submit">
 									<i class="icon-envelope"></i>
 								</button>
