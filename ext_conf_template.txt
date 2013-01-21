@@ -7,11 +7,14 @@ senderEmail = john@doe.com
 # cat=basic//3; type=string; label= List of development emails: A comma separated list of emails.
 developmentEmails = john@doe.com, jane@doe.com
 
-# cat=basic//3; type=string; label= Context name: @todo add select box for value "Production" or "Development".
+# cat=basic//3; type=options[Development,Production]; label= Context name: in Development context no email will be sent to real recipients but to the development emails instead (see settings above).
 context = Development
 
-# cat=basic//3; type=string; label= A message uid : @todo implement that feature in the BE module level.
+# cat=basic//3; type=string; label= A message uid : @todo implement that feature at the BE module level.
 messageUid = 1
 
 # cat=basic//3; type=string; label= A root page uid : Define what is the root page of the website. This setting is mandatory to have the RTE settings loaded and be able to send HTML email.
 rootPageUid = 1
+
+# cat=basic//3; type=boolean; label= Load the BE module : Since the extension can be used as standalone library for sending emails, decide whether to load the BE module.
+enableBeModule = 1
