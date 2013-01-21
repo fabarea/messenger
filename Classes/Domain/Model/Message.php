@@ -66,6 +66,8 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $markerUtility;
 
 	/**
+	 * A set of markers.
+	 *
 	 * @var array
 	 */
 	protected $markers = array();
@@ -274,23 +276,21 @@ class Tx_Messenger_Domain_Model_Message {
 	}
 
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	public function getMarkers() {
 		return $this->markers;
 	}
 
 	/**
+	 * The normal case is to pass an array to the setter. Though an object can be given which will be converted to an array eventually.
+	 *
 	 * @param mixed $markers
 	 * @return Tx_Messenger_Domain_Model_Message
 	 */
 	public function setMarkers($markers) {
 		if (is_object($markers)) {
-			if (method_exists($markers, 'toArray')) {
-				$markers = $markers->toArray();
-			} else {
-				$markers = Tx_Messenger_Utility_Object::toArray($markers);
-			}
+			$markers = Tx_Messenger_Utility_Object::toArray($markers);
 		}
 		$this->markers = $markers;
 		return $this;

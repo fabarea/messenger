@@ -37,27 +37,31 @@
  */
 class Tx_Messenger_Utility_ObjectTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
-	/**
-	 * @var Tx_Messenger_Utility_Object
-	 */
-	private $fixture;
-
 	public function setUp() {
-		#$this->fixture = new Tx_Messenger_Utility_Object();
 	}
 
 	public function tearDown() {
-		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function propertyViewIsCorrectlySet() {
+	public function stdClassObjectReturnsAnArrayHavingKeyFoo() {
 		$mock = new stdClass();
 		$mock->foo = uniqid();
 		$actual = Tx_Messenger_Utility_Object::toArray($mock);
 		$this->assertArrayHasKey('foo', $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function feUserObjectReturnsAnArrayHavingKeyName() {
+		$expected = uniqid();
+		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
+		$fakeUser->setName($expected);
+		$actual = Tx_Messenger_Utility_Object::toArray($fakeUser);
+		$this->assertSame($expected, $actual['name']);
 	}
 
 }

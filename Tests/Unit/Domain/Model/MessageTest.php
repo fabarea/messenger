@@ -309,12 +309,25 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setMarkerWithObjectConvertItToArray() {
+	public function setMarkerWithStdClassObjectGetConvertedToArray() {
 		$fakeObject = new stdClass();
 		$fakeObject->foo = uniqid();
 		$this->fixture->setMarkers($fakeObject);
 		$this->assertArrayHasKey('foo', $this->fixture->getMarkers());
 	}
+
+	/**
+	 * @test
+	 */
+	public function setMarkerWithFeUserObjectGetConvertedToArray() {
+		$expected = uniqid();
+		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
+		$fakeUser->setName($expected);
+		$this->fixture->setMarkers($fakeUser);
+		$actual = $this->fixture->getMarkers();
+		$this->assertSame($expected, $actual['name']);
+	}
+
 
 	/**
 	 * @test

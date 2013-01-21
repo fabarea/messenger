@@ -33,12 +33,61 @@
 class Tx_Messenger_Utility_Object {
 
 	/**
+	 * Convert an object to an array using different strategies. The first strategy who succeeds breaks the loop.
+	 *
+	 * @param object $object
+	 * @return array
+	 */
+	public static function toArray($object) {
+		$strategies = array('toArrayWithSpecialMethod', 'toArrayWithGetter', 'toArrayWithConvertingAttributes');
+
+		foreach ($strategies as $strategy) {
+			$values = self::$strategy($object);
+			if (!empty($values)) {
+				break;
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * Convert an object relying an internal method toArray() of the given object.
+	 *
+	 * @param object $object
+	 * @return array
+	 */
+	protected static function toArrayWithSpecialMethod($object) {
+		$values = array();
+		if (method_exists($object, 'toArray')) {
+			$values = $object->toArray();
+		}
+		return $values;
+	}
+
+	/**
+	 * Convert an object using its getter methods.
+	 *
+	 * @param object $object
+	 * @return array
+	 */
+	protected static function toArrayWithGetter($object) {
+		$values = array();
+		foreach (get_class_methods($object) as $method) {
+			if (preg_match('/^get(.+)/is', $method, $match)) {
+				$property = strtolower($match[1]);
+				$values[$property] = call_user_func(array($object, $method));
+			}
+		}
+		return $values;
+	}
+
+	/**
 	 * Convert an object to array regardless of the visibility of its property.
 	 *
 	 * @param object $object
 	 * @return array
 	 */
-	static public function toArray(& $object) {
+	protected static function toArrayWithConvertingAttributes(& $object) {
 		$clone = (array) $object;
 		$result = array();
 

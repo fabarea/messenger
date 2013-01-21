@@ -101,7 +101,8 @@ class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	public function substituteStringWithEmptyMarker() {
 		$markers = array();
 		$output = $this->fixture->substitute($this->input, $markers);
-		$this->assertEquals($this->inputWithoutMarkers, $output);
+		// Make sure to have the RTE loaded. Can be done in the settings with Extension Manager.
+		$this->assertEquals('<p>' . $this->inputWithoutMarkers . '</p>', $output);
 	}
 
 	/**
