@@ -114,9 +114,9 @@ class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 		$this->populateRecordLayouts();
 	}
 
-	public function tearDown() {
-		$this->testingFramework->cleanUp();
-		unset($this->testingFramework);
+		public function tearDown() {
+			$this->testingFramework->cleanUp();
+			unset($this->testingFramework);
 	}
 
 	/**

@@ -58,6 +58,7 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 	 */
 	protected $defaultSettings = array(
 		'tableStructure' => 'Tx_Messenger_ListManager_DemoListManager',
+		'tableStructureFallBack' => 'Tx_Messenger_ListManager_DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
 		'messageUid' => '',

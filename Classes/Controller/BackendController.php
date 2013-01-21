@@ -63,7 +63,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
 
 		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = t3lib_div::makeInstance('Tx_Messenger_Validator_TableStructureValidator');
+		$validator = $this->objectManager->get('Tx_Messenger_Validator_TableStructureValidator');
 		$validator->validate($this->listManager);
 	}
 
@@ -128,12 +128,6 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		return $result;
 	}
 
-	/**
-	 * Save a setting for a BE User.
-	 */
-	public function set(){
-
-	}
 	/**
 	 * Action list
 	 *

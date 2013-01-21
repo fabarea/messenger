@@ -10,22 +10,6 @@ module.tx_messenger {
 	}
 }
 
-config.tx_extbase{
-	# This configuration has not effect since currently not using the Extbase persistence...
-    persistence{
-        classes{
-
-            Tx_Messenger_Domain_Model_EmailTemplate {
-                mapping {
-                    tableName = tx_messenger_domain_model_messagetemplate
-                    recordType = Tx_Messenger_Template
-                }
-            }
-
-    	}
-    }
-}
-
 # Plugin configuration
 plugin.tx_messenger {
 	settings {

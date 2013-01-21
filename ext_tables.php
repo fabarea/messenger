@@ -15,6 +15,7 @@ if (TYPO3_MODE === 'BE') {
 		'',						// Position
 		array(
 			'Backend' => 'index, sendMessage, sendMessageTest',
+			'ListManager' => 'list, save',
 		),
 		array(
 			'access' => 'user,group',

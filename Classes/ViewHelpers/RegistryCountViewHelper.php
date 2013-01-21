@@ -23,36 +23,22 @@
 ***************************************************************/
 
 /**
- * A factory for list manager.
+ * View helper which allows you to render the number of item within the registry.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ListManager_Factory {
+class Tx_Messenger_ViewHelpers_RegistryCountViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
-	 */
-	static protected $instance = NULL;
-
-	/**
-	 * Get an instance of a list manager interface
+	 * Return the number of item within the registry
 	 *
-	 * @return Tx_Messenger_Interface_ListableInterface
+	 * @return int
 	 */
-	public static function getInstance() {
-		if (is_null(self::$instance)) {
-			$className = Tx_Messenger_Utility_BeUserPreference::get('messenger_list_manager');
-
-			if (! class_exists($className)) {
-				$className = Tx_Messenger_Utility_Configuration::getInstance()->get('tableStructureFallBack');
-			}
-
-			self::$instance = t3lib_div::makeInstance($className);
-		}
-		return self::$instance;
+	public function render() {
+		return Tx_Messenger_ListManager_Registry::getInstance()->count();
 	}
 
 }

@@ -43,6 +43,12 @@
 			<trans-unit id="send_selected">
 				<source>Send email for selected recipients</source>
 			</trans-unit>
+			<trans-unit id="list_of_recipients">
+				<source>List of recipients</source>
+			</trans-unit>
+			<trans-unit id="demo_list_of_recipients">
+				<source>Demo list of recipients</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

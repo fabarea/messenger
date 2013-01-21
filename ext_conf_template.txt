@@ -4,9 +4,6 @@ senderName = John Doe
 # cat=basic; type=string; label=Default sender email: Specify default value for sender email.
 senderEmail = john@doe.com
 
-# cat=basic//3; type=string; label= List Manager name : A list manager describes how recipients should be displayed.
-tableStructure = Tx_Messenger_ListManager_DemoListManager
-
 # cat=basic//3; type=string; label= List of development emails: A comma separated list of emails.
 developmentEmails = john@doe.com, jane@doe.com
 

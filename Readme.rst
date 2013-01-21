@@ -29,8 +29,23 @@ List Manager
 
 In order to have a table of recipients displayed in the BE module a "list manager" must be provided where it is defined
 what sort of data should be displayed. A list manager must implement a listable interface. As example,
-there is a Demo List Manager in the extension which can be taken as starting point in ``Tx_Messenger_ListManager_DemoListManager``.
+a `Demo List Manager` is provided in the extension which can be taken as starting point for a custom implementation. The file is at
+``Tx_Messenger_ListManager_DemoListManager``
 
+A list manager must be registered in ``ext_localconf.php`` as follows::
+
+	# Register a new list manager for demo purposes.
+	Tx_Messenger_ListManager_Registry::getInstance()->add(
+
+		# Corresponds to a class name.
+		'Tx_Messenger_ListManager_DemoListManager',
+
+		# A string or label describing the recipients (for the BE module needs).
+		'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
+	);
+
+If more than two list managers are registered, a button is displayed in the BE module alongside the recipients heading, enabling a BE User
+to pick between the managers. The choice is saved as preference per BE User.
 
 Defining fields
 -----------------
@@ -86,18 +101,12 @@ Notice the debug method. When set, the email will be sent to a debug email inste
 Todo (long term)
 =================
 
-+ Add flash message when user interact with the GUI
 + Improve message management in the BE module (create new one from scratch, edit, select, ...)
-+ Improve recipient management in the BE module (select new source)
 + Add GUI to support layout wrapping
 + Add support for multi-language in the BE module
-+ Add a possible "Mailing" Domain Model object.
++ Add a possible "Mailing" Domain Model object for grouping sent emails
 + Add filtering capability to be provided by the list manager.
-+ Add an option to load or not the BE module since the extension can be used as library for sending templated message.
 + A message can be sent in various language.
-+ Add configuration for setting root pid to parse RTE configuration
-  $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
-+ Release side extensions for "fronted_user_messenger", "backend_user_messenger" and "web_page_messenger" which implement the list manager
 + Implement queue method part of the message API.
 
 ::

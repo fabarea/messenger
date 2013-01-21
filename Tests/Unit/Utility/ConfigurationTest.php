@@ -86,7 +86,7 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 	 */
 	public function configurationProvider() {
 		return array(
-			array('tableStructure'),
+			array('tableStructureFallBack'),
 			array('developmentEmails'),
 			array('context'),
 			array('senderName'),

@@ -43,6 +43,7 @@ class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit
 	}
 
 	public function tearDown() {
+		unset($this->fixture);
 	}
 
 	/**

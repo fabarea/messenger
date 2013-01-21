@@ -23,36 +23,27 @@
 ***************************************************************/
 
 /**
- * A factory for list manager.
+ * View helper which allows you to render a translated string.
  *
  * @category    ViewHelpers
  * @package     TYPO3
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ListManager_Factory {
+class Tx_Messenger_ViewHelpers_TranslateViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
-	 */
-	static protected $instance = NULL;
-
-	/**
-	 * Get an instance of a list manager interface
+	 * Return a translated string.
 	 *
-	 * @return Tx_Messenger_Interface_ListableInterface
+	 * @param string $key
+	 * @return int
 	 */
-	public static function getInstance() {
-		if (is_null(self::$instance)) {
-			$className = Tx_Messenger_Utility_BeUserPreference::get('messenger_list_manager');
+	public function render($key) {
 
-			if (! class_exists($className)) {
-				$className = Tx_Messenger_Utility_Configuration::getInstance()->get('tableStructureFallBack');
-			}
-
-			self::$instance = t3lib_div::makeInstance($className);
+		if (t3lib_div::isFirstPartOfStr($key, 'LLL:')) {
+			$key = Tx_Extbase_Utility_Localization::translate($key, '');
 		}
-		return self::$instance;
+		return $key;
 	}
 
 }
