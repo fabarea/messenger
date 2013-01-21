@@ -177,7 +177,7 @@ class Tx_Messenger_Domain_Model_Message {
 			->setBody($body, 'text/html');
 
 		// Attach plain text version if HTML tags are found in body
-		if ($this->hasHtml($body)) {
+		if ($this->hasHtml($body) && Tx_Messenger_Utility_Configuration::getInstance()->get('sendMultipartedEmail')) {
 			$text = Tx_Messenger_Utility_Html2Text::getInstance()->convert($body);
 			$this->message->addPart($text, 'text/plain');
 		}

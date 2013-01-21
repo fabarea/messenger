@@ -88,8 +88,7 @@ Usage::
 		->addAttachment($pathToFile)
 		->setLayout($identifierString)
 		->simulate()
-		->send()
-
+		->send();
 
 There are two mandatory methods to set for sending a message::
 
@@ -111,7 +110,7 @@ Todo (long term)
 
 ::
 
-	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message')
+	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message');
 	$message->setIdentifier($identifierString)
 		->setRecipients($arrayOfRecipients)
 		->setMarkers($arrayOfMarkers)

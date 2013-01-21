@@ -93,6 +93,8 @@ class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseT
 			array('senderEmail'),
 			array('markerReplacedInLayout'),
 			array('listOfContextsSendingEmails'),
+			array('sendMultipartedEmail'),
+			array('enableBeModule'),
 		);
 	}
 }

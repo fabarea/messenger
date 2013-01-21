@@ -67,6 +67,7 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 		'markerReplacedInLayout' => 'template',
 		'listOfContextsSendingEmails' => 'Production',
 		'rootPageUid' => '',
+		'sendMultipartedEmail' => TRUE,
 		'enableBeModule' => TRUE,
 	);
 
