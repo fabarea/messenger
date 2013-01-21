@@ -74,7 +74,7 @@ class Tx_Messenger_Utility_Object {
 		$values = array();
 		foreach (get_class_methods($object) as $method) {
 			if (preg_match('/^get(.+)/is', $method, $match)) {
-				$property = strtolower($match[1]);
+				$property = lcfirst($match[1]);
 				$values[$property] = call_user_func(array($object, $method));
 			}
 		}
