@@ -2,6 +2,17 @@ body {
 	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 }
 
+.centered {
+	position: fixed;
+	top: 50px;
+	z-index: 100;
+	left: 50%;
+}
+
+.flash-message .alert {
+	margin-bottom: 10px;
+}
+
 .form-dropdown {
 	height: auto;
 	margin: 10px;
@@ -33,3 +44,4 @@ body {
 	margin: 0;
 	padding: 0;
 }
+

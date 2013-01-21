@@ -77,9 +77,14 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	public function sendMessageAction($messageTemplateUid = 0, $recipientUid = '') {
 
 		$result = 'The message could not be sent!';
+		$status = 'error';
 		if ($messageTemplateUid > 0) {
 
 			$recipients = t3lib_div::trimExplode(',', $recipientUid);
+
+			$result = count($recipients);
+			$status = 'success';
+
 			foreach ($recipients as $recipient) {
 				$markers = $this->listManager->getRecord($recipient);
 				$recipient = $this->listManager->getRecipientInfo($recipient);
@@ -91,16 +96,18 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 					->setMarkers($markers)
 					->send();
 
-				if ($isSent) {
-					$result = 'ok';
-				} else {
-					$result = 'The message could not be sent for recipient uid ' . $recipient;
+				// Block the loop if anything goes wrong.
+				if (! $isSent) {
+					$result = sprintf('The message could not be sent for recipient uid %s. It could be more error besides...', $recipient);
+					$status = 'error';
 					break;
 				}
 			}
 
 		}
-		return $result;
+		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
+		header("Content-Type: text/json");
+		return json_encode(array('message' => $result, 'status' => $status));
 	}
 
 	/**
@@ -113,6 +120,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	public function sendMessageTestAction($messageTemplateUid = 0, $testEmail = '') {
 
 		$result = 'The message could not be sent! Missing email?';
+		$status = 'error';
 		if ($messageTemplateUid > 0 && $testEmail != '') {
 
 			/** @var $message Tx_Messenger_Domain_Model_Message */
@@ -120,12 +128,17 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 			$isSent = $message->setMessageTemplate($messageTemplateUid)
 				->setRecipients($testEmail)
 				->send();
-			$result = $isSent ? 'ok' : 'The message could not be sent! Contact an administrator.';
+
+			// value "1" corresponds to the number of email sent
+			$result = $isSent ? '1' : 'The message could not be sent! Contact an administrator.';
+			$status = $isSent ? 'success' : $status;
 
 			// save email address as preference
 			Tx_Messenger_Utility_BeUserPreference::set('messenger_testing_email', $testEmail);
 		}
-		return $result;
+		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
+		header("Content-Type: text/json");
+		return json_encode(array('message' => $result, 'status' => $status));
 	}
 
 	/**

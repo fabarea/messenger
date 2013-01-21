@@ -62,12 +62,22 @@ $(document).ready(function () {
 		$($(this).closest('form')).ajaxSubmit({
 			context: this,
 			success: function (data) {
-				if (data == 'ok') {
+				var message;
+
+				message = data.message;
+				if (data.status == 'success') {
 					$(this).removeClass('disabled');
 					$('.send-message-submit').removeClass('disabled');
-				} else {
-					alert('Something went wrong with message: ' + data);
+
+					if (parseInt(data.message) > 1) {
+						message = Messenger.format('x-messages-sent-successfully', data.message);
+					} else {
+						message = Messenger.format('message-sent-successfully', data.message);
+					}
 				}
+
+				Messenger.FlashMessage.add(message, data.status);
+				Messenger.FlashMessage.showAll();
 			}
 		});
 		e.stopPropagation();
@@ -100,11 +110,16 @@ $(document).ready(function () {
 				}
 			},
 			success: function (data) {
-				if (data == 'ok') {
+				var message;
+
+				message = data.message;
+				if (data.status == 'success') {
 					$(this).removeClass('disabled');
-				} else {
-					alert('Something went wrong with message: ' + data);
+					message = Messenger.format('message-sent-successfully', data.message);
 				}
+
+				Messenger.FlashMessage.add(message, data.status);
+				Messenger.FlashMessage.showAll();
 			}
 		});
 
@@ -122,13 +137,49 @@ $(document).ready(function () {
 				$('#send-message-test-submit').addClass('disabled')
 			},
 			success: function (data) {
-				if (data == 'ok') {
+				var message;
+
+				message = data.message;
+				if (data.status == 'success') {
 					$('#send-message-test-submit').removeClass('disabled');
 					$('#send-message-test-dropdown').removeClass('open');
-				} else {
-					alert('Something went wrong with message: ' + data);
+					message = Messenger.format('message-sent-successfully', data.message);
 				}
+
+				Messenger.FlashMessage.add(message ,data.status);
+				Messenger.FlashMessage.showAll();
 			}
 		})
 	});
 });
+
+
+
+/**
+ * Format a string give a place holder. Acts as the "sprintf" function in PHP
+ *
+ * Example:
+ *
+ * "Foo {0}".format('Bar') will return "Foo Bar"
+ *
+ * @param {string} key
+ */
+Messenger.format = function (key) {
+	var s = Messenger.label(key),
+		i = arguments.length + 1;
+
+	while (i--) {
+		s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i + 1]);
+	}
+	return s;
+};
+
+/**
+ * Shorthand method for getting a label.
+ *
+ * @param {string} key
+ */
+Messenger.label = function (key) {
+	return Messenger.Label.get(key);
+};
+

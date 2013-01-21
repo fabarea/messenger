@@ -49,6 +49,15 @@
 			<trans-unit id="demo_list_of_recipients">
 				<source>Demo list of recipients</source>
 			</trans-unit>
+			<trans-unit id="message-sent-successfully">
+				<source>Successfully sent {0} message</source>
+			</trans-unit>
+			<trans-unit id="x-messages-sent-successfully">
+				<source>Successfully sent {0} messages</source>
+			</trans-unit>
+			<trans-unit id="message-error">
+				<source>Something went wrong with message:</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

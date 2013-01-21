@@ -15,15 +15,33 @@
 	<!--[if lt IE 9]>
 	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
+
+	<!-- Make jQuery available from the beginning -->
+	<m:js name="JQuery/jquery.js"/>
+
+	<script type="text/javascript">
+
+		// Declare namespace
+		window.Messenger = {};
+
+		// "Live" variables
+		Messenger._labels = {
+			"message-sent-successfully": '<f:translate key="message-sent-successfully" />',
+			"x-messages-sent-successfully": '<f:translate key="x-messages-sent-successfully" />',
+			"message-error": '<f:translate key="message-error" />'
+		};
+
+	</script>
 </head>
 <body>
 
 <f:render section="main"/>
 
-<m:js name="JQuery/jquery.js"/>
 <m:js name="JQuery/jquery.form.js"/>
 <m:js name="Bootstrap/bootstrap.min.js"/>
 <m:js name="Messenger.js"/>
+<m:js name="Messenger.FlashMessage.js"/>
+<m:js name="Messenger.Label.js"/>
 
 </body>
 </html>
