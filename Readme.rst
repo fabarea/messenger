@@ -73,7 +73,7 @@ Message API
 Usage::
 
 	$identifier = 'foo';
-	$recipients = array('john@doe.com', 'John Doe');
+	$recipients = array('john@doe.com' => 'John Doe');
 	$markers = array(
 	  'first_name' => 'John',
 	  'last_name' => 'Doe',
