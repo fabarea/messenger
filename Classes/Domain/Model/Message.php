@@ -203,9 +203,9 @@ class Tx_Messenger_Domain_Model_Message {
 	 * @return string
 	 */
 	protected function getMessageBodyForSimulation($content) {
-		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality, it will be sent to %s <br /><br />%s",
+		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it will be sent to %s <br /><br />%s",
 			strtoupper($this->context->getName()),
-			$this->configurationManager->get('developmentEmails'),
+			implode(',', array_keys($this->recipients)),
 			$content
 		);
 		return $messageBody;
