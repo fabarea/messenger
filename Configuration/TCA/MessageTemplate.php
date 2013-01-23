@@ -9,7 +9,7 @@ $TCA['tx_messenger_domain_model_messagetemplate'] = array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, identifier, subject, body',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, identifier, subject, body;;2;richtext:rte_transform[flag=rte_enabled|mode=ts];4-4-4'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, identifier, subject, body'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
