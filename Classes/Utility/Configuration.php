@@ -78,6 +78,11 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 	 */
 	public function __construct() {
 		$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extensionKey]);
+
+		// Make sure settings can be merged!
+		if (! is_array($settings)) {
+			$settings = array();
+		}
 		$this->settings = t3lib_div::array_merge($this->defaultSettings, $settings);
 	}
 
