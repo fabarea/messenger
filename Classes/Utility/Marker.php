@@ -63,15 +63,18 @@ class Tx_Messenger_Utility_Marker {
 
 		if ($format == 'text/html') {
 
-			$config['parseFunc.'] = array();
-			if (TYPO3_MODE == 'BE') {
-				$config['parseFunc.'] = $this->getRteConfiguration();
-			} elseif (TYPO3_MODE == 'FE') {
-				$config['parseFunc.'] = $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
+			// Rather use the format view helper
+			$input = sprintf('<f:format.html>%s</f:format.html>', $input);
 
-			}
-			$config['value'] = $input;
-			$input = $this->contentObject->TEXT($config);
+			#$config['parseFunc.'] = array();
+			#if (TYPO3_MODE == 'BE') {
+			#	$config['parseFunc.'] = $this->getRteConfiguration();
+			#} elseif (TYPO3_MODE == 'FE') {
+			#	$config['parseFunc.'] = $GLOBALS['TSFE']->tmpl->setup['lib.']['parseFunc_RTE.'];
+			#
+			#}
+			#$config['value'] = $input;
+			#$input = $this->contentObject->TEXT($config);
 		}
 
 		$this->view->setTemplateSource($input);
