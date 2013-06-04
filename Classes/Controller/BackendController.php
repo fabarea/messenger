@@ -40,16 +40,9 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 
 	/**
 	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @inject
 	 */
 	protected $messageTemplateRepository;
-
-	/**
-	 * @param Tx_Messenger_Domain_Repository_MessageTemplateRepository $messageTemplateRepository
-	 * @return void
-	 */
-	public function injectMessageTemplateRepository(Tx_Messenger_Domain_Repository_MessageTemplateRepository $messageTemplateRepository) {
-		$this->messageTemplateRepository = $messageTemplateRepository;
-	}
 
 	/**
 	 * Initializes the controller before invoking an action method.
@@ -148,12 +141,12 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 */
 	public function indexAction() {
 
-		$messageUid = Tx_Messenger_Utility_Configuration::getInstance()->get('messageUid');
+		$messageUid = Tx_Messenger_Utility_BeUserPreference::get('messenger_message_template');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
 
 		$records = $this->listManager->getRecords();
 		$this->view->assign('recipients', $records);
-		$this->view->assign('message', $messageTemplate);
+		$this->view->assign('messageTemplate', $messageTemplate);
 	}
 }
 ?>

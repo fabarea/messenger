@@ -31,22 +31,29 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_ListManagerController extends Tx_Extbase_MVC_Controller_ActionController {
+class Tx_Messenger_Controller_MessageTemplateController extends Tx_Extbase_MVC_Controller_ActionController {
+
+	/**
+	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @inject
+	 */
+	protected $messageTemplateRepository;
 
 	/**
 	 * @return void
 	 */
 	public function listAction() {
-		$this->view->assign('listManagers', Tx_Messenger_ListManager_Registry::getInstance()->get());
+		$messageTemplates = $this->messageTemplateRepository->findAll();
+		$this->view->assign('messageTemplates', $messageTemplates);
 	}
 
 	/**
-	 * @param string $listManager
+	 * @param string $messageTemplate
 	 * @return void
 	 */
-	public function saveAction($listManager) {
+	public function saveAction($messageTemplate) {
 		// save email address as preference
-		Tx_Messenger_Utility_BeUserPreference::set('messenger_list_manager', $listManager);
+		Tx_Messenger_Utility_BeUserPreference::set('messenger_message_template', $messageTemplate);
 		$this->redirect('index', 'Backend');
 	}
 }

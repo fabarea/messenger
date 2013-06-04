@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
+      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+
+<f:layout name="Default"/>
+
+<f:section name="main">
+
+	<f:render partial="Nav" arguments="{_all}"/>
+
+	<div class="container container-main">
+
+		<div>
+			<h3>
+				<f:translate key="list_of_message_templates"></f:translate>
+			</h3>
+			<div>
+				<table class="table table-striped table-hover">
+					<thead>
+					<tr>
+						<th style="">
+							<f:translate key="identifier"></f:translate>
+						</th>
+						<th style="">
+							<f:translate key="content"></f:translate>
+						</th>
+						<th style=""></th>
+					</tr>
+					</thead>
+					<tbody>
+					<f:for each="{messageTemplates}" as="messageTemplate">
+						<tr data-uid="{messageTemplate.uid}">
+							<td>
+								<strong>{messageTemplate.identifier}</strong>
+							</td>
+							<td>
+								{messageTemplate.subject}
+								<div class="muted">{messageTemplate.body -> f:format.stripTags() -> f:format.crop(maxCharacters:
+									200)}
+								</div>
+							</td>
+							<td>
+								<f:link.action class="btn" action="save" arguments="{messageTemplate: '{messageTemplate.uid}'}">
+									<i class="icon-check"></i>
+								</f:link.action>
+							</td>
+						</tr>
+					</f:for>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</f:section>
+</html>
+{namespace m=Tx_Messenger_ViewHelpers}

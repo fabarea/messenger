@@ -1,0 +1,24 @@
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+
+			<div class="nav-collapse collapse">
+				<div id="navbar-main" class="nav">
+					<div class="row-fluid row-navbar">
+						<div class="span12">
+							<f:link.action action="index" controller="Backend" class="btn btn-mini" style="margin:0">Back</f:link.action>
+							<m:render.developmentMessage/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{namespace m=Tx_Messenger_ViewHelpers}

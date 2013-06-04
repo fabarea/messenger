@@ -61,7 +61,6 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 		'tableStructureFallBack' => 'Tx_Messenger_ListManager_DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
-		'messageUid' => '',
 		'senderName' => 'John Doe',
 		'senderEmail' => 'john@doe.com',
 		'markerReplacedInLayout' => 'template',

@@ -16,6 +16,7 @@ if (TYPO3_MODE === 'BE' && Tx_Messenger_Utility_Configuration::getInstance()->ge
 		array(
 			'Backend' => 'index, sendMessage, sendMessageTest',
 			'ListManager' => 'list, save',
+			'MessageTemplate' => 'list, save',
 		),
 		array(
 			'access' => 'user,group',

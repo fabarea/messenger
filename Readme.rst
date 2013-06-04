@@ -16,12 +16,8 @@ Setting up
 ==============
 
 Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
-Though, **pay attention** to define a ``messageUid``. This can be achieved in the BE list view of TYPO3.
 
-Web > List > Select a folder / page > Create new record (at the bottom) > Email template
-
-
-Also the ``tableStructure`` setting will likely to be re-defined according to your need. See next chapter.
+The ``tableStructure`` setting will likely to be re-defined according to your need. See next chapter.
 
 
 List Manager

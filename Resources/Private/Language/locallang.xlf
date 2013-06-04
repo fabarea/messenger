@@ -58,6 +58,18 @@
 			<trans-unit id="message-error">
 				<source>Something went wrong with message:</source>
 			</trans-unit>
+			<trans-unit id="list_of_message_templates">
+				<source>List of recipients</source>
+			</trans-unit>
+			<trans-unit id="identifier">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="content">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="name">
+				<source>Name</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

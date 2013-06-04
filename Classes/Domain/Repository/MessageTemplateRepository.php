@@ -33,6 +33,15 @@
 class Tx_Messenger_Domain_Repository_MessageTemplateRepository extends Tx_Extbase_Persistence_Repository {
 
 	/**
+	 * Initialize Repository
+	 */
+	public function initializeObject() {
+		$querySettings = $this->objectManager->create('Tx_Extbase_Persistence_Typo3QuerySettings');
+		$querySettings->setRespectStoragePage(FALSE);
+		$this->setDefaultQuerySettings($querySettings);
+	}
+
+	/**
 	 * Finds an object matching the given identifier.
 	 *
 	 * @param string $identifier The identifier of the object to find
