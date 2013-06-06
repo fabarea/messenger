@@ -1,22 +1,12 @@
-<!DOCTYPE html>
-<html lang="en"
-      xmlns:f="http://typo3.org/ns/typo3/fluid/viewhelpers"
-      xmlns:m="http://typo3.org/ns/typo3/media/viewhelpers">
-<head>
-	<meta charset="utf-8">
-	<title>Messenger</title>
+<f:be.container pageTitle="Messenger" enableJumpToUrl="false" enableClickMenu="false" loadPrototype="false"
+	                 loadScriptaculous="false" loadExtJs="false" loadExtJsTheme="true">
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- @todo extend Extension Manager ViewHelper and use "addCssFiles" and "addJsFiles" when migrating to 6.0. Remember jquery will be loaded by default as of TYPO3 6.0 -->
+
 	<m:css name="bootstrap.css"/>
 	<m:css name="messenger.css"/>
 	<m:css name="bootstrap-responsive.css"/>
 
-	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-
-	<!-- Make jQuery available from the beginning -->
 	<m:js name="JQuery/jquery.js"/>
 
 	<script type="text/javascript">
@@ -32,17 +22,14 @@
 		};
 
 	</script>
-</head>
-<body>
 
-<f:render section="main"/>
+	<f:render section="main"/>
 
-<m:js name="JQuery/jquery.form.js"/>
-<m:js name="Bootstrap/bootstrap.min.js"/>
-<m:js name="Messenger.js"/>
-<m:js name="Messenger.FlashMessage.js"/>
-<m:js name="Messenger.Label.js"/>
+	<m:js name="JQuery/jquery.form.js"/>
+	<m:js name="Bootstrap/bootstrap.min.js"/>
+	<m:js name="Messenger.js"/>
+	<m:js name="Messenger.FlashMessage.js"/>
+	<m:js name="Messenger.Label.js"/>
 
-</body>
-</html>
+</f:be.container>
 {namespace m=Tx_Messenger_ViewHelpers}

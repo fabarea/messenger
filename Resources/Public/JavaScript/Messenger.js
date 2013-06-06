@@ -9,10 +9,10 @@ $(document).ready(function () {
 		rows = $('#table-recipients').find('tbody tr');
 		if ($(this).is(':checked')) {
 			rows.filter(':not(:has(:checkbox:checked))').click();
-			$('#btn-send').removeClass('disabled');
+			$('#btn-send, #btn-send-caret').removeClass('disabled');
 		} else {
 			rows.filter(':has(:checkbox:checked)').click();
-			$('#btn-send').addClass('disabled');
+			$('#btn-send, #btn-send-caret').addClass('disabled');
 		}
 	});
 
@@ -33,9 +33,9 @@ $(document).ready(function () {
 
 			// make the top bottom activated if a row is selected
 			if ($('#table-recipients').find('tbody tr').filter(':has(:checkbox:checked)').length > 0) {
-				$('#btn-send').removeClass('disabled')
+				$('#btn-send, #btn-send-caret').removeClass('disabled')
 			} else {
-				$('#btn-send').addClass('disabled')
+				$('#btn-send, #btn-send-caret').addClass('disabled')
 			}
 		});
 
@@ -44,6 +44,9 @@ $(document).ready(function () {
 	 * Send message action for *all* selected recipients
 	 */
 	$('#btn-send').click(function (e) {
+		if ($(this).hasClass('disabled')) {
+			return;
+		}
 
 		var selectedUsers;
 

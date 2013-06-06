@@ -2,6 +2,31 @@ body {
 	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 }
 
+/* Override Bootstrap for TYPO3 look & feel */
+html,
+body {
+	height: 97%;
+	padding-top: 30px;
+	background-color: #F8F8F8;
+	/* padding-top because of the nav bar */
+	/* height 97% because of the padding-top... */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+
+.label {
+	font-weight: normal;
+}
+
+.btn-group > .btn, .btn-group > .dropdown-menu,
+.btn,
+select,
+input[type="text"],
+label {
+	font-size: 11px;
+}
+
+/* Custom styles */
 .centered {
 	position: fixed;
 	top: 50px;

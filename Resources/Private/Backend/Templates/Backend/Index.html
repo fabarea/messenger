@@ -41,7 +41,7 @@
 				<f:translate key="message"></f:translate>
 
 				<f:link.action class="btn" controller="MessageTemplate" action="list">
-					<i class="icon-pencil"></i>
+					<m:sprite name="actions-document-open"/>
 				</f:link.action>
 			</h3>
 			<div>
@@ -92,7 +92,7 @@
 				<f:translate key="recipients"></f:translate>
 				<f:if condition="{m:registryCount()} > 1">
 					<f:link.action class="btn" controller="ListManager" action="list">
-						<i class="icon-pencil"></i>
+						<m:sprite name="actions-document-open"/>
 					</f:link.action>
 				</f:if>
 			</h3>
@@ -149,9 +149,23 @@
 			<f:form method="post" action="sendMessage" arguments="{format: 'json'}"
 			        class="send-message-action form-reset-style">
 
-				<button type="submit" class="btn btn-primary disabled" id="btn-send">
-					<f:translate key="send_selected"></f:translate>
-				</button>
+				<div class="btn-group">
+					<a class="btn btn-primary disabled" data-toggle="dropdown" href="#" id="btn-send">
+						<f:translate key="send_selected"></f:translate>
+					</a>
+					<button class="btn dropdown-toggle btn-primary disabled" id="btn-send-caret" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li>
+							<a class="disabled" data-toggle="dropdown" href="#">
+								Create mailing (not implemented yet)
+							</a>
+						</li>
+					</ul>
+
+				</div>
+
 				<f:form.hidden name="recipientUid" value="{recipient.uid}" id="field-selected-recipients"/>
 				<f:form.hidden name="messageTemplateUid" value="{messageTemplate.uid}"/>
 			</f:form>

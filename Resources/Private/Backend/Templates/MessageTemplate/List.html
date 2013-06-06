@@ -23,7 +23,7 @@
 						<th style="">
 							<f:translate key="content"></f:translate>
 						</th>
-						<th style=""></th>
+						<th style="width: 70px"></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -39,9 +39,12 @@
 								</div>
 							</td>
 							<td>
-								<f:link.action class="btn" action="save" arguments="{messageTemplate: '{messageTemplate.uid}'}">
-									<i class="icon-check"></i>
-								</f:link.action>
+								<a href="alt_doc.php?returnUrl=mod.php%3FM%3Duser_MessengerM1%26tx_messenger_user_messengerm1%5Baction%5D%3Dlist%26tx_messenger_user_messengerm1%5Bcontroller%5D%3DMessageTemplate&edit[tx_messenger_domain_model_messagetemplate][{messageTemplate.uid}]=edit"
+								   data-uid="{asset.uid}"><m:sprite name="actions-document-open"/></a>
+								<f:link.action class=""
+								               action="save"
+								               arguments="{messageTemplate: '{messageTemplate.uid}'}"></f:link.action>
+								<f:link.action class="" action="save" arguments="{messageTemplate: '{messageTemplate.uid}'}"><m:sprite name="status-status-checked"/></f:link.action>
 							</td>
 						</tr>
 					</f:for>
