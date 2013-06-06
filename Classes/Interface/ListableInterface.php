@@ -41,9 +41,13 @@ interface Tx_Messenger_Interface_ListableInterface {
 	/**
 	 * Returns a set of records.
 	 *
+	 * @param Tx_Messenger_QueryElement_Matcher $matcher
+	 * @param Tx_Messenger_QueryElement_Order $order
+	 * @param int $limit
+	 * @param int $offset
 	 * @return mixed
 	 */
-	public function getRecords();
+	public function findBy(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, $limit = NULL, $offset = NULL);
 
 	/**
 	 * Get data about a particular record.
@@ -51,7 +55,7 @@ interface Tx_Messenger_Interface_ListableInterface {
 	 * @param mixed $identifier an identifier for the record.
 	 * @return mixed
 	 */
-	public function getRecord($identifier);
+	public function findByUid($identifier);
 
 	/**
 	 * Return recipient info according to an identifier. The returned array must look like:
@@ -61,5 +65,16 @@ interface Tx_Messenger_Interface_ListableInterface {
 	 * @return mixed
 	 */
 	public function getRecipientInfo($identifier);
+
+	/**
+	 * Get list of possible filters.
+	 * This must be an associative array containing the name of the filter as key and the values as filter
+	 *
+	 * array('group' => array('foo', 'bar'));
+	 *
+	 * @return array
+	 */
+	public function getFilters();
+
 }
 ?>

@@ -50,7 +50,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelperTest extends Tx_Extbase_Tests_
 	 * @test
 	 */
 	public function renderReturnsStringThatContainsThTags() {
-		$recipients = Tx_Messenger_ListManager_Factory::getInstance()->getRecords();
+		$recipients = Tx_Messenger_ListManager_Factory::getInstance()->findBy();
 		$actual = $this->fixture->render($recipients[0]);
 
 		$expected = count(Tx_Messenger_ListManager_Factory::getInstance()->getFields());

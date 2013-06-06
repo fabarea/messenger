@@ -47,7 +47,7 @@
 			<div>
 				<f:if condition="{messageTemplate}">
 					<f:then>
-						<span title="{messageTemplate.identifier}">{messageTemplate.subject} {messageTemplate.identifier}</span>
+						<span title="{messageTemplate.identifier}">{messageTemplate.subject}</span>
 
 						<div class="muted">{messageTemplate.body -> f:format.crop(maxCharacters: 500)}
 
@@ -87,7 +87,6 @@
 		</div>
 		<hr>
 
-
 		<div>
 			<h3>
 				<f:translate key="recipients"></f:translate>
@@ -97,6 +96,21 @@
 					</f:link.action>
 				</f:if>
 			</h3>
+
+			<f:form action="index" controller="Backend">
+				<ul class="inline">
+					<f:for each="{filters}" key="filterName" as="filter" iteration="iterator">
+						<li>
+							<f:form.select name="matcher[matches][{filterName}]" options="{filter.values}"
+							               value="{m:arrayValue(needle: '{filterName}', haystack: '{matcher.matches}')}" class="menu-filter"/>
+						</li>
+					</f:for>
+					<li>
+
+						<f:form.textfield name="matcher[searchTerm]" placeholder="{f:translate(key:'search')}" value="{matcher.searchTerm}"/>
+					</li>
+				</ul>
+			</f:form>
 
 			<table id="table-recipients" class="table table-striped table-hover">
 				<thead>
@@ -131,7 +145,6 @@
 				</f:for>
 				</tbody>
 			</table>
-
 
 			<f:form method="post" action="sendMessage" arguments="{format: 'json'}"
 			        class="send-message-action form-reset-style">

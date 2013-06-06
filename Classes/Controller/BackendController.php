@@ -79,7 +79,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 			$status = 'success';
 
 			foreach ($recipients as $recipient) {
-				$markers = $this->listManager->getRecord($recipient);
+				$markers = $this->listManager->findByUid($recipient);
 				$recipient = $this->listManager->getRecipientInfo($recipient);
 
 				/** @var $message Tx_Messenger_Domain_Model_Message */
@@ -135,18 +135,27 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	}
 
 	/**
-	 * Action list
-	 *
+	 * @param Tx_Messenger_QueryElement_Matcher $matcher
+	 * @param Tx_Messenger_QueryElement_Order $order
+	 * @param Tx_Messenger_QueryElement_Pager $pager
 	 * @return void
+	 * @validate $matcher Tx_Messenger_Domain_Validator_MatcherValidator
 	 */
-	public function indexAction() {
+	public function indexAction(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, Tx_Messenger_QueryElement_Pager $pager = NULL) {
+
+		$matcher = $matcher === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Matcher') : $matcher;
+		$order = $order === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Order') : $order;
+		$pager = $pager === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Pager') : $pager;
 
 		$messageUid = Tx_Messenger_Utility_BeUserPreference::get('messenger_message_template');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
 
-		$records = $this->listManager->getRecords();
-		$this->view->assign('recipients', $records);
+		$this->view->assign('recipients', $this->listManager->findBy($matcher, $order, $pager->getLimit(), $pager->getOffset()));
+		$this->view->assign('filters', $this->listManager->getFilters());
 		$this->view->assign('messageTemplate', $messageTemplate);
+		$this->view->assign('matcher', $matcher);
+		$this->view->assign('order', $order);
+		$this->view->assign('pager', $pager);
 	}
 }
 ?>

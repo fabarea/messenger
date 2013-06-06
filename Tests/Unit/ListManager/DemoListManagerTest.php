@@ -50,7 +50,7 @@ class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit
 	 * @test
 	 */
 	public function getRecordsReturnANotEmptySetOfUsers() {
-		$this->assertNotEmpty($this->fixture->getRecords());
+		$this->assertNotEmpty($this->fixture->findBy());
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit
 	 * @test
 	 */
 	public function getRecordReturnsNotEmptyArrayForUidEqualsOne() {
-		$this->assertNotEmpty($this->fixture->getRecord(1));
+		$this->assertNotEmpty($this->fixture->findByUid(1));
 	}
 
 	/**

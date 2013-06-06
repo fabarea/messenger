@@ -50,6 +50,14 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 			'fieldName' => 'email',
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:email',
 		),
+		array(
+			'fieldName' => 'group',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:group',
+		),
+		array(
+			'fieldName' => 'status',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:status',
+		),
 	);
 
 	/**
@@ -61,20 +69,76 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 		foreach (array(1, 2, 3, 4) as $uid) {
 			$this->records[$uid] = array(
 				'uid' => $uid,
-				'firstName' => uniqid('first'),
-				'lastName' => uniqid('last'),
-				'email' => uniqid('email@asdf.com'),
+				'firstName' => 'first_name_' . $uid,
+				'lastName' => 'last_name_' . $uid,
+				'email' => sprintf('email_%s@test.com', $uid),
+				'group' => $uid < 3 ? 'foo' : 'bar',
+				'status' => $uid,
 			);
 		}
 	}
 
 	/**
 	 * Returns a set of recipients.
+	 * Notice, it is a very "cheap" algorithm for filtering a set of data for demo purposes
 	 *
+	 * @param Tx_Messenger_QueryElement_Matcher $matcher
+	 * @param Tx_Messenger_QueryElement_Order $order
+	 * @param int $limit
+	 * @param int $offset
 	 * @return array
 	 */
-	public function getRecords() {
-		return $this->records;
+	public function findBy(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, $limit = NULL, $offset = NULL) {
+
+		$records = $this->records;
+		$recordSet1 = $recordSet2 = $recordSet3 = array(1, 2, 3, 4);
+
+		// Search for uid having match
+		if (count($matcher->getMatches()) > 0) {
+			if (in_array('status', array_keys($matcher->getMatches()))) {
+				$recordSet1 = array();
+			}
+			if (in_array('group', array_keys($matcher->getMatches()))) {
+				$recordSet2 = array();
+			}
+			foreach ($this->records as $record) {
+				foreach ($matcher->getMatches() as $key => $value) {
+					if ($key == 'status' && $record['status'] == $value) {
+						$recordSet1[] = $record['uid'];
+					} elseif ($key == 'group' && $record['group'] == $value) {
+						$recordSet2[] = $record['uid'];
+					}
+				}
+			}
+		}
+
+		// Search for uid having search term
+		if ($matcher->getSearchTerm() !== '') {
+			$recordSet3 = array();
+
+			foreach ($this->records as $record) {
+				if (preg_match('/' . $matcher->getSearchTerm() . '/isU', $record['firstName'])
+					|| preg_match('/' . $matcher->getSearchTerm() . '/isU', $record['lastName'])
+					|| preg_match('/' . $matcher->getSearchTerm() . '/isU', $record['email']))
+				{
+					$recordSet3[] = $record['uid'];
+				}
+			}
+		}
+
+		// Merge arrays
+		if (count($matcher->getMatches()) > 0 || $matcher->getSearchTerm() !== '') {
+			$uids = array_intersect($recordSet1, $recordSet2, $recordSet3);
+			$records = array();
+			foreach ($uids as $uid) {
+				foreach ($this->records as $record) {
+					if ($uid == $record['uid']) {
+						$records[] = $record;
+					}
+				}
+			}
+		}
+		return $records;
 	}
 
 	/**
@@ -93,7 +157,7 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	 * @param int $uid an identifier for the record.
 	 * @return array
 	 */
-	public function getRecord($uid) {
+	public function findByUid($uid) {
 		if (empty($this->records[$uid])) {
 			throw new Tx_Messenger_Exception_MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
 		}
@@ -109,8 +173,44 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	 * @return mixed
 	 */
 	public function getRecipientInfo($identifier) {
-		$record = $this->getRecord($identifier);
+		$record = $this->findByUid($identifier);
 		return array($record['email'] => $record['firstName'] . ' ' . $record['lastName']);
+	}
+
+	/**
+	 * Get list of possible filters.
+	 * This must be an associative array containing the name of the filter as key and the values as filter
+	 * array('group' => array('foo', 'bar'));
+	 *
+	 * @return array
+	 */
+	public function getFilters() {
+		return array(
+			'group' => array(
+				'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:group',
+				'values' => array(
+					'?' => sprintf('%s %s',
+						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),
+						Tx_Extbase_Utility_Localization::translate('group', 'messenger')
+					),
+					'foo' => 'foo',
+					'bar' => 'bar',
+				),
+			),
+			'status' => array(
+				'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:status',
+				'values' => array(
+					'?' => sprintf('%s %s',
+						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),
+						Tx_Extbase_Utility_Localization::translate('status', 'messenger')
+					),
+					1 => 'status 1',
+					2 => 'status 2',
+					3 => 'status 3',
+					4 => 'status 4',
+				),
+			),
+		);
 	}
 }
 

@@ -151,6 +151,13 @@ $(document).ready(function () {
 			}
 		})
 	});
+
+	/**
+	 * Trigger form submit if menu filter change value.
+	 */
+	$('.menu-filter').change(function () {
+		$(this).closest('form').submit();
+	});
 });
 
 

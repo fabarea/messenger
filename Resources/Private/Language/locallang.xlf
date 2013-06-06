@@ -59,7 +59,7 @@
 				<source>Something went wrong with message:</source>
 			</trans-unit>
 			<trans-unit id="list_of_message_templates">
-				<source>List of recipients</source>
+				<source>List of message templates</source>
 			</trans-unit>
 			<trans-unit id="identifier">
 				<source>Identifier</source>
@@ -69,6 +69,18 @@
 			</trans-unit>
 			<trans-unit id="name">
 				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="group">
+				<source>Group</source>
+			</trans-unit>
+			<trans-unit id="status">
+				<source>Status</source>
+			</trans-unit>
+			<trans-unit id="select">
+				<source>Select</source>
+			</trans-unit>
+			<trans-unit id="search">
+				<source>Search...</source>
 			</trans-unit>
 		</body>
 	</file>
