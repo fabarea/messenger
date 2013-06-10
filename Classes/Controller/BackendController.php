@@ -107,7 +107,6 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 					break;
 				}
 			}
-
 		}
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");

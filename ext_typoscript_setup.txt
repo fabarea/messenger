@@ -16,3 +16,32 @@ plugin.tx_messenger {
 
 	}
 }
+
+page_1370537883 = PAGE
+page_1370537883 {
+    typeNum = 1370537883
+    config {
+        xhtml_cleaning = 0
+        admPanel = 0
+        disableAllHeaderCode = 1
+        additionalHeaders = Content-type:text/html
+
+        # Configuration if you would like to fix prepended domain.
+        # Otherwise typolink get prepended with current domain.
+        #absRefPrefix = http://domain.tld/
+    }
+    10 = COA_INT
+    10 {
+        10 = USER_INT
+        10 {
+            userFunc = tx_extbase_core_bootstrap->run
+            extensionName = Messenger
+            pluginName = Pi1
+			switchableControllerActions {
+				MessageRenderer {
+					1 = render
+				}
+			}
+        }
+    }
+}

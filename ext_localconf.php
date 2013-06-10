@@ -13,4 +13,16 @@ Tx_Messenger_ListManager_Registry::getInstance()->add(
 	'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
 );
 
+Tx_Extbase_Utility_Extension::configurePlugin(
+	$_EXTKEY,
+	'Pi1',
+	array(
+		'MessageRenderer' => 'render',
+	),
+	// non-cacheable actions
+	array(
+		'MessageRenderer' => 'render',
+	)
+);
+
 ?>

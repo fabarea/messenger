@@ -123,6 +123,11 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $context;
 
 	/**
+	 * @var Tx_Messenger_Utility_Crawler
+	 */
+	protected $crawler;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -130,6 +135,7 @@ class Tx_Messenger_Domain_Model_Message {
 		$this->templateRepository = t3lib_div::makeInstance('Tx_Messenger_Domain_Repository_MessageTemplateRepository');
 		$this->emailValidator = t3lib_div::makeInstance('Tx_Messenger_Validator_Email');
 		$this->markerUtility = t3lib_div::makeInstance('Tx_Messenger_Utility_Marker');
+		$this->crawler = t3lib_div::makeInstance('Tx_Messenger_Utility_Crawler');
 		$this->configurationManager = Tx_Messenger_Utility_Configuration::getInstance();
 		$this->context = Tx_Messenger_Utility_Context::getInstance();
 
@@ -151,8 +157,7 @@ class Tx_Messenger_Domain_Model_Message {
 	public function send() {
 
 		// Substitute markers
-		$messageTemplate = $this->getMessageTemplate();
-		if (empty($messageTemplate)) {
+		if (empty($this->messageTemplate)) {
 			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
 		}
 
@@ -161,8 +166,9 @@ class Tx_Messenger_Domain_Model_Message {
 			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
 		}
 
-		$subject = $this->markerUtility->substitute($messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
-		$body = $messageTemplate->getBody();
+		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
+
+		$body = $this->formatBody();
 
 		// Set debug flag for not production context
 		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
@@ -194,6 +200,25 @@ class Tx_Messenger_Domain_Model_Message {
 			throw new Tx_Messenger_Exception_WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
 		}
 		return $result;
+	}
+
+	/**
+	 * Format the body by fetching content from the FE.
+	 *
+	 * @return string
+	 */
+	protected function formatBody() {
+
+		// get body of message which get called by a crawler for resolving fluid syntax
+		$this->crawler->addGetVar('type', 1370537883);
+		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->messageTemplate->getUid());
+
+		foreach ($this->markers as $key => $value) {
+			$this->crawler->addGetVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
+		}
+
+		$this->crawler->exec(Tx_Messenger_Utility_Server::getHostAndProtocol());
+		return $this->crawler->getResult();
 	}
 
 	/**
