@@ -45,7 +45,7 @@ interface Tx_Messenger_Interface_ListableInterface {
 	 * @param Tx_Messenger_QueryElement_Order $order
 	 * @param int $limit
 	 * @param int $offset
-	 * @return mixed
+	 * @return array|Tx_Extbase_Persistence_QueryResultInterface
 	 */
 	public function findBy(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, $limit = NULL, $offset = NULL);
 
@@ -53,24 +53,31 @@ interface Tx_Messenger_Interface_ListableInterface {
 	 * Get data about a particular record.
 	 *
 	 * @param mixed $identifier an identifier for the record.
-	 * @return mixed
+	 * @return array|Tx_Extbase_Persistence_QueryResultInterface
 	 */
 	public function findByUid($identifier);
 
 	/**
-	 * Return recipient info according to an identifier. The returned array must look like:
-	 * array('email' => 'recipient name');
+	 * Return mapping info between the expected property of messenger and the one of your model.
+	 * The value of example below corresponds to property of your model.
+	 * Example:
 	 *
-	 * @param mixed $identifier an identifier for the record.
-	 * @return mixed
+	 * <pre>
+	 * array(
+	 *   'email' => 'email',
+	 *  ' name' => 'name',
+	 * );
+	 * </pre>
+	 *
+	 * @return array
 	 */
-	public function getRecipientInfo($identifier);
+	public function getMapping();
 
 	/**
 	 * Get list of possible filters.
-	 * This must be an associative array containing the name of the filter as key and the values as filter
+	 * This must be an associative array containing the name of the filter as key and the values as filter.
 	 *
-	 * array('group' => array('foo', 'bar'));
+	 * array('group' => array('values' => 'foo', 'bar'));
 	 *
 	 * @return array
 	 */

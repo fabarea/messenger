@@ -25,21 +25,21 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Validator_TableStructureValidator.
+ * Test case for class Tx_Messenger_Validator_ListManagerValidator.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class Tx_Messenger_Validator_ListManagerValidatorTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Validator_TableStructureValidator
+	 * @var Tx_Messenger_Validator_ListManagerValidator
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Validator_TableStructureValidator();
+		$this->fixture = new Tx_Messenger_Validator_ListManagerValidator();
 	}
 
 	public function tearDown() {
@@ -60,7 +60,7 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
+			'Tx_Messenger_Validator_ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -75,7 +75,7 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 		$tableHeaders = array(array());
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
+			'Tx_Messenger_Validator_ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -90,7 +90,7 @@ class Tx_Messenger_Validator_TableStructureValidatorTest extends Tx_Extbase_Test
 		$tableHeaders = array();
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Validator_TableStructureValidator', 'validateFields'
+			'Tx_Messenger_Validator_ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);

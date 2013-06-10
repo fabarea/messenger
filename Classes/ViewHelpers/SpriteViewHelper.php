@@ -39,7 +39,6 @@ class Tx_Messenger_ViewHelpers_SpriteViewHelper extends Tx_Fluid_Core_ViewHelper
 	public function render($name = NULL) {
 		return t3lib_iconWorks::getSpriteIcon($name);
 	}
-
 }
 
 ?>

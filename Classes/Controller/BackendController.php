@@ -53,11 +53,16 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	 */
 	public function initializeAction() {
 
-		$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
+		try {
+			$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
 
-		/** @var $validator Tx_Messenger_Validator_TableStructureValidator */
-		$validator = $this->objectManager->get('Tx_Messenger_Validator_TableStructureValidator');
-		$validator->validate($this->listManager);
+			/** @var $listManagerValidator Tx_Messenger_Validator_ListManagerValidator */
+			$listManagerValidator = $this->objectManager->get('Tx_Messenger_Validator_ListManagerValidator');
+			$listManagerValidator->validate($this->listManager);
+		} catch(Exception $e ) {
+			$this->flashMessageContainer->add('List Manager validation error: ' . $e->getMessage(), '', t3lib_FlashMessage::ERROR);
+			$this->redirect('list', 'ListManager');
+		}
 	}
 
 	/**
@@ -74,24 +79,24 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		if ($messageTemplateUid > 0) {
 
 			$recipients = t3lib_div::trimExplode(',', $recipientUid);
+			$mapping = $this->listManager->getMapping();
 
 			$result = count($recipients);
 			$status = 'success';
 
-			foreach ($recipients as $recipient) {
-				$markers = $this->listManager->findByUid($recipient);
-				$recipient = $this->listManager->getRecipientInfo($recipient);
+			foreach ($recipients as $recipientUid) {
+				$recipient = $this->listManager->findByUid($recipientUid);
 
 				/** @var $message Tx_Messenger_Domain_Model_Message */
 				$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
 				$isSent = $message->setMessageTemplate($messageTemplateUid)
-					->setRecipients($recipient)
-					->setMarkers($markers)
+					->setRecipients($this->formatRecipient($recipient, $mapping))
+					->setMarkers($recipient)
 					->send();
 
 				// Block the loop if anything goes wrong.
 				if (! $isSent) {
-					$result = sprintf('The message could not be sent for recipient uid %s. It could be more error besides...', $recipient);
+					$result = sprintf('The message could not be sent for recipient uid %s. It could be more error besides...', $recipientUid);
 					$status = 'error';
 					break;
 				}
@@ -101,6 +106,25 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");
 		return json_encode(array('message' => $result, 'status' => $status));
+	}
+
+	/**
+	 * Format a recipient.
+	 *
+	 * Return recipient info according to an identifier. The returned array must look like:
+	 * array('email' => 'recipient name');
+	 */
+	public function formatRecipient($recipient, $mapping) {
+		$emailMapping = $mapping['email'];
+		$nameMapping = $mapping['name'];
+		if (is_array($recipient)) {
+			$result = array($recipient[$emailMapping] => $recipient[$nameMapping]);
+		} else {
+			$getEmail = 'get' . ucfirst($emailMapping);
+			$getName = 'get' . ucfirst($nameMapping);
+			$result = array(call_user_func($recipient, $getEmail) => call_user_func($recipient, $getName));
+		}
+		return $result;
 	}
 
 	/**

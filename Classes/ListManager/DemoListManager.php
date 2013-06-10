@@ -75,6 +75,7 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 				'group' => $uid < 3 ? 'foo' : 'bar',
 				'status' => $uid,
 			);
+			$this->records[$uid]['name'] = $this->records[$uid]['firstName'] . ' ' . $this->records[$uid]['lastName'];
 		}
 	}
 
@@ -165,29 +166,25 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	}
 
 	/**
-	 * Return recipient info according to an identifier. The returned array must look like:
-	 *
-	 * array('email' => 'recipient name');
-	 *
-	 * @param mixed $identifier an identifier for the record.
-	 * @return mixed
+	 * @return array
 	 */
-	public function getRecipientInfo($identifier) {
-		$record = $this->findByUid($identifier);
-		return array($record['email'] => $record['firstName'] . ' ' . $record['lastName']);
+	public function getMapping() {
+		return array(
+			'email' => 'email',
+			'name' => 'name',
+		);
 	}
 
 	/**
 	 * Get list of possible filters.
 	 * This must be an associative array containing the name of the filter as key and the values as filter
-	 * array('group' => array('foo', 'bar'));
+	 * array('group' => array('values' => 'foo', 'bar'));
 	 *
 	 * @return array
 	 */
 	public function getFilters() {
 		return array(
 			'group' => array(
-				'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:group',
 				'values' => array(
 					'?' => sprintf('%s %s',
 						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),
@@ -198,7 +195,8 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 				),
 			),
 			'status' => array(
-				'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:status',
+				// key "label" is not used for now but could be in the future.
+				#'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:status',
 				'values' => array(
 					'?' => sprintf('%s %s',
 						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),

@@ -30,27 +30,46 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Validator_TableStructureValidator {
+class Tx_Messenger_Validator_ListManagerValidator {
 
 	/**
 	 * Validate a list manager.
 	 *
-	 * @param Tx_Messenger_Interface_ListableInterface $tableStructure
+	 * @param Tx_Messenger_Interface_ListableInterface $listManager
 	 * @return void
 	 */
-	public function validate(Tx_Messenger_Interface_ListableInterface $tableStructure) {
+	public function validate(Tx_Messenger_Interface_ListableInterface $listManager) {
+		$this->validateFields($listManager);
+		$this->validateMapping($listManager);
 
-		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
-		$this->validateFields($tableHeaders);
+		// @todo find the right way for checking if recipients can be formatted array(email => name);
+	}
+
+	/**
+	 * Validate the mapping.
+	 *
+	 * @param Tx_Messenger_Interface_ListableInterface $listManager
+	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
+	 */
+	protected function validateMapping($listManager) {
+		$mapping = $listManager->getMapping();
+
+		foreach (array('email', 'name') as $value) {
+			if (!isset($mapping[$value])) {
+				throw new Tx_Messenger_Exception_MissingKeyInArrayException(sprintf('mapping looks not correct, missing key "%s".', $value), 1370878760);
+			}
+		}
 	}
 
 	/**
 	 * Validate the fields.
 	 *
+	 * @param Tx_Messenger_Interface_ListableInterface $listManager
 	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
-	 * @param array $tableHeaders
+	 * @throws Tx_Messenger_Exception_EmptyArrayException
 	 */
-	protected function validateFields($tableHeaders) {
+	protected function validateFields($listManager) {
+		$tableHeaders = $listManager->getFields();
 		if (empty($tableHeaders)) {
 			throw new Tx_Messenger_Exception_EmptyArrayException('Empty array for fields', 1357656665);
 		}
@@ -58,11 +77,11 @@ class Tx_Messenger_Validator_TableStructureValidator {
 		foreach ($tableHeaders as $tableHeader) {
 
 			if (empty($tableHeader['fieldName'])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException('Missing key in fields "fieldName ".', 1357656663);
+				throw new Tx_Messenger_Exception_MissingKeyInArrayException('fields look not correct, missing key "fieldName".', 1357656663);
 			}
 
 			if (empty($tableHeader['label'])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException('Missing key in fields "label".', 1357656664);
+				throw new Tx_Messenger_Exception_MissingKeyInArrayException('fields look not correct, missing key "label".', 1357656664);
 			}
 		}
 	}

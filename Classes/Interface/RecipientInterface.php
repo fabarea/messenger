@@ -45,5 +45,12 @@ interface Tx_Messenger_Interface_RecipientInterface {
 	 */
 	public function getEmail();
 
+	/**
+	 * get a string
+	 *
+	 * @return string
+	 */
+	public function getName();
+
 }
 ?>
