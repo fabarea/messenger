@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -25,26 +25,34 @@
  ***************************************************************/
 
 /**
+ *
+ *
  * @package messenger
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-interface Tx_Messenger_Interface_RecipientInterface {
+class Tx_Messenger_Formatter_Recipient {
 
 	/**
-	 * @return int
+	 * Format a recipient.
+	 * Return recipient info according to an identifier. The returned array must look like:
+	 * array('email' => 'recipient name');
+	 *
+	 * @param array|Tx_Messenger_Interface_RecipientInterface $recipient
+	 * @param array $mapping
+	 * @return array
 	 */
-	public function getUid();
-
-	/**
-	 * @return string
-	 */
-	public function getEmail();
-
-	/**
-	 * @return string
-	 */
-	public function getName();
-
+	public function format($recipient, array $mapping) {
+		$emailMapping = $mapping['email'];
+		$nameMapping = $mapping['name'];
+		if (is_array($recipient)) {
+			$result = array($recipient[$emailMapping] => $recipient[$nameMapping]);
+		} else {
+			$getEmail = 'get' . ucfirst($emailMapping);
+			$getName = 'get' . ucfirst($nameMapping);
+			$result = array(call_user_func($recipient, $getEmail) => call_user_func($recipient, $getName));
+		}
+		return $result;
+	}
 }
 ?>

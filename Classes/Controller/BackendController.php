@@ -39,6 +39,12 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	protected $listManager;
 
 	/**
+	 * @var Tx_Messenger_Formatter_Recipient
+	 * @inject
+	 */
+	protected $recipientFormatter;
+
+	/**
 	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
 	 * @inject
 	 */
@@ -90,7 +96,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 				/** @var $message Tx_Messenger_Domain_Model_Message */
 				$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
 				$isSent = $message->setMessageTemplate($messageTemplateUid)
-					->setRecipients($this->formatRecipient($recipient, $mapping))
+					->setRecipients($this->recipientFormatter->format($recipient, $mapping))
 					->setMarkers($recipient)
 					->send();
 
@@ -106,25 +112,6 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");
 		return json_encode(array('message' => $result, 'status' => $status));
-	}
-
-	/**
-	 * Format a recipient.
-	 *
-	 * Return recipient info according to an identifier. The returned array must look like:
-	 * array('email' => 'recipient name');
-	 */
-	public function formatRecipient($recipient, $mapping) {
-		$emailMapping = $mapping['email'];
-		$nameMapping = $mapping['name'];
-		if (is_array($recipient)) {
-			$result = array($recipient[$emailMapping] => $recipient[$nameMapping]);
-		} else {
-			$getEmail = 'get' . ucfirst($emailMapping);
-			$getName = 'get' . ucfirst($nameMapping);
-			$result = array(call_user_func($recipient, $getEmail) => call_user_func($recipient, $getName));
-		}
-		return $result;
 	}
 
 	/**
