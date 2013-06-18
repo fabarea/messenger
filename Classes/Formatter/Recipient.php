@@ -50,7 +50,7 @@ class Tx_Messenger_Formatter_Recipient {
 		} else {
 			$getEmail = 'get' . ucfirst($emailMapping);
 			$getName = 'get' . ucfirst($nameMapping);
-			$result = array(call_user_func($recipient, $getEmail) => call_user_func($recipient, $getName));
+			$result = array(call_user_func(array($recipient, $getEmail)) => call_user_func(array($recipient, $getName)));
 		}
 		return $result;
 	}
