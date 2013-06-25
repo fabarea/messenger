@@ -17,6 +17,10 @@ plugin.tx_messenger {
 	}
 }
 
+# Custom parser for mail body, derived from RTE parser
+lib.parseFunc_Mail < lib.parseFunc_RTE
+lib.parseFunc_Mail.makelinks = 0
+
 page_1370537883 = PAGE
 page_1370537883 {
     typeNum = 1370537883
