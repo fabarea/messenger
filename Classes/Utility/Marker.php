@@ -64,7 +64,7 @@ class Tx_Messenger_Utility_Marker {
 		if ($format == 'text/html') {
 
 			// Rather use the format view helper
-			$input = sprintf('<f:format.html>%s</f:format.html>', $input);
+			$input = sprintf('<f:format.html parseFuncTSPath="lib.parseFunc_Mail">%s</f:format.html>', $input);
 
 			#$config['parseFunc.'] = array();
 			#if (TYPO3_MODE == 'BE') {
