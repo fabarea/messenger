@@ -38,10 +38,7 @@ class Tx_Messenger_Utility_Server {
 	 * @return string
 	 */
 	public static function getHostAndProtocol() {
-		return sprintf('%s%s/',
-			stripos($_SERVER['SERVER_PROTOCOL'], 'https') === true ? 'https://' : 'http://',
-			$_SERVER['HTTP_HOST']
-		);
+		return t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
 	}
 }
 
