@@ -22,6 +22,7 @@ namespace TYPO3\CMS\Messenger\Utility;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * A class dealing with server variables.
@@ -34,7 +35,13 @@ class Server {
 	 * @return string
 	 */
 	public static function getHostAndProtocol() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
+		$hostAndProtocol = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
+		$replaceHttpsByHttp = TRUE; // @todo make configuration in the BE? TS?
+		if ($replaceHttpsByHttp) {
+			$hostAndProtocol = preg_replace('/^https/isU', 'http', $hostAndProtocol);
+
+		}
+		return $hostAndProtocol;
 	}
 }
 
