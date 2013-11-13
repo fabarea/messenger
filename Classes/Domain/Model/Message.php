@@ -97,7 +97,7 @@ class Message {
 	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
-	protected $messageTemplate;
+	protected $template;
 
 	/**
 	 * @var string
@@ -154,7 +154,7 @@ class Message {
 	public function send() {
 
 		// Substitute markers
-		if (empty($this->messageTemplate)) {
+		if (empty($this->template)) {
 			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
 		}
 
@@ -163,7 +163,7 @@ class Message {
 			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
 		}
 
-		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
+		$subject = $this->markerUtility->substitute($this->template->getSubject(), $this->getMarkers(), 'text/plain');
 
 		$body = $this->formatBody();
 
@@ -208,7 +208,7 @@ class Message {
 
 		// get body of message which get called by a crawler for resolving fluid syntax
 		$this->crawler->addGetVar('type', 1370537883);
-		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->messageTemplate->getUid());
+		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->template->getUid());
 
 		foreach ($this->markers as $key => $value) {
 			$this->crawler->addGetVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
@@ -221,14 +221,14 @@ class Message {
 	/**
 	 * Get a body message when email is simulated.
 	 *
-	 * @param string $content
+	 * @param string $messageBody
 	 * @return string
 	 */
-	protected function getMessageBodyForSimulation($content) {
-		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it will be sent to %s <br /><br />%s",
+	protected function getMessageBodyForSimulation($messageBody) {
+		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it would be sent to %s <br /><br />%s",
 			strtoupper($this->context->getName()),
 			implode(',', array_keys($this->recipients)),
-			$content
+			$messageBody
 		);
 		return $messageBody;
 	}
@@ -255,8 +255,8 @@ class Message {
 	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
-	public function getMessageTemplate() {
-		return $this->messageTemplate;
+	public function getTemplate() {
+		return $this->template;
 	}
 
 	/**
@@ -312,7 +312,7 @@ class Message {
 	 */
 	public function setMarkers($markers) {
 		if (is_object($markers)) {
-			$markers = TYPO3\CMS\Messenger\Utility\Object::toArray($markers);
+			$markers = \TYPO3\CMS\Messenger\Utility\Object::toArray($markers);
 		}
 		$this->markers = $markers;
 		return $this;
@@ -417,7 +417,7 @@ class Message {
 	 * @param mixed $messageTemplate
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
-	public function setMessageTemplate($messageTemplate) {
+	public function setTemplate($messageTemplate) {
 
 
 		if ($messageTemplate instanceof \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate) {
@@ -441,7 +441,7 @@ class Message {
 			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
 		}
 
-		$this->messageTemplate = $object;
+		$this->template = $object;
 		return $this;
 	}
 }

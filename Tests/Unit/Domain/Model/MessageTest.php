@@ -127,12 +127,12 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeInt() {
+	public function getTemplateReturnsMessageTemplateForUidOfTypeInt() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setMessageTemplate($this->uidTemplate);
+		$this->fixture->setTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -142,12 +142,12 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeString() {
+	public function getTemplateReturnsMessageTemplateForUidOfTypeString() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
+		$this->fixture->setTemplate((string) $this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -157,12 +157,12 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getMessageTemplateReturnsMessageTemplateForIdentifier() {
+	public function getTemplateReturnsMessageTemplateForIdentifier() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setMessageTemplate($this->identifier);
+		$this->fixture->setTemplate($this->identifier);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -173,9 +173,9 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 * @expectedException \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 */
-	public function setMessageTemplateRaisesException() {
+	public function setTemplateRaisesException() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'setMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'setTemplate'
 		);
 
 		$method->setAccessible(TRUE);
@@ -245,7 +245,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithSimulateFlagUsingMboxTransport() {
-		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+		$mailSent = $this->fixture->setTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
@@ -257,7 +257,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithSetMarkers() {
-		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+		$mailSent = $this->fixture->setTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->send();
@@ -268,7 +268,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithNoSetMarkers() {
-		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+		$mailSent = $this->fixture->setTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->send();
 		$this->assertTrue($mailSent);
@@ -279,7 +279,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne() {
 		$language = 1;
-		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
+		$mailSent = $this->fixture->setTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
