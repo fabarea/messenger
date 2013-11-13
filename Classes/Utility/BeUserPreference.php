@@ -36,10 +36,8 @@ class BeUserPreference {
 	 */
 	static public function get($key) {
 		$result = '';
-		/** @var $user t3lib_beUserAuth */
-		$user = $GLOBALS['BE_USER'];
-		if ($user && !empty($user->uc[$key])) {
-			$result = $user->uc[$key];
+		if (self::getBackendUser() && !empty(self::getBackendUser()->uc[$key])) {
+			$result = self::getBackendUser()->uc[$key];
 
 		}
 		return $result;
@@ -54,12 +52,19 @@ class BeUserPreference {
 	 */
 	static public function set($key, $value) {
 
-		/** @var $user t3lib_beUserAuth */
-		$user = $GLOBALS['BE_USER'];
-		if ($user) {
-			$user->uc[$key] = $value;
-			$user->writeUC();
+		if (self::getBackendUser()) {
+			self::getBackendUser()->uc[$key] = $value;
+			self::getBackendUser()->writeUC();
 		}
+	}
+
+	/**
+	 * Returns an instance of the current Backend User.
+	 *
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	static protected function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 }
 
