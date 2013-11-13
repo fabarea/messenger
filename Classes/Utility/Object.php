@@ -37,6 +37,7 @@ class Object {
 	public static function toArray($object) {
 		$strategies = array('toArrayWithSpecialMethod', 'toArrayWithGetter', 'toArrayWithConvertingAttributes');
 
+		$values = array();
 		foreach ($strategies as $strategy) {
 			$values = self::$strategy($object);
 			if (!empty($values)) {
