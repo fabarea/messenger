@@ -3,8 +3,31 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$TCA['tx_messenger_domain_model_messagetemplate'] = array(
-	'ctrl' => $TCA['tx_messenger_domain_model_messagetemplate']['ctrl'],
+return array(
+	'ctrl' => array(
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
+		'label' => 'subject',
+		'label_alt' => 'identifier',
+		'label_alt_force' => 1,
+		'default_sortby' => 'ORDER BY identifier ASC',
+		'tstamp' => 'tstamp',
+		'crdate' => 'crdate',
+		'cruser_id' => 'cruser_id',
+		'dividers2tabs' => TRUE,
+
+		'origUid' => 't3_origuid',
+		'languageField' => 'sys_language_uid',
+		'transOrigPointerField' => 'l10n_parent',
+		'transOrigDiffSourceField' => 'l10n_diffsource',
+		'delete' => 'deleted',
+		'enablecolumns' => array(
+			'disabled' => 'hidden'
+		),
+		'searchFields' => 'identifier, subject,body,',
+		'typeicon_classes' => array(
+			'default' => 'extensions-messenger-messagetemplate',
+		),
+	),
 	'interface' => array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, identifier, subject, body',
 	),
@@ -90,5 +113,3 @@ $TCA['tx_messenger_domain_model_messagetemplate'] = array(
 		),
 	),
 );
-
-?>

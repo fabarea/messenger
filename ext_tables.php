@@ -27,91 +27,18 @@ if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstan
 
 }
 
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Send a message to a group of people');
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_messenger_domain_model_sentmessage', 'EXT:messenger/Resources/Private/Language/locallang_csh_tx_messenger_domain_model_sentmessage.xlf');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
-$TCA['tx_messenger_domain_model_sentmessage'] = array(
-	'ctrl' => array(
-		'title'	=> 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage',
-		'label' => 'user',
-		'tstamp' => 'tstamp',
-		'crdate' => 'crdate',
-		'cruser_id' => 'cruser_id',
-		'dividers2tabs' => TRUE,
-
-		'verssOrigDiffSourceField' => 'l10n_diffsource',
-		'delete' => 'deleted',
-		'enablecolumns' => array(
-			'disabled' => 'hidden',
-		),
-		'searchFields' => 'content,',
-		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/SentMessage.php',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.gif'
-	),
-);
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
-$TCA['tx_messenger_domain_model_messagetemplate'] = array(
-	'ctrl' => array(
-		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
-		'label' => 'subject',
-		'label_alt' => 'identifier',
-		'label_alt_force' => 1,
-		'default_sortby' => 'ORDER BY identifier ASC',
-		'tstamp' => 'tstamp',
-		'crdate' => 'crdate',
-		'cruser_id' => 'cruser_id',
-		'dividers2tabs' => TRUE,
-
-		'origUid' => 't3_origuid',
-		'languageField' => 'sys_language_uid',
-		'transOrigPointerField' => 'l10n_parent',
-		'transOrigDiffSourceField' => 'l10n_diffsource',
-		'delete' => 'deleted',
-		'enablecolumns' => array(
-			'disabled' => 'hidden'
-		),
-		'searchFields' => 'identifier, subject,body,',
-		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/MessageTemplate.php',
-		'typeicon_classes' => array(
-			'default' => 'extensions-messenger-messagetemplate',
-		),
-	),
-);
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
-$TCA['tx_messenger_domain_model_messagelayout'] = array(
-	'ctrl' => array(
-		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout',
-		'label' => 'identifier',
-		'default_sortby' => 'ORDER BY identifier ASC',
-		'tstamp' => 'tstamp',
-		'crdate' => 'crdate',
-		'cruser_id' => 'cruser_id',
-		'dividers2tabs' => TRUE,
-
-		'origUid' => 't3_origuid',
-		'languageField' => 'sys_language_uid',
-		'transOrigPointerField' => 'l10n_parent',
-		'transOrigDiffSourceField' => 'l10n_diffsource',
-		'delete' => 'deleted',
-		'enablecolumns' => array(
-			'disabled' => 'hidden'
-		),
-		'searchFields' => 'identifier, content,',
-		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/MessageLayout.php',
-		'typeicon_classes' => array(
-			'default' => 'extensions-messenger-messagelayout',
-		),
-	),
-);
 
 $icons = array(
 	'messagetemplate' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.gif',
 	'messagelayout' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
+	'sentmessage' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',
 );
-t3lib_SpriteManager::addSingleIcons($icons, $_EXTKEY);
+\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, $_EXTKEY);
 
 ?>

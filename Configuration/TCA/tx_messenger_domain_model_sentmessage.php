@@ -3,8 +3,25 @@ if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$TCA['tx_messenger_domain_model_sentmessage'] = array(
-	'ctrl' => $TCA['tx_messenger_domain_model_sentmessage']['ctrl'],
+return array(
+	'ctrl' => array(
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage',
+		'label' => 'user',
+		'tstamp' => 'tstamp',
+		'crdate' => 'crdate',
+		'cruser_id' => 'cruser_id',
+		'dividers2tabs' => TRUE,
+
+		'verssOrigDiffSourceField' => 'l10n_diffsource',
+		'delete' => 'deleted',
+		'enablecolumns' => array(
+			'disabled' => 'hidden',
+		),
+		'searchFields' => 'content,',
+		'typeicon_classes' => array(
+			'default' => 'extensions-messenger-sentmessage',
+		),
+	),
 	'interface' => array(
 		'showRecordFieldList' => 'hidden, user, message, content, sent_time',
 	),
@@ -66,5 +83,3 @@ $TCA['tx_messenger_domain_model_sentmessage'] = array(
 		),
 	),
 );
-
-?>
