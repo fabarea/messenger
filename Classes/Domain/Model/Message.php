@@ -27,10 +27,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  *
- *
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  * @todo remove language handling from the class which should be managed outside - or not?
  *
  */

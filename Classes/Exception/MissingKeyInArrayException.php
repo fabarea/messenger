@@ -26,9 +26,6 @@ namespace TYPO3\CMS\Messenger\Exception;
 
 /**
  * Exception for missing key in array
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  */
 class MissingKeyInArrayException extends \Exception {
 

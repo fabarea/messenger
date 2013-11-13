@@ -26,10 +26,6 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
 
 /**
  *
- *
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  */
 class SentMessage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 

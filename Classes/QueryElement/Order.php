@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\QueryElement;
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2012
+*  (c) 2013 Fabien Udriot <fabien.udriot@typo3.org>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,8 +25,6 @@ namespace TYPO3\CMS\Messenger\QueryElement;
 
 /**
  * A class for handling order
- *
- * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
 class Order  {
 

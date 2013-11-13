@@ -25,9 +25,6 @@ namespace TYPO3\CMS\Messenger\Domain\Repository;
  ***************************************************************/
 
 /**
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  * @todo check how to handle language flag.
  */
 class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {

@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2012
+*  (c) 2013 Fabien Udriot <fabien.udriot@typo3.org>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,11 +25,6 @@ namespace TYPO3\CMS\Messenger\Utility;
 
 /**
  * A class dealing with configuration.
- *
- * @category    ViewHelpers
- * @package     TYPO3
- * @subpackage  messenger
- * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
 class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 

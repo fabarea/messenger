@@ -25,10 +25,6 @@ namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
  ***************************************************************/
 
 /**
- *
- *
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @see http://www.chuggnutt.com/html2text
  *
  */

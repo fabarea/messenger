@@ -24,10 +24,7 @@ namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/**
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @see http://www.chuggnutt.com/html2text
+/** @see http://www.chuggnutt.com/html2text
  *
  */
 

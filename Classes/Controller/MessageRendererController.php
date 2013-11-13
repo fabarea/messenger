@@ -25,8 +25,6 @@ namespace TYPO3\CMS\Messenger\Controller;
  ***************************************************************/
 
 /**
- * @package messenger
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
 class MessageRendererController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
