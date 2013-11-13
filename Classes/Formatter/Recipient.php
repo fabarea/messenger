@@ -34,7 +34,7 @@ class Recipient {
 	 * Return recipient info according to an identifier. The returned array must look like:
 	 * array('email' => 'recipient name');
 	 *
-	 * @param array|Tx_Messenger_Interface_RecipientInterface $recipient
+	 * @param array|\TYPO3\CMS\Messenger\MessengerInterface\RecipientInterface $recipient
 	 * @param array $mapping
 	 * @return array
 	 */
@@ -51,4 +51,5 @@ class Recipient {
 		return $result;
 	}
 }
+
 ?>

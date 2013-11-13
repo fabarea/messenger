@@ -23,6 +23,7 @@ namespace TYPO3\CMS\Messenger\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Messenger\Utility\BeUserPreference;
 
 /**
  *
@@ -44,12 +45,13 @@ class MessageTemplateController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 	}
 
 	/**
-	 * @param string $messageTemplate
+	 * @param int $messageTemplate
 	 * @return void
 	 */
 	public function saveAction($messageTemplate) {
+
 		// save email address as preference
-		\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_message_template', $messageTemplate);
+		BeUserPreference::set('messenger_message_template', $messageTemplate);
 		$this->redirect('index', 'Backend');
 	}
 }

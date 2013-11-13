@@ -153,8 +153,8 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 		$order = $order === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Order') : $order;
 		$pager = $pager === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Pager') : $pager;
 
-		$messageUid = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_message_template');
-		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
+		$messageIdentifier = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_message_template');
+		$messageTemplate = $this->messageTemplateRepository->findByIdentifier($messageIdentifier);
 
 		$this->view->assign('recipients', $this->listManager->findBy($matcher, $order, $pager->getLimit(), $pager->getOffset()));
 		$this->view->assign('filters', $this->listManager->getFilters());

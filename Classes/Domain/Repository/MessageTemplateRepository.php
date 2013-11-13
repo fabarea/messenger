@@ -33,7 +33,7 @@ class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repositor
 	 * Initialize Repository
 	 */
 	public function initializeObject() {
-		$querySettings = $this->objectManager->create('Tx_Extbase_Persistence_Typo3QuerySettings');
+		$querySettings = $this->objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings');
 		$querySettings->setRespectStoragePage(FALSE);
 		$this->setDefaultQuerySettings($querySettings);
 	}
@@ -51,7 +51,7 @@ class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repositor
 		$query->getQuerySettings()->setRespectStoragePage(FALSE);
 		$object = $query
 			->matching(
-			$query->equals('identifier', $identifier)
+			$query->equals('uid', $identifier)
 		)
 			->execute()
 			->getFirst();

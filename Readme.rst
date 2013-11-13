@@ -9,8 +9,8 @@ a possible wrapping layout. This can be useful if the message must be surrounded
 
 Development goes at https://github.com/gebruederheitz/messenger
 
-@todo publish fe_users_messenger
-@todo publish be_users_messenger
+@todo include fe_users_messenger
+@todo include be_users_messenger
 
 Setting up
 ==============

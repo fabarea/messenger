@@ -128,8 +128,8 @@ class Message {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->message = GeneralUtility::makeInstance('t3lib_mail_Message');
-		$this->templateRepository = GeneralUtility::makeInstance('\TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository');
+		$this->message = GeneralUtility::makeInstance('TYPO3\CMS\Core\Mail\MailMessage');
+		$this->templateRepository = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository');
 		$this->emailValidator = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Validator\Email');
 		$this->markerUtility = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Marker');
 		$this->crawler = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Crawler');
@@ -214,7 +214,7 @@ class Message {
 			$this->crawler->addGetVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
 		}
 
-		$this->crawler->exec(TYPO3\CMS\Messenger\Utility\Server::getHostAndProtocol());
+		$this->crawler->exec(\TYPO3\CMS\Messenger\Utility\Server::getHostAndProtocol());
 		return $this->crawler->getResult();
 	}
 
