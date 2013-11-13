@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,10 +31,10 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_MessageTemplateController extends Tx_Extbase_MVC_Controller_ActionController {
+class MessageTemplateController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
@@ -53,7 +53,7 @@ class Tx_Messenger_Controller_MessageTemplateController extends Tx_Extbase_MVC_C
 	 */
 	public function saveAction($messageTemplate) {
 		// save email address as preference
-		Tx_Messenger_Utility_BeUserPreference::set('messenger_message_template', $messageTemplate);
+		\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_message_template', $messageTemplate);
 		$this->redirect('index', 'Backend');
 	}
 }

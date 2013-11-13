@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +31,7 @@
  *
  */
 
-interface Tx_Messenger_Strategy_Html2Text_StrategyInterface {
+interface StrategyInterface {
 
 	/**
 	 * Convert a given HTML input to Text

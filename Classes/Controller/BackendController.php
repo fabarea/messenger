@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,21 +31,21 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
+	 * @var \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
 	 */
 	protected $listManager;
 
 	/**
-	 * @var Tx_Messenger_Formatter_Recipient
+	 * @var \TYPO3\CMS\Messenger\Formatter\Recipient
 	 * @inject
 	 */
 	protected $recipientFormatter;
 
 	/**
-	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
@@ -60,10 +60,10 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	public function initializeAction() {
 
 		try {
-			$this->listManager = Tx_Messenger_ListManager_Factory::getInstance();
+			$this->listManager = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance();
 
-			/** @var $listManagerValidator Tx_Messenger_Validator_ListManagerValidator */
-			$listManagerValidator = $this->objectManager->get('Tx_Messenger_Validator_ListManagerValidator');
+			/** @var $listManagerValidator TYPO3\CMS\Messenger\Validator\ListManagerValidator */
+			$listManagerValidator = $this->objectManager->get('TYPO3\CMS\Messenger\Validator\ListManagerValidator');
 			$listManagerValidator->validate($this->listManager);
 		} catch(Exception $e ) {
 			$this->flashMessageContainer->add('List Manager validation error: ' . $e->getMessage(), '', t3lib_FlashMessage::ERROR);
@@ -84,7 +84,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		$status = 'error';
 		if ($messageTemplateUid > 0) {
 
-			$recipients = t3lib_div::trimExplode(',', $recipientUid);
+			$recipients = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $recipientUid);
 			$mapping = $this->listManager->getMapping();
 
 			$result = count($recipients);
@@ -93,8 +93,8 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 			foreach ($recipients as $recipientUid) {
 				$recipient = $this->listManager->findByUid($recipientUid);
 
-				/** @var $message Tx_Messenger_Domain_Model_Message */
-				$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
+				/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
+				$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
 				$isSent = $message->setMessageTemplate($messageTemplateUid)
 					->setRecipients($this->recipientFormatter->format($recipient, $mapping))
 					->setMarkers($recipient)
@@ -126,8 +126,8 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 		$status = 'error';
 		if ($messageTemplateUid > 0 && $testEmail != '') {
 
-			/** @var $message Tx_Messenger_Domain_Model_Message */
-			$message = $this->objectManager->get('Tx_Messenger_Domain_Model_Message');
+			/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
+			$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
 			$isSent = $message->setMessageTemplate($messageTemplateUid)
 				->setRecipients($testEmail)
 				->send();
@@ -137,7 +137,7 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 			$status = $isSent ? 'success' : $status;
 
 			// save email address as preference
-			Tx_Messenger_Utility_BeUserPreference::set('messenger_testing_email', $testEmail);
+			\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_testing_email', $testEmail);
 		}
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");
@@ -145,19 +145,19 @@ class Tx_Messenger_Controller_BackendController extends Tx_Extbase_MVC_Controlle
 	}
 
 	/**
-	 * @param Tx_Messenger_QueryElement_Matcher $matcher
-	 * @param Tx_Messenger_QueryElement_Order $order
-	 * @param Tx_Messenger_QueryElement_Pager $pager
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Pager $pager
 	 * @return void
-	 * @validate $matcher Tx_Messenger_Domain_Validator_MatcherValidator
+	 * @validate $matcher \TYPO3\CMS\Messenger\Domain\Validator\MatcherValidator
 	 */
-	public function indexAction(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, Tx_Messenger_QueryElement_Pager $pager = NULL) {
+	public function indexAction(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, \TYPO3\CMS\Messenger\QueryElement\Pager $pager = NULL) {
 
-		$matcher = $matcher === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Matcher') : $matcher;
-		$order = $order === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Order') : $order;
-		$pager = $pager === NULL ? $this->objectManager->get('Tx_Messenger_QueryElement_Pager') : $pager;
+		$matcher = $matcher === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Matcher') : $matcher;
+		$order = $order === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Order') : $order;
+		$pager = $pager === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Pager') : $pager;
 
-		$messageUid = Tx_Messenger_Utility_BeUserPreference::get('messenger_message_template');
+		$messageUid = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_message_template');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageUid);
 
 		$this->view->assign('recipients', $this->listManager->findBy($matcher, $order, $pager->getLimit(), $pager->getOffset()));

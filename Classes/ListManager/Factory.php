@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,27 +31,27 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ListManager_Factory {
+class Factory {
 
 	/**
-	 * @var Tx_Messenger_Interface_ListableInterface
+	 * @var \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
 	 */
 	static protected $instance = NULL;
 
 	/**
 	 * Get an instance of a list manager interface
 	 *
-	 * @return Tx_Messenger_Interface_ListableInterface
+	 * @return \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
-			$className = Tx_Messenger_Utility_BeUserPreference::get('messenger_list_manager');
+			$className = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_list_manager');
 
 			if (! class_exists($className)) {
-				$className = Tx_Messenger_Utility_Configuration::getInstance()->get('tableStructureFallBack');
+				$className = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('tableStructureFallBack');
 			}
 
-			self::$instance = t3lib_div::makeInstance($className);
+			self::$instance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($className);
 		}
 		return self::$instance;
 	}

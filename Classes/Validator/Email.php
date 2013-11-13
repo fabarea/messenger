@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Validator;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,12 +31,12 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Validator_Email {
+class Email {
 
 	/**
 	 * Validate emails to be used in the Swiftmailer framework
 	 *
-	 * @throws Tx_Messenger_Exception_InvalidEmailFormatException
+	 * @throws \TYPO3\CMS\Messenger\Exception\InvalidEmailFormatException
 	 * @param $emails
 	 * @return boolean
 	 */
@@ -44,11 +44,11 @@ class Tx_Messenger_Validator_Email {
 		foreach ($emails as $email => $name) {
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				$message = sprintf('Email provided is not valid, given value "%s"', $email);
-				throw new Tx_Messenger_Exception_InvalidEmailFormatException($message, 1350297165);
+				throw new \TYPO3\CMS\Messenger\Exception\InvalidEmailFormatException($message, 1350297165);
 			}
 			if (strlen($name) <= 0) {
 				$message = sprintf('Name should not be empty, given value "%s"', $name);
-				throw new Tx_Messenger_Exception_InvalidEmailFormatException($message, 1350297170);
+				throw new \TYPO3\CMS\Messenger\Exception\InvalidEmailFormatException($message, 1350297170);
 			}
 		}
 		return TRUE;

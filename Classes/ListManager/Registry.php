@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ListManager_Registry implements t3lib_Singleton {
+class Registry implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * @var array
@@ -41,10 +42,10 @@ class Tx_Messenger_ListManager_Registry implements t3lib_Singleton {
 	/**
 	 * Get an instance of a list manager interface
 	 *
-	 * @return Tx_Messenger_ListManager_Registry
+	 * @return \TYPO3\CMS\Messenger\ListManager\Registry
 	 */
 	public static function getInstance() {
-		return t3lib_div::makeInstance('Tx_Messenger_ListManager_Registry');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\ListManager\Registry');
 	}
 
 	/**

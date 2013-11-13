@@ -25,21 +25,21 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_ListManager_Registry.
+ * Test case for class \TYPO3\CMS\Messenger\ListManager\Registry.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_ListManager_RegistryTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class RegistryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_ListManager_Registry
+	 * @var \TYPO3\CMS\Messenger\ListManager\Registry
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_ListManager_Registry();
+		$this->fixture = new \TYPO3\CMS\Messenger\ListManager\Registry();
 	}
 
 	public function tearDown() {

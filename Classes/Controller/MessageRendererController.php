@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -29,14 +29,14 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_MessageRendererController extends Tx_Extbase_MVC_Controller_ActionController {
+class MessageRendererController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @param Tx_Messenger_Domain_Model_MessageTemplate $messageTemplate
+	 * @param \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 * @param array $markers
 	 * @return strong
 	 */
-	public function renderAction(Tx_Messenger_Domain_Model_MessageTemplate $messageTemplate, $markers = array()) {
+	public function renderAction(\TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate, $markers = array()) {
 
 		/** @var Tx_Fluid_View_StandaloneView $emailView */
 		$emailView = $this->objectManager->create('Tx_Fluid_View_StandaloneView');

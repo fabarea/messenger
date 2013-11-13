@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
@@ -32,7 +32,7 @@
  *
  */
 
-class Tx_Messenger_Strategy_Html2Text_LynxStrategy implements Tx_Messenger_Strategy_Html2Text_StrategyInterface {
+class LynxStrategy implements \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface {
 
 	/**
 	 * @var string
@@ -42,7 +42,7 @@ class Tx_Messenger_Strategy_Html2Text_LynxStrategy implements Tx_Messenger_Strat
 	/**
 	 * Constructor
 	 *
-	 * @return Tx_Messenger_Strategy_Html2Text_LynxStrategy
+	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy
 	 */
 	public function __construct() {
 		$this->lynx = $this->getLynx();

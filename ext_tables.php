@@ -3,12 +3,12 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-if (TYPO3_MODE === 'BE' && Tx_Messenger_Utility_Configuration::getInstance()->get('enableBeModule')) {
+if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('enableBeModule')) {
 
 	/**
 	 * Registers a Backend Module
 	 */
-	Tx_Extbase_Utility_Extension::registerModule(
+	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 		$_EXTKEY,
 		'user',	 // Make module a submodule of 'user'
 		'm1',	// Submodule key
@@ -27,10 +27,11 @@ if (TYPO3_MODE === 'BE' && Tx_Messenger_Utility_Configuration::getInstance()->ge
 
 }
 
-t3lib_extMgm::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Send a message to a group of people');
 
-t3lib_extMgm::addLLrefForTCAdescr('tx_messenger_domain_model_sentmessage', 'EXT:messenger/Resources/Private/Language/locallang_csh_tx_messenger_domain_model_sentmessage.xlf');
-t3lib_extMgm::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Send a message to a group of people');
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_messenger_domain_model_sentmessage', 'EXT:messenger/Resources/Private/Language/locallang_csh_tx_messenger_domain_model_sentmessage.xlf');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
 $TCA['tx_messenger_domain_model_sentmessage'] = array(
 	'ctrl' => array(
 		'title'	=> 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage',
@@ -46,12 +47,12 @@ $TCA['tx_messenger_domain_model_sentmessage'] = array(
 			'disabled' => 'hidden',
 		),
 		'searchFields' => 'content,',
-		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/SentMessage.php',
-		'iconfile' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.gif'
+		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/SentMessage.php',
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.gif'
 	),
 );
 
-t3lib_extMgm::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
 $TCA['tx_messenger_domain_model_messagetemplate'] = array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
@@ -73,14 +74,14 @@ $TCA['tx_messenger_domain_model_messagetemplate'] = array(
 			'disabled' => 'hidden'
 		),
 		'searchFields' => 'identifier, subject,body,',
-		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/MessageTemplate.php',
+		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/MessageTemplate.php',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagetemplate',
 		),
 	),
 );
 
-t3lib_extMgm::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
 $TCA['tx_messenger_domain_model_messagelayout'] = array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout',
@@ -100,7 +101,7 @@ $TCA['tx_messenger_domain_model_messagelayout'] = array(
 			'disabled' => 'hidden'
 		),
 		'searchFields' => 'identifier, content,',
-		'dynamicConfigFile' => t3lib_extMgm::extPath($_EXTKEY) . 'Configuration/TCA/MessageLayout.php',
+		'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/MessageLayout.php',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagelayout',
 		),
@@ -108,8 +109,8 @@ $TCA['tx_messenger_domain_model_messagelayout'] = array(
 );
 
 $icons = array(
-	'messagetemplate' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.gif',
-	'messagelayout' => t3lib_extMgm::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
+	'messagetemplate' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.gif',
+	'messagelayout' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
 );
 t3lib_SpriteManager::addSingleIcons($icons, $_EXTKEY);
 

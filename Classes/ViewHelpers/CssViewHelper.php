@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_CssViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class CssViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Compute a CSS tag and render it
@@ -47,10 +48,10 @@ class Tx_Messenger_ViewHelpers_CssViewHelper extends Tx_Fluid_Core_ViewHelper_Ab
 		}
 
 		if (TYPO3_MODE === 'FE') {
-			$extPath = t3lib_extMgm::extPath($extKey);
+			$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey);
 			$extRelPath = substr($extPath, strlen(PATH_site));
 		} else {
-			$extRelPath = t3lib_extMgm::extRelPath($extKey);
+			$extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($extKey);
 		}
 
 		return sprintf('<link href="%s%s%s" rel="stylesheet" />', $extRelPath, $pathInsideExt, $name);

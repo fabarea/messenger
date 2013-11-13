@@ -1,10 +1,11 @@
 <?php
+namespace TYPO3\CMS\Messenger\Utility;
 /**
  * Class to handle cURL requests
  *
  * @author Cyril Mazur    www.cyrilmazur.com    twitter.com/CyrilMazur    facebook.com/CyrilMazur
  */
-class Tx_Messenger_Utility_Crawler {
+class Crawler {
 
 	/**
 	 * Contains the vars to send by POST

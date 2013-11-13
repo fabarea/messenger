@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Domain_Model_MessageLayout.
+ * Test case for class \TYPO3\CMS\Messenger\Domain\Model\MessageLayout.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -35,15 +35,15 @@
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Domain_Model_MessageLayoutTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class MessageLayoutTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Domain_Model_MessageLayout
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Domain_Model_MessageLayout();
+		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\MessageLayout();
 	}
 
 	public function tearDown() {

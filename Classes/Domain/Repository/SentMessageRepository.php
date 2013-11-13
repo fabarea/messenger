@@ -1,10 +1,10 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -31,7 +31,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Domain_Repository_SentMessageRepository extends Tx_Extbase_Persistence_Repository {
+class SentMessageRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 }
 ?>

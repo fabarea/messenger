@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Server {
+class Server {
 
 	/**
 	 * Return a host prepend with the protocol
@@ -38,7 +39,7 @@ class Tx_Messenger_Utility_Server {
 	 * @return string
 	 */
 	public static function getHostAndProtocol() {
-		return t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
 	}
 }
 

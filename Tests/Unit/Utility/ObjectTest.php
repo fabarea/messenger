@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Utility_Object.
+ * Test case for class TYPO3\CMS\Messenger\Utility\Object.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -35,7 +35,7 @@
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Utility_ObjectTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function setUp() {
 	}
@@ -49,7 +49,7 @@ class Tx_Messenger_Utility_ObjectTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	public function stdClassObjectReturnsAnArrayHavingKeyFoo() {
 		$mock = new stdClass();
 		$mock->foo = uniqid();
-		$actual = Tx_Messenger_Utility_Object::toArray($mock);
+		$actual = TYPO3\CMS\Messenger\Utility\Object::toArray($mock);
 		$this->assertArrayHasKey('foo', $actual);
 	}
 
@@ -60,7 +60,7 @@ class Tx_Messenger_Utility_ObjectTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 		$expected = uniqid();
 		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
 		$fakeUser->setName($expected);
-		$actual = Tx_Messenger_Utility_Object::toArray($fakeUser);
+		$actual = TYPO3\CMS\Messenger\Utility\Object::toArray($fakeUser);
 		$this->assertSame($expected, $actual['name']);
 	}
 

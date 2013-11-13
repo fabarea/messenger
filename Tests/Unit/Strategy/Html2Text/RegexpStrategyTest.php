@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Strategy_Html2Text_RegexpStrategy.
+ * Test case for class \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -35,15 +35,15 @@
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Strategy_Html2Text_RegexpStrategyTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class RegexpStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Strategy_Html2Text_RegexpStrategy
+	 * @var \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Strategy_Html2Text_RegexpStrategy();
+		$this->fixture = new \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy();
 	}
 
 	public function tearDown() {

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\QueryElement;
 /***************************************************************
 *  Copyright notice
 *
@@ -27,7 +28,7 @@
  *
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_QueryElement_Order  {
+class Order  {
 
 	/**
 	 * The orderings

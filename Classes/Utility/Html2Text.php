@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
  *  Copyright notice
  *
@@ -32,10 +32,10 @@
  *
  */
 
-class Tx_Messenger_Utility_Html2Text implements t3lib_Singleton {
+class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
-	 * @var Tx_Messenger_Strategy_Html2Text_StrategyInterface
+	 * @var \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	protected $converter;
 
@@ -47,20 +47,20 @@ class Tx_Messenger_Utility_Html2Text implements t3lib_Singleton {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return Tx_Messenger_Utility_Html2Text
+	 * @return \TYPO3\CMS\Messenger\Utility\Html2Text
 	 */
 	static public function getInstance() {
-		return t3lib_div::makeInstance('Tx_Messenger_Utility_Html2Text');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Html2Text');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return Tx_Messenger_Utility_Html2Text
+	 * @return \TYPO3\CMS\Messenger\Utility\Html2Text
 	 */
 	public function __construct() {
-		$this->possibleConverters[] = t3lib_div::makeInstance('Tx_Messenger_Strategy_Html2Text_LynxStrategy');
-		$this->possibleConverters[] = t3lib_div::makeInstance('Tx_Messenger_Strategy_Html2Text_RegexpStrategy');
+		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy');
+		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy');
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Tx_Messenger_Utility_Html2Text implements t3lib_Singleton {
 	/**
 	 * Find the best suitable converter
 	 *
-	 * @return Tx_Messenger_Strategy_Html2Text_StrategyInterface
+	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	public function findBestConverter() {
 
@@ -102,15 +102,15 @@ class Tx_Messenger_Utility_Html2Text implements t3lib_Singleton {
 	/**
 	 * Set strategy
 	 *
-	 * @param Tx_Messenger_Strategy_Html2Text_StrategyInterface $converter
+	 * @param \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $converter
 	 * @return void
 	 */
-	public function setConverter(Tx_Messenger_Strategy_Html2Text_StrategyInterface $converter) {
+	public function setConverter(\TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $converter) {
 		$this->converter = $converter;
 	}
 
 	/**
-	 * @return Tx_Messenger_Strategy_Html2Text_StrategyInterface
+	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	public function getConverter() {
 		return $this->converter;
@@ -131,7 +131,7 @@ class Tx_Messenger_Utility_Html2Text implements t3lib_Singleton {
 	}
 
 	/**
-	 * @param Tx_Messenger_Strategy_Html2Text_StrategyInterface $possibleConverter
+	 * @param \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $possibleConverter
 	 */
 	public function addPossibleConverter($possibleConverter) {
 		$this->possibleConverters[] = $possibleConverter;

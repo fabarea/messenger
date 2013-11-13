@@ -1,5 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
-      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers"
+      xmlns:m="http://typo3.org/ns/TYPO3/CMS/Messenger/ViewHelpers">
 
 <f:layout name="Default"/>
 
@@ -46,7 +47,7 @@
 								<f:link.action class=""
 								               action="save"
 								               arguments="{messageTemplate: '{messageTemplate.uid}'}"></f:link.action>
-								<f:link.action class="" action="save" arguments="{messageTemplate: '{messageTemplate.uid}'}"><m:sprite name="status-status-checked"/></f:link.action>
+								<f:link.action class="" action="save" arguments="{messageTemplate: '{messageTemplate.uid}'}"><m:sprite name="actions-edit-add"/></f:link.action>
 							</td>
 						</tr>
 					</f:for>
@@ -59,4 +60,3 @@
 
 </f:section>
 </html>
-{namespace m=Tx_Messenger_ViewHelpers}

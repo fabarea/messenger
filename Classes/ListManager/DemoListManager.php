@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -27,7 +28,7 @@
  *
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface_ListableInterface {
+class DemoListManager implements \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface {
 
 	/**
 	 * @var array
@@ -61,9 +62,7 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	);
 
 	/**
-	 * Constructor
-	 *
-	 * @return Tx_Messenger_ListManager_DemoListManager
+	 * @return \TYPO3\CMS\Messenger\ListManager\DemoListManager
 	 */
 	public function __construct(){
 		foreach (array(1, 2, 3, 4) as $uid) {
@@ -83,13 +82,13 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	 * Returns a set of recipients.
 	 * Notice, it is a very "cheap" algorithm for filtering a set of data for demo purposes
 	 *
-	 * @param Tx_Messenger_QueryElement_Matcher $matcher
-	 * @param Tx_Messenger_QueryElement_Order $order
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
 	 * @param int $limit
 	 * @param int $offset
 	 * @return array
 	 */
-	public function findBy(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, $limit = NULL, $offset = NULL) {
+	public function findBy(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL) {
 
 		$records = $this->records;
 		$recordSet1 = $recordSet2 = $recordSet3 = array(1, 2, 3, 4);
@@ -154,13 +153,13 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 	/**
 	 * Get data about a particular record.
 	 *
-	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
+	 * @throws \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException
 	 * @param int $uid an identifier for the record.
 	 * @return array
 	 */
 	public function findByUid($uid) {
 		if (empty($this->records[$uid])) {
-			throw new Tx_Messenger_Exception_MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
+			throw new \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
 		}
 		return $this->records[$uid];
 	}
@@ -187,8 +186,8 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 			'group' => array(
 				'values' => array(
 					'?' => sprintf('%s %s',
-						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),
-						Tx_Extbase_Utility_Localization::translate('group', 'messenger')
+						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('select', 'messenger'),
+						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('group', 'messenger')
 					),
 					'foo' => 'foo',
 					'bar' => 'bar',
@@ -199,8 +198,8 @@ class Tx_Messenger_ListManager_DemoListManager implements Tx_Messenger_Interface
 				#'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:status',
 				'values' => array(
 					'?' => sprintf('%s %s',
-						Tx_Extbase_Utility_Localization::translate('select', 'messenger'),
-						Tx_Extbase_Utility_Localization::translate('status', 'messenger')
+						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('select', 'messenger'),
+						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('status', 'messenger')
 					),
 					1 => 'status 1',
 					2 => 'status 2',

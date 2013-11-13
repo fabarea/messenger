@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers\Table;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_Table_HeaderViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class HeaderViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Render a message in development context.
@@ -42,13 +43,13 @@ class Tx_Messenger_ViewHelpers_Table_HeaderViewHelper extends Tx_Fluid_Core_View
 	public function render() {
 		$result = '';
 		$template = '<th %s %s>%s</th>';
-		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
+		$tableHeaders = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			$result .= sprintf($template . PHP_EOL,
 				$this->getStyleAttribute($tableHeader),
 				empty($tableHeader['class']) ? '' : $tableHeader['class'],
-				Tx_Extbase_Utility_Localization::translate($tableHeader['label'], '')
+				\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($tableHeader['label'], '')
 			);
 		}
 		return $result;

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers\Table;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Render a row of a table given an object as input.
@@ -42,7 +43,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 
 		$result = '';
 		$template = '<td %s %s>%s</td>';
-		$tableHeaders = Tx_Messenger_ListManager_Factory::getInstance()->getFields();
+		$tableHeaders = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			if (is_array($object)) {
@@ -63,14 +64,14 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	/**
 	 * Get a value for an array given a key.
 	 *
-	 * @throws Tx_Messenger_Exception_UnknownMethodException
+	 * @throws \TYPO3\CMS\Messenger\Exception\UnknownMethodException
 	 * @param array $array
 	 * @param string $key
 	 * @return string
 	 */
 	protected function getValueForArray($array, $key) {
 		if (! isset($array[$key])) {
-			throw new Tx_Messenger_Exception_UnknownMethodException('Array does not contain a key: ' . $key, 1357668817);
+			throw new \TYPO3\CMS\Messenger\Exception\UnknownMethodException('Array does not contain a key: ' . $key, 1357668817);
 		}
 		return $array[$key];
 	}
@@ -78,7 +79,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	/**
 	 * Get a value for an object given a property name.
 	 *
-	 * @throws Tx_Messenger_Exception_UnknownMethodException
+	 * @throws \TYPO3\CMS\Messenger\Exception\UnknownMethodException
 	 * @param Object $object
 	 * @param string $propertyName
 	 * @return string
@@ -86,7 +87,7 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelper extends Tx_Fluid_Core_ViewHel
 	protected function getValueForObject($object, $propertyName) {
 		$getter = 'get' . ucfirst($propertyName);
 		if (! method_exists($object, $getter)) {
-			throw new Tx_Messenger_Exception_UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
+			throw new \TYPO3\CMS\Messenger\Exception\UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
 		}
 		return call_user_func(array($object, $getter));
 	}

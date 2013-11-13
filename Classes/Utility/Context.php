@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Context implements t3lib_Singleton {
+class Context implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * @var string
@@ -50,21 +51,21 @@ class Tx_Messenger_Utility_Context implements t3lib_Singleton {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return Tx_Messenger_Utility_Context
+	 * @return \TYPO3\CMS\Messenger\Utility\Context
 	 */
 	static public function getInstance() {
-		return t3lib_div::makeInstance('Tx_Messenger_Utility_Context');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Context');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return Tx_Messenger_Utility_Context
+	 * @return \TYPO3\CMS\Messenger\Utility\Context
 	 */
 	public function __construct() {
-		$settings = Tx_Messenger_Utility_Configuration::getInstance()->getSettings();
+		$settings = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->getSettings();
 		$this->name = empty($settings['context']) ? 'Development' : $settings['context'];
-		$this->sendingEmailContexts = t3lib_div::trimExplode(',', $settings['listOfContextsSendingEmails']);
+		$this->sendingEmailContexts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $settings['listOfContextsSendingEmails']);
 	}
 
 	/**

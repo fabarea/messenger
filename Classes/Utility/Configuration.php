@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
+class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
 	 * @var array
@@ -45,10 +46,10 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return Tx_Messenger_Utility_Configuration
+	 * @return \TYPO3\CMS\Messenger\Utility\Configuration
 	 */
 	static public function getInstance() {
-		return t3lib_div::makeInstance('Tx_Messenger_Utility_Configuration');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Configuration');
 	}
 
 	/**
@@ -57,8 +58,8 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 	 * @var array
 	 */
 	protected $defaultSettings = array(
-		'tableStructure' => 'Tx_Messenger_ListManager_DemoListManager',
-		'tableStructureFallBack' => 'Tx_Messenger_ListManager_DemoListManager',
+		'tableStructure' => 'TYPO3\CMS\Messenger\ListManager\DemoListManager',
+		'tableStructureFallBack' => 'TYPO3\CMS\Messenger\ListManager\DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
 		'senderName' => 'John Doe',
@@ -73,7 +74,7 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 	/**
 	 * Constructor
 	 *
-	 * @return Tx_Messenger_Utility_Configuration
+	 * @return \TYPO3\CMS\Messenger\Utility\Configuration
 	 */
 	public function __construct() {
 		$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extensionKey]);
@@ -82,7 +83,7 @@ class Tx_Messenger_Utility_Configuration implements t3lib_Singleton {
 		if (! is_array($settings)) {
 			$settings = array();
 		}
-		$this->settings = t3lib_div::array_merge($this->defaultSettings, $settings);
+		$this->settings = \TYPO3\CMS\Core\Utility\GeneralUtility::array_merge($this->defaultSettings, $settings);
 	}
 
 	/**

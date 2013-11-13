@@ -1,10 +1,10 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
- *  
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -31,22 +31,22 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_SentMessageController extends Tx_Extbase_MVC_Controller_ActionController {
+class SentMessageController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
 	 * sentMessageRepository
 	 *
-	 * @var Tx_Messenger_Domain_Repository_SentMessageRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository
 	 */
 	protected $sentMessageRepository;
 
 	/**
 	 * injectSentMessageRepository
 	 *
-	 * @param Tx_Messenger_Domain_Repository_SentMessageRepository $sentMessageRepository
+	 * @param \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository
 	 * @return void
 	 */
-	public function injectSentMessageRepository(Tx_Messenger_Domain_Repository_SentMessageRepository $sentMessageRepository) {
+	public function injectSentMessageRepository(\TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository) {
 		$this->sentMessageRepository = $sentMessageRepository;
 	}
 

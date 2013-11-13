@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Domain\Validator;
 /***************************************************************
  *  Copyright notice
  *
@@ -24,12 +25,12 @@
  ***************************************************************/
 
 /**
- * Validator for Tx_Messenger_QueryElement_Matcher
+ * Validator for \TYPO3\CMS\Messenger\QueryElement\Matcher
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class Tx_Messenger_Domain_Validator_MatcherValidator extends Tx_Extbase_Validation_Validator_AbstractValidator {
+class MatcherValidator extends \TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Remove matching value containing "?" which stands for nothing to match.

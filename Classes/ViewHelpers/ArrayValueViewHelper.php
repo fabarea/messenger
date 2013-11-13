@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_ArrayValueViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class ArrayValueViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Return a key from an array

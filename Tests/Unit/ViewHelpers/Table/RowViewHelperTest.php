@@ -31,7 +31,7 @@
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_ViewHelpers_Table_RowViewHelperTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class RowViewHelperTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var Tx_Messenger_ViewHelpers_Table_RowViewHelper
@@ -50,10 +50,10 @@ class Tx_Messenger_ViewHelpers_Table_RowViewHelperTest extends Tx_Extbase_Tests_
 	 * @test
 	 */
 	public function renderReturnsStringThatContainsThTags() {
-		$recipients = Tx_Messenger_ListManager_Factory::getInstance()->findBy();
+		$recipients = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->findBy();
 		$actual = $this->fixture->render($recipients[0]);
 
-		$expected = count(Tx_Messenger_ListManager_Factory::getInstance()->getFields());
+		$expected = count(\TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields());
 		$this->assertEquals($expected, preg_match_all('/<td/isU', $actual, $matches));
 	}
 

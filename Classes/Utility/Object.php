@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Utility_Object {
+class Object {
 
 	/**
 	 * Convert an object to an array using different strategies. The first strategy who succeeds breaks the loop.

@@ -24,10 +24,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class Tx_Messenger_Utility_Html2Text.
+ * Test case for class \TYPO3\CMS\Messenger\Utility\Html2Text.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -37,10 +37,10 @@ require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Utility_Html2TextTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Utility_Html2Text
+	 * @var \TYPO3\CMS\Messenger\Utility\Html2Text
 	 */
 	protected $fixture;
 
@@ -55,7 +55,7 @@ class Tx_Messenger_Utility_Html2TextTest extends Tx_Extbase_Tests_Unit_BaseTestC
 	protected $markers;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Utility_Html2Text();
+		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Html2Text();
 	}
 
 	public function tearDown() {
@@ -69,7 +69,7 @@ class Tx_Messenger_Utility_Html2TextTest extends Tx_Extbase_Tests_Unit_BaseTestC
 
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
-		$converter = new Tx_Messenger_Strategy_Html2Text_RegexpStrategy();
+		$converter = new \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy();
 		$this->fixture->setConverter($converter);
 
 		$this->assertEquals($expected, $this->fixture->convert($input));
@@ -81,7 +81,7 @@ class Tx_Messenger_Utility_Html2TextTest extends Tx_Extbase_Tests_Unit_BaseTestC
 	public function convertReturnsTextWithLynxConverter() {
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
-		$converter = new Tx_Messenger_Strategy_Html2Text_LynxStrategy();
+		$converter = new \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy();
 		$lynxPath = '/opt/local/bin/lynx'; // @to-improve corresponds to Fabien's environment
 		$converter->setLynx($lynxPath);
 		$this->fixture->setConverter($converter);
@@ -94,7 +94,7 @@ class Tx_Messenger_Utility_Html2TextTest extends Tx_Extbase_Tests_Unit_BaseTestC
 	 */
 	public function findBestConverterReturnsRegexpConverter() {
 		$converter = $this->fixture->findBestConverter();
-		$this->assertTrue($converter instanceof Tx_Messenger_Strategy_Html2Text_RegexpStrategy);
+		$this->assertTrue($converter instanceof \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy);
 	}
 }
 ?>

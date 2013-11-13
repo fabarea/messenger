@@ -26,15 +26,15 @@ List Manager
 In order to have a table of recipients displayed in the BE module a "list manager" must be provided where it is defined
 what sort of data should be displayed. A list manager must implement a listable interface. As example,
 a `Demo List Manager` is provided in the extension which can be taken as starting point for a custom implementation. The file is at
-``Tx_Messenger_ListManager_DemoListManager``
+``\TYPO3\CMS\Messenger\ListManager\DemoListManager``
 
 A list manager must be registered in ``ext_localconf.php`` as follows::
 
 	# Register a new list manager for demo purposes.
-	Tx_Messenger_ListManager_Registry::getInstance()->add(
+	\TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->add(
 
 		# Corresponds to a class name.
-		'Tx_Messenger_ListManager_DemoListManager',
+		'TYPO3\CMS\Messenger\ListManager\DemoListManager',
 
 		# A string or label describing the recipients (for the BE module needs).
 		'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
@@ -75,8 +75,8 @@ Usage::
 	  'last_name' => 'Doe',
 	);
 
-	$objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_Manager');
-	$message = $objectManager->get('Tx_Messenger_Domain_Model_Message');
+	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Extbase_Object_Manager');
+	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
 	$message->setMessageTemplate($identifierString)
 		->setRecipients($arrayOfRecipients)
 		->setMarkers($arrayOfMarkers)
@@ -106,7 +106,7 @@ Todo (long term)
 
 ::
 
-	$message = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_Message');
+	$message = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Model\Message');
 	$message->setIdentifier($identifierString)
 		->setRecipients($arrayOfRecipients)
 		->setMarkers($arrayOfMarkers)

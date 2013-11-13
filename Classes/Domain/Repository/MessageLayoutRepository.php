@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
@@ -24,7 +24,7 @@
  *
  * @todo check how to handle language flag.
  */
-class Tx_Messenger_Domain_Repository_MessageLayoutRepository extends Tx_Extbase_Persistence_Repository {
+class MessageLayoutRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	/**
 	 * Finds an object matching the given identifier.
@@ -51,7 +51,7 @@ class Tx_Messenger_Domain_Repository_MessageLayoutRepository extends Tx_Extbase_
 //	 * Finds a layout record by its identifier.
 //	 *
 //	 * @param string $identifier
-//	 * @return Tx_Messenger_Domain_Model_MessageLayout or NULL if no Layout object is found
+//	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageLayout or NULL if no Layout object is found
 //	 */
 //	public function findByIdentifier($identifier) {
 //
@@ -62,12 +62,12 @@ class Tx_Messenger_Domain_Repository_MessageLayoutRepository extends Tx_Extbase_
 //
 //		// Translates record and create the Layout object
 //		if (class_exists('tx_overlays')) {
-//			$language = Tx_Messenger_Utility_Context::getInstance()->getLanguage();
+//			$language = \TYPO3\CMS\Messenger\Utility\Context::getInstance()->getLanguage();
 //			$records = tx_overlays::overlayRecordSet($tableName, $records, intval($language));
 //		}
 //		$layoutObject = NULL;
 //		if (!empty($records[0])) {
-//			$layoutObject = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_MessageLayout', $records[0]);
+//			$layoutObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Model\MessageLayout', $records[0]);
 //		}
 //		return $layoutObject;
 //	}

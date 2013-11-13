@@ -24,10 +24,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class Tx_Messenger_Domain_Repository_MessageTemplateRepository.
+ * Test case for class \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -36,23 +36,23 @@ require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
  * @author Fabien Udriot <fudriot@cobweb.ch>
  * @todo fix unit tests
  */
-class Tx_Messenger_Domain_Repository_MessageTemplateRepositoryTest extends Tx_Messenger_BaseTest {
+class MessageTemplateRepositoryTest extends Tx_Messenger_BaseTest {
 
 	/**
-	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
 	 */
 	private $fixture;
 
 
 	public function setUp() {
 		parent::setUp();
-		$this->fixture = new Tx_Messenger_Domain_Repository_MessageTemplateRepository();
+		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->fixture);
-		Tx_Messenger_Utility_Context::getInstance()->setLanguage(0);
+		TYPO3\CMS\Messenger\Utility\Context::getInstance()->setLanguage(0);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Tx_Messenger_Domain_Repository_MessageTemplateRepositoryTest extends Tx_Me
 	 */
 	public function findByIdentifierReturnsTemplateObject() {
 		$templateObject = $this->fixture->findByIdentifier($this->identifier);
-		$this->assertEquals('Tx_Messenger_Domain_Model_MessageTemplate', get_class($templateObject));
+		$this->assertEquals('TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', get_class($templateObject));
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Tx_Messenger_Domain_Repository_MessageTemplateRepositoryTest extends Tx_Me
 	public function canFindByIdentifierForSysLanguageEqualsOne() {
 		// Fix me: does not make sense to run the test if library overlays is not loaded.
 		if (class_exists('tx_overlays')) {
-			Tx_Messenger_Utility_Context::getInstance()->setLanguage(1);
+			TYPO3\CMS\Messenger\Utility\Context::getInstance()->setLanguage(1);
 			$templateObject = $this->fixture->findByIdentifier($this->identifier);
 			$this->assertEquals($this->subjectTranslated, $templateObject->getSubject());
 		}

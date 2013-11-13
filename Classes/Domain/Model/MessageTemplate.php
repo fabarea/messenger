@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +31,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Domain_Model_MessageTemplate extends Tx_Extbase_DomainObject_AbstractEntity {
+class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
 	 * @var string
@@ -60,7 +60,7 @@ class Tx_Messenger_Domain_Model_MessageTemplate extends Tx_Extbase_DomainObject_
 	protected $layout;
 
 	/**
-	 * @var Tx_Messenger_Domain_Repository_MessageLayoutRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
 	 */
 	protected $layoutRepository;
 
@@ -71,7 +71,7 @@ class Tx_Messenger_Domain_Model_MessageTemplate extends Tx_Extbase_DomainObject_
 		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
 		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
 		$this->body = !empty($data['body']) ? $data['body'] : '';
-		$this->layoutRepository = t3lib_div::makeInstance('Tx_Messenger_Domain_Repository_MessageLayoutRepository');
+		$this->layoutRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository');
 	}
 
 	/**
@@ -153,21 +153,21 @@ class Tx_Messenger_Domain_Model_MessageTemplate extends Tx_Extbase_DomainObject_
 	 * @return string
 	 */
 	protected function getMarkerTemplate() {
-		$marker = Tx_Messenger_Utility_Configuration::getInstance()->get('markerReplacedInLayout');
+		$marker = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('markerReplacedInLayout');
 		return sprintf('{%s}', $marker);
 	}
 
 	/**
-	 * @throws Tx_Messenger_Exception_RecordNotFoundException
+	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 * @return string
 	 */
 	public function getLayoutContent() {
 
-		/** @var $layout Tx_Messenger_Domain_Model_MessageLayout */
+		/** @var $layout \TYPO3\CMS\Messenger\Domain\Model\MessageLayout */
 		$layout = $this->layoutRepository->findByIdentifier($this->layout);
 		if (!$layout) {
 			$message = sprintf('No Email Layout record was found for identity "%s"', $this->layout);
-			throw new Tx_Messenger_Exception_RecordNotFoundException($message, 1350124207);
+			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
 		}
 		return $layout->getContent();
 	}

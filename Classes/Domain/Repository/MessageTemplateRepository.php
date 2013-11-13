@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
@@ -30,7 +30,7 @@
  *
  * @todo check how to handle language flag.
  */
-class Tx_Messenger_Domain_Repository_MessageTemplateRepository extends Tx_Extbase_Persistence_Repository {
+class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	/**
 	 * Initialize Repository
@@ -65,7 +65,7 @@ class Tx_Messenger_Domain_Repository_MessageTemplateRepository extends Tx_Extbas
 //	 * Finds a template record by its identifier.
 //	 *
 //	 * @param string $identifier
-//	 * @return Tx_Messenger_Domain_Model_MessageTemplate or NULL if no Template object is found
+//	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate or NULL if no Template object is found
 //	 */
 //	public function findByIdentifier($identifier) {
 //
@@ -76,12 +76,12 @@ class Tx_Messenger_Domain_Repository_MessageTemplateRepository extends Tx_Extbas
 //
 //		// Translates record and create the Template object
 //		if (class_exists('tx_overlays')) {
-//			$language = Tx_Messenger_Utility_Context::getInstance()->getLanguage();
+//			$language = \TYPO3\CMS\Messenger\Utility\Context::getInstance()->getLanguage();
 //			$records = tx_overlays::overlayRecordSet($tableName, $records, intval($language));
 //		}
 //		$templateObject = NULL;
 //		if (! empty($records[0])) {
-//			$templateObject = t3lib_div::makeInstance('Tx_Messenger_Domain_Model_MessageTemplate', $records[0]);
+//			$templateObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $records[0]);
 //		}
 //		return $templateObject;
 //	}

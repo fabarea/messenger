@@ -25,21 +25,21 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Utility_ConfigurationTest.
+ * Test case for class \TYPO3\CMS\Messenger\Utility\ConfigurationTest.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_Utility_ConfigurationTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class ConfigurationTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Utility_Configuration
+	 * @var \TYPO3\CMS\Messenger\Utility\Configuration
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Utility_Configuration();
+		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Configuration();
 	}
 
 	public function tearDown() {

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers\Be;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_Be_UserPreferenceViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class UserPreferenceViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Return a user preference given a key.
@@ -39,7 +40,7 @@ class Tx_Messenger_ViewHelpers_Be_UserPreferenceViewHelper extends Tx_Fluid_Core
 	 * @return string
 	 */
 	public function render($key) {
-		return (string) Tx_Messenger_Utility_BeUserPreference::get($key);
+		return (string) \TYPO3\CMS\Messenger\Utility\BeUserPreference::get($key);
 	}
 }
 

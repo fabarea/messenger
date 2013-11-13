@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\Validator;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,15 +31,15 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_Validator_ListManagerValidator {
+class ListManagerValidator {
 
 	/**
 	 * Validate a list manager.
 	 *
-	 * @param Tx_Messenger_Interface_ListableInterface $listManager
+	 * @param \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface $listManager
 	 * @return void
 	 */
-	public function validate(Tx_Messenger_Interface_ListableInterface $listManager) {
+	public function validate(\TYPO3\CMS\Messenger\MessengerInterface\ListableInterface $listManager) {
 		$this->validateFields($listManager);
 		$this->validateMapping($listManager);
 
@@ -48,15 +49,15 @@ class Tx_Messenger_Validator_ListManagerValidator {
 	/**
 	 * Validate the mapping.
 	 *
-	 * @param Tx_Messenger_Interface_ListableInterface $listManager
-	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
+	 * @param \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface $listManager
+	 * @throws \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException
 	 */
 	protected function validateMapping($listManager) {
 		$mapping = $listManager->getMapping();
 
 		foreach (array('email', 'name') as $value) {
 			if (!isset($mapping[$value])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException(sprintf('mapping looks not correct, missing key "%s".', $value), 1370878760);
+				throw new \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException(sprintf('mapping looks not correct, missing key "%s".', $value), 1370878760);
 			}
 		}
 	}
@@ -64,24 +65,24 @@ class Tx_Messenger_Validator_ListManagerValidator {
 	/**
 	 * Validate the fields.
 	 *
-	 * @param Tx_Messenger_Interface_ListableInterface $listManager
-	 * @throws Tx_Messenger_Exception_MissingKeyInArrayException
-	 * @throws Tx_Messenger_Exception_EmptyArrayException
+	 * @param \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface $listManager
+	 * @throws \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException
+	 * @throws \TYPO3\CMS\Messenger\Exception\EmptyArrayException
 	 */
 	protected function validateFields($listManager) {
 		$tableHeaders = $listManager->getFields();
 		if (empty($tableHeaders)) {
-			throw new Tx_Messenger_Exception_EmptyArrayException('Empty array for fields', 1357656665);
+			throw new \TYPO3\CMS\Messenger\Exception\EmptyArrayException('Empty array for fields', 1357656665);
 		}
 
 		foreach ($tableHeaders as $tableHeader) {
 
 			if (empty($tableHeader['fieldName'])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException('fields look not correct, missing key "fieldName".', 1357656663);
+				throw new \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException('fields look not correct, missing key "fieldName".', 1357656663);
 			}
 
 			if (empty($tableHeader['label'])) {
-				throw new Tx_Messenger_Exception_MissingKeyInArrayException('fields look not correct, missing key "label".', 1357656664);
+				throw new \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException('fields look not correct, missing key "label".', 1357656664);
 			}
 		}
 	}

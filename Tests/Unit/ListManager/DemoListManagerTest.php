@@ -25,21 +25,21 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_ListManager_DemoListManager.
+ * Test case for class \TYPO3\CMS\Messenger\ListManager\DemoListManager.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_ListManager_DemoListManagerTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class DemoListManagerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_ListManager_DemoListManager
+	 * @var \TYPO3\CMS\Messenger\ListManager\DemoListManager
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_ListManager_DemoListManager();
+		$this->fixture = new \TYPO3\CMS\Messenger\ListManager\DemoListManager();
 	}
 
 	public function tearDown() {

@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Validator_Email.
+ * Test case for class \TYPO3\CMS\Messenger\Validator\Email.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -35,15 +35,15 @@
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Validator_EmailTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class EmailTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var Tx_Messenger_Validator_Email
+	 * @var \TYPO3\CMS\Messenger\Validator\Email
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Validator_Email();
+		$this->fixture = new \TYPO3\CMS\Messenger\Validator\Email();
 	}
 
 	public function tearDown() {
@@ -68,7 +68,7 @@ class Tx_Messenger_Validator_EmailTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 	/**
 	 * @test
 	 * @dataProvider invalidEmailsProvider
-	 * @expectedException Tx_Messenger_Exception_InvalidEmailFormatException
+	 * @expectedException \TYPO3\CMS\Messenger\Exception\InvalidEmailFormatException
 	 */
 	public function wrongEmailsRaiseException($emails) {
 		$this->fixture->validate($emails);

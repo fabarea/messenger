@@ -25,13 +25,13 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_ListManager_Factory.
+ * Test case for class \TYPO3\CMS\Messenger\ListManager\Factory.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
  * @subpackage media
  */
-class Tx_Messenger_ListManager_FactoryTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class FactoryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function setUp() {
 	}
@@ -43,8 +43,8 @@ class Tx_Messenger_ListManager_FactoryTest extends Tx_Extbase_Tests_Unit_BaseTes
 	 * @test
 	 */
 	public function getInstanceMethodOfTableStructureReturnsAnInstanceOfATableStructureInterface() {
-		$instance = Tx_Messenger_ListManager_Factory::getInstance('Tx_Messenger_ListManager_DemoListManager');
-		$this->assertTrue($instance instanceof Tx_Messenger_Interface_ListableInterface);
+		$instance = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance('TYPO3\CMS\Messenger\ListManager\DemoListManager');
+		$this->assertTrue($instance instanceof \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface);
 	}
 }
 ?>

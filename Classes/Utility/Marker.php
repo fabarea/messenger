@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Utility;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +31,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Utility_Marker {
+class Marker {
 
 	/**
 	 * @var Tx_Fluid_View_StandaloneView
@@ -47,8 +47,8 @@ class Tx_Messenger_Utility_Marker {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->view = t3lib_div::makeInstance('Tx_Fluid_View_StandaloneView');
-		$this->contentObject = t3lib_div::makeInstance('tslib_cObj');
+		$this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Fluid_View_StandaloneView');
+		$this->contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
 	}
 
 	/**
@@ -88,10 +88,10 @@ class Tx_Messenger_Utility_Marker {
 	 * @return array
 	 */
 	protected function getRteConfiguration() {
-		$pageUid = Tx_Messenger_Utility_Configuration::getInstance()->get('rootPageUid');
-		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
+		$pageUid = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('rootPageUid');
+		$sysPageObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
 		$rootLine = $sysPageObj->getRootLine($pageUid);
-		$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
+		$TSObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_tsparser_ext');
 		$TSObj->tt_track = 0;
 		$TSObj->init();
 		$TSObj->runThroughTemplates($rootLine);

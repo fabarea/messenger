@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers\Render;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_Render_DevelopmentMessageViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class DevelopmentMessageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Render a message in development context.
@@ -41,9 +42,9 @@ class Tx_Messenger_ViewHelpers_Render_DevelopmentMessageViewHelper extends Tx_Fl
 	 */
 	public function render() {
 		$value = '';
-		if (Tx_Messenger_Utility_Context::getInstance()->isNotProduction()) {
-			$emails = Tx_Messenger_Utility_Configuration::getInstance()->get('developmentEmails');
-			$label = sprintf(Tx_Extbase_Utility_Localization::translate('development_mode', 'messenger'), $emails);
+		if (\TYPO3\CMS\Messenger\Utility\Context::getInstance()->isNotProduction()) {
+			$emails = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('developmentEmails');
+			$label = sprintf(\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('development_mode', 'messenger'), $emails);
 			$value = sprintf('<span class="label">%s</span>', $label);
 		}
 		return $value;

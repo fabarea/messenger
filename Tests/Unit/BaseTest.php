@@ -33,7 +33,7 @@
  * @subpackage messenger
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_BaseTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class Tx_Messenger_BaseTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var Tx_Phpunit_Framework

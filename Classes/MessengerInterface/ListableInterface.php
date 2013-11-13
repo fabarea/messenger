@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\MessengerInterface;
 /***************************************************************
  *  Copyright notice
  *
@@ -29,7 +29,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-interface Tx_Messenger_Interface_ListableInterface {
+interface ListableInterface {
 
 	/**
 	 * Get fields being displayed in the list.
@@ -41,13 +41,13 @@ interface Tx_Messenger_Interface_ListableInterface {
 	/**
 	 * Returns a set of records.
 	 *
-	 * @param Tx_Messenger_QueryElement_Matcher $matcher
-	 * @param Tx_Messenger_QueryElement_Order $order
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
+	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
 	 * @param int $limit
 	 * @param int $offset
 	 * @return array|Tx_Extbase_Persistence_QueryResultInterface
 	 */
-	public function findBy(Tx_Messenger_QueryElement_Matcher $matcher = NULL, Tx_Messenger_QueryElement_Order $order = NULL, $limit = NULL, $offset = NULL);
+	public function findBy(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL);
 
 	/**
 	 * Get data about a particular record.

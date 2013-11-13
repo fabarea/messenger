@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -29,7 +30,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_JsViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class JsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Compute a JS tag and render it
@@ -46,10 +47,10 @@ class Tx_Messenger_ViewHelpers_JsViewHelper extends Tx_Fluid_Core_ViewHelper_Abs
 		}
 
 		if (TYPO3_MODE === 'FE') {
-			$extPath = t3lib_extMgm::extPath($extKey);
+			$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey);
 			$extRelPath = substr($extPath, strlen(PATH_site));
 		} else {
-			$extRelPath = t3lib_extMgm::extRelPath($extKey);
+			$extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($extKey);
 		}
 
 		return sprintf('<script src="%s%s%s"></script>', $extRelPath, $pathInsideExt, $name);

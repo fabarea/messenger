@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Utility_Marker.
+ * Test case for class \TYPO3\CMS\Messenger\Utility\Marker.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -35,7 +35,7 @@
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class MarkerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var string
@@ -63,7 +63,7 @@ class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	private $markers;
 
 	/**
-	 * @var Tx_Messenger_Utility_Marker
+	 * @var \TYPO3\CMS\Messenger\Utility\Marker
 	 */
 	private $fixture;
 
@@ -77,7 +77,7 @@ class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 			'marker_1' => $this->marker1,
 			'marker_2' => $this->marker2,
 		);
-		$this->fixture = new Tx_Messenger_Utility_Marker();
+		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Marker();
 	}
 
 	public function tearDown() {
@@ -129,7 +129,7 @@ class Tx_Messenger_Utility_MarkerTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	public function getRteConfigurationReturnsANotEmptyArray() {
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Utility_Marker', 'getRteConfiguration'
+			'TYPO3\CMS\Messenger\Utility\Marker', 'getRteConfiguration'
 		);
 
 		$method->setAccessible(TRUE);

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\QueryElement;
 /***************************************************************
  *  Copyright notice
  *
@@ -28,7 +29,7 @@
  *
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_QueryElement_Pager  {
+class Pager  {
 
 	/**
 	 * Total amount of entries

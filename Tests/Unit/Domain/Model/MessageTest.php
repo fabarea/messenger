@@ -24,10 +24,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class Tx_Messenger_Domain_Model_Message.
+ * Test case for class \TYPO3\CMS\Messenger\Domain\Model\Message.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -37,7 +37,7 @@ require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
+class MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @var Tx_Phpunit_Framework
@@ -45,7 +45,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	protected $testingFramework;
 
 	/**
-	 * @var Tx_Messenger_Domain_Model_Message
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	protected $fixture;
 
@@ -77,8 +77,8 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 			'first_name' => uniqid('first_name_'),
 			'last_name' => uniqid('last_name_'),
 		);
-		$this->fixture = new Tx_Messenger_Domain_Model_Message();
-		$this->attachment = t3lib_extMgm::extPath('messenger') . 'Tests/Resources/Sample.pdf';
+		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\Message();
+		$this->attachment = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Resources/Sample.pdf';
 
 		// Compute temporary directory.
 		$temporaryDirectory = PATH_site . 'typo3temp'; // ini_get('upload_tmp_dir');
@@ -129,13 +129,13 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeInt() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
+			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -144,13 +144,13 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageTemplateReturnsMessageTemplateForUidOfTypeString() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
 		);
 
 		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
+			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -159,23 +159,23 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageTemplateReturnsMessageTemplateForIdentifier() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->identifier);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Tx_Messenger_Domain_Model_MessageTemplate', $method->invoke($this->fixture)
+			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
 	/**
 	 * @test
-	 * @expectedException Tx_Messenger_Exception_RecordNotFoundException
+	 * @expectedException \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 */
 	public function setMessageTemplateRaisesException() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'setMessageTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'setMessageTemplate'
 		);
 
 		$method->setAccessible(TRUE);
@@ -205,7 +205,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 		$this->fixture->setRecipients($this->recipients);
 
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getRecipientsForSimulation'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -217,7 +217,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageBodyForSimulationPrependsBodyMessage() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_Message', 'getMessageBodyForSimulation'
+			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -299,7 +299,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @test
-	 * @expectedException Tx_Messenger_Exception_MissingFileException
+	 * @expectedException \TYPO3\CMS\Messenger\Exception\MissingFileException
 	 */
 	public function addAttachmentRaisesAnExceptionWhenFileDoesNotExistToMessage() {
 		$attachment = '/unknown/file.pdf';
@@ -336,7 +336,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
 		$method = $setterName . ucfirst($propertyName);
 		$actual = call_user_func_array(array($this->fixture, $method), array($value));
-		$this->assertTrue($actual instanceof Tx_Messenger_Domain_Model_Message);
+		$this->assertTrue($actual instanceof \TYPO3\CMS\Messenger\Domain\Model\Message);
 	}
 
 	/**
@@ -348,7 +348,7 @@ class Tx_Messenger_Domain_Model_MessageTest extends Tx_Messenger_BaseTest {
 			array('language', NULL),
 			array('layout', NULL),
 			array('markers', NULL),
-			array('attachment', t3lib_extMgm::extPath('messenger') . 'Tests/Resources/Sample.pdf', 'add'),
+			array('attachment', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Resources/Sample.pdf', 'add'),
 		);
 	}
 }

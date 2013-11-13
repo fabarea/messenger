@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
@@ -23,6 +23,7 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  *
@@ -33,7 +34,7 @@
  * @todo remove language handling from the class which should be managed outside - or not?
  *
  */
-class Tx_Messenger_Domain_Model_Message {
+class Message {
 
 	/**
 	 * @var int
@@ -41,7 +42,7 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $uid;
 
 	/**
-	 * @var t3lib_mail_Message
+	 * @var \TYPO3\CMS\Core\Mail\MailMessage
 	 */
 	protected $message;
 
@@ -56,12 +57,12 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $recipients = array();
 
 	/**
-	 * @var Tx_Messenger_Validator_Email
+	 * @var \TYPO3\CMS\Messenger\Validator\Email
 	 */
 	protected $emailValidator;
 
 	/**
-	 * @var Tx_Messenger_Utility_Marker
+	 * @var \TYPO3\CMS\Messenger\Utility\Marker
 	 */
 	protected $markerUtility;
 
@@ -93,12 +94,12 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $attachments = array();
 
 	/**
-	 * @var Tx_Messenger_Domain_Repository_MessageTemplateRepository
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
 	 */
 	protected $templateRepository;
 
 	/**
-	 * @var Tx_Messenger_Domain_Model_MessageTemplate
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
 
@@ -113,17 +114,17 @@ class Tx_Messenger_Domain_Model_Message {
 	protected $messageBody;
 
 	/**
-	 * @var Tx_Messenger_Utility_Configuration
+	 * @var \TYPO3\CMS\Messenger\Utility\Configuration
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var Tx_Messenger_Utility_Context
+	 * @var \TYPO3\CMS\Messenger\Utility\Context
 	 */
 	protected $context;
 
 	/**
-	 * @var Tx_Messenger_Utility_Crawler
+	 * @var \TYPO3\CMS\Messenger\Utility\Crawler
 	 */
 	protected $crawler;
 
@@ -131,13 +132,13 @@ class Tx_Messenger_Domain_Model_Message {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->message = t3lib_div::makeInstance('t3lib_mail_Message');
-		$this->templateRepository = t3lib_div::makeInstance('Tx_Messenger_Domain_Repository_MessageTemplateRepository');
-		$this->emailValidator = t3lib_div::makeInstance('Tx_Messenger_Validator_Email');
-		$this->markerUtility = t3lib_div::makeInstance('Tx_Messenger_Utility_Marker');
-		$this->crawler = t3lib_div::makeInstance('Tx_Messenger_Utility_Crawler');
-		$this->configurationManager = Tx_Messenger_Utility_Configuration::getInstance();
-		$this->context = Tx_Messenger_Utility_Context::getInstance();
+		$this->message = GeneralUtility::makeInstance('t3lib_mail_Message');
+		$this->templateRepository = GeneralUtility::makeInstance('\TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository');
+		$this->emailValidator = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Validator\Email');
+		$this->markerUtility = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Marker');
+		$this->crawler = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Crawler');
+		$this->configurationManager = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance();
+		$this->context = \TYPO3\CMS\Messenger\Utility\Context::getInstance();
 
 		$this->sender = array(
 			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
@@ -150,20 +151,20 @@ class Tx_Messenger_Domain_Model_Message {
 	 * Utility method that will fetch an email template and format its content according to a set of markers.
 	 * Send the email eventually.
 	 *
-	 * @throws Tx_Messenger_Exception_WrongPluginConfigurationException
-	 * @throws Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException
+	 * @throws \TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException
+	 * @throws \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException
 	 * @return boolean whether or not the email was sent successfully
 	 */
 	public function send() {
 
 		// Substitute markers
 		if (empty($this->messageTemplate)) {
-			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
+			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
 		}
 
 		$recipients = $this->getRecipients();
 		if (empty($recipients)) {
-			throw new Tx_Messenger_Exception_MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
+			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
 		}
 
 		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
@@ -183,8 +184,8 @@ class Tx_Messenger_Domain_Model_Message {
 			->setBody($body, 'text/html');
 
 		// Attach plain text version if HTML tags are found in body
-		if ($this->hasHtml($body) && Tx_Messenger_Utility_Configuration::getInstance()->get('sendMultipartedEmail')) {
-			$text = Tx_Messenger_Utility_Html2Text::getInstance()->convert($body);
+		if ($this->hasHtml($body) && \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('sendMultipartedEmail')) {
+			$text = \TYPO3\CMS\Messenger\Utility\Html2Text::getInstance()->convert($body);
 			$this->message->addPart($text, 'text/plain');
 		}
 
@@ -197,7 +198,7 @@ class Tx_Messenger_Domain_Model_Message {
 		$result = $this->message->isSent();
 
 		if (!$result) {
-			throw new Tx_Messenger_Exception_WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
+			throw new \TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
 		}
 		return $result;
 	}
@@ -217,7 +218,7 @@ class Tx_Messenger_Domain_Model_Message {
 			$this->crawler->addGetVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
 		}
 
-		$this->crawler->exec(Tx_Messenger_Utility_Server::getHostAndProtocol());
+		$this->crawler->exec(TYPO3\CMS\Messenger\Utility\Server::getHostAndProtocol());
 		return $this->crawler->getResult();
 	}
 
@@ -242,7 +243,7 @@ class Tx_Messenger_Domain_Model_Message {
 	 * @return array
 	 */
 	protected function getRecipientsForSimulation() {
-		$emails = t3lib_div::trimExplode(',', $this->configurationManager->get('developmentEmails'));
+		$emails = GeneralUtility::trimExplode(',', $this->configurationManager->get('developmentEmails'));
 
 		$recipients = array();
 		foreach ($emails as $email) {
@@ -255,8 +256,8 @@ class Tx_Messenger_Domain_Model_Message {
 	/**
 	 * Retrieves the message template object
 	 *
-	 * @throws Tx_Messenger_Exception_RecordNotFoundException
-	 * @return Tx_Messenger_Domain_Model_MessageTemplate
+	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -281,9 +282,9 @@ class Tx_Messenger_Domain_Model_Message {
 	/**
 	 * Add an attachment.
 	 *
-	 * @throws Tx_Messenger_Exception_MissingFileException
+	 * @throws \TYPO3\CMS\Messenger\Exception\MissingFileException
 	 * @param string $attachment an absolute path to a file
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function addAttachment($attachment) {
 
@@ -295,7 +296,7 @@ class Tx_Messenger_Domain_Model_Message {
 		}
 		else {
 			$message = sprintf('File not found "%s"', $attachment);
-			throw new Tx_Messenger_Exception_MissingFileException($message, 1350124207);
+			throw new \TYPO3\CMS\Messenger\Exception\MissingFileException($message, 1350124207);
 		}
 		return $this;
 	}
@@ -311,11 +312,11 @@ class Tx_Messenger_Domain_Model_Message {
 	 * The normal case is to pass an array to the setter. Though an object can be given which will be converted to an array eventually.
 	 *
 	 * @param mixed $markers
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setMarkers($markers) {
 		if (is_object($markers)) {
-			$markers = Tx_Messenger_Utility_Object::toArray($markers);
+			$markers = TYPO3\CMS\Messenger\Utility\Object::toArray($markers);
 		}
 		$this->markers = $markers;
 		return $this;
@@ -330,7 +331,7 @@ class Tx_Messenger_Domain_Model_Message {
 
 	/**
 	 * @param int $language
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setLanguage($language) {
 		$this->context->setLanguage($language);
@@ -339,7 +340,7 @@ class Tx_Messenger_Domain_Model_Message {
 
 	/**
 	 * @param boolean $simulate
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function simulate($simulate = TRUE) {
 		$this->simulate = $simulate;
@@ -358,7 +359,7 @@ class Tx_Messenger_Domain_Model_Message {
 	 * Can be an array('email' => 'name') or an email address.
 	 *
 	 * @param mixed $recipients
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setRecipients($recipients) {
 		if (is_string($recipients)) {
@@ -381,7 +382,7 @@ class Tx_Messenger_Domain_Model_Message {
 	 * Re-set default sender
 	 *
 	 * @param array $sender
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setSender(array $sender) {
 		$this->emailValidator->validate($this->sender);
@@ -400,7 +401,7 @@ class Tx_Messenger_Domain_Model_Message {
 	 * Corresponds to a layout identifier
 	 *
 	 * @param string $layout
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setLayout($layout) {
 		$this->layout = $layout;
@@ -412,18 +413,18 @@ class Tx_Messenger_Domain_Model_Message {
 	 *
 	 * Can take as parameter:
 	 *
-	 *      + Tx_Messenger_Domain_Model_MessageTemplate $messageTemplate
+	 *      + \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
 	 *
-	 * @throws Tx_Messenger_Exception_RecordNotFoundException
+	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 * @param mixed $messageTemplate
-	 * @return Tx_Messenger_Domain_Model_Message
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
 	public function setMessageTemplate($messageTemplate) {
 
 
-		if ($messageTemplate instanceof Tx_Messenger_Domain_Model_MessageTemplate) {
+		if ($messageTemplate instanceof \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate) {
 			$object = $messageTemplate;
 		} else {
 
@@ -441,7 +442,7 @@ class Tx_Messenger_Domain_Model_Message {
 
 		if (is_null($object)) {
 			$message = sprintf('No Email Template record was found for identifier "%s"', $messageTemplate);
-			throw new Tx_Messenger_Exception_RecordNotFoundException($message, 1350124207);
+			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
 		}
 
 		$this->messageTemplate = $object;

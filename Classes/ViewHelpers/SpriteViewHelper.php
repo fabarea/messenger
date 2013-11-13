@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -28,7 +29,7 @@
  * @category    ViewHelpers
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_SpriteViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class SpriteViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Returns an icon using sprites
@@ -37,7 +38,7 @@ class Tx_Messenger_ViewHelpers_SpriteViewHelper extends Tx_Fluid_Core_ViewHelper
 	 * @return string
 	 */
 	public function render($name = NULL) {
-		return t3lib_iconWorks::getSpriteIcon($name);
+		return \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon($name);
 	}
 }
 

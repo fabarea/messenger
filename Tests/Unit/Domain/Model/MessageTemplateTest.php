@@ -24,10 +24,10 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class Tx_Messenger_Domain_Model_MessageTemplate.
+ * Test case for class \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -37,16 +37,16 @@ require_once(t3lib_extMgm::extPath('messenger') . 'Tests/Unit/BaseTest.php');
  *
  * @author Fabien Udriot <fudriot@cobweb.ch>
  */
-class Tx_Messenger_Domain_Model_MessageTemplateTest extends Tx_Messenger_BaseTest {
+class MessageTemplateTest extends Tx_Messenger_BaseTest {
 
 	/**
-	 * @var Tx_Messenger_Domain_Model_MessageTemplate
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $fixture;
 
 	public function setUp() {
 		parent::setUp();
-		$this->fixture = new Tx_Messenger_Domain_Model_MessageTemplate();
+		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate();
 	}
 
 	public function tearDown() {
@@ -108,7 +108,7 @@ class Tx_Messenger_Domain_Model_MessageTemplateTest extends Tx_Messenger_BaseTes
 
 	/**
 	 * @test
-	 * @expectedException Tx_Messenger_Exception_RecordNotFoundException
+	 * @expectedException \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
 	 */
 	public function getLayoutContentReturnsExceptionIfLayoutIsNotSet() {
 		$this->fixture->getLayoutContent();
@@ -128,7 +128,7 @@ class Tx_Messenger_Domain_Model_MessageTemplateTest extends Tx_Messenger_BaseTes
 	 */
 	public function getMarkerTemplateReturnsDefaultMarker() {
 		$method = new ReflectionMethod(
-			'Tx_Messenger_Domain_Model_MessageTemplate', 'getMarkerTemplate'
+			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
 		);
 
 		$method->setAccessible(TRUE);

@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_RegistryCountViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class RegistryCountViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Return the number of item within the registry
@@ -38,7 +39,7 @@ class Tx_Messenger_ViewHelpers_RegistryCountViewHelper extends Tx_Fluid_Core_Vie
 	 * @return int
 	 */
 	public function render() {
-		return Tx_Messenger_ListManager_Registry::getInstance()->count();
+		return \TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->count();
 	}
 
 }

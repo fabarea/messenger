@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class Tx_Messenger_Controller_SentMessageController.
+ * Test case for class SentMessageController.
  *
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -36,14 +36,14 @@
  *
  * @author Fabien Udriot <fabien.udriot@gebruederheitz.de>
  */
-class Tx_Messenger_Controller_SentMessageControllerTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class SentMessageControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var Tx_Messenger_Domain_Model_SentMessage
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\SentMessage
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new Tx_Messenger_Domain_Model_SentMessage();
+		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\SentMessage();
 	}
 
 	public function tearDown() {

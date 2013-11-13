@@ -1,4 +1,5 @@
 <?php
+namespace TYPO3\CMS\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -30,7 +31,7 @@
  * @subpackage  messenger
  * @author      Fabien Udriot <fabien.udriot@typo3.org>
  */
-class Tx_Messenger_ViewHelpers_TranslateViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class TranslateViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Return a translated string.
@@ -40,8 +41,8 @@ class Tx_Messenger_ViewHelpers_TranslateViewHelper extends Tx_Fluid_Core_ViewHel
 	 */
 	public function render($key) {
 
-		if (t3lib_div::isFirstPartOfStr($key, 'LLL:')) {
-			$key = Tx_Extbase_Utility_Localization::translate($key, '');
+		if (\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, 'LLL:')) {
+			$key = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, '');
 		}
 		return $key;
 	}

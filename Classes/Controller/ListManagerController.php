@@ -1,5 +1,5 @@
 <?php
-
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,13 +31,13 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_Messenger_Controller_ListManagerController extends Tx_Extbase_MVC_Controller_ActionController {
+class ListManagerController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
 	 * @return void
 	 */
 	public function listAction() {
-		$this->view->assign('listManagers', Tx_Messenger_ListManager_Registry::getInstance()->get());
+		$this->view->assign('listManagers', \TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->get());
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Tx_Messenger_Controller_ListManagerController extends Tx_Extbase_MVC_Contr
 	 */
 	public function saveAction($listManager) {
 		// save email address as preference
-		Tx_Messenger_Utility_BeUserPreference::set('messenger_list_manager', $listManager);
+		\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_list_manager', $listManager);
 		$this->redirect('index', 'Backend');
 	}
 }
