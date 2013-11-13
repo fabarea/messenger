@@ -68,28 +68,33 @@ Message API
 
 Usage::
 
-	$identifier = 'foo';
+	$templateIdentifier = 1; // uid
+	$layoutIdentifier = 1; // uid
 	$recipients = array('john@doe.com' => 'John Doe');
 	$markers = array(
 	  'first_name' => 'John',
 	  'last_name' => 'Doe',
 	);
+	$languageIdentifier = 0; // sys_language_uid
+	$pathToFile = 'some-path-to-file'; // @todo replace me with FAL identifier
 
-	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Extbase_Object_Manager');
+	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+	/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
 	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
-	$message->setMessageTemplate($identifierString)
-		->setRecipients($arrayOfRecipients)
-		->setMarkers($arrayOfMarkers)
-		->setLanguage($languageUid)
+	$message->setTemplate($templateIdentifier)
+		->setRecipients($recipients)
+		->setMarkers($markers)
+		->setLanguage($languageIdentifier)
 		->addAttachment($pathToFile)
-		->setLayout($identifierString)
-		->simulate()
+		->setLayout($layoutIdentifier)
 		->send();
 
 There are two mandatory methods to set for sending a message::
 
 	+ setRecipients()
-	+ setMessageTemplate() which can accept an object, a uid or an identifier property.
+	+ setTemplate() which can accept an object, a uid or an identifier property.
 
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
@@ -107,13 +112,13 @@ Todo (long term)
 ::
 
 	$message = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Model\Message');
-	$message->setIdentifier($identifierString)
+	$message->setIdentifier($templateIdentifier)
 		->setRecipients($arrayOfRecipients)
 		->setMarkers($arrayOfMarkers)
-		->setSimulate(simulate)
+		->setSimulate($simulate)
 		->setLanguage($languageUid)
 		->addAttachment($pathToFile)
-		->setLayout($identifierString)
+		->setLayout($layoutIdentifier)
 		->queue();
 
 
