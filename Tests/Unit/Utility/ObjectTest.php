@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class TYPO3\CMS\Messenger\Utility\Object.
+ * Test case for class \TYPO3\CMS\Messenger\Utility\Object.
  *
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -49,7 +49,7 @@ class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function stdClassObjectReturnsAnArrayHavingKeyFoo() {
 		$mock = new stdClass();
 		$mock->foo = uniqid();
-		$actual = TYPO3\CMS\Messenger\Utility\Object::toArray($mock);
+		$actual = \TYPO3\CMS\Messenger\Utility\Object::toArray($mock);
 		$this->assertArrayHasKey('foo', $actual);
 	}
 
@@ -60,7 +60,7 @@ class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$expected = uniqid();
 		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
 		$fakeUser->setName($expected);
-		$actual = TYPO3\CMS\Messenger\Utility\Object::toArray($fakeUser);
+		$actual = \TYPO3\CMS\Messenger\Utility\Object::toArray($fakeUser);
 		$this->assertSame($expected, $actual['name']);
 	}
 
