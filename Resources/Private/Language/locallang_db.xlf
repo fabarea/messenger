@@ -23,7 +23,7 @@
 			<trans-unit id="tx_messenger_domain_model_messagetemplate">
 				<source>Email template</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_messagetemplate.identifier">
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.speaking_identifier">
 				<source>Identifier</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.subject">

@@ -7,9 +7,9 @@ return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
 		'label' => 'subject',
-		'label_alt' => 'identifier',
+		'label_alt' => 'speaking_identifier',
 		'label_alt_force' => 1,
-		'default_sortby' => 'ORDER BY identifier ASC',
+		'default_sortby' => 'ORDER BY speaking_identifier ASC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -23,16 +23,16 @@ return array(
 		'enablecolumns' => array(
 			'disabled' => 'hidden'
 		),
-		'searchFields' => 'identifier, subject,body,',
+		'searchFields' => 'speaking_identifier, subject,body,',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagetemplate',
 		),
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, identifier, subject, body',
+		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, speaking_identifier, subject, body',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, identifier, subject, body'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, subject, body'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -83,11 +83,11 @@ return array(
 				'type' => 'check',
 			),
 		),
-		'identifier' => array(
+		'speaking_identifier' => array(
 			'exclude' => 0,
 			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.identifier',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.speaking_identifier',
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
