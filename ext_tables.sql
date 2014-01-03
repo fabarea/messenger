@@ -99,28 +99,6 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 );
 
 #
-# Table structure for table 'tx_messenger_domain_model_mailing'
-#
-CREATE TABLE tx_messenger_domain_model_mailing (
-
-	uid int(11) NOT NULL auto_increment,
-	pid int(11) DEFAULT '0' NOT NULL,
-
-	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
-	crdate int(11) unsigned DEFAULT '0' NOT NULL,
-	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
-	deleted tinyint(4) unsigned DEFAULT '0' NOT NULL,
-	hidden tinyint(4) unsigned DEFAULT '0' NOT NULL,
-
-	start_sending_time int(11) unsigned DEFAULT '0' NOT NULL,
-	title varchar(255) DEFAULT '' NOT NULL,
-	comment text,
-
-	PRIMARY KEY (uid),
-	KEY parent (pid)
-);
-
-#
 # Table structure for table 'tx_messenger_domain_model_queue'
 #
 CREATE TABLE tx_messenger_domain_model_queue (
@@ -140,6 +118,28 @@ CREATE TABLE tx_messenger_domain_model_queue (
 	body text,
 	attachment text,
 	context varchar(255) DEFAULT '' NOT NULL,
+
+	PRIMARY KEY (uid),
+	KEY parent (pid)
+);
+
+#
+# Table structure for table 'tx_messenger_domain_model_mailing'
+#
+CREATE TABLE tx_messenger_domain_model_mailing (
+
+	uid int(11) NOT NULL auto_increment,
+	pid int(11) DEFAULT '0' NOT NULL,
+
+	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
+	crdate int(11) unsigned DEFAULT '0' NOT NULL,
+	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
+	deleted tinyint(4) unsigned DEFAULT '0' NOT NULL,
+	hidden tinyint(4) unsigned DEFAULT '0' NOT NULL,
+
+	title varchar(255) DEFAULT '' NOT NULL,
+	start_sending_time int(11) unsigned DEFAULT '0' NOT NULL,
+	comment text,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)

@@ -4,6 +4,7 @@
 		<header/>
 		<body>
 
+			<!-- Sent Message -->
 			<trans-unit id="tx_messenger_domain_model_sentmessage">
 				<source>Sent Message</source>
 			</trans-unit>
@@ -41,6 +42,56 @@
 				<source>Sent Time</source>
 			</trans-unit>
 
+			<!-- Queue -->
+			<trans-unit id="tx_messenger_domain_model_queue">
+				<source>Sent Message</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.sender">
+				<source>Sender</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.recipient">
+				<source>Recipient</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.body">
+				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.attachment">
+				<source>Attachment</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.context">
+				<source>context</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.was_opened">
+				<source>Was opened</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.message_template">
+				<source>Message Template</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.layout_template">
+				<source>Layout Template</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_queue.mailing">
+				<source>Mailing</source>
+			</trans-unit>
+
+			<!-- Mailing -->
+			<trans-unit id="tx_messenger_domain_model_mailing">
+				<source>Sent Message</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_mailing.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_mailing.start_sending_time">
+				<source>Start Sending time</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_mailing.comment">
+				<source>Comment</source>
+			</trans-unit>
+
+			<!-- Message Template -->
 			<trans-unit id="tx_messenger_domain_model_messagetemplate">
 				<source>Email template</source>
 			</trans-unit>
@@ -54,6 +105,7 @@
 				<source>Body</source>
 			</trans-unit>
 
+			<!-- Message Layout -->
 			<trans-unit id="tx_messenger_domain_model_messagelayout">
 				<source>Email layout</source>
 			</trans-unit>

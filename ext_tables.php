@@ -6,17 +6,27 @@ if (!defined('TYPO3_MODE')) {
 // Add static TypoScript template
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Send a message to a group of people');
 
-// Allow domain model to be on standard pages.
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
-
-// Add sprites
-$icons = array(
-	'messagetemplate' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png',
-	'messagelayout' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
-	'sentmessage' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',
+$models = array(
+	'sentmessage',
+	'messagetemplate',
+	'messagelayout',
+	'queue',
+	'mailing',
 );
+
+foreach($models as $model) {
+
+	// Allow domain model to be on standard pages.
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_' . $model);
+
+	// Sprite icon
+	$icons[$model] =  sprintf('%sResources/Public/Icons/tx_messenger_domain_model_%s.png',
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY),
+		$model
+	);
+}
+
+
 \TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, $_EXTKEY);
 
 // Add Messenger main module before 'user'
@@ -62,7 +72,13 @@ if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstan
 // Load some vidi BE modules
 if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
 
-	$dataTypes = array('tx_messenger_domain_model_messagetemplate', 'tx_messenger_domain_model_messagelayout', 'tx_messenger_domain_model_sentmessage');
+	$dataTypes = array(
+		'tx_messenger_domain_model_messagetemplate',
+		'tx_messenger_domain_model_messagelayout',
+		'tx_messenger_domain_model_mailing',
+		'tx_messenger_domain_model_sentmessage',
+		'tx_messenger_domain_model_queue',
+	);
 
 	foreach ($dataTypes as $dataType) {
 		/** @var \TYPO3\CMS\Vidi\ModuleLoader $moduleLoader */
