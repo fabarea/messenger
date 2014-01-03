@@ -54,7 +54,7 @@ if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstan
 		array(
 			'access' => 'user,group',
 			'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
-			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/module_send_message.xlf',
+			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/module_composer.xlf',
 		)
 	);
 }
@@ -62,7 +62,7 @@ if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstan
 // Load some vidi BE modules
 if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
 
-	$dataTypes = array('tx_messenger_domain_model_messagetemplate', 'tx_messenger_domain_model_messagelayout');
+	$dataTypes = array('tx_messenger_domain_model_messagetemplate', 'tx_messenger_domain_model_messagelayout', 'tx_messenger_domain_model_sentmessage');
 
 	foreach ($dataTypes as $dataType) {
 		/** @var \TYPO3\CMS\Vidi\ModuleLoader $moduleLoader */

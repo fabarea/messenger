@@ -7,14 +7,35 @@
 			<trans-unit id="tx_messenger_domain_model_sentmessage">
 				<source>Sent Message</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_sentmessage.user">
-				<source>User</source>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.sender">
+				<source>Sender</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_sentmessage.message">
-				<source>Message</source>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.recipient">
+				<source>Recipient</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_sentmessage.content">
-				<source>Content</source>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.body">
+				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.attachment">
+				<source>Attachment</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.context">
+				<source>context</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.was_opened">
+				<source>Was opened</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.message_template">
+				<source>Message Template</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.layout_template">
+				<source>Layout Template</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_sentmessage.mailing">
+				<source>Mailing</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_sentmessage.sent_time">
 				<source>Sent Time</source>

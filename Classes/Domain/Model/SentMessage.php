@@ -30,89 +30,11 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
 class SentMessage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
-	 * user
-	 *
-	 * @var integer
-	 */
-	protected $user;
-
-	/**
-	 * message
-	 *
-	 * @var integer
-	 */
-	protected $message;
-
-	/**
-	 * content
-	 *
-	 * @var string
-	 */
-	protected $content;
-
-	/**
 	 * sentTime
 	 *
 	 * @var int
 	 */
 	protected $sentTime;
-
-	/**
-	 * Returns the user
-	 *
-	 * @return integer $user
-	 */
-	public function getUser() {
-		return $this->user;
-	}
-
-	/**
-	 * Sets the user
-	 *
-	 * @param integer $user
-	 * @return void
-	 */
-	public function setUser($user) {
-		$this->user = $user;
-	}
-
-	/**
-	 * Returns the message
-	 *
-	 * @return integer $message
-	 */
-	public function getMessage() {
-		return $this->message;
-	}
-
-	/**
-	 * Sets the message
-	 *
-	 * @param integer $message
-	 * @return void
-	 */
-	public function setMessage($message) {
-		$this->message = $message;
-	}
-
-	/**
-	 * Returns the content
-	 *
-	 * @return string $content
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-
-	/**
-	 * Sets the content
-	 *
-	 * @param string $content
-	 * @return void
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
 
 	/**
 	 * Returns the sentTime

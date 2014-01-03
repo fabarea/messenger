@@ -11,8 +11,6 @@ return array(
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
 		'dividers2tabs' => TRUE,
-
-		'verssOrigDiffSourceField' => 'l10n_diffsource',
 		'delete' => 'deleted',
 		'enablecolumns' => array(
 			'disabled' => 'hidden',
@@ -22,11 +20,8 @@ return array(
 			'default' => 'extensions-messenger-sentmessage',
 		),
 	),
-	'interface' => array(
-		'showRecordFieldList' => 'hidden, user, message, content, sent_time',
-	),
 	'types' => array(
-		'1' => array('showitem' => 'user, message, content, sent_time'),
+		'1' => array('showitem' => 'subject, body, sent_time'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -39,29 +34,19 @@ return array(
 				'type' => 'check',
 			),
 		),
-		'user' => array(
+		'subject' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.user',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.subject',
 			'config' => array(
 				'type' => 'input',
-				'size' => 4,
+				'size' => 30,
 				'readOnly' => TRUE,
-				'eval' => 'int',
+				'eval' => 'trim',
 			),
 		),
-		'message' => array(
+		'body' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.message',
-			'config' => array(
-				'type' => 'input',
-				'size' => 4,
-				'readOnly' => TRUE,
-				'eval' => 'int',
-			),
-		),
-		'content' => array(
-			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.content',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.body',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -79,6 +64,30 @@ return array(
 				'checkbox' => 1,
 				'readOnly' => TRUE,
 				'default' => time(),
+			),
+		),
+	),
+	'grid' => array(
+		'facets' => array(
+			'uid',
+			'subject',
+		),
+		'columns' => array(
+			'__checkbox' => array(
+				'width' => '5px',
+				'sortable' => FALSE,
+				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+			),
+			'uid' => array(
+				'visible' => FALSE,
+				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
+				'width' => '5px',
+			),
+			'subject' => array(
+			),
+			'__buttons' => array(
+				'sortable' => FALSE,
+				'width' => '70px',
 			),
 		),
 	),
