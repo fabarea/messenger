@@ -6,8 +6,8 @@ if (!defined ('TYPO3_MODE')) {
 return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout',
-		'label' => 'identifier',
-		'default_sortby' => 'ORDER BY identifier ASC',
+		'label' => 'speaking_identifier',
+		'default_sortby' => 'ORDER BY speaking_identifier ASC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -21,16 +21,16 @@ return array(
 		'enablecolumns' => array(
 			'disabled' => 'hidden'
 		),
-		'searchFields' => 'identifier, content,',
+		'searchFields' => 'speaking_identifier, content,',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagelayout',
 		),
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, identifier, content',
+		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, speaking_identifier, content',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, identifier, content'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, content'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -81,11 +81,11 @@ return array(
 				'type' => 'check',
 			),
 		),
-		'identifier' => array(
+		'speaking_identifier' => array(
 			'exclude' => 0,
 			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout.identifier',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout.speaking_identifier',
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
@@ -98,6 +98,31 @@ return array(
 			'config' => array(
 				'type' => 'text',
 				'eval' => 'trim'
+			),
+		),
+	),
+	'grid' => array(
+		'facets' => array(
+			'uid',
+			'speaking_identifier',
+		),
+		'columns' => array(
+			'__checkbox' => array(
+				'width' => '5px',
+				'sortable' => FALSE,
+				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+			),
+			'uid' => array(
+				'visible' => FALSE,
+				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
+				'width' => '5px',
+			),
+			'speaking_identifier' => array(
+				'editable' => TRUE,
+			),
+			'__buttons' => array(
+				'sortable' => FALSE,
+				'width' => '70px',
 			),
 		),
 	),

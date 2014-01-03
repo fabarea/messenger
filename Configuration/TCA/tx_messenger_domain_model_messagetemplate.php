@@ -112,4 +112,33 @@ return array(
 			),
 		),
 	),
+	'grid' => array(
+		'facets' => array(
+			'uid',
+			'speaking_identifier',
+		),
+		'columns' => array(
+			'__checkbox' => array(
+				'width' => '5px',
+				'sortable' => FALSE,
+				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+			),
+			'uid' => array(
+				'visible' => FALSE,
+				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
+				'width' => '5px',
+			),
+			'speaking_identifier' => array(
+				'editable' => TRUE,
+				'width' => '150px',
+			),
+			'subject' => array(
+				'editable' => TRUE,
+			),
+			'__buttons' => array(
+				'sortable' => FALSE,
+				'width' => '70px',
+			),
+		),
+	),
 );

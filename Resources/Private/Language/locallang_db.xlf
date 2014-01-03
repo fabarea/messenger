@@ -36,7 +36,7 @@
 			<trans-unit id="tx_messenger_domain_model_messagelayout">
 				<source>Email layout</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_messagelayout.identifier">
+			<trans-unit id="tx_messenger_domain_model_messagelayout.speaking_identifier">
 				<source>Identifier</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagelayout.content">

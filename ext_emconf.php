@@ -15,8 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Send a custom message to a group of configurable recipients.',
 	'category' => 'plugin',
 	'author' => 'Fabien Udriot',
-	'author_email' => 'fabien.udriot@gebruederheitz.de',
-	'author_company' => 'Gebruederheitz',
+	'author_email' => 'fabien.udriot@typo3.org',
 	'shy' => '',
 	'priority' => '',
 	'module' => '',
@@ -30,6 +29,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'version' => '2.0.0',
 	'constraints' => array(
 		'depends' => array(
+			'vidi' => '',
 			'typo3' => '6.1.0-6.1.99',
 		),
 		'conflicts' => array(
