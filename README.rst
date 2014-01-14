@@ -9,59 +9,17 @@ a possible wrapping layout. This can be useful if the message must be surrounded
 
 Development goes at https://github.com/gebruederheitz/messenger
 
-@todo include fe_users_messenger
-@todo include be_users_messenger
-
-Setting up
+Installation
 ==============
 
 Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
 
 The ``tableStructure`` setting will likely to be re-defined according to your need. See next chapter.
 
+Multi-parted email
+====================
 
-List Manager
-================
-
-In order to have a table of recipients displayed in the BE module a "list manager" must be provided where it is defined
-what sort of data should be displayed. A list manager must implement a listable interface. As example,
-a `Demo List Manager` is provided in the extension which can be taken as starting point for a custom implementation. The file is at
-``\TYPO3\CMS\Messenger\ListManager\DemoListManager``
-
-A list manager must be registered in ``ext_localconf.php`` as follows::
-
-	# Register a new list manager for demo purposes.
-	\TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->add(
-
-		# Corresponds to a class name.
-		'TYPO3\CMS\Messenger\ListManager\DemoListManager',
-
-		# A string or label describing the recipients (for the BE module needs).
-		'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
-	);
-
-If more than two list managers are registered, a button is displayed in the BE module alongside the recipients heading, enabling a BE User
-to pick between the managers. The choice is saved as preference per BE User.
-
-Defining fields
------------------
-
-Method ``getFields`` from the list manager must return an array with the following structure:
-
-* fieldName - **mandatory** - the name of the property
-* label - **mandatory** - the label of the property - example: LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:email,
-* width - optional - a width for the column - "example: 30%"
-* style - optional - a style for the column - "background-color: red"
-* class - optional - class names for the column - "foo bar"
-
-Note that the list manager is validate against a list manager validator.
-
-Recipient
-=========================
-
-A recipient interface is provided making sure a user can be correctly displayed within the table. The interface is not mandatory to
-be implemented since a recipient can be in the form of an array. However, a minimum of ``uid`` and ``email`` must be provided.
-An exception will be raised on the run time if something goes wrong.
+Whenever possible, Messenger will send multi-parted email which contains a HTML version alongside to a plain text within the same email.
 
 Message API
 =================
@@ -102,6 +60,7 @@ Todo (long term)
 =================
 
 + Improve message management in the BE module (create new one from scratch, edit, select, ...)
++ Provide default FE / BE Users provider
 + Add GUI to support layout wrapping
 + Add support for multi-language in the BE module
 + Add a possible "Mailing" Domain Model object for grouping sent emails
@@ -121,6 +80,53 @@ Todo (long term)
 		->setLayout($layoutIdentifier)
 		->queue();
 
+
+List Manager
+================
+
+This paragraph is obsolete! The List Manager must be integrated in Vidi somehow.
+
+In order to have a table of recipients displayed in the BE module a "list manager" must be provided where it is defined
+what sort of data should be displayed. A list manager must implement a listable interface. As example,
+a `Demo List Manager` is provided in the extension which can be taken as starting point for a custom implementation. The file is at
+``\TYPO3\CMS\Messenger\ListManager\DemoListManager``
+
+A list manager must be registered in ``ext_localconf.php`` as follows::
+
+	# Register a new list manager for demo purposes.
+	\TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->add(
+
+		# Corresponds to a class name.
+		'TYPO3\CMS\Messenger\ListManager\DemoListManager',
+
+		# A string or label describing the recipients (for the BE module needs).
+		'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
+	);
+
+If more than two list managers are registered, a button is displayed in the BE module alongside the recipients heading, enabling a BE User
+to pick between the managers. The choice is saved as preference per BE User.
+
+Defining fields
+-----------------
+
+This paragraph is obsolete! The List Manager must be integrated in Vidi somehow.
+
+Method ``getFields`` from the list manager must return an array with the following structure:
+
+* fieldName - **mandatory** - the name of the property
+* label - **mandatory** - the label of the property - example: LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:email,
+* width - optional - a width for the column - "example: 30%"
+* style - optional - a style for the column - "background-color: red"
+* class - optional - class names for the column - "foo bar"
+
+Note that the list manager is validate against a list manager validator.
+
+Recipient
+=========================
+
+A recipient interface is provided making sure a user can be correctly displayed within the table. The interface is not mandatory to
+be implemented since a recipient can be in the form of an array. However, a minimum of ``uid`` and ``email`` must be provided.
+An exception will be raised on the run time if something goes wrong.
 
 Sponsors
 ==============
