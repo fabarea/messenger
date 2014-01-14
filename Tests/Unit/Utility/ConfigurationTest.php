@@ -93,7 +93,6 @@ class ConfigurationTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 			array('senderEmail'),
 			array('markerReplacedInLayout'),
 			array('listOfContextsSendingEmails'),
-			array('enableBeModule'),
 		);
 	}
 }

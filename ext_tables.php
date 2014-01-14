@@ -46,51 +46,71 @@ if (TYPO3_MODE == 'BE') {
 	}
 }
 
-if (TYPO3_MODE === 'BE' && \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('enableBeModule')) {
+if (TYPO3_MODE === 'BE') {
 
-	/**
-	 * Registers a Backend Module
-	 */
-	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-		$_EXTKEY,
-		'messenger', // Make module a submodule of 'user'
-		'm1', // Submodule key
-		'', // Position
-		array(
-			'Backend' => 'index, sendMessage, sendMessageTest',
-			'ListManager' => 'list, save',
-			'MessageTemplate' => 'list, save',
-		),
-		array(
-			'access' => 'user,group',
-			'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
-			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/module_composer.xlf',
-		)
-	);
-}
+	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-// Load some vidi BE modules
-if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
+	/** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
+	$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+	$configuration = $configurationUtility->getCurrentConfiguration($_EXTKEY);
 
-	$dataTypes = array(
-		'tx_messenger_domain_model_messagetemplate',
-		'tx_messenger_domain_model_messagelayout',
-		'tx_messenger_domain_model_mailing',
-		'tx_messenger_domain_model_sentmessage',
-		'tx_messenger_domain_model_queue',
-	);
+	$enabledModules = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $configuration['enabledModules']['value']);
 
-	foreach ($dataTypes as $dataType) {
-		/** @var \TYPO3\CMS\Vidi\ModuleLoader $moduleLoader */
-		$moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Vidi\ModuleLoader', $dataType);
-		$moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.png')
-			->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
-			->addJavaScriptFiles(array(sprintf('EXT:messenger/Resources/Public/JavaScript/Backend/%s.js', $dataType)))
-			->addStyleSheetFiles(array(sprintf('EXT:messenger/Resources/Public/StyleSheet/Backend/%s.css', $dataType)))
-			->setDefaultPid(1)
-			->setMainModule('messenger')
-			->register();
+	if (in_array('composer', $enabledModules)) {
+
+		/**
+		 * Registers a Backend Module
+		 */
+		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+			$_EXTKEY,
+			'messenger', // Make module a submodule of 'user'
+			'm1', // Submodule key
+			'', // Position
+			array(
+				'Backend' => 'index, sendMessage, sendMessageTest',
+				'ListManager' => 'list, save',
+				'MessageTemplate' => 'list, save',
+			),
+			array(
+				'access' => 'user,group',
+				'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
+				'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/module_composer.xlf',
+			)
+		);
+
+	}
+
+	// Load some vidi BE modules
+	if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
+
+		$dataTypes = array(
+			'tx_messenger_domain_model_messagetemplate',
+			'tx_messenger_domain_model_messagelayout',
+			'tx_messenger_domain_model_mailing',
+			'tx_messenger_domain_model_sentmessage',
+			'tx_messenger_domain_model_queue',
+		);
+
+		foreach ($dataTypes as $dataType) {
+
+			// Only load if requested by the User.
+			$shortDataType = str_replace('tx_messenger_domain_model_', '', $dataType);
+			if (in_array($shortDataType, $enabledModules)) {
+
+				/** @var \TYPO3\CMS\Vidi\ModuleLoader $moduleLoader */
+				$moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Vidi\ModuleLoader', $dataType);
+				$moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.png')
+					->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
+					->addJavaScriptFiles(array(sprintf('EXT:messenger/Resources/Public/JavaScript/Backend/%s.js', $dataType)))
+					->addStyleSheetFiles(array(sprintf('EXT:messenger/Resources/Public/StyleSheet/Backend/%s.css', $dataType)))
+					->setDefaultPid(1)
+					->setMainModule('messenger')
+					->register();
+			}
+		}
 	}
 }
+
 
 ?>
