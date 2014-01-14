@@ -24,7 +24,10 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
+use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
 use TYPO3\CMS\Messenger\Utility\Html2Text;
+use TYPO3\CMS\Messenger\Utility\Server;
 
 /**
  *
@@ -148,7 +151,7 @@ class Message {
 	 * Utility method that will fetch an email template and format its content according to a set of markers.
 	 * Send the email eventually.
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException
+	 * @throws WrongPluginConfigurationException
 	 * @throws \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException
 	 * @return boolean whether or not the email was sent successfully
 	 */
@@ -195,7 +198,7 @@ class Message {
 		$result = $this->message->isSent();
 
 		if (!$result) {
-			throw new \TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
+			throw new WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
 		}
 		return $result;
 	}
@@ -212,10 +215,11 @@ class Message {
 		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->template->getUid());
 
 		foreach ($this->markers as $key => $value) {
-			$this->crawler->addGetVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
+			// send as post to avoid HTTP 414 "Request-URI Too Large"
+			$this->crawler->addPostVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
 		}
 
-		$this->crawler->exec(\TYPO3\CMS\Messenger\Utility\Server::getHostAndProtocol());
+		$this->crawler->exec(Server::getHostAndProtocol());
 		return $this->crawler->getResult();
 	}
 
@@ -253,7 +257,7 @@ class Message {
 	/**
 	 * Retrieves the message template object
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
+	 * @throws RecordNotFoundException
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	public function getTemplate() {
@@ -414,7 +418,7 @@ class Message {
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
+	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
@@ -439,7 +443,7 @@ class Message {
 
 		if (is_null($object)) {
 			$message = sprintf('No Email Template record was found for identifier "%s"', $messageTemplate);
-			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
+			throw new RecordNotFoundException($message, 1350124207);
 		}
 
 		$this->template = $object;

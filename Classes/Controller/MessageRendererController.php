@@ -32,12 +32,12 @@ class MessageRendererController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 	/**
 	 * @param \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 * @param array $markers
-	 * @return strong
+	 * @return string
 	 */
 	public function renderAction(\TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate, $markers = array()) {
 
-		/** @var Tx_Fluid_View_StandaloneView $emailView */
-		$emailView = $this->objectManager->create('Tx_Fluid_View_StandaloneView');
+		/** @var \TYPO3\CMS\Fluid\View\StandaloneView $emailView */
+		$emailView = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
 		$emailView->setTemplateSource($messageTemplate->getBody());
 		$emailView->assignMultiple($markers);
 		return $emailView->render();
