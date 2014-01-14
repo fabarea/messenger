@@ -7,9 +7,6 @@ senderEmail = john@doe.com
 # cat=basic//3; type=string; label= List of development emails: A comma separated list of emails.
 developmentEmails = john@doe.com, jane@doe.com
 
-# cat=basic//3; type=boolean; label= Send multi-parted email : A multi-parted email contains a HTML version alongside to a plain text within the same email.
-sendMultipartedEmail = 1
-
 # cat=basic//3; type=options[Development,Production]; label= Context name: in Development context no email will be sent to real recipients but to the development emails instead (see settings above).
 context = Development
 

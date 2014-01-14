@@ -24,6 +24,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Messenger\Utility\Html2Text;
 
 /**
  *
@@ -180,8 +181,8 @@ class Message {
 			->setBody($body, 'text/html');
 
 		// Attach plain text version if HTML tags are found in body
-		if ($this->hasHtml($body) && \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('sendMultipartedEmail')) {
-			$text = \TYPO3\CMS\Messenger\Utility\Html2Text::getInstance()->convert($body);
+		if ($this->hasHtml($body)) {
+			$text = Html2Text::getInstance()->convert($body);
 			$this->message->addPart($text, 'text/plain');
 		}
 

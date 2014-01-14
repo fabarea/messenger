@@ -62,7 +62,6 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 		'markerReplacedInLayout' => 'template',
 		'listOfContextsSendingEmails' => 'Production',
 		'rootPageUid' => '',
-		'sendMultipartedEmail' => TRUE,
 		'enableBeModule' => TRUE,
 	);
 

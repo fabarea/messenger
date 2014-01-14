@@ -91,7 +91,7 @@ return array(
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
-				'eval' => 'trim,required,unique'
+				'eval' => 'trim,required,unique',
 			),
 		),
 		'subject' => array(
@@ -100,7 +100,7 @@ return array(
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
-				'eval' => 'trim,required'
+				'eval' => 'trim,required',
 			),
 		),
 		'body' => array(
@@ -108,7 +108,19 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.body',
 			'config' => array(
 				'type' => 'text',
-				'eval' => 'trim'
+				'eval' => 'trim',
+				'default' => 'Hello Admin,
+
+A new submission was made by {email}
+
+<strong>Identifier</strong>
+{uid}
+
+<strong><l:translate key="foo"/></strong>
+{foo}
+
+<f:link.page pageUid="1">Open page</f:link.page>
+'
 			),
 		),
 	),
