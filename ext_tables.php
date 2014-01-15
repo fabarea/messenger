@@ -14,18 +14,17 @@ $models = array(
 	'mailing',
 );
 
-foreach($models as $model) {
+foreach ($models as $model) {
 
 	// Allow domain model to be on standard pages.
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_' . $model);
 
 	// Sprite icon
-	$icons[$model] =  sprintf('%sResources/Public/Icons/tx_messenger_domain_model_%s.png',
+	$icons[$model] = sprintf('%sResources/Public/Icons/tx_messenger_domain_model_%s.png',
 		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY),
 		$model
 	);
 }
-
 
 \TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, $_EXTKEY);
 
@@ -112,5 +111,14 @@ if (TYPO3_MODE === 'BE') {
 	}
 }
 
+# Install PSR-0-compatible class autoloader for Markdown Library in Resources/PHP/Michelf
+spl_autoload_register(function ($class) {
+	if (strpos($class, 'Michelf\Markdown') !== FALSE) {
+		require sprintf('%sResources/Private/PHP/Markdown/%s',
+			\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger'),
+			preg_replace('{\\\\|_(?!.*\\\\)}', DIRECTORY_SEPARATOR, ltrim($class, '\\')) . '.php'
+		);
+	}
+});
 
 ?>

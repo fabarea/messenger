@@ -21,6 +21,11 @@ Multi-parted email
 
 Whenever possible, Messenger will send multi-parted email which contains a HTML version alongside to a plain text within the same email.
 
+Message with Markdown and Fluid
+==================================
+
+Body message can be written using Markdown syntax alongside with Fluid View Helper which will be be rendered when sending the email.
+
 Message API
 =================
 

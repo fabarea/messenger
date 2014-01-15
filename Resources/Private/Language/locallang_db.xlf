@@ -32,7 +32,7 @@
 			<trans-unit id="tx_messenger_domain_model_sentmessage.message_template">
 				<source>Message Template</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_sentmessage.layout_template">
+			<trans-unit id="tx_messenger_domain_model_sentmessage.message_layout">
 				<source>Layout Template</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_sentmessage.mailing">
@@ -70,7 +70,7 @@
 			<trans-unit id="tx_messenger_domain_model_queue.message_template">
 				<source>Message Template</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_queue.layout_template">
+			<trans-unit id="tx_messenger_domain_model_queue.message_layout">
 				<source>Layout Template</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_queue.mailing">
@@ -103,6 +103,9 @@
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.body">
 				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.message_layout">
+				<source>Message Layout</source>
 			</trans-unit>
 
 			<!-- Message Layout -->

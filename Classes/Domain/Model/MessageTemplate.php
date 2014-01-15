@@ -24,6 +24,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
+use TYPO3\CMS\Messenger\Utility\Configuration;
 
 /**
  * Message Template representation
@@ -33,7 +34,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @var string
 	 */
-	protected $identifier;
+	protected $speakingIdentifier;
 
 	/**
 	 * @var string
@@ -66,10 +67,10 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * Constructor
 	 */
 	public function __construct(array $data = array()) {
-		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
+		$this->speakingIdentifier = !empty($data['speaking_identifier']) ? $data['speaking_identifier'] : '';
 		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
 		$this->body = !empty($data['body']) ? $data['body'] : '';
-		$this->messageLayout = !empty($data['layout_template']) ? $data['layout_template'] : '';
+		$this->messageLayout = !empty($data['message_layout']) ? $data['message_layout'] : '';
 	}
 
 	/**
@@ -97,8 +98,10 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * @return string $body
 	 */
 	public function getBody() {
+
+		// Possible wrap body in Layout content
 		if ($this->messageLayout) {
-			$this->body = str_replace($this->getMarkerTemplate(), $this->body, $this->getLayoutContent());
+			$this->body = str_replace('{BODY}', $this->body, $this->messageLayout->getContent());
 		}
 		return $this->body;
 	}
@@ -114,22 +117,18 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 	/**
-	 * Returns the identifier
-	 *
-	 * @return string $identifier
+	 * @return string $speakingIdentifier
 	 */
-	public function getIdentifier() {
-		return $this->identifier;
+	public function getSpeakingIdentifier() {
+		return $this->speakingIdentifier;
 	}
 
 	/**
-	 * Sets the identifier
-	 *
-	 * @param string $identifier
+	 * @param string $speakingIdentifier
 	 * @return void
 	 */
-	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
+	public function setSpeakingIdentifier($speakingIdentifier) {
+		$this->speakingIdentifier = $speakingIdentifier;
 	}
 
 	/**
@@ -155,15 +154,5 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	public function setMessageLayout($layout) {
 		$this->messageLayout = $layout;
 	}
-
-	/**
-	 * Get the marker that will be replaced by the body in a Layout.
-	 * @return string
-	 */
-	protected function getMarkerTemplate() {
-		$marker = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('markerReplacedInLayout');
-		return sprintf('{%s}', $marker);
-	}
-
 }
 ?>

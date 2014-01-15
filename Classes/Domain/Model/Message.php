@@ -23,6 +23,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Swift_Attachment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Messenger\Exception\MissingFileException;
@@ -32,7 +33,7 @@ use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
 use TYPO3\CMS\Messenger\Utility\Html2Text;
 use TYPO3\CMS\Messenger\Utility\Object;
 use TYPO3\CMS\Messenger\Utility\Server;
-
+use \Michelf\Markdown;
 /**
  * Message representation
  * @todo remove language handling from the class which should be managed outside - or not?
@@ -128,7 +129,7 @@ class Message {
 	protected $queueRepository;
 
 	/**
-	 * @var MessageTemplate
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
 
@@ -223,21 +224,13 @@ class Message {
 
 		$body = $this->formatBody();
 
-		// @todo test me!
-		#if ($this->getMessageLayout()) {
-		#	$content = $this->getMessageLayout()->getContent();
-		#	$body = str_replace('{BODY}', $body, $content);
-		#} elseif (is_object($this->messageTemplate->getMessageLayout())) {
-		#	$content = $this->messageTemplate->getMessageLayout()->getContent();
-		#	$body = str_replace('{BODY}', $body, $content);
-		#}
-
 		// Set debug flag for not production context
 		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
 			$body = $this->getMessageBodyForSimulation($body);
 			$recipients = $this->getRecipientsForSimulation();
 		}
 		$body = $this->markerUtility->substitute($body, $this->getMarkers());
+		$body = Markdown::defaultTransform($body);
 
 		$this->getMailMessage()->setTo($recipients)
 			->setFrom($this->sender)
@@ -309,9 +302,8 @@ class Message {
 
 	/**
 	 * Retrieves the message template object
-
 	 *
-*@return MessageTemplate
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Mailing
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -503,7 +495,12 @@ class Message {
 				$messageTemplate = (int) $messageTemplate;
 			}
 			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findBySpeakingIdentifier';
+
 			$this->messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
+
+			if (is_object($this->getMessageLayout())) {
+				$this->messageTemplate->setMessageTemplate($this->getMessageLayout());
+			}
 
 			if (is_null($this->messageTemplate)) {
 				$message = sprintf('I could not find message template ""', $messageTemplate);
@@ -542,7 +539,7 @@ class Message {
 			'context' => $this->context->getName(),
 			'was_opened' => 0,
 			'message_template' => $this->messageTemplate->getUid(),
-			'layout_template' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
+			'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
 			'sent_time' => time(),
 			'mailing' => is_object($this->mailing) ? $this->mailing->getUid() : 0,
 		);
