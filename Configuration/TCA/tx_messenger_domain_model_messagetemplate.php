@@ -28,11 +28,8 @@ return array(
 			'default' => 'extensions-messenger-messagetemplate',
 		),
 	),
-	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, speaking_identifier, subject, body',
-	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, subject, body'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, subject, body, message_layout'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -123,6 +120,19 @@ A new submission was made by {email}
 '
 			),
 		),
+		'message_layout' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.message_layout',
+			'config' => array(
+				'type' => 'select',
+				'items' => array(
+					0 => array(),
+				),
+				'foreign_table' => 'tx_messenger_domain_model_messagelayout',
+				'size' => 1,
+				'minitems' => 0,
+			),
+		),
 	),
 	'grid' => array(
 		'facets' => array(
@@ -147,6 +157,9 @@ A new submission was made by {email}
 			'subject' => array(
 				'editable' => TRUE,
 			),
+//			'message_layout' => array(
+//				'visible' => FALSE,
+//			),
 			'body' => array(),
 			'__buttons' => array(
 				'sortable' => FALSE,
