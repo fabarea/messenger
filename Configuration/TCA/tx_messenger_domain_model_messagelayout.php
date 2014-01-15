@@ -97,7 +97,13 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout.content',
 			'config' => array(
 				'type' => 'text',
-				'eval' => 'trim'
+				'eval' => 'trim',
+				'default' => 'Header to be replaced...
+
+{BODY}
+
+Footer to be replaced...
+'
 			),
 		),
 	),
@@ -120,6 +126,7 @@ return array(
 			'speaking_identifier' => array(
 				'editable' => TRUE,
 			),
+			'content' => array(),
 			'__buttons' => array(
 				'sortable' => FALSE,
 				'width' => '70px',

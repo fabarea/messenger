@@ -23,6 +23,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
 
 /**
  * Message Template representation
@@ -51,14 +52,15 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	protected $layoutBody;
 
 	/**
-	 * @var string
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @inject
 	 */
-	protected $layoutRepository;
+	protected $messageLayoutRepository;
 
 	/**
 	 * Constructor
@@ -67,7 +69,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
 		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
 		$this->body = !empty($data['body']) ? $data['body'] : '';
-		$this->messageLayoutRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository');
+		$this->messageLayout = !empty($data['layout_template']) ? $data['layout_template'] : '';
 	}
 
 	/**
@@ -131,9 +133,19 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 	/**
-	 * @return string
+	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
+		if (!is_object($this->messageLayout)) {
+			/** @var $layout \TYPO3\CMS\Messenger\Domain\Model\MessageLayout */
+			$this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
+			if (!$this->messageLayout) {
+				$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
+				throw new RecordNotFoundException($message, 1350124207);
+			}
+		}
+
 		return $this->messageLayout;
 	}
 
@@ -151,21 +163,6 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	protected function getMarkerTemplate() {
 		$marker = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('markerReplacedInLayout');
 		return sprintf('{%s}', $marker);
-	}
-
-	/**
-	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
-	 * @return string
-	 */
-	public function getLayoutContent() {
-
-		/** @var $layout \TYPO3\CMS\Messenger\Domain\Model\MessageLayout */
-		$layout = $this->messageLayoutRepository->findByIdentifier($this->messageLayout);
-		if (!$layout) {
-			$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
-			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
-		}
-		return $layout->getContent();
 	}
 
 }

@@ -9,6 +9,7 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	speaking_identifier varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
+	layout_template int(11) unsigned DEFAULT '0' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,

@@ -25,6 +25,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  ***************************************************************/
 use Swift_Attachment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Messenger\Exception\MissingFileException;
 use TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
 use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
@@ -109,6 +110,12 @@ class Message {
 	protected $messageTemplateRepository;
 
 	/**
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @inject
+	 */
+	protected $messageLayoutRepository;
+
+	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository
 	 * @inject
 	 */
@@ -121,7 +128,7 @@ class Message {
 	protected $queueRepository;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
+	 * @var MessageTemplate
 	 */
 	protected $messageTemplate;
 
@@ -162,7 +169,7 @@ class Message {
 	}
 
 	/**
-	 * Prepares the emails by fetching an email template, formats the body and sends the email eventually.
+	 * Prepares the emails and queue it.
 	 *
 	 * @return void
 	 */
@@ -172,9 +179,31 @@ class Message {
 	}
 
 	/**
-	 * Prepares the emails by fetching an email template and formats its body.
+	 * Prepares the emails and queue it.
 	 *
 	 * @throws WrongPluginConfigurationException
+	 * @throws MissingPropertyValueInMessageObjectException
+	 * @return boolean whether or not the email was sent successfully
+	 */
+	public function send() {
+
+		$this->prepareMessage();
+
+		$this->getMailMessage()->send();
+		$isSent = $this->getMailMessage()->isSent();
+
+		if ($isSent) {
+			$this->sentMessageRepository->add($this->toArray());
+		} else {
+			throw new WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
+		}
+
+		return $isSent;
+	}
+
+	/**
+	 * Prepares the emails by fetching an email template and formats its body.
+	 *
 	 * @throws MissingPropertyValueInMessageObjectException
 	 * @return boolean whether or not the email was sent successfully
 	 */
@@ -193,6 +222,15 @@ class Message {
 		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
 
 		$body = $this->formatBody();
+
+		// @todo test me!
+		#if ($this->getMessageLayout()) {
+		#	$content = $this->getMessageLayout()->getContent();
+		#	$body = str_replace('{BODY}', $body, $content);
+		#} elseif (is_object($this->messageTemplate->getMessageLayout())) {
+		#	$content = $this->messageTemplate->getMessageLayout()->getContent();
+		#	$body = str_replace('{BODY}', $body, $content);
+		#}
 
 		// Set debug flag for not production context
 		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
@@ -216,29 +254,6 @@ class Message {
 		foreach ($this->attachments as $attachment) {
 			$this->getMailMessage()->attach($attachment);
 		}
-	}
-
-	/**
-	 * Prepares the emails by fetching an email template, formats the body and sends the email eventually.
-	 *
-	 * @throws WrongPluginConfigurationException
-	 * @throws MissingPropertyValueInMessageObjectException
-	 * @return boolean whether or not the email was sent successfully
-	 */
-	public function send() {
-
-		$this->prepareMessage();
-
-		$this->getMailMessage()->send();
-		$isSent = $this->getMailMessage()->isSent();
-
-		if ($isSent) {
-			$this->sentMessageRepository->add($this->toArray());
-		} else {
-			throw new WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
-		}
-
-		return $isSent;
 	}
 
 	/**
@@ -294,8 +309,9 @@ class Message {
 
 	/**
 	 * Retrieves the message template object
+
 	 *
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
+*@return MessageTemplate
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -320,7 +336,7 @@ class Message {
 	/**
 	 * Add an attachment.
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\MissingFileException
+	 * @throws MissingFileException
 	 * @param string $attachment an absolute path to a file
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
@@ -331,10 +347,9 @@ class Message {
 			$parts = explode('/', $attachment);
 			$fileName = array_pop($parts);
 			$this->attachments[] = Swift_Attachment::fromPath($attachment)->setFilename($fileName);
-		}
-		else {
+		} else {
 			$message = sprintf('File not found "%s"', $attachment);
-			throw new \TYPO3\CMS\Messenger\Exception\MissingFileException($message, 1350124207);
+			throw new MissingFileException($message, 1350124207);
 		}
 		return $this;
 	}
@@ -429,28 +444,46 @@ class Message {
 	}
 
 	/**
-	 * @return string
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		return $this->messageLayout;
 	}
 
 	/**
-	 * Corresponds to a layout identifier
+	 * parameter $messageLayout can be:
+	 *      + \TYPO3\CMS\Messenger\Domain\Model\MessageLayout $messageLayout
+	 *      + int $messageLayout which corresponds to an uid
+	 *      + string $messageLayout which corresponds to a value for property "identifier".
 	 *
-	 * @param string $layout
+	 * @throws RecordNotFoundException
+	 * @param mixed $messageLayout
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
 	 */
-	public function setMessageLayout($layout) {
-		$this->messageLayout = $layout;
+	public function setMessageLayout($messageLayout) {
+
+		if ($messageLayout instanceof MessageLayout) {
+			$this->messageLayout = $messageLayout;
+		} else {
+
+			// try to convert message layout to a possible uid.
+			if ((int) $messageLayout > 0) {
+				$messageLayout = (int) $messageLayout;
+			}
+			$methodName = is_int($messageLayout) ? 'findByUid' : 'findBySpeakingIdentifier';
+			$this->messageLayout = $this->messageLayoutRepository->$methodName($messageLayout);
+
+			if (is_null($this->messageLayout)) {
+				$message = sprintf('I could not find message layout ""', $messageLayout);
+				throw new RecordNotFoundException($message, 1389769449);
+			}
+		}
+
 		return $this;
 	}
 
 	/**
-	 * Set a message template.
-	 *
-	 * Can take as parameter:
-	 *
+	 * parameter $messageTemplate can be:
 	 *      + \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
@@ -461,33 +494,29 @@ class Message {
 	 */
 	public function setMessageTemplate($messageTemplate) {
 
-		if ($messageTemplate instanceof \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate) {
-			$object = $messageTemplate;
+		if ($messageTemplate instanceof MessageTemplate) {
+			$this->messageTemplate = $messageTemplate;
 		} else {
 
 			// try to convert message template to a possible uid.
 			if ((int) $messageTemplate > 0) {
 				$messageTemplate = (int) $messageTemplate;
 			}
-			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByIdentifier';
-			$object = call_user_func_array(array($this->messageTemplateRepository, $methodName), array($messageTemplate));
+			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findBySpeakingIdentifier';
+			$this->messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
 
-			// Attach a layout to the email template
-			// @todo: add setMessageLayout method()
-			#$messageTemplate->setMessageLayout($this->getMessageLayout());
+			if (is_null($this->messageTemplate)) {
+				$message = sprintf('I could not find message template ""', $messageTemplate);
+				throw new RecordNotFoundException($message, 1350124207);
+			}
 		}
 
-		if (is_null($object)) {
-			$message = sprintf('No Email Template record was found for identifier "%s"', $messageTemplate);
-			throw new RecordNotFoundException($message, 1350124207);
-		}
-
-		$this->messageTemplate = $object;
 		return $this;
 	}
 
 	/**
 	 * Convert this object to an array.
+	 *
 	 * @return array
 	 */
 	public function toArray() {

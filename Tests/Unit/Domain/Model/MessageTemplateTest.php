@@ -100,23 +100,6 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
-	 */
-	public function getLayoutContentReturnsExceptionIfLayoutIsNotSet() {
-		$this->fixture->getLayoutContent();
-	}
-
-	/**
-	 * @test
-	 */
-	public function getLayoutContentCanReturnContent() {
-		$this->fixture->setMessageLayout($this->layoutIdentifier);
-		$actual = $this->fixture->getLayoutContent();
-		$this->assertEquals($this->layoutContent, $actual);
-	}
-
-	/**
-	 * @test
 	 */
 	public function getMarkerTemplateReturnsDefaultMarker() {
 		$method = new ReflectionMethod(

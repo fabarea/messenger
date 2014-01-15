@@ -147,6 +147,7 @@ A new submission was made by {email}
 			'subject' => array(
 				'editable' => TRUE,
 			),
+			'body' => array(),
 			'__buttons' => array(
 				'sortable' => FALSE,
 				'width' => '70px',

@@ -25,24 +25,25 @@ namespace TYPO3\CMS\Messenger\Domain\Repository;
 class MessageLayoutRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	/**
-	 * Finds an object matching the given identifier.
+	 * Finds an object given a speaking identifier.
 	 *
-	 * @param string $identifier The identifier of the object to find
-	 * @return object The matching object if found, otherwise NULL
+	 * @param string $speakingIdentifier
+	 * @return object|NULL
 	 * @api
 	 */
-	public function findByIdentifier($identifier) {
+	public function findBySpeakingIdentifier($speakingIdentifier) {
 		$query = $this->createQuery();
 		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
 		$query->getQuerySettings()->setRespectStoragePage(FALSE);
 		$object = $query
 			->matching(
-			$query->equals('identifier', $identifier)
-		)
+				$query->equals('speaking_identifier', $speakingIdentifier)
+			)
 			->execute()
 			->getFirst();
 		return $object;
 	}
+
 
 
 //	/** @todo resolve overlays of record

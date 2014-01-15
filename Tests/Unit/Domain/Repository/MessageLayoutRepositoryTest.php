@@ -47,33 +47,5 @@ class MessageLayoutRepositoryTest extends Tx_Messenger_BaseTest {
 		unset($this->fixture);
 		TYPO3\CMS\Messenger\Utility\Context::getInstance()->setLanguage(0);
 	}
-
-	/**
-	 * @test
-	 */
-	public function findByIdentifierReturnsTemplateObject() {
-		$templateObject = $this->fixture->findByIdentifier($this->layoutIdentifier);
-		$this->assertEquals('TYPO3\CMS\Messenger\Domain\Model\MessageLayout', get_class($templateObject));
-	}
-
-	/**
-	 * @test
-	 */
-	public function canFindByIdentifierWithDefaultSysLanguage() {
-		$object = $this->fixture->findByIdentifier($this->layoutIdentifier);
-		$this->assertEquals($this->layoutIdentifier, $object->getIdentifier());
-	}
-
-	/**
-	 * @test
-	 */
-	public function canFindByIdentifierForSysLanguageEqualsOne() {
-		// Fix me: does not make sense to run the test if library overlays is not loaded.
-		if (class_exists('tx_overlays')) {
-			TYPO3\CMS\Messenger\Utility\Context::getInstance()->setLanguage(1);
-			$object = $this->fixture->findByIdentifier($this->layoutIdentifier);
-			$this->assertEquals($this->layoutContentTranslated, $object->getContent());
-		}
-	}
 }
 ?>
