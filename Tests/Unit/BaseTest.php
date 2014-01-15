@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
+ *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
  *
  *  All rights reserved
  *
@@ -26,12 +26,6 @@
 
 /**
  * Group together some utility for testing purposes
- *
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @package TYPO3
- * @subpackage messenger
- * @author Fabien Udriot <fudriot@cobweb.ch>
  */
 class Tx_Messenger_BaseTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 

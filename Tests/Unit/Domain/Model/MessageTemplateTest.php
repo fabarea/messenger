@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
+ *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
  *
  *  All rights reserved
  *
@@ -28,14 +28,6 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messen
 
 /**
  * Test case for class \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate.
- *
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
- * @package TYPO3
- * @subpackage messenger
- *
- * @author Fabien Udriot <fudriot@cobweb.ch>
  */
 class MessageTemplateTest extends Tx_Messenger_BaseTest {
 

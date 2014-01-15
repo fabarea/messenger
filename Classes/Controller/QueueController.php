@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
  *
  *  All rights reserved
  *

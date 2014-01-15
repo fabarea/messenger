@@ -5,9 +5,9 @@ Messenger Extension
 Messenger Extension is a TYPO3 extension for listing recipients in a flexible way and send them emails to them. A message (AKA email) is composed by a message template and
 a possible wrapping layout. This can be useful if the message must be surrounded by a footer / header containing a logo or some default text.
 
-.. image:: https://raw.github.com/gebruederheitz/messenger/master/Documentation/Screenshot.png
+.. image:: https://raw.github.com/fudriot/messenger/master/Documentation/Screenshot.png
 
-Development goes at https://github.com/gebruederheitz/messenger
+Development goes at https://github.com/fudriot/messenger
 
 Installation
 ==============

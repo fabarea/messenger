@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\Exception;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
+ *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
  *
  *  All rights reserved
  *

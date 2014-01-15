@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\Domain\Validator;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
  *
  *  All rights reserved
  *
@@ -26,9 +26,6 @@ namespace TYPO3\CMS\Messenger\Domain\Validator;
 
 /**
  * Validator for \TYPO3\CMS\Messenger\QueryElement\Matcher
- *
- * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class MatcherValidator extends \TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator {
 
