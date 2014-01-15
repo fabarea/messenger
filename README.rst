@@ -56,29 +56,32 @@ There are two mandatory methods to set for sending a message::
 
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
-Todo (long term)
+
+Queue
 =================
 
-+ Improve message management in the BE module (create new one from scratch, edit, select, ...)
-+ Provide default FE / BE Users provider
-+ Add GUI to support layout wrapping
-+ Add support for multi-language in the BE module
-+ Add a possible "Mailing" Domain Model object for grouping sent emails
-+ Add filtering capability to be provided by the list manager.
-+ A message can be sent in various language.
-+ Implement queue method part of the message API.
+Alpha feature!
+
+Messenger has the feature to queue emails. This is mandatory as soon as making mass-mailing.
+
+@todo scheduler is not yet implemented.
 
 ::
 
-	$message = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Model\Message');
-	$message->setIdentifier($templateIdentifier)
-		->setRecipients($arrayOfRecipients)
-		->setMarkers($arrayOfMarkers)
-		->setSimulate($simulate)
-		->setLanguage($languageUid)
-		->addAttachment($pathToFile)
-		->setLayout($layoutIdentifier)
+	/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+	$message->
+		... // same as in the example above
 		->queue();
+
+Todo (long term)
+=================
+
++ Use Application Context as of TYPO3 6.2
++ Improve message management in the BE module (create new one from scratch, edit, select, ...)
++ Provide default FE / BE Users provider
++ Add GUI to support layout wrapping
++ A message can be sent in various language (alpha quality)
 
 
 List Manager

@@ -34,6 +34,26 @@ return array(
 				'type' => 'check',
 			),
 		),
+		'sender' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.sender',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
+		'recipient' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.recipient',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
 		'subject' => array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.subject',
@@ -66,6 +86,36 @@ return array(
 				'default' => time(),
 			),
 		),
+		'context' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.context',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
+		'attachment' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.attachment',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
+		'was_opened' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.was_opened',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
 	),
 	'grid' => array(
 		'facets' => array(
@@ -83,7 +133,24 @@ return array(
 				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
 				'width' => '5px',
 			),
-			'subject' => array(
+			'sender' => array(),
+			'recipient' => array(),
+			'subject' => array(),
+			'body' => array(
+				'width' => '500px',
+			),
+			'sent_time' => array(
+				'format' => 'datetime',
+				'width' => '150px',
+			),
+			'attachment' => array(
+				'visible' => FALSE,
+			),
+			'was_opened' => array(
+				'visible' => FALSE,
+			),
+			'context' => array(
+				'width' => '100px',
 			),
 			'__buttons' => array(
 				'sortable' => FALSE,

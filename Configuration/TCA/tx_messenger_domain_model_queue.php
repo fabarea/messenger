@@ -34,6 +34,26 @@ return array(
 				'type' => 'check',
 			),
 		),
+		'sender' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.sender',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
+		'recipient' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.recipient',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
+			),
+		),
 		'subject' => array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.subject',
@@ -54,16 +74,24 @@ return array(
 				'eval' => 'trim',
 			),
 		),
-		'sent_time' => array(
+		'context' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.sent_time',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.context',
 			'config' => array(
 				'type' => 'input',
-				'size' => 4,
-				'eval' => 'time',
-				'checkbox' => 1,
+				'size' => 255,
 				'readOnly' => TRUE,
-				'default' => time(),
+				'eval' => 'trim',
+			),
+		),
+		'attachment' => array(
+			'exclude' => 0,
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.attachment',
+			'config' => array(
+				'type' => 'input',
+				'size' => 255,
+				'readOnly' => TRUE,
+				'eval' => 'trim',
 			),
 		),
 	),
@@ -83,10 +111,17 @@ return array(
 				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
 				'width' => '5px',
 			),
+			'sender' => array(),
+			'recipient' => array(),
 			'subject' => array(),
-			'__buttons' => array(
-				'sortable' => FALSE,
-				'width' => '70px',
+			'body' => array(
+				'width' => '500px',
+			),
+			'attachment' => array(
+				'visible' => FALSE,
+			),
+			'context' => array(
+				'width' => '100px',
 			),
 		),
 	),

@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  ***************************************************************/
 
 /**
- *
+ * Message Template representation
  */
 class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 

@@ -23,18 +23,28 @@ namespace TYPO3\CMS\Messenger\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Messenger\Domain\Model\MessageTemplate;
 
 /**
- *
+ * Controller which take the GET / POST arguments and generates an output given a Message Template.
  */
-class MessageRendererController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+class MessageRendererController extends ActionController {
+
+	/**
+	 * Initialize object
+	 */
+	public function initializeAction() {
+
+		// @todo add IP address check. This controller is called by a crawler and is not meant to be called from the "outside"
+	}
 
 	/**
 	 * @param \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 * @param array $markers
 	 * @return string
 	 */
-	public function renderAction(\TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate, $markers = array()) {
+	public function renderAction(MessageTemplate $messageTemplate, $markers = array()) {
 
 		/** @var \TYPO3\CMS\Fluid\View\StandaloneView $emailView */
 		$emailView = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');

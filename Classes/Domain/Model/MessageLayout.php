@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  ***************************************************************/
 
 /**
- *
+ * Message Layout representation
  */
 class MessageLayout extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 

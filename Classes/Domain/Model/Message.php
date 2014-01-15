@@ -23,16 +23,18 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use Swift_Attachment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
 use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
 use TYPO3\CMS\Messenger\Utility\Html2Text;
+use TYPO3\CMS\Messenger\Utility\Object;
 use TYPO3\CMS\Messenger\Utility\Server;
 
 /**
- *
+ * Message representation
  * @todo remove language handling from the class which should be managed outside - or not?
- *
  */
 class Message {
 
@@ -42,9 +44,10 @@ class Message {
 	protected $uid;
 
 	/**
-	 * @var \TYPO3\CMS\Core\Mail\MailMessage
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+	 * @inject
 	 */
-	protected $message;
+	protected $objectManager;
 
 	/**
 	 * @var array
@@ -63,6 +66,7 @@ class Message {
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Utility\Marker
+	 * @inject
 	 */
 	protected $markerUtility;
 
@@ -79,9 +83,14 @@ class Message {
 	protected $language;
 
 	/**
-	 * @var string
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
 	 */
-	protected $layout;
+	protected $messageLayout;
+
+	/**
+	 * @var \TYPO3\CMS\Messenger\Domain\Model\Mailing
+	 */
+	protected $mailing;
 
 	/**
 	 * @var boolean
@@ -95,23 +104,26 @@ class Message {
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @inject
 	 */
-	protected $templateRepository;
+	protected $messageTemplateRepository;
+
+	/**
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository
+	 * @inject
+	 */
+	protected $sentMessageRepository;
+
+	/**
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\QueueRepository
+	 * @inject
+	 */
+	protected $queueRepository;
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
-	protected $template;
-
-	/**
-	 * @var string
-	 */
-	protected $messageSubject;
-
-	/**
-	 * @var string
-	 */
-	protected $messageBody;
+	protected $messageTemplate;
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Utility\Configuration
@@ -125,18 +137,20 @@ class Message {
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Utility\Crawler
+	 * @inject
 	 */
 	protected $crawler;
+
+	/**
+	 * @var \TYPO3\CMS\Core\Mail\MailMessage
+	 */
+	protected $mailMessage;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->message = GeneralUtility::makeInstance('TYPO3\CMS\Core\Mail\MailMessage');
-		$this->templateRepository = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository');
 		$this->emailValidator = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Validator\Email');
-		$this->markerUtility = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Marker');
-		$this->crawler = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Crawler');
 		$this->configurationManager = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance();
 		$this->context = \TYPO3\CMS\Messenger\Utility\Context::getInstance();
 
@@ -148,26 +162,35 @@ class Message {
 	}
 
 	/**
-	 * Utility method that will fetch an email template and format its content according to a set of markers.
-	 * Send the email eventually.
+	 * Prepares the emails by fetching an email template, formats the body and sends the email eventually.
+	 *
+	 * @return void
+	 */
+	public function queue() {
+		$this->prepareMessage();
+		$this->queueRepository->add($this->toArray());
+	}
+
+	/**
+	 * Prepares the emails by fetching an email template and formats its body.
 	 *
 	 * @throws WrongPluginConfigurationException
-	 * @throws \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException
+	 * @throws MissingPropertyValueInMessageObjectException
 	 * @return boolean whether or not the email was sent successfully
 	 */
-	public function send() {
+	protected function prepareMessage() {
 
 		// Substitute markers
-		if (empty($this->template)) {
-			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
+		if (empty($this->messageTemplate)) {
+			throw new MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
 		}
 
 		$recipients = $this->getRecipients();
 		if (empty($recipients)) {
-			throw new \TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
+			throw new MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
 		}
 
-		$subject = $this->markerUtility->substitute($this->template->getSubject(), $this->getMarkers(), 'text/plain');
+		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
 
 		$body = $this->formatBody();
 
@@ -178,7 +201,7 @@ class Message {
 		}
 		$body = $this->markerUtility->substitute($body, $this->getMarkers());
 
-		$this->message->setTo($recipients)
+		$this->getMailMessage()->setTo($recipients)
 			->setFrom($this->sender)
 			->setSubject($subject)
 			->setBody($body, 'text/html');
@@ -186,21 +209,36 @@ class Message {
 		// Attach plain text version if HTML tags are found in body
 		if ($this->hasHtml($body)) {
 			$text = Html2Text::getInstance()->convert($body);
-			$this->message->addPart($text, 'text/plain');
+			$this->getMailMessage()->addPart($text, 'text/plain');
 		}
 
 		// Handle attachment
 		foreach ($this->attachments as $attachment) {
-			$this->message->attach($attachment);
+			$this->getMailMessage()->attach($attachment);
 		}
+	}
 
-		$this->message->send();
-		$result = $this->message->isSent();
+	/**
+	 * Prepares the emails by fetching an email template, formats the body and sends the email eventually.
+	 *
+	 * @throws WrongPluginConfigurationException
+	 * @throws MissingPropertyValueInMessageObjectException
+	 * @return boolean whether or not the email was sent successfully
+	 */
+	public function send() {
 
-		if (!$result) {
+		$this->prepareMessage();
+
+		$this->getMailMessage()->send();
+		$isSent = $this->getMailMessage()->isSent();
+
+		if ($isSent) {
+			$this->sentMessageRepository->add($this->toArray());
+		} else {
 			throw new WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
 		}
-		return $result;
+
+		return $isSent;
 	}
 
 	/**
@@ -212,7 +250,7 @@ class Message {
 
 		// get body of message which get called by a crawler for resolving fluid syntax
 		$this->crawler->addGetVar('type', 1370537883);
-		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->template->getUid());
+		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->messageTemplate->getUid());
 
 		foreach ($this->markers as $key => $value) {
 			// send as post to avoid HTTP 414 "Request-URI Too Large"
@@ -259,9 +297,19 @@ class Message {
 	 *
 	 * @throws RecordNotFoundException
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
+	 * @deprecated
 	 */
 	public function getTemplate() {
-		return $this->template;
+		return $this->messageTemplate;
+	}
+
+	/**
+	 * Retrieves the message template object
+	 *
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
+	 */
+	public function getMessageTemplate() {
+		return $this->messageTemplate;
 	}
 
 	/**
@@ -317,7 +365,7 @@ class Message {
 	 */
 	public function setMarkers($markers) {
 		if (is_object($markers)) {
-			$markers = \TYPO3\CMS\Messenger\Utility\Object::toArray($markers);
+			$markers = Object::toArray($markers);
 		}
 		$this->markers = $markers;
 		return $this;
@@ -395,7 +443,7 @@ class Message {
 	 * @return string
 	 */
 	public function getLayout() {
-		return $this->layout;
+		return $this->messageLayout;
 	}
 
 	/**
@@ -403,9 +451,10 @@ class Message {
 	 *
 	 * @param string $layout
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @deprecated
 	 */
 	public function setLayout($layout) {
-		$this->layout = $layout;
+		$this->messageLayout = $layout;
 		return $this;
 	}
 
@@ -421,9 +470,9 @@ class Message {
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @deprecated
 	 */
 	public function setTemplate($messageTemplate) {
-
 
 		if ($messageTemplate instanceof \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate) {
 			$object = $messageTemplate;
@@ -434,7 +483,7 @@ class Message {
 				$messageTemplate = (int) $messageTemplate;
 			}
 			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByIdentifier';
-			$object = call_user_func_array(array($this->templateRepository, $methodName), array($messageTemplate));
+			$object = call_user_func_array(array($this->messageTemplateRepository, $methodName), array($messageTemplate));
 
 			// Attach a layout to the email template
 			// @todo: add setMessageLayout method()
@@ -446,8 +495,67 @@ class Message {
 			throw new RecordNotFoundException($message, 1350124207);
 		}
 
-		$this->template = $object;
+		$this->messageTemplate = $object;
 		return $this;
+	}
+
+	/**
+	 * Convert this object to an array.
+	 * @return array
+	 */
+	public function toArray() {
+
+		// Prepare recipients
+		$recipients = array();
+		foreach ($this->getRecipients() as $email => $name) {
+			$recipients[] = sprintf('%s <%s>', $name, $email);
+		}
+
+		// Prepare recipients
+		$senders = array();
+		foreach ($this->getSender() as $email => $name) {
+			$senders[] = sprintf('%s <%s>', $name, $email);
+		}
+
+		$values = array(
+			'sender' => implode(',', $senders),
+			'recipient' => implode(',', $recipients),
+			'subject' => $this->getMailMessage()->getSubject(),
+			'body' => $this->getMailMessage()->getBody(),
+			'attachment' => count($this->getMailMessage()->getChildren()),
+			'context' => $this->context->getName(),
+			'was_opened' => 0,
+			'message_template' => $this->messageTemplate->getUid(),
+			'layout_template' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
+			'sent_time' => time(),
+			'mailing' => is_object($this->mailing) ? $this->mailing->getUid() : 0,
+		);
+
+		return $values;
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Core\Mail\MailMessage
+	 */
+	public function getMailMessage() {
+		if (is_null($this->mailMessage)) {
+			$this->mailMessage = $this->objectManager->get('TYPO3\CMS\Core\Mail\MailMessage');
+		}
+		return $this->mailMessage;
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Messenger\Domain\Model\Mailing
+	 */
+	public function getMailing() {
+		return $this->mailing;
+	}
+
+	/**
+	 * @param \TYPO3\CMS\Messenger\Domain\Model\Mailing $mailing
+	 */
+	public function setMailing($mailing) {
+		$this->mailing = $mailing;
 	}
 }
 

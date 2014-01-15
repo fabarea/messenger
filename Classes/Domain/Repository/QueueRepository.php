@@ -26,14 +26,14 @@ namespace TYPO3\CMS\Messenger\Domain\Repository;
 use TYPO3\CMS\Vidi\Tca\TcaService;
 
 /**
- * A repository for handling sent message
+ * A repository for the Queue.
  */
-class SentMessageRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class QueueRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	/**
 	 * @var string
 	 */
-	protected $tableName = 'tx_messenger_domain_model_sentmessage';
+	protected $tableName = 'tx_messenger_domain_model_queue';
 
 	/**
 	 * @param array $message
@@ -55,8 +55,9 @@ class SentMessageRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 		$result = $this->getDatabaseConnection()->exec_INSERTquery($this->tableName, $values);
 		if (!$result) {
-			throw new \Exception('I could not save the message as "sent message"', 1389721852);
+			throw new \Exception('I could not queue the message.', 1389721932);
 		}
+		exit();
 		return $this->getDatabaseConnection()->sql_insert_id();
 	}
 

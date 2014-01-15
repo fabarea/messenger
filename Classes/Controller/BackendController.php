@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Messenger\Controller;
  ***************************************************************/
 
 /**
- *
+ * A controller for the BE module.
  */
 class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 

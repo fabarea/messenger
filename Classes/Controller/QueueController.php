@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Domain\Model;
+namespace TYPO3\CMS\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -25,29 +25,35 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  ***************************************************************/
 
 /**
- * Sent Message representation
+ * A controller for managing the queue.
  */
-class SentMessage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var int
+	 * @var \TYPO3\CMS\Messenger\Domain\Repository\QueueRepository
+	 * @inject
 	 */
-	protected $sentTime;
+	protected $queueRepository;
 
 	/**
-	 * @return int $sentTime
-	 */
-	public function getSentTime() {
-		return $this->sentTime;
-	}
-
-	/**
-	 * @param int $sentTime
+	 * Fetch message from the queue and send them.
+	 *
 	 * @return void
 	 */
-	public function setSentTime($sentTime) {
-		$this->sentTime = $sentTime;
-	}
+	public function processAction() {
 
+		// @todo get this limit by configuration.
+		$limit = 100;
+		$queuedMessages = $this->queueRepository->fetch($limit);
+
+		foreach ($queuedMessages as $queuedMessage) {
+
+			/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
+			$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+			// @todo
+			$message->hydrate($queuedMessage);
+			$message->send();
+		}
+	}
 }
 ?>

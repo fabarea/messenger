@@ -3,7 +3,7 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Fabien Udriot <fabien.udriot@gebruederheitz.de>, Gebruederheitz
+ *  (c) 2012 Fabien Udriot <fudriot@cobweb.ch>, Cobweb
  *
  *  All rights reserved
  *
@@ -25,29 +25,34 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  ***************************************************************/
 
 /**
- * Sent Message representation
+ * Mailing representation
  */
-class SentMessage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class Mailing extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 
 	/**
-	 * @var int
+	 * @var string
 	 */
-	protected $sentTime;
+	protected $identifier;
 
 	/**
-	 * @return int $sentTime
+	 * Constructor
 	 */
-	public function getSentTime() {
-		return $this->sentTime;
+	public function __construct(array $data = array()) {
+		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
 	}
 
 	/**
-	 * @param int $sentTime
-	 * @return void
+	 * @return string
 	 */
-	public function setSentTime($sentTime) {
-		$this->sentTime = $sentTime;
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
+	/**
+	 * @param string $identifier
+	 */
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
+	}
 }
 ?>
