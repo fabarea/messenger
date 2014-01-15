@@ -341,7 +341,7 @@ class Message {
 			$this->attachments[] = Swift_Attachment::fromPath($attachment)->setFilename($fileName);
 		} else {
 			$message = sprintf('File not found "%s"', $attachment);
-			throw new MissingFileException($message, 1350124207);
+			throw new MissingFileException($message, 1389779394);
 		}
 		return $this;
 	}
@@ -503,7 +503,7 @@ class Message {
 			}
 
 			if (is_null($this->messageTemplate)) {
-				$message = sprintf('I could not find message template ""', $messageTemplate);
+				$message = sprintf('I could not find message template "%s"', $messageTemplate);
 				throw new RecordNotFoundException($message, 1350124207);
 			}
 		}

@@ -141,7 +141,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 			$this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
 			if (!$this->messageLayout) {
 				$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
-				throw new RecordNotFoundException($message, 1350124207);
+				throw new RecordNotFoundException($message, 1389779386);
 			}
 		}
 
