@@ -295,17 +295,6 @@ class Message {
 	/**
 	 * Retrieves the message template object
 	 *
-	 * @throws RecordNotFoundException
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
-	 * @deprecated
-	 */
-	public function getTemplate() {
-		return $this->messageTemplate;
-	}
-
-	/**
-	 * Retrieves the message template object
-	 *
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
 	 */
 	public function getMessageTemplate() {
@@ -442,7 +431,7 @@ class Message {
 	/**
 	 * @return string
 	 */
-	public function getLayout() {
+	public function getMessageLayout() {
 		return $this->messageLayout;
 	}
 
@@ -451,9 +440,8 @@ class Message {
 	 *
 	 * @param string $layout
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
-	 * @deprecated
 	 */
-	public function setLayout($layout) {
+	public function setMessageLayout($layout) {
 		$this->messageLayout = $layout;
 		return $this;
 	}
@@ -470,9 +458,8 @@ class Message {
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
 	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
-	 * @deprecated
 	 */
-	public function setTemplate($messageTemplate) {
+	public function setMessageTemplate($messageTemplate) {
 
 		if ($messageTemplate instanceof \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate) {
 			$object = $messageTemplate;
@@ -487,7 +474,7 @@ class Message {
 
 			// Attach a layout to the email template
 			// @todo: add setMessageLayout method()
-			#$messageTemplate->setLayout($this->getLayout());
+			#$messageTemplate->setMessageLayout($this->getMessageLayout());
 		}
 
 		if (is_null($object)) {

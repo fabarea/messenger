@@ -110,7 +110,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function getLayoutContentCanReturnContent() {
-		$this->fixture->setLayout($this->layoutIdentifier);
+		$this->fixture->setMessageLayout($this->layoutIdentifier);
 		$actual = $this->fixture->getLayoutContent();
 		$this->assertEquals($this->layoutContent, $actual);
 	}
@@ -133,7 +133,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	public function getBodyIsWrappedIfLayoutIsSet() {
 		$body = uniqid('I am singing in the rain!');
 		$this->fixture->setBody($body);
-		$this->fixture->setLayout($this->layoutIdentifier);
+		$this->fixture->setMessageLayout($this->layoutIdentifier);
 		$expected = str_replace('{template}', $body, $this->layoutContent);
 		$this->assertEquals($expected, $this->fixture->getBody());
 	}

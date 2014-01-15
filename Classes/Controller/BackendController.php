@@ -91,7 +91,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
 				/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
 				$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
-				$isSent = $message->setTemplate($messageTemplateUid)
+				$isSent = $message->setMessageTemplate($messageTemplateUid)
 					->setRecipients($this->recipientFormatter->format($recipient, $mapping))
 					->setMarkers($recipient)
 					->send();
@@ -124,7 +124,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 
 			/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
 			$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
-			$isSent = $message->setTemplate($messageTemplateUid)
+			$isSent = $message->setMessageTemplate($messageTemplateUid)
 				->setRecipients($testEmail)
 				->send();
 

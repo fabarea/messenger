@@ -41,12 +41,12 @@ Usage::
 
 	/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
 	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
-	$message->setTemplate($templateIdentifier)
+	$message->setMessageTemplate($templateIdentifier)
 		->setRecipients($recipients)
 		->setMarkers($markers)
 		->setLanguage($languageIdentifier)
 		->addAttachment($pathToFile)
-		->setLayout($layoutIdentifier)
+		->setMessageLayout($layoutIdentifier)
 		->send();
 
 There are two mandatory methods to set for sending a message::

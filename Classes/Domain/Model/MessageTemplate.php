@@ -53,7 +53,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @var string
 	 */
-	protected $layout;
+	protected $messageLayout;
 
 	/**
 	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
@@ -67,7 +67,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
 		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
 		$this->body = !empty($data['body']) ? $data['body'] : '';
-		$this->layoutRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository');
+		$this->messageLayoutRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository');
 	}
 
 	/**
@@ -95,7 +95,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * @return string $body
 	 */
 	public function getBody() {
-		if ($this->layout) {
+		if ($this->messageLayout) {
 			$this->body = str_replace($this->getMarkerTemplate(), $this->body, $this->getLayoutContent());
 		}
 		return $this->body;
@@ -133,15 +133,15 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @return string
 	 */
-	public function getLayout() {
-		return $this->layout;
+	public function getMessageLayout() {
+		return $this->messageLayout;
 	}
 
 	/**
 	 * @param string $layout
 	 */
-	public function setLayout($layout) {
-		$this->layout = $layout;
+	public function setMessageLayout($layout) {
+		$this->messageLayout = $layout;
 	}
 
 	/**
@@ -160,9 +160,9 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	public function getLayoutContent() {
 
 		/** @var $layout \TYPO3\CMS\Messenger\Domain\Model\MessageLayout */
-		$layout = $this->layoutRepository->findByIdentifier($this->layout);
+		$layout = $this->messageLayoutRepository->findByIdentifier($this->messageLayout);
 		if (!$layout) {
-			$message = sprintf('No Email Layout record was found for identity "%s"', $this->layout);
+			$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
 			throw new \TYPO3\CMS\Messenger\Exception\RecordNotFoundException($message, 1350124207);
 		}
 		return $layout->getContent();

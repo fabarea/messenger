@@ -124,7 +124,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setTemplate($this->uidTemplate);
+		$this->fixture->setMessageTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -139,7 +139,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setTemplate((string) $this->uidTemplate);
+		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -154,7 +154,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
-		$this->fixture->setTemplate($this->identifier);
+		$this->fixture->setMessageTemplate($this->identifier);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
 			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
@@ -237,7 +237,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithSimulateFlagUsingMboxTransport() {
-		$mailSent = $this->fixture->setTemplate($this->identifier)
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
@@ -249,7 +249,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithSetMarkers() {
-		$mailSent = $this->fixture->setTemplate($this->identifier)
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->send();
@@ -260,7 +260,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function canSendMessageWithNoSetMarkers() {
-		$mailSent = $this->fixture->setTemplate($this->identifier)
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->send();
 		$this->assertTrue($mailSent);
@@ -271,7 +271,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne() {
 		$language = 1;
-		$mailSent = $this->fixture->setTemplate($this->identifier)
+		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setRecipients($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
