@@ -21,7 +21,7 @@ return array(
 		),
 	),
 	'types' => array(
-		'1' => array('showitem' => 'subject, body, sent_time'),
+		'1' => array('showitem' => 'sender, recipient, subject, body, attachment, context'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -38,10 +38,10 @@ return array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.sender',
 			'config' => array(
-				'type' => 'input',
-				'size' => 255,
+				'type' => 'text',
+				'rows' => 4,
+				'cols' => 50,
 				'readOnly' => TRUE,
-				'eval' => 'trim',
 			),
 		),
 		'recipient' => array(
@@ -49,7 +49,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.recipient',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -59,7 +59,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.subject',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -79,7 +79,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.context',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -89,7 +89,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.attachment',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -122,6 +122,10 @@ return array(
 			),
 			'context' => array(
 				'width' => '100px',
+			),
+			'__buttons' => array(
+				'sortable' => FALSE,
+				'width' => '70px',
 			),
 		),
 	),

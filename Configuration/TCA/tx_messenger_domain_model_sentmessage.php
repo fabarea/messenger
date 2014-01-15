@@ -21,7 +21,7 @@ return array(
 		),
 	),
 	'types' => array(
-		'1' => array('showitem' => 'subject, body, sent_time'),
+		'1' => array('showitem' => 'sender, recipient, subject, body, sent_time, attachment, was_opened, context'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -39,7 +39,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.sender',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -49,7 +49,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.recipient',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -59,7 +59,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.subject',
 			'config' => array(
 				'type' => 'input',
-				'size' => 30,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -68,10 +68,10 @@ return array(
 			'exclude' => 0,
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.body',
 			'config' => array(
-				'type' => 'input',
-				'size' => 30,
+				'type' => 'text',
+				'rows' => 4,
+				'cols' => 50,
 				'readOnly' => TRUE,
-				'eval' => 'trim',
 			),
 		),
 		'sent_time' => array(
@@ -91,7 +91,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.context',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -101,7 +101,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.attachment',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
@@ -111,7 +111,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_sentmessage.was_opened',
 			'config' => array(
 				'type' => 'input',
-				'size' => 255,
+				'size' => 50,
 				'readOnly' => TRUE,
 				'eval' => 'trim',
 			),
