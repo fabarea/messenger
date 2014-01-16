@@ -110,13 +110,18 @@ return array(
 
 A new submission was made by {email}
 
-<strong>Identifier</strong>
-{uid}
+**MarkDown syntax**
 
-<strong><l:translate key="foo"/></strong>
-{foo}
+* bullet list
+* bullet list
 
-<f:link.page pageUid="1">Open page</f:link.page>
+**Fluid View Helper syntax**
+
+Identifier: {uid}
+
+<l:translate key="foo"/>: {foo}
+
+<f:link.page pageUid="1" absolute="1">Open page</f:link.page>
 '
 			),
 		),

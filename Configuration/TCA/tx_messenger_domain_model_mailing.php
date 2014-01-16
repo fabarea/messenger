@@ -7,6 +7,7 @@ return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_mailing',
 		'label' => 'user',
+		'default_sortby' => 'ORDER BY uid ASC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
