@@ -30,6 +30,7 @@ use TYPO3\CMS\Messenger\Exception\MissingFileException;
 use TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
 use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
+use TYPO3\CMS\Messenger\Service\LoggerService;
 use TYPO3\CMS\Messenger\Utility\Html2Text;
 use TYPO3\CMS\Messenger\Utility\Object;
 use TYPO3\CMS\Messenger\Utility\Server;
@@ -180,7 +181,7 @@ class Message {
 	}
 
 	/**
-	 * Prepares the emails and queue it.
+	 * Prepares the emails and send it.
 	 *
 	 * @throws WrongPluginConfigurationException
 	 * @throws MissingPropertyValueInMessageObjectException
@@ -196,7 +197,9 @@ class Message {
 		if ($isSent) {
 			$this->sentMessageRepository->add($this->toArray());
 		} else {
-			throw new WrongPluginConfigurationException('No Email sent, something went wrong. Check Swift Mail configuration', 1350124220);
+			$message = 'No Email sent, something went wrong. Check Swift Mail configuration';
+			LoggerService::getLogger($this)->error($message);
+			throw new WrongPluginConfigurationException($message, 1350124220);
 		}
 
 		return $isSent;
