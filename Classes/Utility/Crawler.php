@@ -79,7 +79,14 @@ class Crawler {
 	 * @param string $value
 	 */
 	public function addPostVar($name, $value) {
-		$this->postVars[$name] = $value;
+		// If value is an array, dig recursively into the structure
+		if (is_array($value)) {
+			foreach ($value as $key => $subValue) {
+				$this->addPostVar($name . '[' . $key . ']', $subValue);
+			}
+		} else {
+			$this->postVars[$name] = $value;
+		}
 	}
 
 	/**
