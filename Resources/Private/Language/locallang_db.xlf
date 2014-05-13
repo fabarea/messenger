@@ -98,6 +98,9 @@
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.speaking_identifier">
 				<source>Identifier</source>
 			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.speaking_identifier.placeholder">
+				<source>message-new</source>
+			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.subject">
 				<source>Subject</source>
 			</trans-unit>

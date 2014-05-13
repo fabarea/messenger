@@ -87,6 +87,7 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.speaking_identifier',
 			'config' => array(
 				'type' => 'input',
+				'placeholder' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.speaking_identifier.placeholder',
 				'size' => 100,
 				'eval' => 'trim,required,unique',
 			),
@@ -108,14 +109,17 @@ return array(
 				'eval' => 'trim',
 				'default' => 'Hello Admin,
 
-A new submission was made by {email}
+A new submission was made by {email}.
 
-**MarkDown syntax**
+You can write Markdown and Fluid View Helper within your template.
+Markers such as {foo} have to be posted by Messenger.
+
+**MarkDown**
 
 * bullet list
 * bullet list
 
-**Fluid View Helper syntax**
+**Fluid View Helper**
 
 Identifier: {uid}
 
