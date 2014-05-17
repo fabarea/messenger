@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Utility;
+namespace Vanilla\Messenger\Utility;
 /***************************************************************
  *  Copyright notice
  *
@@ -84,7 +84,7 @@ class Marker {
 	 * @return array
 	 */
 	protected function getRteConfiguration() {
-		$pageUid = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('rootPageUid');
+		$pageUid = \Vanilla\Messenger\Utility\Configuration::getInstance()->get('rootPageUid');
 		$sysPageObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
 		$rootLine = $sysPageObj->getRootLine($pageUid);
 		$TSObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_tsparser_ext');

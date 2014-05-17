@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Domain\Model;
+namespace Vanilla\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
@@ -23,8 +23,8 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
-use TYPO3\CMS\Messenger\Utility\Configuration;
+use Vanilla\Messenger\Exception\RecordNotFoundException;
+use Vanilla\Messenger\Utility\Configuration;
 
 /**
  * Message Template representation
@@ -53,12 +53,12 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	protected $layoutBody;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
+	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
@@ -132,12 +132,12 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 	/**
-	 * @throws \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
+	 * @throws \Vanilla\Messenger\Exception\RecordNotFoundException
+	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		if (!is_object($this->messageLayout)) {
-			/** @var $layout \TYPO3\CMS\Messenger\Domain\Model\MessageLayout */
+			/** @var $layout \Vanilla\Messenger\Domain\Model\MessageLayout */
 			$this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
 			if (!$this->messageLayout) {
 				$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);

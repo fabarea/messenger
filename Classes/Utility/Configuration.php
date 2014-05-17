@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Utility;
+namespace Vanilla\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -41,10 +41,10 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Configuration
+	 * @return \Vanilla\Messenger\Utility\Configuration
 	 */
 	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Configuration');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Utility\Configuration');
 	}
 
 	/**
@@ -53,8 +53,8 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var array
 	 */
 	protected $defaultSettings = array(
-		'tableStructure' => 'TYPO3\CMS\Messenger\ListManager\DemoListManager',
-		'tableStructureFallBack' => 'TYPO3\CMS\Messenger\ListManager\DemoListManager',
+		'tableStructure' => 'Vanilla\Messenger\ListManager\DemoListManager',
+		'tableStructureFallBack' => 'Vanilla\Messenger\ListManager\DemoListManager',
 		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
 		'senderName' => 'John Doe',
@@ -67,7 +67,7 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Constructor
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Configuration
+	 * @return \Vanilla\Messenger\Utility\Configuration
 	 */
 	public function __construct() {
 		$settings = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extensionKey]);

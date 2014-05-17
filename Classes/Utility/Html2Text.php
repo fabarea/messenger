@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Utility;
+namespace Vanilla\Messenger\Utility;
 /***************************************************************
  *  Copyright notice
  *
@@ -31,7 +31,7 @@ namespace TYPO3\CMS\Messenger\Utility;
 class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
+	 * @var \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	protected $converter;
 
@@ -43,20 +43,20 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Html2Text
+	 * @return \Vanilla\Messenger\Utility\Html2Text
 	 */
 	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Html2Text');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Utility\Html2Text');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Html2Text
+	 * @return \Vanilla\Messenger\Utility\Html2Text
 	 */
 	public function __construct() {
-		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy');
-		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy');
+		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\LynxStrategy');
+		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy');
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Find the best suitable converter
 	 *
-	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
+	 * @return \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	public function findBestConverter() {
 
@@ -98,15 +98,15 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Set strategy
 	 *
-	 * @param \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $converter
+	 * @param \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface $converter
 	 * @return void
 	 */
-	public function setConverter(\TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $converter) {
+	public function setConverter(\Vanilla\Messenger\Strategy\Html2Text\StrategyInterface $converter) {
 		$this->converter = $converter;
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface
+	 * @return \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface
 	 */
 	public function getConverter() {
 		return $this->converter;
@@ -127,7 +127,7 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface $possibleConverter
+	 * @param \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface $possibleConverter
 	 */
 	public function addPossibleConverter($possibleConverter) {
 		$this->possibleConverters[] = $possibleConverter;

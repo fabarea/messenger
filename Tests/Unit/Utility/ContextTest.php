@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Utility\Context.
+ * Test case for class \Vanilla\Messenger\Utility\Context.
  */
 class ContextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
@@ -35,7 +35,7 @@ class ContextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $testingFramework;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Context
+	 * @var \Vanilla\Messenger\Utility\Context
 	 */
 	private $fixture;
 
@@ -47,7 +47,7 @@ class ContextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->testingFramework->createTemplate($pid, array('root' => 1));
 		$this->testingFramework->createFakeFrontEnd($pid);
 
-		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Context();
+		$this->fixture = new \Vanilla\Messenger\Utility\Context();
 	}
 
 	public function tearDown() {

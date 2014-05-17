@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ListManager;
+namespace Vanilla\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -26,7 +26,7 @@ namespace TYPO3\CMS\Messenger\ListManager;
 /**
  * A demo list manager.
  */
-class DemoListManager implements \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface {
+class DemoListManager implements \Vanilla\Messenger\MessengerInterface\ListableInterface {
 
 	/**
 	 * @var array
@@ -60,7 +60,7 @@ class DemoListManager implements \TYPO3\CMS\Messenger\MessengerInterface\Listabl
 	);
 
 	/**
-	 * @return \TYPO3\CMS\Messenger\ListManager\DemoListManager
+	 * @return \Vanilla\Messenger\ListManager\DemoListManager
 	 */
 	public function __construct(){
 		foreach (array(1, 2, 3, 4) as $uid) {
@@ -80,13 +80,13 @@ class DemoListManager implements \TYPO3\CMS\Messenger\MessengerInterface\Listabl
 	 * Returns a set of recipients.
 	 * Notice, it is a very "cheap" algorithm for filtering a set of data for demo purposes
 	 *
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
+	 * @param \Vanilla\Messenger\QueryElement\Matcher $matcher
+	 * @param \Vanilla\Messenger\QueryElement\Order $order
 	 * @param int $limit
 	 * @param int $offset
 	 * @return array
 	 */
-	public function findBy(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL) {
+	public function findBy(\Vanilla\Messenger\QueryElement\Matcher $matcher = NULL, \Vanilla\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL) {
 
 		$records = $this->records;
 		$recordSet1 = $recordSet2 = $recordSet3 = array(1, 2, 3, 4);
@@ -151,13 +151,13 @@ class DemoListManager implements \TYPO3\CMS\Messenger\MessengerInterface\Listabl
 	/**
 	 * Get data about a particular record.
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException
+	 * @throws \Vanilla\Messenger\Exception\MissingKeyInArrayException
 	 * @param int $uid an identifier for the record.
 	 * @return array
 	 */
 	public function findByUid($uid) {
 		if (empty($this->records[$uid])) {
-			throw new \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
+			throw new \Vanilla\Messenger\Exception\MissingKeyInArrayException(sprintf('Uid does not exist: "%s"', $uid), 1357807844);
 		}
 		return $this->records[$uid];
 	}

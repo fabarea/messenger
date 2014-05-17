@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -24,7 +24,7 @@ namespace TYPO3\CMS\Messenger\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Messenger\Domain\Model\MessageTemplate;
+use Vanilla\Messenger\Domain\Model\MessageTemplate;
 
 /**
  * Controller which take the GET / POST arguments and generates an output given a Message Template.
@@ -40,7 +40,7 @@ class MessageRendererController extends ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
+	 * @param \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 * @param array $markers
 	 * @return string
 	 */

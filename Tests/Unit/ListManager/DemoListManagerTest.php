@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\ListManager\DemoListManager.
+ * Test case for class \Vanilla\Messenger\ListManager\DemoListManager.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -34,12 +34,12 @@
 class DemoListManagerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\ListManager\DemoListManager
+	 * @var \Vanilla\Messenger\ListManager\DemoListManager
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\ListManager\DemoListManager();
+		$this->fixture = new \Vanilla\Messenger\ListManager\DemoListManager();
 	}
 
 	public function tearDown() {

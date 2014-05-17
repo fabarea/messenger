@@ -27,25 +27,25 @@
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository.
+ * Test case for class \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository.
  */
 class MessageTemplateRepositoryTest extends Tx_Messenger_BaseTest {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
 	 */
 	private $fixture;
 
 
 	public function setUp() {
 		parent::setUp();
-		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository();
+		$this->fixture = new \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->fixture);
-		TYPO3\CMS\Messenger\Utility\Context::getInstance()->setLanguage(0);
+		Vanilla\Messenger\Utility\Context::getInstance()->setLanguage(0);
 	}
 }
 ?>

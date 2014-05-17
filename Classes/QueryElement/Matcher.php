@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\QueryElement;
+namespace Vanilla\Messenger\QueryElement;
 /***************************************************************
 *  Copyright notice
 *
@@ -51,7 +51,7 @@ class Matcher {
 
 	/**
 	 * @param string $searchTerm
-	 * @return \TYPO3\CMS\Messenger\QueryElement\Matcher
+	 * @return \Vanilla\Messenger\QueryElement\Matcher
 	 */
 	public function setSearchTerm($searchTerm) {
 		$this->searchTerm = $searchTerm;
@@ -74,7 +74,7 @@ class Matcher {
 
 	/**
 	 * @param array $matches
-	 * @return \TYPO3\CMS\Messenger\QueryElement\Matcher
+	 * @return \Vanilla\Messenger\QueryElement\Matcher
 	 */
 	public function setMatches($matches) {
 		$this->matches = $matches;
@@ -86,7 +86,7 @@ class Matcher {
 	 *
 	 * @param string $field
 	 * @param string $value
-	 * @return \TYPO3\CMS\Messenger\QueryElement\Matcher
+	 * @return \Vanilla\Messenger\QueryElement\Matcher
 	 */
 	public function addMatch($field, $value) {
 		if ($this->tcaService->hasRelationManyToMany($field)) {

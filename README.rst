@@ -58,8 +58,8 @@ Usage::
 	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
 	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-	/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 	$message->setMessageTemplate($templateIdentifier)
 		->setRecipients($recipients)
 		->setMarkers($markers)
@@ -87,8 +87,8 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 
 ::
 
-	/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 	$message->
 		... // same as in the example above
 		->queue();
@@ -111,15 +111,15 @@ This paragraph is obsolete! The List Manager must be integrated in Vidi somehow.
 In order to have a table of recipients displayed in the BE module a "list manager" must be provided where it is defined
 what sort of data should be displayed. A list manager must implement a listable interface. As example,
 a `Demo List Manager` is provided in the extension which can be taken as starting point for a custom implementation. The file is at
-``\TYPO3\CMS\Messenger\ListManager\DemoListManager``
+``\Vanilla\Messenger\ListManager\DemoListManager``
 
 A list manager must be registered in ``ext_localconf.php`` as follows::
 
 	# Register a new list manager for demo purposes.
-	\TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->add(
+	\Vanilla\Messenger\ListManager\Registry::getInstance()->add(
 
 		# Corresponds to a class name.
-		'TYPO3\CMS\Messenger\ListManager\DemoListManager',
+		'Vanilla\Messenger\ListManager\DemoListManager',
 
 		# A string or label describing the recipients (for the BE module needs).
 		'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'

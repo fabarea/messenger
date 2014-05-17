@@ -49,7 +49,7 @@ class HeaderViewHelperTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function renderReturnsStringThatContainsThTags() {
-		$expected = count(\TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields());
+		$expected = count(\Vanilla\Messenger\ListManager\Factory::getInstance()->getFields());
 		$actual = $this->fixture->render();
 		$this->assertEquals($expected, preg_match_all('/<th/isU', $actual, $matches));
 	}

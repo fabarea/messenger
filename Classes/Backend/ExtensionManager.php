@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Backend;
+namespace Vanilla\Messenger\Backend;
 /***************************************************************
  *  Copyright notice
  *
@@ -63,7 +63,7 @@ class ExtensionManager {
 	/**
 	 * Constructor
 	 *
-	 * @return \TYPO3\CMS\Messenger\Backend\ExtensionManager
+	 * @return \Vanilla\Messenger\Backend\ExtensionManager
 	 */
 	public function __construct() {
 

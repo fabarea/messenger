@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Utility\ConfigurationTest.
+ * Test case for class \Vanilla\Messenger\Utility\ConfigurationTest.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -34,12 +34,12 @@
 class ConfigurationTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Configuration
+	 * @var \Vanilla\Messenger\Utility\Configuration
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Configuration();
+		$this->fixture = new \Vanilla\Messenger\Utility\Configuration();
 	}
 
 	public function tearDown() {

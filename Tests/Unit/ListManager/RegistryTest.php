@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\ListManager\Registry.
+ * Test case for class \Vanilla\Messenger\ListManager\Registry.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -34,12 +34,12 @@
 class RegistryTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\ListManager\Registry
+	 * @var \Vanilla\Messenger\ListManager\Registry
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\ListManager\Registry();
+		$this->fixture = new \Vanilla\Messenger\ListManager\Registry();
 	}
 
 	public function tearDown() {

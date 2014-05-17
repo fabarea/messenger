@@ -29,12 +29,12 @@
  */
 class SentMessageControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\SentMessage
+	 * @var \Vanilla\Messenger\Domain\Model\SentMessage
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\SentMessage();
+		$this->fixture = new \Vanilla\Messenger\Domain\Model\SentMessage();
 	}
 
 	public function tearDown() {

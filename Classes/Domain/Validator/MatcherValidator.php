@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Domain\Validator;
+namespace Vanilla\Messenger\Domain\Validator;
 /***************************************************************
  *  Copyright notice
  *
@@ -25,7 +25,7 @@ namespace TYPO3\CMS\Messenger\Domain\Validator;
  ***************************************************************/
 
 /**
- * Validator for \TYPO3\CMS\Messenger\QueryElement\Matcher
+ * Validator for \Vanilla\Messenger\QueryElement\Matcher
  */
 class MatcherValidator extends \TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator {
 

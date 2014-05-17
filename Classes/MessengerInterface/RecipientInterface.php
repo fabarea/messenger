@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\MessengerInterface;
+namespace Vanilla\Messenger\MessengerInterface;
 /***************************************************************
  *  Copyright notice
  *

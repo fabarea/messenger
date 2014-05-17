@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers\Table;
+namespace Vanilla\Messenger\ViewHelpers\Table;
 /***************************************************************
 *  Copyright notice
 *
@@ -38,7 +38,7 @@ class HeaderViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 	public function render() {
 		$result = '';
 		$template = '<th %s %s>%s</th>';
-		$tableHeaders = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields();
+		$tableHeaders = \Vanilla\Messenger\ListManager\Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			$result .= sprintf($template . PHP_EOL,

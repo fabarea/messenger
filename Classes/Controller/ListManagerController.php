@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -33,7 +33,7 @@ class ListManagerController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	 * @return void
 	 */
 	public function listAction() {
-		$this->view->assign('listManagers', \TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->get());
+		$this->view->assign('listManagers', \Vanilla\Messenger\ListManager\Registry::getInstance()->get());
 	}
 
 	/**
@@ -42,7 +42,7 @@ class ListManagerController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	 */
 	public function saveAction($listManager) {
 		// save email address as preference
-		\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_list_manager', $listManager);
+		\Vanilla\Messenger\Utility\BeUserPreference::set('messenger_list_manager', $listManager);
 		$this->redirect('index', 'Backend');
 	}
 }

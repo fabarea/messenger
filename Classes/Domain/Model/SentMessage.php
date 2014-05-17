@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Domain\Model;
+namespace Vanilla\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *

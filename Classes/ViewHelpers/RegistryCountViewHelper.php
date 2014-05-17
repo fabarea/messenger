@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers;
+namespace Vanilla\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *
@@ -34,7 +34,7 @@ class RegistryCountViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 	 * @return int
 	 */
 	public function render() {
-		return \TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->count();
+		return \Vanilla\Messenger\ListManager\Registry::getInstance()->count();
 	}
 
 }

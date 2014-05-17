@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers;
+namespace Vanilla\Messenger\ViewHelpers;
 /***************************************************************
 *  Copyright notice
 *

@@ -14,7 +14,7 @@ context = Development
 rootPageUid = 1
 
 # cat=basic//3; type=string; label= Default List Manager : If no preference is defined by the User, take this value as the default List Manager.
-tableStructureFallBack = TYPO3\CMS\Messenger\ListManager\DemoListManager
+tableStructureFallBack = Vanilla\Messenger\ListManager\DemoListManager
 
-# cat=basic//; type=user[EXT:messenger/Classes/Backend/ExtensionManager.php:TYPO3\CMS\Messenger\Backend\ExtensionManager->renderBeModules]; label = Select BE modules to display: Since the extension can be used as standalone library, decide what BE module to show.
+# cat=basic//; type=user[EXT:messenger/Classes/Backend/ExtensionManager.php:Vanilla\Messenger\Backend\ExtensionManager->renderBeModules]; label = Select BE modules to display: Since the extension can be used as standalone library, decide what BE module to show.
 enabledModules = composer, messagetemplate, messagelayout, mailing, sentmessage, queue

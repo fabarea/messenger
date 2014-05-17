@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Utility\Marker.
+ * Test case for class \Vanilla\Messenger\Utility\Marker.
  */
 class MarkerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
@@ -55,7 +55,7 @@ class MarkerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	private $markers;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Marker
+	 * @var \Vanilla\Messenger\Utility\Marker
 	 */
 	private $fixture;
 
@@ -69,7 +69,7 @@ class MarkerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 			'marker_1' => $this->marker1,
 			'marker_2' => $this->marker2,
 		);
-		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Marker();
+		$this->fixture = new \Vanilla\Messenger\Utility\Marker();
 	}
 
 	public function tearDown() {
@@ -121,7 +121,7 @@ class MarkerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function getRteConfigurationReturnsANotEmptyArray() {
 
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Utility\Marker', 'getRteConfiguration'
+			'Vanilla\Messenger\Utility\Marker', 'getRteConfiguration'
 		);
 
 		$method->setAccessible(TRUE);

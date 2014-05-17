@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers\Table;
+namespace Vanilla\Messenger\ViewHelpers\Table;
 /***************************************************************
 *  Copyright notice
 *
@@ -38,7 +38,7 @@ class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 
 		$result = '';
 		$template = '<td %s %s>%s</td>';
-		$tableHeaders = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields();
+		$tableHeaders = \Vanilla\Messenger\ListManager\Factory::getInstance()->getFields();
 
 		foreach ($tableHeaders as $tableHeader) {
 			if (is_array($object)) {
@@ -59,14 +59,14 @@ class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 	/**
 	 * Get a value for an array given a key.
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\UnknownMethodException
+	 * @throws \Vanilla\Messenger\Exception\UnknownMethodException
 	 * @param array $array
 	 * @param string $key
 	 * @return string
 	 */
 	protected function getValueForArray($array, $key) {
 		if (! isset($array[$key])) {
-			throw new \TYPO3\CMS\Messenger\Exception\UnknownMethodException('Array does not contain a key: ' . $key, 1357668817);
+			throw new \Vanilla\Messenger\Exception\UnknownMethodException('Array does not contain a key: ' . $key, 1357668817);
 		}
 		return $array[$key];
 	}
@@ -74,7 +74,7 @@ class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 	/**
 	 * Get a value for an object given a property name.
 	 *
-	 * @throws \TYPO3\CMS\Messenger\Exception\UnknownMethodException
+	 * @throws \Vanilla\Messenger\Exception\UnknownMethodException
 	 * @param Object $object
 	 * @param string $propertyName
 	 * @return string
@@ -82,7 +82,7 @@ class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 	protected function getValueForObject($object, $propertyName) {
 		$getter = 'get' . ucfirst($propertyName);
 		if (! method_exists($object, $getter)) {
-			throw new \TYPO3\CMS\Messenger\Exception\UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
+			throw new \Vanilla\Messenger\Exception\UnknownMethodException('Object does not have method: ' . $getter, 1357668816);
 		}
 		return call_user_func(array($object, $getter));
 	}

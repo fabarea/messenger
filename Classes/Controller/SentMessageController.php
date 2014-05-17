@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -32,17 +32,17 @@ class SentMessageController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	/**
 	 * sentMessageRepository
 	 *
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\SentMessageRepository
 	 */
 	protected $sentMessageRepository;
 
 	/**
 	 * injectSentMessageRepository
 	 *
-	 * @param \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository
+	 * @param \Vanilla\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository
 	 * @return void
 	 */
-	public function injectSentMessageRepository(\TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository) {
+	public function injectSentMessageRepository(\Vanilla\Messenger\Domain\Repository\SentMessageRepository $sentMessageRepository) {
 		$this->sentMessageRepository = $sentMessageRepository;
 	}
 

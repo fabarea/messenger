@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -30,18 +30,18 @@ namespace TYPO3\CMS\Messenger\Controller;
 class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
+	 * @var \Vanilla\Messenger\MessengerInterface\ListableInterface
 	 */
 	protected $listManager;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Formatter\Recipient
+	 * @var \Vanilla\Messenger\Formatter\Recipient
 	 * @inject
 	 */
 	protected $recipientFormatter;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
@@ -56,10 +56,10 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 	public function initializeAction() {
 
 		try {
-			$this->listManager = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance();
+			$this->listManager = \Vanilla\Messenger\ListManager\Factory::getInstance();
 
-			/** @var $listManagerValidator TYPO3\CMS\Messenger\Validator\ListManagerValidator */
-			$listManagerValidator = $this->objectManager->get('TYPO3\CMS\Messenger\Validator\ListManagerValidator');
+			/** @var $listManagerValidator Vanilla\Messenger\Validator\ListManagerValidator */
+			$listManagerValidator = $this->objectManager->get('Vanilla\Messenger\Validator\ListManagerValidator');
 			$listManagerValidator->validate($this->listManager);
 		} catch(Exception $e ) {
 			$this->flashMessageContainer->add('List Manager validation error: ' . $e->getMessage(), '', t3lib_FlashMessage::ERROR);
@@ -89,8 +89,8 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 			foreach ($recipients as $recipientUid) {
 				$recipient = $this->listManager->findByUid($recipientUid);
 
-				/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
-				$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+				/** @var $message \Vanilla\Messenger\Domain\Model\Message */
+				$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 				$isSent = $message->setMessageTemplate($messageTemplateUid)
 					->setRecipients($this->recipientFormatter->format($recipient, $mapping))
 					->setMarkers($recipient)
@@ -122,8 +122,8 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 		$status = 'error';
 		if ($messageTemplateUid > 0 && $testEmail != '') {
 
-			/** @var $message \TYPO3\CMS\Messenger\Domain\Model\Message */
-			$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+			/** @var $message \Vanilla\Messenger\Domain\Model\Message */
+			$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 			$isSent = $message->setMessageTemplate($messageTemplateUid)
 				->setRecipients($testEmail)
 				->send();
@@ -133,7 +133,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 			$status = $isSent ? 'success' : $status;
 
 			// save email address as preference
-			\TYPO3\CMS\Messenger\Utility\BeUserPreference::set('messenger_testing_email', $testEmail);
+			\Vanilla\Messenger\Utility\BeUserPreference::set('messenger_testing_email', $testEmail);
 		}
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");
@@ -141,19 +141,19 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Pager $pager
+	 * @param \Vanilla\Messenger\QueryElement\Matcher $matcher
+	 * @param \Vanilla\Messenger\QueryElement\Order $order
+	 * @param \Vanilla\Messenger\QueryElement\Pager $pager
 	 * @return void
-	 * @validate $matcher \TYPO3\CMS\Messenger\Domain\Validator\MatcherValidator
+	 * @validate $matcher \Vanilla\Messenger\Domain\Validator\MatcherValidator
 	 */
-	public function indexAction(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, \TYPO3\CMS\Messenger\QueryElement\Pager $pager = NULL) {
+	public function indexAction(\Vanilla\Messenger\QueryElement\Matcher $matcher = NULL, \Vanilla\Messenger\QueryElement\Order $order = NULL, \Vanilla\Messenger\QueryElement\Pager $pager = NULL) {
 
-		$matcher = $matcher === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Matcher') : $matcher;
-		$order = $order === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Order') : $order;
-		$pager = $pager === NULL ? $this->objectManager->get('TYPO3\CMS\Messenger\QueryElement\Pager') : $pager;
+		$matcher = $matcher === NULL ? $this->objectManager->get('Vanilla\Messenger\QueryElement\Matcher') : $matcher;
+		$order = $order === NULL ? $this->objectManager->get('Vanilla\Messenger\QueryElement\Order') : $order;
+		$pager = $pager === NULL ? $this->objectManager->get('Vanilla\Messenger\QueryElement\Pager') : $pager;
 
-		$messageIdentifier = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_message_template');
+		$messageIdentifier = \Vanilla\Messenger\Utility\BeUserPreference::get('messenger_message_template');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageIdentifier);
 
 		$this->view->assign('recipients', $this->listManager->findBy($matcher, $order, $pager->getLimit(), $pager->getOffset()));

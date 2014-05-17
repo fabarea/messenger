@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Utility;
+namespace Vanilla\Messenger\Utility;
 /**
  * Class to handle cURL requests
  *

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
+namespace Vanilla\Messenger\Strategy\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
@@ -28,7 +28,7 @@ namespace TYPO3\CMS\Messenger\Strategy\Html2Text;
  * @see http://www.chuggnutt.com/html2text
  *
  */
-class RegexpStrategy implements \TYPO3\CMS\Messenger\Strategy\Html2Text\StrategyInterface {
+class RegexpStrategy implements \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface {
 
 	/**
 	 *  Contains the HTML content to convert.
@@ -211,7 +211,7 @@ class RegexpStrategy implements \TYPO3\CMS\Messenger\Strategy\Html2Text\Strategy
 	 *
 	 * @param string $source HTML content
 	 * @param boolean $from_file Indicates $source is a file to pull content from
-	 * @return \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy
+	 * @return \Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy
 	 */
 	public function  __construct($source = '', $from_file = FALSE) {
 		if (!empty($source)) {

@@ -27,12 +27,12 @@
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Utility\Html2Text.
+ * Test case for class \Vanilla\Messenger\Utility\Html2Text.
  */
 class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Html2Text
+	 * @var \Vanilla\Messenger\Utility\Html2Text
 	 */
 	protected $fixture;
 
@@ -47,7 +47,7 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $markers;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\Utility\Html2Text();
+		$this->fixture = new \Vanilla\Messenger\Utility\Html2Text();
 	}
 
 	public function tearDown() {
@@ -61,7 +61,7 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
-		$converter = new \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy();
+		$converter = new \Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy();
 		$this->fixture->setConverter($converter);
 
 		$this->assertEquals($expected, $this->fixture->convert($input));
@@ -73,7 +73,7 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function convertReturnsTextWithLynxConverter() {
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
-		$converter = new \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy();
+		$converter = new \Vanilla\Messenger\Strategy\Html2Text\LynxStrategy();
 		$lynxPath = '/opt/local/bin/lynx'; // @to-improve corresponds to Fabien's environment
 		$converter->setLynx($lynxPath);
 		$this->fixture->setConverter($converter);
@@ -86,7 +86,7 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	public function findBestConverterReturnsRegexpConverter() {
 		$converter = $this->fixture->findBestConverter();
-		$this->assertTrue($converter instanceof \TYPO3\CMS\Messenger\Strategy\Html2Text\RegexpStrategy);
+		$this->assertTrue($converter instanceof \Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy);
 	}
 }
 ?>

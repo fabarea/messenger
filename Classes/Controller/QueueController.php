@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -30,7 +30,7 @@ namespace TYPO3\CMS\Messenger\Controller;
 class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\QueueRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\QueueRepository
 	 * @inject
 	 */
 	protected $queueRepository;
@@ -48,8 +48,8 @@ class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
 		foreach ($queuedMessages as $queuedMessage) {
 
-			/** @var \TYPO3\CMS\Messenger\Domain\Model\Message $message */
-			$message = $this->objectManager->get('TYPO3\CMS\Messenger\Domain\Model\Message');
+			/** @var \Vanilla\Messenger\Domain\Model\Message $message */
+			$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 			// @todo
 			$message->hydrate($queuedMessage);
 			$message->send();

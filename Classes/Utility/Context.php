@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Utility;
+namespace Vanilla\Messenger\Utility;
 /***************************************************************
 *  Copyright notice
 *
@@ -46,19 +46,19 @@ class Context implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Context
+	 * @return \Vanilla\Messenger\Utility\Context
 	 */
 	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Utility\Context');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Utility\Context');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return \TYPO3\CMS\Messenger\Utility\Context
+	 * @return \Vanilla\Messenger\Utility\Context
 	 */
 	public function __construct() {
-		$settings = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->getSettings();
+		$settings = \Vanilla\Messenger\Utility\Configuration::getInstance()->getSettings();
 		$this->name = empty($settings['context']) ? 'Development' : $settings['context'];
 		$this->sendingEmailContexts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $settings['listOfContextsSendingEmails']);
 	}

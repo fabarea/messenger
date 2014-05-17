@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Controller;
+namespace Vanilla\Messenger\Controller;
 /***************************************************************
  *  Copyright notice
  *
@@ -23,7 +23,7 @@ namespace TYPO3\CMS\Messenger\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use TYPO3\CMS\Messenger\Utility\BeUserPreference;
+use Vanilla\Messenger\Utility\BeUserPreference;
 
 /**
  *
@@ -31,7 +31,7 @@ use TYPO3\CMS\Messenger\Utility\BeUserPreference;
 class MessageTemplateController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers\Be;
+namespace Vanilla\Messenger\ViewHelpers\Be;
 /***************************************************************
 *  Copyright notice
 *
@@ -35,7 +35,7 @@ class UserPreferenceViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 * @return string
 	 */
 	public function render($key) {
-		return (string) \TYPO3\CMS\Messenger\Utility\BeUserPreference::get($key);
+		return (string) \Vanilla\Messenger\Utility\BeUserPreference::get($key);
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ListManager;
+namespace Vanilla\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -29,21 +29,21 @@ namespace TYPO3\CMS\Messenger\ListManager;
 class Factory {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
+	 * @var \Vanilla\Messenger\MessengerInterface\ListableInterface
 	 */
 	static protected $instance = NULL;
 
 	/**
 	 * Get an instance of a list manager interface
 	 *
-	 * @return \TYPO3\CMS\Messenger\MessengerInterface\ListableInterface
+	 * @return \Vanilla\Messenger\MessengerInterface\ListableInterface
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
-			$className = \TYPO3\CMS\Messenger\Utility\BeUserPreference::get('messenger_list_manager');
+			$className = \Vanilla\Messenger\Utility\BeUserPreference::get('messenger_list_manager');
 
 			if (! class_exists($className)) {
-				$className = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('tableStructureFallBack');
+				$className = \Vanilla\Messenger\Utility\Configuration::getInstance()->get('tableStructureFallBack');
 			}
 
 			self::$instance = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($className);

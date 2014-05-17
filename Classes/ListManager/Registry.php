@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ListManager;
+namespace Vanilla\Messenger\ListManager;
 /***************************************************************
 *  Copyright notice
 *
@@ -37,10 +37,10 @@ class Registry implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Get an instance of a list manager interface
 	 *
-	 * @return \TYPO3\CMS\Messenger\ListManager\Registry
+	 * @return \Vanilla\Messenger\ListManager\Registry
 	 */
 	public static function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Messenger\ListManager\Registry');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\ListManager\Registry');
 	}
 
 	/**

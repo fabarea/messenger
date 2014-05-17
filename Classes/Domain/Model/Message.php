@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Domain\Model;
+namespace Vanilla\Messenger\Domain\Model;
 /***************************************************************
  *  Copyright notice
  *
@@ -26,14 +26,14 @@ namespace TYPO3\CMS\Messenger\Domain\Model;
 
 use Swift_Attachment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Messenger\Exception\MissingFileException;
-use TYPO3\CMS\Messenger\Exception\MissingPropertyValueInMessageObjectException;
-use TYPO3\CMS\Messenger\Exception\RecordNotFoundException;
-use TYPO3\CMS\Messenger\Exception\WrongPluginConfigurationException;
-use TYPO3\CMS\Messenger\Service\LoggerService;
-use TYPO3\CMS\Messenger\Utility\Html2Text;
-use TYPO3\CMS\Messenger\Utility\Object;
-use TYPO3\CMS\Messenger\Utility\Server;
+use Vanilla\Messenger\Exception\MissingFileException;
+use Vanilla\Messenger\Exception\MissingPropertyValueInMessageObjectException;
+use Vanilla\Messenger\Exception\RecordNotFoundException;
+use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
+use Vanilla\Messenger\Service\LoggerService;
+use Vanilla\Messenger\Utility\Html2Text;
+use Vanilla\Messenger\Utility\Object;
+use Vanilla\Messenger\Utility\Server;
 use \Michelf\Markdown;
 /**
  * Message representation
@@ -63,12 +63,12 @@ class Message {
 	protected $recipients = array();
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Validator\Email
+	 * @var \Vanilla\Messenger\Validator\Email
 	 */
 	protected $emailValidator;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Marker
+	 * @var \Vanilla\Messenger\Utility\Marker
 	 * @inject
 	 */
 	protected $markerUtility;
@@ -86,12 +86,12 @@ class Message {
 	protected $language;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
+	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\Mailing
+	 * @var \Vanilla\Messenger\Domain\Model\Mailing
 	 */
 	protected $mailing;
 
@@ -106,46 +106,46 @@ class Message {
 	protected $attachments = array();
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\SentMessageRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\SentMessageRepository
 	 * @inject
 	 */
 	protected $sentMessageRepository;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Repository\QueueRepository
+	 * @var \Vanilla\Messenger\Domain\Repository\QueueRepository
 	 * @inject
 	 */
 	protected $queueRepository;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate
+	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Configuration
+	 * @var \Vanilla\Messenger\Utility\Configuration
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Context
+	 * @var \Vanilla\Messenger\Utility\Context
 	 */
 	protected $context;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Utility\Crawler
+	 * @var \Vanilla\Messenger\Utility\Crawler
 	 * @inject
 	 */
 	protected $crawler;
@@ -159,9 +159,9 @@ class Message {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->emailValidator = GeneralUtility::makeInstance('TYPO3\CMS\Messenger\Validator\Email');
-		$this->configurationManager = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance();
-		$this->context = \TYPO3\CMS\Messenger\Utility\Context::getInstance();
+		$this->emailValidator = GeneralUtility::makeInstance('Vanilla\Messenger\Validator\Email');
+		$this->configurationManager = \Vanilla\Messenger\Utility\Configuration::getInstance();
+		$this->context = \Vanilla\Messenger\Utility\Context::getInstance();
 
 		$this->sender = array(
 			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
@@ -306,7 +306,7 @@ class Message {
 	/**
 	 * Retrieves the message template object
 	 *
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Mailing
+	 * @return \Vanilla\Messenger\Domain\Model\Mailing
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -333,7 +333,7 @@ class Message {
 	 *
 	 * @throws MissingFileException
 	 * @param string $attachment an absolute path to a file
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function addAttachment($attachment) {
 
@@ -360,7 +360,7 @@ class Message {
 	 * The normal case is to pass an array to the setter. Though an object can be given which will be converted to an array eventually.
 	 *
 	 * @param mixed $markers
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setMarkers($markers) {
 		if (is_object($markers)) {
@@ -379,7 +379,7 @@ class Message {
 
 	/**
 	 * @param int $language
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setLanguage($language) {
 		$this->context->setLanguage($language);
@@ -388,7 +388,7 @@ class Message {
 
 	/**
 	 * @param boolean $simulate
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function simulate($simulate = TRUE) {
 		$this->simulate = $simulate;
@@ -407,7 +407,7 @@ class Message {
 	 * Can be an array('email' => 'name') or an email address.
 	 *
 	 * @param mixed $recipients
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setRecipients($recipients) {
 		if (is_string($recipients)) {
@@ -430,7 +430,7 @@ class Message {
 	 * Re-set default sender
 	 *
 	 * @param array $sender
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setSender(array $sender) {
 		$this->emailValidator->validate($this->sender);
@@ -439,7 +439,7 @@ class Message {
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\MessageLayout
+	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		return $this->messageLayout;
@@ -447,13 +447,13 @@ class Message {
 
 	/**
 	 * parameter $messageLayout can be:
-	 *      + \TYPO3\CMS\Messenger\Domain\Model\MessageLayout $messageLayout
+	 *      + \Vanilla\Messenger\Domain\Model\MessageLayout $messageLayout
 	 *      + int $messageLayout which corresponds to an uid
 	 *      + string $messageLayout which corresponds to a value for property "identifier".
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageLayout
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setMessageLayout($messageLayout) {
 
@@ -479,13 +479,13 @@ class Message {
 
 	/**
 	 * parameter $messageTemplate can be:
-	 *      + \TYPO3\CMS\Messenger\Domain\Model\MessageTemplate $messageTemplate
+	 *      + \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setMessageTemplate($messageTemplate) {
 
@@ -561,14 +561,14 @@ class Message {
 	}
 
 	/**
-	 * @return \TYPO3\CMS\Messenger\Domain\Model\Mailing
+	 * @return \Vanilla\Messenger\Domain\Model\Mailing
 	 */
 	public function getMailing() {
 		return $this->mailing;
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Messenger\Domain\Model\Mailing $mailing
+	 * @param \Vanilla\Messenger\Domain\Model\Mailing $mailing
 	 */
 	public function setMailing($mailing) {
 		$this->mailing = $mailing;

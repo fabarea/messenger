@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\MessengerInterface;
+namespace Vanilla\Messenger\MessengerInterface;
 /***************************************************************
  *  Copyright notice
  *
@@ -38,13 +38,13 @@ interface ListableInterface {
 	/**
 	 * Returns a set of records.
 	 *
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Matcher $matcher
-	 * @param \TYPO3\CMS\Messenger\QueryElement\Order $order
+	 * @param \Vanilla\Messenger\QueryElement\Matcher $matcher
+	 * @param \Vanilla\Messenger\QueryElement\Order $order
 	 * @param int $limit
 	 * @param int $offset
 	 * @return array|Tx_Extbase_Persistence_QueryResultInterface
 	 */
-	public function findBy(\TYPO3\CMS\Messenger\QueryElement\Matcher $matcher = NULL, \TYPO3\CMS\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL);
+	public function findBy(\Vanilla\Messenger\QueryElement\Matcher $matcher = NULL, \Vanilla\Messenger\QueryElement\Order $order = NULL, $limit = NULL, $offset = NULL);
 
 	/**
 	 * Get data about a particular record.

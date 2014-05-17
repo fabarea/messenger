@@ -4,10 +4,10 @@ if (!defined('TYPO3_MODE')) {
 }
 
 # Register a new list manager for demo purposes.
-\TYPO3\CMS\Messenger\ListManager\Registry::getInstance()->add(
+\Vanilla\Messenger\ListManager\Registry::getInstance()->add(
 
 	# Corresponds to a class name.
-	'TYPO3\CMS\Messenger\ListManager\DemoListManager',
+	'Vanilla\Messenger\ListManager\DemoListManager',
 
 	# A string or label describing the recipients (for the BE module needs).
 	'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'

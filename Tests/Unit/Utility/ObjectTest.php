@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Utility\Object.
+ * Test case for class \Vanilla\Messenger\Utility\Object.
  */
 class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
@@ -41,7 +41,7 @@ class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function stdClassObjectReturnsAnArrayHavingKeyFoo() {
 		$mock = new stdClass();
 		$mock->foo = uniqid();
-		$actual = \TYPO3\CMS\Messenger\Utility\Object::toArray($mock);
+		$actual = \Vanilla\Messenger\Utility\Object::toArray($mock);
 		$this->assertArrayHasKey('foo', $actual);
 	}
 
@@ -52,7 +52,7 @@ class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$expected = uniqid();
 		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
 		$fakeUser->setName($expected);
-		$actual = \TYPO3\CMS\Messenger\Utility\Object::toArray($fakeUser);
+		$actual = \Vanilla\Messenger\Utility\Object::toArray($fakeUser);
 		$this->assertSame($expected, $actual['name']);
 	}
 

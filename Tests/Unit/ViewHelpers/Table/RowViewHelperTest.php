@@ -50,10 +50,10 @@ class RowViewHelperTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 * @test
 	 */
 	public function renderReturnsStringThatContainsThTags() {
-		$recipients = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->findBy();
+		$recipients = \Vanilla\Messenger\ListManager\Factory::getInstance()->findBy();
 		$actual = $this->fixture->render($recipients[0]);
 
-		$expected = count(\TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields());
+		$expected = count(\Vanilla\Messenger\ListManager\Factory::getInstance()->getFields());
 		$this->assertEquals($expected, preg_match_all('/<td/isU', $actual, $matches));
 	}
 

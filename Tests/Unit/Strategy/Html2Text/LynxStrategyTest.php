@@ -25,17 +25,17 @@
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy.
+ * Test case for class \Vanilla\Messenger\Strategy\Html2Text\LynxStrategy.
  */
 class LynxStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy
+	 * @var \Vanilla\Messenger\Strategy\Html2Text\LynxStrategy
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\CMS\Messenger\Strategy\Html2Text\LynxStrategy();
+		$this->fixture = new \Vanilla\Messenger\Strategy\Html2Text\LynxStrategy();
 	}
 
 	public function tearDown() {

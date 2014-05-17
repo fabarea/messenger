@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\Formatter;
+namespace Vanilla\Messenger\Formatter;
 /***************************************************************
  *  Copyright notice
  *
@@ -34,7 +34,7 @@ class Recipient {
 	 * Return recipient info according to an identifier. The returned array must look like:
 	 * array('email' => 'recipient name');
 	 *
-	 * @param array|\TYPO3\CMS\Messenger\MessengerInterface\RecipientInterface $recipient
+	 * @param array|\Vanilla\Messenger\MessengerInterface\RecipientInterface $recipient
 	 * @param array $mapping
 	 * @return array
 	 */

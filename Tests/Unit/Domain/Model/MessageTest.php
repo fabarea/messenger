@@ -27,7 +27,7 @@
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \TYPO3\CMS\Messenger\Domain\Model\Message.
+ * Test case for class \Vanilla\Messenger\Domain\Model\Message.
  */
 class MessageTest extends Tx_Messenger_BaseTest {
 
@@ -37,7 +37,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	protected $testingFramework;
 
 	/**
-	 * @var \TYPO3\CMS\Messenger\Domain\Model\Message
+	 * @var \Vanilla\Messenger\Domain\Model\Message
 	 */
 	protected $fixture;
 
@@ -69,7 +69,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 			'first_name' => uniqid('first_name_'),
 			'last_name' => uniqid('last_name_'),
 		);
-		$this->fixture = new \TYPO3\CMS\Messenger\Domain\Model\Message();
+		$this->fixture = new \Vanilla\Messenger\Domain\Model\Message();
 		$this->attachment = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Resources/Sample.pdf';
 
 		// Compute temporary directory.
@@ -121,13 +121,13 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForUidOfTypeInt() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
+			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -136,13 +136,13 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForUidOfTypeString() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
+			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -151,23 +151,23 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForIdentifier() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getTemplate'
+			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->identifier);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'TYPO3\CMS\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Messenger\Exception\RecordNotFoundException
+	 * @expectedException \Vanilla\Messenger\Exception\RecordNotFoundException
 	 */
 	public function setTemplateRaisesException() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'setTemplate'
+			'Vanilla\Messenger\Domain\Model\Message', 'setTemplate'
 		);
 
 		$method->setAccessible(TRUE);
@@ -197,7 +197,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		$this->fixture->setRecipients($this->recipients);
 
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
+			'Vanilla\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -209,7 +209,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageBodyForSimulationPrependsBodyMessage() {
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
+			'Vanilla\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -291,7 +291,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Messenger\Exception\MissingFileException
+	 * @expectedException \Vanilla\Messenger\Exception\MissingFileException
 	 */
 	public function addAttachmentRaisesAnExceptionWhenFileDoesNotExistToMessage() {
 		$attachment = '/unknown/file.pdf';
@@ -328,7 +328,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
 		$method = $setterName . ucfirst($propertyName);
 		$actual = call_user_func_array(array($this->fixture, $method), array($value));
-		$this->assertTrue($actual instanceof \TYPO3\CMS\Messenger\Domain\Model\Message);
+		$this->assertTrue($actual instanceof \Vanilla\Messenger\Domain\Model\Message);
 	}
 
 	/**

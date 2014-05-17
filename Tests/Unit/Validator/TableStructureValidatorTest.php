@@ -25,7 +25,7 @@
  ***************************************************************/
 
 /**
- * Test case for class TYPO3\CMS\Messenger\Validator\ListManagerValidator.
+ * Test case for class Vanilla\Messenger\Validator\ListManagerValidator.
  *
  * @author Fabien Udriot <fabien.udriot@typo3.org>
  * @package TYPO3
@@ -34,12 +34,12 @@
 class ListManagerValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var TYPO3\CMS\Messenger\Validator\ListManagerValidator
+	 * @var Vanilla\Messenger\Validator\ListManagerValidator
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new TYPO3\CMS\Messenger\Validator\ListManagerValidator();
+		$this->fixture = new Vanilla\Messenger\Validator\ListManagerValidator();
 	}
 
 	public function tearDown() {
@@ -49,7 +49,7 @@ class ListManagerValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCas
 	 * @test
 	 */
 	public function validateTheDefaultTableStructure() {
-		$tableStructure = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance();
+		$tableStructure = \Vanilla\Messenger\ListManager\Factory::getInstance();
 		$this->fixture->validate($tableStructure);
 	}
 
@@ -57,10 +57,10 @@ class ListManagerValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCas
 	 * @test
 	 */
 	public function validateFieldsRaisesNoExceptionWhenItComesFromTableStructureFactory() {
-		$tableHeaders = \TYPO3\CMS\Messenger\ListManager\Factory::getInstance()->getFields();
+		$tableHeaders = \Vanilla\Messenger\ListManager\Factory::getInstance()->getFields();
 
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Validator\ListManagerValidator', 'validateFields'
+			'Vanilla\Messenger\Validator\ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -69,13 +69,13 @@ class ListManagerValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCas
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Messenger\Exception\MissingKeyInArrayException
+	 * @expectedException \Vanilla\Messenger\Exception\MissingKeyInArrayException
 	 */
 	public function validateFieldsRaisesMissingKeyExceptionForIncompleteArray() {
 		$tableHeaders = array(array());
 
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Validator\ListManagerValidator', 'validateFields'
+			'Vanilla\Messenger\Validator\ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);
@@ -84,13 +84,13 @@ class ListManagerValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCas
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\CMS\Messenger\Exception\EmptyArrayException
+	 * @expectedException \Vanilla\Messenger\Exception\EmptyArrayException
 	 */
 	public function validateFieldsRaisesEmptyExceptionForEmptyArray() {
 		$tableHeaders = array();
 
 		$method = new ReflectionMethod(
-			'TYPO3\CMS\Messenger\Validator\ListManagerValidator', 'validateFields'
+			'Vanilla\Messenger\Validator\ListManagerValidator', 'validateFields'
 		);
 
 		$method->setAccessible(TRUE);

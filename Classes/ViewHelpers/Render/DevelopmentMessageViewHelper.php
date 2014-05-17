@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\Messenger\ViewHelpers\Render;
+namespace Vanilla\Messenger\ViewHelpers\Render;
 /***************************************************************
 *  Copyright notice
 *
@@ -37,8 +37,8 @@ class DevelopmentMessageViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abst
 	 */
 	public function render() {
 		$value = '';
-		if (\TYPO3\CMS\Messenger\Utility\Context::getInstance()->isNotProduction()) {
-			$emails = \TYPO3\CMS\Messenger\Utility\Configuration::getInstance()->get('developmentEmails');
+		if (\Vanilla\Messenger\Utility\Context::getInstance()->isNotProduction()) {
+			$emails = \Vanilla\Messenger\Utility\Configuration::getInstance()->get('developmentEmails');
 			$label = sprintf(\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('development_mode', 'messenger'), $emails);
 			$value = sprintf('<span class="label">%s</span>', $label);
 		}
