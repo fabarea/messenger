@@ -1,33 +1,47 @@
-=====================
+===================
 Messenger Extension
-=====================
+===================
 
 Messenger Extension is a TYPO3 extension for listing recipients in a flexible way and send them emails to them. A message (AKA email) is composed by a message template and
 a possible wrapping layout. This can be useful if the message must be surrounded by a footer / header containing a logo or some default text.
 
 .. image:: https://raw.github.com/fudriot/messenger/master/Documentation/Screenshot.png
 
-Development goes at https://github.com/fudriot/messenger
+Project info and releases
+=========================
+
+Stable version:
+http://typo3.org/extensions/repository/view/messenger (not yet released on the TER)
+
+Development version:
+https://github.com/fudriot/messenger.git
+
+::
+    git clone https://github.com/fudriot/messenger.git
+
+Flash news about latest development or release
+http://twitter.com/fudriot
+
 
 Installation
-==============
+============
 
 Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
 
 The ``tableStructure`` setting will likely to be re-defined according to your need. See next chapter.
 
 Multi-parted email
-====================
+==================
 
 Whenever possible, Messenger will send multi-parted email which contains a HTML version alongside to a plain text within the same email.
 
 Message with Markdown and Fluid
-==================================
+===============================
 
 Body message can be written using Markdown syntax alongside with Fluid View Helper which will be be rendered when sending the email.
 
 Message API
-=================
+===========
 
 Usage::
 
@@ -80,7 +94,7 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 		->queue();
 
 Todo (long term)
-=================
+================
 
 + Use Application Context as of TYPO3 6.2
 + Improve message management in the BE module (create new one from scratch, edit, select, ...)
@@ -90,7 +104,7 @@ Todo (long term)
 
 
 List Manager
-================
+============
 
 This paragraph is obsolete! The List Manager must be integrated in Vidi somehow.
 
@@ -115,7 +129,7 @@ If more than two list managers are registered, a button is displayed in the BE m
 to pick between the managers. The choice is saved as preference per BE User.
 
 Defining fields
------------------
+---------------
 
 This paragraph is obsolete! The List Manager must be integrated in Vidi somehow.
 
@@ -129,15 +143,17 @@ Method ``getFields`` from the list manager must return an array with the followi
 
 Note that the list manager is validate against a list manager validator.
 
-Recipient
-=========================
+Recipient Interface
+===================
+
+@todo check if that is still true with Vidi integration
 
 A recipient interface is provided making sure a user can be correctly displayed within the table. The interface is not mandatory to
 be implemented since a recipient can be in the form of an array. However, a minimum of ``uid`` and ``email`` must be provided.
 An exception will be raised on the run time if something goes wrong.
 
 Sponsors
-==============
+========
 
 * `Gebrüderheitz`_ – Agentur für Webkommunikation
 * `Cobweb`_ Agence web spécialisée dans le conseil web, le webdesign et la réalisation de sites internet
