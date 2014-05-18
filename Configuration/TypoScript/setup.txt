@@ -1,4 +1,6 @@
-# Module configuration
+######################################
+# module.tx_messenger
+######################################
 module.tx_messenger {
 	persistence {
 		storagePid = {$module.tx_messenger.persistence.storagePid}
@@ -10,7 +12,9 @@ module.tx_messenger {
 	}
 }
 
-# Plugin configuration
+######################################
+# plugin.tx_messenger
+######################################
 plugin.tx_messenger {
 	settings {
 
@@ -21,6 +25,9 @@ plugin.tx_messenger {
 lib.parseFunc_Mail < lib.parseFunc_RTE
 lib.parseFunc_Mail.makelinks = 0
 
+######################################
+# Ajax request configuration
+######################################
 page_1370537883 = PAGE
 page_1370537883 {
     typeNum = 1370537883
@@ -48,4 +55,17 @@ page_1370537883 {
 			}
         }
     }
+}
+
+######################################
+# config.tx_extbase
+######################################
+config.tx_extbase {
+	view {
+		widget {
+			Vanilla\Messenger\ViewHelpers\Widget\ShowViewHelper {
+				templateRootPath = EXT:messenger/Resources/Private/Templates/
+			}
+		}
+	}
 }

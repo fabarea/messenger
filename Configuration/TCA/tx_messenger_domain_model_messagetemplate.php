@@ -121,13 +121,18 @@ Markers such as {foo} have to be posted by Messenger.
 
 **Fluid View Helper**
 
-Identifier: {uid}
-
 <l:translate key="foo"/>: {foo}
 
 <f:link.page pageUid="1" absolute="1">Open page</f:link.page>
-'
-			),
+
+**Messenger View Helper**
+
+Show detail of an item:
+
+<m:widget.show item="markerName" dataType="tx_ext_foo"/>
+
+{namespace m=Vanilla\Messenger\ViewHelpers}
+			'),
 		),
 		'message_layout' => array(
 			'exclude' => 0,

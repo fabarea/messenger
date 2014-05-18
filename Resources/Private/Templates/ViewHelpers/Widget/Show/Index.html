@@ -1,0 +1,15 @@
+<!-- special indentation for email -->
+<f:if condition="{item}">
+<table>
+<f:for each="{item}" as="value" key="key">
+<f:if condition="{m:show.isVisible()}">
+<tr>
+<td>{m:show.label()}</td>
+<td>{m:show.value()}</td>
+</tr>
+</f:if>
+</f:for>
+</table>
+</f:if>
+{namespace m=Vanilla\Messenger\ViewHelpers}
+{namespace v=TYPO3\CMS\Vidi\ViewHelpers}

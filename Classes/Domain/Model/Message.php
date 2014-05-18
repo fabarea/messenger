@@ -31,8 +31,10 @@ use Vanilla\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
 use Vanilla\Messenger\Service\LoggerService;
+use Vanilla\Messenger\Utility\Algorithms;
+use Vanilla\Messenger\Utility\Configuration;
+use Vanilla\Messenger\Utility\Context;
 use Vanilla\Messenger\Utility\Html2Text;
-use Vanilla\Messenger\Utility\Object;
 use Vanilla\Messenger\Utility\Server;
 use \Michelf\Markdown;
 /**
@@ -151,12 +153,12 @@ class Message {
 	protected $messageTemplate;
 
 	/**
-	 * @var \Vanilla\Messenger\Utility\Configuration
+	 * @var Configuration
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \Vanilla\Messenger\Utility\Context
+	 * @var Context
 	 */
 	protected $context;
 
@@ -175,9 +177,10 @@ class Message {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->emailValidator = GeneralUtility::makeInstance('Vanilla\Messenger\Validator\Email');
-		$this->configurationManager = \Vanilla\Messenger\Utility\Configuration::getInstance();
-		$this->context = \Vanilla\Messenger\Utility\Context::getInstance();
+		// @todo simplify
+		$this->emailValidator = GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
+		$this->configurationManager = Configuration::getInstance();
+		$this->context = Context::getInstance();
 
 		$this->sender = array(
 			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
@@ -278,22 +281,27 @@ class Message {
 
 	/**
 	 * Format the body by fetching content from the FE.
+	 * This is required in order to "resolve" the View Helpers in the context of Fluid.
 	 *
 	 * @return string
 	 */
 	protected function formatBody() {
 
-		// get body of message which get called by a crawler for resolving fluid syntax
-		$this->crawler->addGetVar('type', 1370537883);
-		$this->crawler->addGetVar('tx_messenger_pi1[messageTemplate]', $this->messageTemplate->getUid());
+		$registryIdentifier = Algorithms::generateUUID();
+		$registryEntry = array(
+			'messageBody' => $this->messageTemplate->getBody(),
+			'markers' => $this->markers,
+		);
 
-		foreach ($this->markers as $key => $value) {
-			// send as post to avoid HTTP 414 "Request-URI Too Large"
-			$this->crawler->addPostVar(sprintf('tx_messenger_pi1[markers][%s]', $key), $value);
-		}
+		$this->getRegistry()->set('Vanilla\Messenger', $registryIdentifier, $registryEntry);
 
-		$this->crawler->exec(Server::getHostAndProtocol());
-		return $this->crawler->getResult();
+		$this->crawler->addGetVar('type', 1370537883)
+			->addGetVar('tx_messenger_pi1[registryIdentifier]', $registryIdentifier)
+			->setUrl(Server::getHostAndProtocol());
+
+		//echo $this->crawler->getFinalUrl(); exit();
+		$formattedBody = $this->crawler->exec();
+		return $formattedBody;
 	}
 
 	/**
@@ -305,7 +313,7 @@ class Message {
 	protected function getMessageBodyForSimulation($messageBody) {
 		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it would be sent to %s <br /><br />%s",
 			strtoupper($this->context->getName()),
-			implode(',', array_keys($this->recipients)),
+			implode(',', array_keys($this->to)),
 			$messageBody
 		);
 		return $messageBody;
@@ -374,24 +382,35 @@ class Message {
 	}
 
 	/**
-	 * @return mixed
-	 */
-	public function getMarkers() {
-		return $this->markers;
-	}
-
-	/**
-	 * The normal case is to pass an array to the setter. Though an object can be given which will be converted to an array eventually.
+	 * Set Markers
 	 *
 	 * @param mixed $markers
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setMarkers($markers) {
-		if (is_object($markers)) {
-			$markers = Object::toArray($markers);
-		}
 		$this->markers = $markers;
 		return $this;
+	}
+
+	/**
+	 * Add a new maker.
+	 *
+	 * @param string $markerName
+	 * @param mixed $value
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 */
+	public function addMarker($markerName, $value) {
+		$this->markers[$markerName] = $value;
+		return $this;
+	}
+
+	/**
+	 * Returns an instance of the Frontend object.
+	 *
+	 * @return \TYPO3\CMS\Core\Registry
+	 */
+	protected function getRegistry() {
+		return GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
 	}
 
 	/**
