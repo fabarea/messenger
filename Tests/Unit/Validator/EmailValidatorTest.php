@@ -25,17 +25,17 @@
  ***************************************************************/
 
 /**
- * Test case for class \Vanilla\Messenger\Validator\Email.
+ * Test case for class \Vanilla\Messenger\Validator\EmailValidator.
  */
-class EmailTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class EmailValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \Vanilla\Messenger\Validator\Email
+	 * @var \Vanilla\Messenger\Validator\EmailValidator
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Validator\Email();
+		$this->fixture = new \Vanilla\Messenger\Validator\EmailValidator();
 	}
 
 	public function tearDown() {

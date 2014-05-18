@@ -23,16 +23,17 @@ namespace Vanilla\Messenger\Validator;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use Vanilla\Messenger\Exception\InvalidEmailFormatException;
 
 /**
- *
+ * Validate Email in the context of SwiftMailer
  */
-class Email {
+class EmailValidator {
 
 	/**
-	 * Validate emails to be used in the Swiftmailer framework
+	 * Validate emails to be used in the SwiftMailer framework
 	 *
-	 * @throws \Vanilla\Messenger\Exception\InvalidEmailFormatException
+	 * @throws InvalidEmailFormatException
 	 * @param $emails
 	 * @return boolean
 	 */
@@ -40,11 +41,11 @@ class Email {
 		foreach ($emails as $email => $name) {
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				$message = sprintf('Email provided is not valid, given value "%s"', $email);
-				throw new \Vanilla\Messenger\Exception\InvalidEmailFormatException($message, 1350297165);
+				throw new InvalidEmailFormatException($message, 1350297165);
 			}
 			if (strlen($name) <= 0) {
 				$message = sprintf('Name should not be empty, given value "%s"', $name);
-				throw new \Vanilla\Messenger\Exception\InvalidEmailFormatException($message, 1350297170);
+				throw new InvalidEmailFormatException($message, 1350297170);
 			}
 		}
 		return TRUE;
