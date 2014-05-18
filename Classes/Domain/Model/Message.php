@@ -58,12 +58,28 @@ class Message {
 	protected $sender = array();
 
 	/**
+	 * The "to" addresses
+	 *
 	 * @var array
 	 */
-	protected $recipients = array();
+	protected $to = array();
 
 	/**
-	 * @var \Vanilla\Messenger\Validator\Email
+	 * The "cc" addresses
+	 *
+	 * @var array
+	 */
+	protected $cc = array();
+
+	/**
+	 * The "cc" addresses
+	 *
+	 * @var array
+	 */
+	protected $bcc = array();
+
+	/**
+	 * @var \Vanilla\Messenger\Validator\EmailValidator
 	 */
 	protected $emailValidator;
 
@@ -215,30 +231,38 @@ class Message {
 
 		// Substitute markers
 		if (empty($this->messageTemplate)) {
-			throw new MissingPropertyValueInMessageObjectException('Message template was not defined', 1354536584);
+			throw new MissingPropertyValueInMessageObjectException('Messenger: message template was not defined', 1354536584);
 		}
 
-		$recipients = $this->getRecipients();
-		if (empty($recipients)) {
-			throw new MissingPropertyValueInMessageObjectException('Recipients was not defined', 1354536585);
+		if (empty($this->to)) {
+			throw new MissingPropertyValueInMessageObjectException('Messenger: no recipient was defined', 1354536585);
 		}
 
-		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->getMarkers(), 'text/plain');
-
+		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->markers, 'text/plain');
 		$body = $this->formatBody();
 
 		// Set debug flag for not production context
 		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
 			$body = $this->getMessageBodyForSimulation($body);
-			$recipients = $this->getRecipientsForSimulation();
+			$this->to = $this->getRecipientsForSimulation();
 		}
-		$body = $this->markerUtility->substitute($body, $this->getMarkers());
+		$body = $this->markerUtility->substitute($body, $this->markers);
 		$body = Markdown::defaultTransform($body);
 
-		$this->getMailMessage()->setTo($recipients)
+		$this->getMailMessage()->setTo($this->to)
 			->setFrom($this->sender)
 			->setSubject($subject)
 			->setBody($body, 'text/html');
+
+		// Add possible CC
+		if (!empty($this->cc)) {
+			$this->getMailMessage()->setCc($this->cc);
+		}
+
+		// Add possible BCC
+		if (!empty($this->bcc)) {
+			$this->getMailMessage()->setBcc($this->bcc);
+		}
 
 		// Attach plain text version if HTML tags are found in body
 		if ($this->hasHtml($body)) {
@@ -396,26 +420,47 @@ class Message {
 	}
 
 	/**
-	 * @return array
+	 * @param mixed $recipients
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @deprecated as of 2.0 will be removed in 2 version
 	 */
-	public function getRecipients() {
-		return $this->recipients;
+	public function setRecipients($recipients) {
+		return $this->setTo($recipients);
 	}
 
 	/**
-	 * Set recipients.
-	 * Can be an array('email' => 'name') or an email address.
+	 * Set "to" addresses. Should be an array('email' => 'name').
 	 *
-	 * @param mixed $recipients
+	 * @param mixed $addresses
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
-	public function setRecipients($recipients) {
-		if (is_string($recipients)) {
-			$recipients = array($recipients => $recipients);
-		}
-		// could be implemented as tag @validate...
-		$this->emailValidator->validate($recipients);
-		$this->recipients = $recipients;
+	public function setTo($addresses) {
+		$this->emailValidator->validate($addresses);
+		$this->to = $addresses;
+		return $this;
+	}
+
+	/**
+	 * Set "cc" addresses. Should be an array('email' => 'name').
+	 *
+	 * @param mixed $addresses
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 */
+	public function setCc($addresses) {
+		$this->emailValidator->validate($addresses);
+		$this->cc = $addresses;
+		return $this;
+	}
+
+	/**
+	 * Set "cc" addresses. Should be an array('email' => 'name').
+	 *
+	 * @param mixed $addresses
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 */
+	public function setBcc($addresses) {
+		$this->emailValidator->validate($addresses);
+		$this->bcc = $addresses;
 		return $this;
 	}
 

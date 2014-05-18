@@ -178,7 +178,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 */
 	public function setRecipientPropertyIsSetBySetRecipientMethod() {
-		$this->fixture->setRecipients($this->recipients);
+		$this->fixture->setTo($this->recipients);
 		$this->assertAttributeEquals($this->recipients, 'recipients', $this->fixture);
 	}
 
@@ -187,14 +187,14 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function setRecipientPropertyCanBeSetWithEmail() {
 		$email = uniqid() . '@test.com';
-		$this->fixture->setRecipients($email);
+		$this->fixture->setTo($email);
 	}
 
 	/**
 	 * @test
 	 */
 	public function getRecipientsForSimulationIsNotEmptyByDefault() {
-		$this->fixture->setRecipients($this->recipients);
+		$this->fixture->setTo($this->recipients);
 
 		$method = new ReflectionMethod(
 			'Vanilla\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
@@ -238,7 +238,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithSimulateFlagUsingMboxTransport() {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
-			->setRecipients($this->recipients)
+			->setTo($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
 			->send();
@@ -250,7 +250,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithSetMarkers() {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
-			->setRecipients($this->recipients)
+			->setTo($this->recipients)
 			->setMarkers($this->markers)
 			->send();
 		$this->assertTrue($mailSent);
@@ -261,7 +261,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function canSendMessageWithNoSetMarkers() {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
-			->setRecipients($this->recipients)
+			->setTo($this->recipients)
 			->send();
 		$this->assertTrue($mailSent);
 	}
@@ -272,7 +272,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne() {
 		$language = 1;
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
-			->setRecipients($this->recipients)
+			->setTo($this->recipients)
 			->setMarkers($this->markers)
 			->simulate()
 			->setLanguage($language)

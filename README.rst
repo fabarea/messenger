@@ -60,21 +60,25 @@ Usage::
 
 	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
 	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+
+	# Minimum required to be set
 	$message->setMessageTemplate($templateIdentifier)
-		->setRecipients($recipients)
-		->setMarkers($markers)
+		->setTo($recipients)
+
+	# Additional setter
+	$message->setMarkers($markers)
 		->setLanguage($languageIdentifier)
 		->addAttachment($pathToFile)
-		->setMessageLayout($layoutIdentifier)
-		->send();
+		->setMessageLayout($layoutIdentifier);
 
-There are two mandatory methods to set for sending a message::
+	# Possible debug before sending.
+	# var_dump($message->toArray());
 
-	+ setRecipients()
-	+ setTemplate() which can accept an object, a uid or an identifier property.
+	# Send the email...
+	$isSent = $message->send();
 
-Notice the debug method. When set, the email will be sent to a debug email instead of the real one. This debug email address can be configured in file `ext_typoscript_setup.txt`::
-
+Notice the debug method. When set, the email will be sent to a debug email instead of the real one.
+This debug email address can be configured in file `ext_typoscript_setup.txt`::
 
 Queue
 =================

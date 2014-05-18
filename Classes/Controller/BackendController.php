@@ -92,7 +92,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 				/** @var $message \Vanilla\Messenger\Domain\Model\Message */
 				$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 				$isSent = $message->setMessageTemplate($messageTemplateUid)
-					->setRecipients($this->recipientFormatter->format($recipient, $mapping))
+					->setTo($this->recipientFormatter->format($recipient, $mapping))
 					->setMarkers($recipient)
 					->send();
 
@@ -125,7 +125,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 			/** @var $message \Vanilla\Messenger\Domain\Model\Message */
 			$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
 			$isSent = $message->setMessageTemplate($messageTemplateUid)
-				->setRecipients($testEmail)
+				->setTo($testEmail)
 				->send();
 
 			// value "1" corresponds to the number of email sent
