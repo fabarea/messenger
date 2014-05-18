@@ -22,16 +22,17 @@ namespace Vanilla\Messenger\ViewHelpers\Be;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper that a render a development message
  */
-class UserPreferenceViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class UserPreferenceViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Return a user preference given a key.
 	 *
-	 * @param string key
+	 * @param string $key
 	 * @return string
 	 */
 	public function render($key) {

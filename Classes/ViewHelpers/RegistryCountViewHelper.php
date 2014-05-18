@@ -22,11 +22,12 @@ namespace Vanilla\Messenger\ViewHelpers;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper which allows you to render the number of item within the registry.
  */
-class RegistryCountViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class RegistryCountViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Return the number of item within the registry

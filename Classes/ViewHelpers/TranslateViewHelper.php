@@ -22,11 +22,14 @@ namespace Vanilla\Messenger\ViewHelpers;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper which allows you to render a translated string.
  */
-class TranslateViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class TranslateViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Return a translated string.
@@ -36,8 +39,8 @@ class TranslateViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
 	 */
 	public function render($key) {
 
-		if (\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($key, 'LLL:')) {
-			$key = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, '');
+		if (GeneralUtility::isFirstPartOfStr($key, 'LLL:')) {
+			$key = LocalizationUtility::translate($key, '');
 		}
 		return $key;
 	}

@@ -22,11 +22,12 @@ namespace Vanilla\Messenger\ViewHelpers;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper which allows you to render a translated string.
  */
-class ArrayValueViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class ArrayValueViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Return a key from an array
