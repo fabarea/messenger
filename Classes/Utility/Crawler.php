@@ -12,49 +12,56 @@ class Crawler {
 	 *
 	 * @var array
 	 */
-	private $postVars = array();
+	protected $postVars = array();
 
 	/**
 	 * Contains the vars to send by GET
 	 *
 	 * @var array
 	 */
-	private $getVars = array();
+	protected $getVars = array();
 
 	/**
 	 * cURL handler
 	 *
 	 * @var resource
 	 */
-	private $ch;
+	protected $ch;
 
 	/**
 	 * The headers to send
 	 *
 	 * @var string
 	 */
-	private $headers;
+	protected $headers;
 
 	/**
 	 * The number of the current channel
 	 *
 	 * @var int
 	 */
-	private $channels;
+	protected $channels;
+
+	/**
+	 * The url
+	 *
+	 * @var string
+	 */
+	protected $url;
 
 	/**
 	 * The resulted text
 	 *
 	 * @var string
 	 */
-	private $r_text;
+	protected $result;
 
 	/**
 	 * The resulted headers
 	 *
 	 * @var string
 	 */
-	private $r_headers;
+	protected $header;
 
 	/**
 	 * Constructor
@@ -77,6 +84,7 @@ class Crawler {
 	 *
 	 * @param string $name
 	 * @param string $value
+	 * @return $this
 	 */
 	public function addPostVar($name, $value) {
 		// If value is an array, dig recursively into the structure
@@ -87,6 +95,7 @@ class Crawler {
 		} else {
 			$this->postVars[$name] = $value;
 		}
+		return $this;
 	}
 
 	/**
@@ -94,19 +103,26 @@ class Crawler {
 	 *
 	 * @param string $name
 	 * @param string $value
+	 * @return $this
 	 */
 	public function addGetVar($name, $value) {
 		$this->getVars[$name] = $value;
+		return $this;
 	}
 
 	/**
 	 * Execute the request and return the result
 	 *
-	 * @param string $url
+	 * @throws \RuntimeException
+	 * @internal param string $url
 	 * @return string
 	 */
-	public function exec($url) {
+	public function getFinalUrl() {
+		if (empty($this->url)) {
+			throw new \RuntimeException('Crawler: I could not find the URL. Please set one!', 1400408814);
+		}
 
+		$url = $this->url;
 		// format url
 		if (!empty($this->getVars)) {
 			$delimiter = '?';
@@ -119,9 +135,18 @@ class Crawler {
 				$delimiter = '&';
 			}
 		}
+		return $url;
+	}
+
+	/**
+	 * Execute the request and return the result
+	 *
+	 * @return string
+	 */
+	public function exec() {
 
 		// Set the options
-		curl_setopt($this->ch, CURLOPT_URL, $url);
+		curl_setopt($this->ch, CURLOPT_URL, $this->getFinalUrl());
 		curl_setopt($this->ch, CURLOPT_USERAGENT, $this->headers['agent']);
 		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, 0);
@@ -152,19 +177,10 @@ class Crawler {
 			$t = curl_exec($this->ch);
 		}
 
-		$this->r_text = $t;
-		$this->r_headers = curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
+		$this->result = $t;
+		$this->header = curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
 
-		return $this->r_text;
-	}
-
-	/**
-	 * Return the resulted text
-	 *
-	 * @return string
-	 */
-	public function getResult() {
-		return $this->r_text;
+		return $this->result;
 	}
 
 	/**
@@ -173,7 +189,23 @@ class Crawler {
 	 * @return string
 	 */
 	public function getHeader() {
-		return $this->r_headers;
+		return $this->header;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUrl() {
+		return $this->url;
+	}
+
+	/**
+	 * @param string $url
+	 * @return $this
+	 */
+	public function setUrl($url) {
+		$this->url = $url;
+		return $this;
 	}
 }
 
