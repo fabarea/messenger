@@ -11,8 +11,8 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Send a message to a group of configurable recipients',
-	'description' => 'Send a custom message to a group of configurable recipients.',
+	'title' => 'Send messages to a bunch of people',
+	'description' => 'Send messages to a bunch of people. A message can be wrapped in a layout template.',
 	'category' => 'plugin',
 	'author' => 'Fabien Udriot',
 	'author_email' => 'fabien.udriot@typo3.org',
