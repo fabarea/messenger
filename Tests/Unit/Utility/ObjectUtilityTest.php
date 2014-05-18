@@ -27,7 +27,7 @@
 /**
  * Test case for class \Vanilla\Messenger\Utility\Object.
  */
-class ObjectTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class ObjectUtilityTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	public function setUp() {
 	}

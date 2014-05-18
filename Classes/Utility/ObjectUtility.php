@@ -26,7 +26,7 @@ namespace Vanilla\Messenger\Utility;
 /**
  * A class dealing with object.
  */
-class Object {
+class ObjectUtility {
 
 	/**
 	 * Convert an object to an array using different strategies. The first strategy who succeeds breaks the loop.
