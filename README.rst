@@ -77,11 +77,31 @@ Usage::
 	# Send the email...
 	$isSent = $message->send();
 
+
 Notice the debug method. When set, the email will be sent to a debug email instead of the real one.
-This debug email address can be configured in file `ext_typoscript_setup.txt`::
+This debug email address can be configured in file `ext_typoscript_setup.txt`.
+
+
+Message View Helper
+===================
+
+View Helper to render a generic item from the array of markers::
+
+	# The minimum declaration
+	<m:widget.show item="markerName" dataType="tx_ext_foo"/>
+
+	# Additional attributes
+	<m:widget.show item="markerName" dataType="tx_ext_foo" exclude="{0: 'fieldName'}" displaySystemFields="true"/>
+
+	{namespace m=Vanilla\Messenger\ViewHelpers}
+
+Retrieve the body of the email being sent. Useful to display to the User a feedback message
+after a form has been posted which is actually the same as of the email::
+
+	<m:show.body key="{settings.messageTemplate}"/>
 
 Queue
-=================
+=====
 
 Alpha feature!
 
@@ -97,15 +117,16 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 		... // same as in the example above
 		->queue();
 
-Todo (long term)
-================
+Todo
+====
+
+Long term goals:
 
 + Use Application Context as of TYPO3 6.2
 + Improve message management in the BE module (create new one from scratch, edit, select, ...)
 + Provide default FE / BE Users provider
 + Add GUI to support layout wrapping
 + A message can be sent in various language (alpha quality)
-
 
 List Manager
 ============
@@ -161,6 +182,8 @@ Sponsors
 
 * `Gebrüderheitz`_ – Agentur für Webkommunikation
 * `Cobweb`_ Agence web spécialisée dans le conseil web, le webdesign et la réalisation de sites internet
+* `Ecodev`_ Ingénierie du développement durable – CMS – application web – bases de données – Webdesign
 
 .. _Gebrüderheitz: http://gebruederheitz.de/
 .. _Cobweb: http://www.cobweb.ch/
+.. _Ecodev: http://www.ecodev.ch/

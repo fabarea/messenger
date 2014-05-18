@@ -30,6 +30,7 @@ use Vanilla\Messenger\Exception\MissingFileException;
 use Vanilla\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
+use Vanilla\Messenger\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Utility\Configuration;
@@ -214,7 +215,11 @@ class Message {
 		$isSent = $this->getMailMessage()->isSent();
 
 		if ($isSent) {
-			$this->sentMessageRepository->add($this->toArray());
+			$message = $this->toArray();
+			$this->sentMessageRepository->add($message);
+
+			// Store body of the message for possible later use.
+			MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $message['body']);
 		} else {
 			$message = 'No Email sent, something went wrong. Check Swift Mail configuration';
 			LoggerService::getLogger($this)->error($message);
@@ -301,7 +306,7 @@ class Message {
 
 		//echo $this->crawler->getFinalUrl(); exit();
 		$formattedBody = $this->crawler->exec();
-		return $formattedBody;
+		return trim($formattedBody);
 	}
 
 	/**
