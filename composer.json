@@ -1,0 +1,5 @@
+{
+    "name": "vanilla/messenger",
+    "description": "Send messages to a bunch of people. A message can be wrapped in a layout template.",
+    "type": "typo3-cms-extension"
+}
