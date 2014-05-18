@@ -544,19 +544,30 @@ class Message {
 			}
 			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findBySpeakingIdentifier';
 
-			$this->messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
-
+			/** @var \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate */
+			$messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
 			if (is_object($this->getMessageLayout())) {
-				$this->messageTemplate->setMessageTemplate($this->getMessageLayout());
+				$messageTemplate->setMessageLayout($this->getMessageLayout());
 			}
 
-			if (is_null($this->messageTemplate)) {
+			if (is_null($messageTemplate)) {
 				$message = sprintf('I could not find message template "%s"', $messageTemplate);
 				throw new RecordNotFoundException($message, 1350124207);
 			}
+
+			$this->messageTemplate = $messageTemplate;
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Tell whether the message has been prepared.
+	 *
+	 * @return boolean
+	 */
+	protected function isMessagePrepared() {
+		return !empty($this->mailMessage);
 	}
 
 	/**
@@ -566,21 +577,16 @@ class Message {
 	 */
 	public function toArray() {
 
-		// Prepare recipients
-		$recipients = array();
-		foreach ($this->getRecipients() as $email => $name) {
-			$recipients[] = sprintf('%s <%s>', $name, $email);
-		}
-
-		// Prepare recipients
-		$senders = array();
-		foreach ($this->getSender() as $email => $name) {
-			$senders[] = sprintf('%s <%s>', $name, $email);
+		if (! $this->isMessagePrepared()) {
+			$this->prepareMessage();
 		}
 
 		$values = array(
-			'sender' => implode(',', $senders),
-			'recipient' => implode(',', $recipients),
+			'sender' => $this->formatAddresses($this->getSender()),
+			'recipient' => $this->formatAddresses($this->to), // @todo change me! recipient has been deprecated in favor of "to".
+			'to' => $this->formatAddresses($this->to),
+			'cc' => $this->formatAddresses($this->cc),
+			'bcc' => $this->formatAddresses($this->bcc),
 			'subject' => $this->getMailMessage()->getSubject(),
 			'body' => $this->getMailMessage()->getBody(),
 			'attachment' => count($this->getMailMessage()->getChildren()),
@@ -590,9 +596,25 @@ class Message {
 			'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
 			'sent_time' => time(),
 			'mailing' => is_object($this->mailing) ? $this->mailing->getUid() : 0,
+			'body_crawler_url' => $this->crawler->getFinalUrl(),
 		);
 
 		return $values;
+	}
+
+	/**
+	 * Format an array of addresses
+	 *
+	 * @param array $addresses
+	 * @return string
+	 */
+	protected function formatAddresses(array $addresses) {
+		$formattedAddresses = array();
+		foreach ($addresses as $email => $name) {
+			$formattedAddresses[] = sprintf('%s <%s>', $name, $email);
+		}
+		return implode(', ', $formattedAddresses);
+
 	}
 
 	/**
