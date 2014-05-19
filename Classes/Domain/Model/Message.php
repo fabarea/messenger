@@ -50,6 +50,16 @@ class Message {
 	protected $uid;
 
 	/**
+	 * @var int
+	 */
+	protected $type;
+
+	/**
+	 * @var int
+	 */
+	protected $sourcePage;
+
+	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
 	 * @inject
 	 */
@@ -663,5 +673,37 @@ class Message {
 	 */
 	public function setMailing($mailing) {
 		$this->mailing = $mailing;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getType() {
+		return $this->type;
+	}
+
+	/**
+	 * @param int $type
+	 * @return $this
+	 */
+	public function setType($type) {
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSourcePage() {
+		return $this->sourcePage;
+	}
+
+	/**
+	 * @param int $sourcePage
+	 * @return $this
+	 */
+	public function setSourcePage($sourcePage) {
+		$this->sourcePage = $sourcePage;
+		return $this;
 	}
 }

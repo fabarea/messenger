@@ -95,6 +95,18 @@
 			<trans-unit id="tx_messenger_domain_model_messagetemplate">
 				<source>Email template</source>
 			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.type">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.type.email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.type.page">
+				<source>Page</source>
+			</trans-unit>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.source_page">
+				<source>Source page</source>
+			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.qualifier">
 				<source>Key</source>
 			</trans-unit>

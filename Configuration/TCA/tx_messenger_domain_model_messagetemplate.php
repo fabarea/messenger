@@ -14,6 +14,7 @@ return array(
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
 		'dividers2tabs' => TRUE,
+		'requestUpdate' => 'type',
 
 		'origUid' => 't3_origuid',
 		'languageField' => 'sys_language_uid',
@@ -24,12 +25,14 @@ return array(
 			'disabled' => 'hidden'
 		),
 		'searchFields' => 'qualifier, subject,body,',
+		'type' => 'type',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagetemplate',
 		),
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, qualifier, subject, body, message_layout'),
+		'1' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, body, message_layout'),
+		'2' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_page, message_layout'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -72,6 +75,18 @@ return array(
 				'max' => 255,
 			)
 		),
+		'type' => array(
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type',
+			'config' => array(
+				'type' => 'select',
+				'items' => array(
+					array('LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type.email', 1),
+					array('LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type.page', 2),
+				),
+				'size' => 1,
+				'maxitems' => 1,
+			),
+		),
 		'hidden' => array(
 			'exclude' => 1,
 			'l10n_mode' => 'exclude',
@@ -99,6 +114,22 @@ return array(
 				'type' => 'input',
 				'size' => 100,
 				'eval' => 'trim,required',
+			),
+		),
+		'source_page' => array(
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.source_page',
+			'config' => array(
+				'type' => 'group',
+				'internal_type' => 'db',
+				'allowed' => 'pages',
+				'size' => '1',
+				'minitems' => '0',
+				'maxitems' => '1',
+				'wizards' => array(
+					'suggest' => array(
+						'type' => 'suggest',
+					),
+				),
 			),
 		),
 		'body' => array(
