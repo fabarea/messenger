@@ -23,11 +23,12 @@ namespace Vanilla\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
  * Message Layout representation
  */
-class MessageLayout extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class MessageLayout extends AbstractEntity {
 
 	/**
 	 * @var string
