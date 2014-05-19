@@ -23,11 +23,12 @@ namespace Vanilla\Messenger\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * @todo check how to handle language flag.
  */
-class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class MessageTemplateRepository extends Repository {
 
 	/**
 	 * Initialize Repository
@@ -39,19 +40,19 @@ class MessageTemplateRepository extends \TYPO3\CMS\Extbase\Persistence\Repositor
 	}
 
 	/**
-	 * Finds an object given a speaking identifier.
+	 * Finds an object given a qualifier name.
 	 *
-	 * @param string $speakingIdentifier
+	 * @param string $qualifier
 	 * @return object|NULL
 	 * @api
 	 */
-	public function findBySpeakingIdentifier($speakingIdentifier) {
+	public function findByQualifier($qualifier) {
 		$query = $this->createQuery();
 		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
 		$query->getQuerySettings()->setRespectStoragePage(FALSE);
 		$object = $query
 			->matching(
-				$query->equals('speaking_identifier', $speakingIdentifier)
+				$query->equals('qualifier', $qualifier)
 			)
 			->execute()
 			->getFirst();

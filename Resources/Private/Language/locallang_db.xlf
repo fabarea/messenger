@@ -95,10 +95,10 @@
 			<trans-unit id="tx_messenger_domain_model_messagetemplate">
 				<source>Email template</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_messagetemplate.speaking_identifier">
-				<source>Identifier</source>
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.qualifier">
+				<source>Key</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_messagetemplate.speaking_identifier.placeholder">
+			<trans-unit id="tx_messenger_domain_model_messagetemplate.qualifier.placeholder">
 				<source>message-new</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagetemplate.subject">
@@ -115,8 +115,8 @@
 			<trans-unit id="tx_messenger_domain_model_messagelayout">
 				<source>Email layout</source>
 			</trans-unit>
-			<trans-unit id="tx_messenger_domain_model_messagelayout.speaking_identifier">
-				<source>Identifier</source>
+			<trans-unit id="tx_messenger_domain_model_messagelayout.qualifier">
+				<source>Key</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_messagelayout.content">
 				<source>Content</source>

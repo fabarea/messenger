@@ -6,8 +6,8 @@ if (!defined ('TYPO3_MODE')) {
 return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout',
-		'label' => 'speaking_identifier',
-		'default_sortby' => 'ORDER BY speaking_identifier ASC',
+		'label' => 'qualifier',
+		'default_sortby' => 'ORDER BY qualifier ASC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -21,16 +21,16 @@ return array(
 		'enablecolumns' => array(
 			'disabled' => 'hidden'
 		),
-		'searchFields' => 'speaking_identifier, content,',
+		'searchFields' => 'qualifier, content,',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagelayout',
 		),
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, speaking_identifier, content',
+		'showRecordFieldList' => 'sys_language_uid, l10n_diffsource, hidden, qualifier, content',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, content'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, qualifier, content'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -81,15 +81,15 @@ return array(
 				'type' => 'check',
 			),
 		),
-		'speaking_identifier' => array(
+		'qualifier' => array(
 			'exclude' => 0,
 			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout.speaking_identifier',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagelayout.qualifier',
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
-				'eval' => 'trim,required,unique'
+				'eval' => 'trim,unique'
 			),
 		),
 		'content' => array(
@@ -110,7 +110,7 @@ Footer to be replaced...
 	'grid' => array(
 		'facets' => array(
 			'uid',
-			'speaking_identifier',
+			'qualifier',
 		),
 		'columns' => array(
 			'__checkbox' => array(
@@ -123,7 +123,7 @@ Footer to be replaced...
 				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
 				'width' => '5px',
 			),
-			'speaking_identifier' => array(
+			'qualifier' => array(
 				'editable' => TRUE,
 			),
 			'content' => array(),

@@ -15,8 +15,8 @@
 			<trans-unit id="uid">
 				<source>Uid</source>
 			</trans-unit>
-			<trans-unit id="speaking_identifier">
-				<source>Identifier</source>
+			<trans-unit id="qualifier">
+				<source>Key</source>
 			</trans-unit>
 		</body>
 	</file>

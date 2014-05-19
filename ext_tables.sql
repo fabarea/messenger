@@ -6,7 +6,7 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
-	speaking_identifier varchar(255) DEFAULT '' NOT NULL,
+	qualifier varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
 	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE tx_messenger_domain_model_messagelayout (
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
 
-	speaking_identifier varchar(255) DEFAULT '' NOT NULL,
+	qualifier varchar(255) DEFAULT '' NOT NULL,
 	content text,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,

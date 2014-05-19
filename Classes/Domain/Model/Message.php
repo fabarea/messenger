@@ -534,7 +534,7 @@ class Message {
 			if ((int) $messageLayout > 0) {
 				$messageLayout = (int) $messageLayout;
 			}
-			$methodName = is_int($messageLayout) ? 'findByUid' : 'findBySpeakingIdentifier';
+			$methodName = is_int($messageLayout) ? 'findByUid' : 'findByQualifier';
 			$this->messageLayout = $this->messageLayoutRepository->$methodName($messageLayout);
 
 			if (is_null($this->messageLayout)) {
@@ -566,7 +566,7 @@ class Message {
 			if ((int) $messageTemplate > 0) {
 				$messageTemplate = (int) $messageTemplate;
 			}
-			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findBySpeakingIdentifier';
+			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
 
 			/** @var \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate */
 			$messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);

@@ -7,9 +7,9 @@ return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
 		'label' => 'subject',
-		'label_alt' => 'speaking_identifier',
+		'label_alt' => 'qualifier',
 		'label_alt_force' => 1,
-		'default_sortby' => 'ORDER BY speaking_identifier ASC',
+		'default_sortby' => 'ORDER BY qualifier ASC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
 		'cruser_id' => 'cruser_id',
@@ -23,13 +23,13 @@ return array(
 		'enablecolumns' => array(
 			'disabled' => 'hidden'
 		),
-		'searchFields' => 'speaking_identifier, subject,body,',
+		'searchFields' => 'qualifier, subject,body,',
 		'typeicon_classes' => array(
 			'default' => 'extensions-messenger-messagetemplate',
 		),
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, speaking_identifier, subject, body, message_layout'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, qualifier, subject, body, message_layout'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -80,16 +80,16 @@ return array(
 				'type' => 'check',
 			),
 		),
-		'speaking_identifier' => array(
+		'qualifier' => array(
 			'exclude' => 0,
 			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.speaking_identifier',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.qualifier',
 			'config' => array(
 				'type' => 'input',
-				'placeholder' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.speaking_identifier.placeholder',
+				'placeholder' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.qualifier.placeholder',
 				'size' => 100,
-				'eval' => 'trim,required,unique',
+				'eval' => 'trim,unique',
 			),
 		),
 		'subject' => array(
@@ -151,7 +151,7 @@ Show detail of an item:
 	'grid' => array(
 		'facets' => array(
 			'uid',
-			'speaking_identifier',
+			'qualifier',
 		),
 		'columns' => array(
 			'__checkbox' => array(
@@ -164,7 +164,7 @@ Show detail of an item:
 				'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
 				'width' => '5px',
 			),
-			'speaking_identifier' => array(
+			'qualifier' => array(
 				'editable' => TRUE,
 				'width' => '150px',
 			),

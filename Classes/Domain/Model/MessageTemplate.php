@@ -34,7 +34,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * @var string
 	 */
-	protected $speakingIdentifier;
+	protected $qualifier;
 
 	/**
 	 * @var string
@@ -67,7 +67,7 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * Constructor
 	 */
 	public function __construct(array $data = array()) {
-		$this->speakingIdentifier = !empty($data['speaking_identifier']) ? $data['speaking_identifier'] : '';
+		$this->qualifier = !empty($data['qualifier']) ? $data['qualifier'] : '';
 		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
 		$this->body = !empty($data['body']) ? $data['body'] : '';
 		$this->messageLayout = !empty($data['message_layout']) ? $data['message_layout'] : '';
@@ -117,18 +117,18 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 	/**
-	 * @return string $speakingIdentifier
+	 * @return string $qualifier
 	 */
-	public function getSpeakingIdentifier() {
-		return $this->speakingIdentifier;
+	public function getQualifier() {
+		return $this->qualifier;
 	}
 
 	/**
-	 * @param string $speakingIdentifier
+	 * @param string $qualifier
 	 * @return void
 	 */
-	public function setSpeakingIdentifier($speakingIdentifier) {
-		$this->speakingIdentifier = $speakingIdentifier;
+	public function setQualifier($qualifier) {
+		$this->qualifier = $qualifier;
 	}
 
 	/**

@@ -23,12 +23,13 @@ namespace Vanilla\Messenger\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Vidi\Tca\TcaService;
 
 /**
  * A repository for handling sent message
  */
-class SentMessageRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class SentMessageRepository extends Repository {
 
 	/**
 	 * @var string
