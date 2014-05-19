@@ -62,7 +62,7 @@ Usage::
 		->setTo($recipients)
 
 	# Additional setter
-	$message->setMarkers($markers)
+	$message->assign('foo', $bar)
 		->setLanguage($languageIdentifier)
 		->addAttachment($pathToFile)
 		->setMessageLayout($layoutIdentifier);

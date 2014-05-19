@@ -414,11 +414,24 @@ class Message {
 	/**
 	 * Set Markers
 	 *
-	 * @param mixed $markers
+	 * @param mixed $values
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @deprecated
+	 */
+	public function setMarkers($values) {
+		return $this->assignMultiple($values);
+	}
+
+	/**
+	 * Set Markers
+	 *
+	 * @param mixed $values
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
-	public function setMarkers($markers) {
-		$this->markers = $markers;
+	public function assignMultiple(array $values) {
+		foreach ($values as $key => $value) {
+			$this->markers[$key] = $value;
+		}
 		return $this;
 	}
 
@@ -429,7 +442,7 @@ class Message {
 	 * @param mixed $value
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
-	public function addMarker($markerName, $value) {
+	public function assign($markerName, $value) {
 		$this->markers[$markerName] = $value;
 		return $this;
 	}
