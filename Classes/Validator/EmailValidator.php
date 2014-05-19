@@ -23,12 +23,13 @@ namespace Vanilla\Messenger\Validator;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\SingletonInterface;
 use Vanilla\Messenger\Exception\InvalidEmailFormatException;
 
 /**
  * Validate Email in the context of SwiftMailer
  */
-class EmailValidator {
+class EmailValidator implements SingletonInterface {
 
 	/**
 	 * Validate emails to be used in the SwiftMailer framework

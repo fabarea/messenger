@@ -92,11 +92,6 @@ class Message {
 	protected $bcc = array();
 
 	/**
-	 * @var \Vanilla\Messenger\Validator\EmailValidator
-	 */
-	protected $emailValidator;
-
-	/**
 	 * @var \Vanilla\Messenger\Utility\Marker
 	 * @inject
 	 */
@@ -189,7 +184,6 @@ class Message {
 	 */
 	public function __construct() {
 		// @todo simplify
-		$this->emailValidator = GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
 		$this->configurationManager = Configuration::getInstance();
 		$this->context = Context::getInstance();
 
@@ -197,7 +191,7 @@ class Message {
 			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
 		);
 
-		$this->emailValidator->validate($this->sender);
+		$this->getEmailValidator()->validate($this->sender);
 	}
 
 	/**
@@ -346,7 +340,7 @@ class Message {
 		foreach ($emails as $email) {
 			$recipients[$email] = $email;
 		}
-		$this->emailValidator->validate($recipients);
+		$this->getEmailValidator()->validate($recipients);
 		return $recipients;
 	}
 
@@ -469,7 +463,7 @@ class Message {
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setTo($addresses) {
-		$this->emailValidator->validate($addresses);
+		$this->getEmailValidator()->validate($addresses);
 		$this->to = $addresses;
 		return $this;
 	}
@@ -481,7 +475,7 @@ class Message {
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setCc($addresses) {
-		$this->emailValidator->validate($addresses);
+		$this->getEmailValidator()->validate($addresses);
 		$this->cc = $addresses;
 		return $this;
 	}
@@ -493,7 +487,7 @@ class Message {
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setBcc($addresses) {
-		$this->emailValidator->validate($addresses);
+		$this->getEmailValidator()->validate($addresses);
 		$this->bcc = $addresses;
 		return $this;
 	}
@@ -512,7 +506,7 @@ class Message {
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setSender(array $sender) {
-		$this->emailValidator->validate($this->sender);
+		$this->getEmailValidator()->validate($this->sender);
 		$this->sender = $sender;
 		return $this;
 	}
@@ -705,5 +699,12 @@ class Message {
 	public function setSourcePage($sourcePage) {
 		$this->sourcePage = $sourcePage;
 		return $this;
+	}
+
+	/**
+	 * @return \Vanilla\Messenger\Validator\EmailValidator
+	 */
+	public function getEmailValidator() {
+		return GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
 	}
 }
