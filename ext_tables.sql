@@ -8,6 +8,7 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 
 	type int(11) DEFAULT '0' NOT NULL,
 	source_page int(11) DEFAULT '0' NOT NULL,
+	source_file varchar(255) DEFAULT '' NOT NULL,
 	qualifier varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,

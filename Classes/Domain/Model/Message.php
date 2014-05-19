@@ -664,38 +664,6 @@ class Message {
 	}
 
 	/**
-	 * @return int
-	 */
-	public function getType() {
-		return $this->type;
-	}
-
-	/**
-	 * @param int $type
-	 * @return $this
-	 */
-	public function setType($type) {
-		$this->type = $type;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getSourcePage() {
-		return $this->sourcePage;
-	}
-
-	/**
-	 * @param int $sourcePage
-	 * @return $this
-	 */
-	public function setSourcePage($sourcePage) {
-		$this->sourcePage = $sourcePage;
-		return $this;
-	}
-
-	/**
 	 * @return \Vanilla\Messenger\Validator\EmailValidator
 	 */
 	public function getEmailValidator() {

@@ -23,18 +23,38 @@ namespace Vanilla\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
-use Vanilla\Messenger\Utility\Configuration;
 
 /**
  * Message Template representation
  */
-class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class MessageTemplate extends AbstractEntity {
+
+	const TYPE_TEXT = 1;
+	const TYPE_PAGE = 2;
+	const TYPE_FILE = 3;
 
 	/**
 	 * @var string
 	 */
 	protected $qualifier;
+
+	/**
+	 * @var int
+	 */
+	protected $type;
+
+	/**
+	 * @var int
+	 */
+	protected $sourcePage;
+
+	/**
+	 * @var string
+	 */
+	protected $sourceFile;
 
 	/**
 	 * @var string
@@ -67,10 +87,13 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 * Constructor
 	 */
 	public function __construct(array $data = array()) {
-		$this->qualifier = !empty($data['qualifier']) ? $data['qualifier'] : '';
-		$this->subject = !empty($data['subject']) ? $data['subject'] : '';
-		$this->body = !empty($data['body']) ? $data['body'] : '';
-		$this->messageLayout = !empty($data['message_layout']) ? $data['message_layout'] : '';
+		$this->qualifier = empty($data['qualifier']) ? '' : $data['qualifier'];
+		$this->type = empty($data['type']) ? 0 : (int)$data['type'];
+		$this->sourcePage = empty($data['source_page']) ? 0 : $data['source_page'];
+		$this->sourceFile = empty($data['source_file']) ? '' : $data['source_file'];
+		$this->subject = empty($data['subject']) ? '' : $data['subject'];
+		$this->body = empty($data['body']) ? '' : $data['body'];
+		$this->messageLayout = empty($data['message_layout']) ? '' : $data['message_layout'];
 	}
 
 	/**
@@ -93,13 +116,26 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 	/**
-	 * Returns the body
+	 * Returns the body according to the type of the message template.
 	 *
+	 * @throws \Exception
 	 * @return string $body
 	 */
 	public function getBody() {
 
-		// Possible wrap body in Layout content
+		if ($this->type === self::TYPE_PAGE) {
+			// @todo use $crawler to fetch body content of page
+			throw new \Exception('Messenger: not implemented', 1400517075);
+
+		} elseif ($this->type === self::TYPE_FILE) {
+			$file = GeneralUtility::getFileAbsFileName($this->sourceFile);
+			if (!is_file($file)) {
+				throw new \Exception('Messenger: I could not found file ' . $file, 1400517074);
+			}
+			$this->body = file_get_contents($file);
+		}
+
+		// Possible wrap body in Layout content.
 		if ($this->messageLayout) {
 			$this->body = str_replace('{BODY}', $this->body, $this->messageLayout->getContent());
 		}
@@ -153,5 +189,53 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	 */
 	public function setMessageLayout($layout) {
 		$this->messageLayout = $layout;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getType() {
+		return $this->type;
+	}
+
+	/**
+	 * @param int $type
+	 * @return $this
+	 */
+	public function setType($type) {
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSourcePage() {
+		return $this->sourcePage;
+	}
+
+	/**
+	 * @param int $sourcePage
+	 * @return $this
+	 */
+	public function setSourcePage($sourcePage) {
+		$this->sourcePage = $sourcePage;
+		return $this;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSourceFile() {
+		return $this->sourceFile;
+	}
+
+	/**
+	 * @param int $sourceFile
+	 * @return $this
+	 */
+	public function setSourceFile($sourceFile) {
+		$this->sourceFile = $sourceFile;
+		return $this;
 	}
 }

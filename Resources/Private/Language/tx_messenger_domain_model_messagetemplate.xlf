@@ -26,8 +26,14 @@
 			<trans-unit id="type">
 				<source>Type</source>
 			</trans-unit>
-			<trans-unit id="type.email">
-				<source>Email</source>
+			<trans-unit id="type.content_from_text">
+				<source>Content from text</source>
+			</trans-unit>
+			<trans-unit id="type.content_from_page">
+				<source>Content from page</source>
+			</trans-unit>
+			<trans-unit id="type.content_from_file">
+				<source>Content from file</source>
 			</trans-unit>
 			<trans-unit id="type.page">
 				<source>Page</source>

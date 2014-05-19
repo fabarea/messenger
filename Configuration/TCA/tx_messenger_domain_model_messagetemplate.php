@@ -33,6 +33,7 @@ return array(
 	'types' => array(
 		'1' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, body, message_layout'),
 		'2' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_page, message_layout'),
+		'3' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_file, message_layout'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -80,8 +81,9 @@ return array(
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.email', 1),
-					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.page', 2),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_text', 1),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_page', 2),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_file', 3),
 				),
 				'size' => 1,
 				'maxitems' => 1,
@@ -116,6 +118,15 @@ return array(
 				'eval' => 'trim,required',
 			),
 		),
+		'source_file' => array(
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:source_file',
+			'config' => array(
+				'type' => 'input',
+				'default' => 'EXT:foo/Resources/Private/Message/Contact.html',
+				'size' => 100,
+				'eval' => 'trim,required',
+			),
+		),
 		'source_page' => array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:source_page',
 			'config' => array(
@@ -137,6 +148,8 @@ return array(
 			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:body',
 			'config' => array(
 				'type' => 'text',
+				'rows' => 10,
+				'cols' => 5,
 				'eval' => 'trim',
 				'default' => 'Hello Admin,
 
@@ -152,7 +165,7 @@ Markers such as {foo} have to be posted by Messenger.
 
 **Fluid View Helper**
 
-<l:translate key="foo" extensionName="ext"/>: {foo}
+<f:translate key="foo" extensionName="ext"/>: {foo}
 
 <f:link.page pageUid="1" absolute="1">Open page</f:link.page>
 
