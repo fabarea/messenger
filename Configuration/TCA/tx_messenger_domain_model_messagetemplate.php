@@ -152,7 +152,7 @@ Markers such as {foo} have to be posted by Messenger.
 
 **Fluid View Helper**
 
-<l:translate key="foo"/>: {foo}
+<l:translate key="foo" extensionName="ext"/>: {foo}
 
 <f:link.page pageUid="1" absolute="1">Open page</f:link.page>
 
