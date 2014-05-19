@@ -18,6 +18,38 @@
 			<trans-unit id="qualifier">
 				<source>Key</source>
 			</trans-unit>
+
+
+			<trans-unit id="message_template">
+				<source>Message template</source>
+			</trans-unit>
+			<trans-unit id="type">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="type.email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="type.page">
+				<source>Page</source>
+			</trans-unit>
+			<trans-unit id="source_page">
+				<source>Source page</source>
+			</trans-unit>
+			<trans-unit id="qualifier">
+				<source>Key</source>
+			</trans-unit>
+			<trans-unit id="qualifier.placeholder">
+				<source>message-new</source>
+			</trans-unit>
+			<trans-unit id="subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="body">
+				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="message_layout">
+				<source>Message Layout</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -18,6 +18,16 @@
 			<trans-unit id="qualifier">
 				<source>Key</source>
 			</trans-unit>
+
+			<trans-unit id="message_layout">
+				<source>Message layout</source>
+			</trans-unit>
+			<trans-unit id="qualifier">
+				<source>Key</source>
+			</trans-unit>
+			<trans-unit id="content">
+				<source>Content</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

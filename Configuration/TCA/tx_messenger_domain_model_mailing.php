@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 return array(
 	'ctrl' => array(
-		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_mailing',
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_mailing.xlf:mailing',
 		'label' => 'user',
 		'default_sortby' => 'ORDER BY uid ASC',
 		'tstamp' => 'tstamp',
@@ -37,7 +37,7 @@ return array(
 		),
 		'title' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_mailing.title',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_mailing.xlf:title',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -47,7 +47,7 @@ return array(
 		),
 		'comment' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_mailing.comment',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_mailing.xlf:comment',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -57,7 +57,7 @@ return array(
 		),
 		'sent_time' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_mailing.sent_time',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_mailing.xlf:sent_time',
 			'config' => array(
 				'type' => 'input',
 				'size' => 4,

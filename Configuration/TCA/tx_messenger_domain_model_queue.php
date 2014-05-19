@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 return array(
 	'ctrl' => array(
-		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue',
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.qeue',
 		'label' => 'user',
 		'default_sortby' => 'ORDER BY uid ASC',
 		'tstamp' => 'tstamp',
@@ -37,7 +37,7 @@ return array(
 		),
 		'sender' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.sender',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.sender',
 			'config' => array(
 				'type' => 'text',
 				'rows' => 4,
@@ -47,7 +47,7 @@ return array(
 		),
 		'recipient' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.recipient',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.recipient',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -57,7 +57,7 @@ return array(
 		),
 		'subject' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.subject',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.subject',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -67,7 +67,7 @@ return array(
 		),
 		'body' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.body',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.body',
 			'config' => array(
 				'type' => 'input',
 				'size' => 30,
@@ -77,7 +77,7 @@ return array(
 		),
 		'context' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.context',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.context',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -87,7 +87,7 @@ return array(
 		),
 		'attachment' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_queue.attachment',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.attachment',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,

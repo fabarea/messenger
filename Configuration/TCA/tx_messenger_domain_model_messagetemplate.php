@@ -5,7 +5,7 @@ if (!defined ('TYPO3_MODE')) {
 
 return array(
 	'ctrl' => array(
-		'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate',
+		'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
 		'label' => 'subject',
 		'label_alt' => 'qualifier',
 		'label_alt_force' => 1,
@@ -76,12 +76,12 @@ return array(
 			)
 		),
 		'type' => array(
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(
-					array('LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type.email', 1),
-					array('LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.type.page', 2),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.email', 1),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.page', 2),
 				),
 				'size' => 1,
 				'maxitems' => 1,
@@ -99,17 +99,17 @@ return array(
 			'exclude' => 0,
 			'l10n_mode' => 'exclude',
 			'l10n_display' => 'defaultAsReadonly',
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.qualifier',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:qualifier',
 			'config' => array(
 				'type' => 'input',
-				'placeholder' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.qualifier.placeholder',
+				'placeholder' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:qualifier.placeholder',
 				'size' => 100,
 				'eval' => 'trim,unique',
 			),
 		),
 		'subject' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.subject',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:subject',
 			'config' => array(
 				'type' => 'input',
 				'size' => 100,
@@ -117,7 +117,7 @@ return array(
 			),
 		),
 		'source_page' => array(
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.source_page',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:source_page',
 			'config' => array(
 				'type' => 'group',
 				'internal_type' => 'db',
@@ -134,7 +134,7 @@ return array(
 		),
 		'body' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.body',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:body',
 			'config' => array(
 				'type' => 'text',
 				'eval' => 'trim',
@@ -167,7 +167,7 @@ Show detail of an item:
 		),
 		'message_layout' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_db.xlf:tx_messenger_domain_model_messagetemplate.message_layout',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_layout',
 			'config' => array(
 				'type' => 'select',
 				'items' => array(

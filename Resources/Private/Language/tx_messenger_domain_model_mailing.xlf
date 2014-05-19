@@ -15,6 +15,20 @@
 			<trans-unit id="uid">
 				<source>Uid</source>
 			</trans-unit>
+
+
+			<trans-unit id="mailing">
+				<source>Mailing</source>
+			</trans-unit>
+			<trans-unit id="title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="start_sending_time">
+				<source>Start Sending time</source>
+			</trans-unit>
+			<trans-unit id="comment">
+				<source>Comment</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
