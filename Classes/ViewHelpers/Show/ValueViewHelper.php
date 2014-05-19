@@ -22,6 +22,8 @@ namespace Vanilla\Messenger\ViewHelpers\Show;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\CMS\Vidi\Tca\TcaService;
 
@@ -38,14 +40,21 @@ class ValueViewHelper extends AbstractViewHelper {
 	public function render() {
 		$value = $this->templateVariableContainer->get('value');
 		$fieldName = $this->templateVariableContainer->get('key');
-		if ($this->templateVariableContainer->exists('dataType')) {
+
+		if ($value instanceof ObjectStorage) {
+//			$object = $value->current();
+//
+//			// special case for file reference which is ok to be hardcoded
+//			if ($object instanceof FileReference) {
+//				$value = $object->getOriginalResource()->getName();
+//			}
+		} elseif ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
 			$fieldType = TcaService::table($dataType)->field($fieldName)->getType();
 
 			if ($fieldType === TcaService::RADIO || $fieldType === TcaService::SELECT) {
 				$value = TcaService::table($dataType)->field($fieldName)->getLabelForItem($value);
 			}
-
 		}
 		return $value;
 	}
