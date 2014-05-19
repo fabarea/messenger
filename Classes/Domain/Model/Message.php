@@ -23,8 +23,9 @@ namespace Vanilla\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use Swift_Attachment;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode;
 use Vanilla\Messenger\Exception\MissingFileException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
@@ -36,6 +37,9 @@ use Vanilla\Messenger\Utility\Context;
 use Vanilla\Messenger\Service\Html2Text;
 use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
+
+// Make sure Swift's auto-loader is registered
+require_once PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
 
 /**
  * Message representation
@@ -275,6 +279,7 @@ class Message {
 	/**
 	 * Format the body by fetching content from the FE.
 	 * This is required in order to "resolve" the View Helpers in the context of Fluid.
+	 * The crawling step is required to make it work in the Backend as well.
 	 *
 	 * @return string
 	 */
@@ -380,9 +385,9 @@ class Message {
 		$parsedTemplate = $templateParser->parse($content);
 
 		$markers = array();
-		/** @var \TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode $node */
+		/** @var ObjectAccessorNode $node */
 		foreach ($parsedTemplate->getRootNode()->getChildNodes() as $node) {
-			if ($node instanceof \TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode) {
+			if ($node instanceof ObjectAccessorNode) {
 				$markers[] = $node->getObjectPath();
 			}
 		}
@@ -391,7 +396,7 @@ class Message {
 	}
 
 	/**
-	 * Add an attachment.
+	 * Attach a file to the message.
 	 *
 	 * @throws MissingFileException
 	 * @param string $attachment an absolute path to a file
@@ -399,11 +404,16 @@ class Message {
 	 */
 	public function addAttachment($attachment) {
 
+		// Convert $file to absolute path.
+		if ($attachment instanceof File) {
+			$attachment = $attachment->getForLocalProcessing(FALSE);
+		}
+
 		// Makes sure the file exist
 		if (is_file($attachment)) {
 			$parts = explode('/', $attachment);
 			$fileName = array_pop($parts);
-			$this->attachments[] = Swift_Attachment::fromPath($attachment)->setFilename($fileName);
+			$this->attachments[] = \Swift_Attachment::fromPath($attachment)->setFilename($fileName);
 		} else {
 			$message = sprintf('File not found "%s"', $attachment);
 			throw new MissingFileException($message, 1389779394);
