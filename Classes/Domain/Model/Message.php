@@ -38,26 +38,20 @@ use Vanilla\Messenger\Utility\Context;
 use Vanilla\Messenger\Service\Html2Text;
 use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
+
 /**
  * Message representation
  * @todo remove language handling from the class which should be managed outside - or not?
  */
 class Message {
 
+	const SUBJECT = 'subject';
+	const BODY = 'body';
+
 	/**
 	 * @var int
 	 */
 	protected $uid;
-
-	/**
-	 * @var int
-	 */
-	protected $type;
-
-	/**
-	 * @var int
-	 */
-	protected $sourcePage;
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
@@ -361,6 +355,43 @@ class Message {
 			$result = TRUE;
 		}
 		return $result;
+	}
+
+	/**
+	 * Extract Fluid marker from the body or the subject source. A Fluid marker is formatted as follows {foo} .
+	 *
+	 * @param string $messagePart can be Message::BODY or Message::SUBJECT
+	 * @throws \RuntimeException
+	 * @return array
+	 */
+	public function extractMakersFromTemplate($messagePart = '') {
+
+		if (empty($this->messageTemplate)) {
+			throw new \RuntimeException('Messenger: message template was not defined', 1400511070);
+		}
+
+		if ($messagePart === self::SUBJECT) {
+			$content = $this->messageTemplate->getSubject();
+		} elseif ($messagePart === self::BODY) {
+			$content = $this->messageTemplate->getBody();
+		} else {
+			$content = $this->messageTemplate->getSubject();
+			$content .= $this->messageTemplate->getBody();
+		}
+
+		/** @var \TYPO3\CMS\Fluid\Core\Parser\TemplateParser $templateParser */
+		$templateParser = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Parser\TemplateParser');
+		$parsedTemplate = $templateParser->parse($content);
+
+		$markers = array();
+		/** @var \TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode $node */
+		foreach ($parsedTemplate->getRootNode()->getChildNodes() as $node) {
+			if ($node instanceof \TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode) {
+				$markers[] = $node->getObjectPath();
+			}
+		}
+
+		return $markers;
 	}
 
 	/**
