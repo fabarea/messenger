@@ -25,6 +25,8 @@ namespace Vanilla\Messenger\Utility;
 
 /**
  * A class dealing with configuration.
+ *
+ * @deprecated update implementation to make use of TYPO3 API for extension configuration.
  */
 class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 

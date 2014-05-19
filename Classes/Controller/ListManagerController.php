@@ -42,7 +42,7 @@ class ListManagerController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	 */
 	public function saveAction($listManager) {
 		// save email address as preference
-		\Vanilla\Messenger\Utility\BeUserPreference::set('messenger_list_manager', $listManager);
+		\Vanilla\Messenger\Utility\BackendUserPreference::set('messenger_list_manager', $listManager);
 		$this->redirect('index', 'Backend');
 	}
 }

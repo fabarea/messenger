@@ -22,48 +22,25 @@ namespace Vanilla\Messenger\Utility;
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * A class dealing with BE User preference.
+ * A class dealing with server variables.
  */
-class BeUserPreference {
+class ServerUtility {
 
 	/**
-	 * Returns a configuration key for the current BE User.
+	 * Return a host prepend with the protocol
 	 *
-	 * @param string $key
-	 * @return mixed
+	 * @return string
 	 */
-	static public function get($key) {
-		$result = '';
-		if (self::getBackendUser() && !empty(self::getBackendUser()->uc[$key])) {
-			$result = self::getBackendUser()->uc[$key];
+	public static function getHostAndProtocol() {
+		$hostAndProtocol = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/';
+		$replaceHttpsByHttp = TRUE; // @todo make configuration in the BE? TS?
+		if ($replaceHttpsByHttp) {
+			$hostAndProtocol = preg_replace('/^https/isU', 'http', $hostAndProtocol);
 
 		}
-		return $result;
-	}
-
-	/**
-	 * Set a configuration for the current BE User.
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 */
-	static public function set($key, $value) {
-
-		if (self::getBackendUser()) {
-			self::getBackendUser()->uc[$key] = $value;
-			self::getBackendUser()->writeUC();
-		}
-	}
-
-	/**
-	 * Returns an instance of the current Backend User.
-	 *
-	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-	 */
-	static protected function getBackendUser() {
-		return $GLOBALS['BE_USER'];
+		return $hostAndProtocol;
 	}
 }

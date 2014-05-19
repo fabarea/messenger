@@ -25,6 +25,8 @@ namespace Vanilla\Messenger\Utility;
 
 /**
  * A class dealing with context.
+ *
+ * @deprecated use Application Context of 6.2
  */
 class Context implements \TYPO3\CMS\Core\SingletonInterface {
 

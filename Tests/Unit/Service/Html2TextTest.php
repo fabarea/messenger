@@ -27,12 +27,12 @@
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \Vanilla\Messenger\Utility\Html2Text.
+ * Test case for class \Vanilla\Messenger\Service\Html2Text.
  */
 class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \Vanilla\Messenger\Utility\Html2Text
+	 * @var \Vanilla\Messenger\Service\Html2Text
 	 */
 	protected $fixture;
 
@@ -47,7 +47,7 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	protected $markers;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Utility\Html2Text();
+		$this->fixture = new \Vanilla\Messenger\Service\Html2Text();
 	}
 
 	public function tearDown() {

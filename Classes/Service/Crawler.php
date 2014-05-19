@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Utility;
+namespace Vanilla\Messenger\Service;
 /**
  * Class to handle cURL requests
  *

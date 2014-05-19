@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Utility;
+namespace Vanilla\Messenger\Service;
 /***************************************************************
  *  Copyright notice
  *
@@ -23,12 +23,14 @@ namespace Vanilla\Messenger\Utility;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/** @see http://www.chuggnutt.com/html2text
- *
+/**
+ * @see http://www.chuggnutt.com/html2text
  */
 
-class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
+class Html2Text implements SingletonInterface {
 
 	/**
 	 * @var \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface
@@ -43,20 +45,20 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \Vanilla\Messenger\Utility\Html2Text
+	 * @return \Vanilla\Messenger\Service\Html2Text
 	 */
 	static public function getInstance() {
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Utility\Html2Text');
+		return GeneralUtility::makeInstance('Vanilla\Messenger\Service\Html2Text');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return \Vanilla\Messenger\Utility\Html2Text
+	 * @return \Vanilla\Messenger\Service\Html2Text
 	 */
 	public function __construct() {
-		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\LynxStrategy');
-		$this->possibleConverters[] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy');
+		$this->possibleConverters[] = GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\LynxStrategy');
+		$this->possibleConverters[] = GeneralUtility::makeInstance('Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy');
 	}
 
 	/**
@@ -86,6 +88,7 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 		// Else find the best suitable converter
 		$converter = end($this->possibleConverters);
 		foreach ($this->possibleConverters as $possibleConverter) {
+			/** @var \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface $possibleConverter */
 			if ($possibleConverter->available()) {
 				$converter = $possibleConverter;
 				break;

@@ -24,10 +24,9 @@ namespace Vanilla\Messenger\Strategy\Html2Text;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/** @see http://www.chuggnutt.com/html2text
- *
+/**
+ * Strategy Interface for converting HTML to text.
  */
-
 interface StrategyInterface {
 
 	/**

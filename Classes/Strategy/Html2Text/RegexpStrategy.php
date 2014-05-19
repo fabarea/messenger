@@ -26,9 +26,8 @@ namespace Vanilla\Messenger\Strategy\Html2Text;
 
 /**
  * @see http://www.chuggnutt.com/html2text
- *
  */
-class RegexpStrategy implements \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface {
+class RegexpStrategy implements StrategyInterface {
 
 	/**
 	 *  Contains the HTML content to convert.

@@ -23,6 +23,7 @@ namespace Vanilla\Messenger\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use Vanilla\Messenger\Utility\BackendUserPreference;
 
 /**
  * A controller for the BE module.
@@ -72,7 +73,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 	 *
 	 * @param int $messageTemplateUid
 	 * @param string $recipientUid
-	 * @return void
+	 * @return string
 	 */
 	public function sendMessageAction($messageTemplateUid = 0, $recipientUid = '') {
 
@@ -133,7 +134,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 			$status = $isSent ? 'success' : $status;
 
 			// save email address as preference
-			\Vanilla\Messenger\Utility\BeUserPreference::set('messenger_testing_email', $testEmail);
+			BackendUserPreference::set('messenger_testing_email', $testEmail);
 		}
 		$this->request->setFormat('json'); // I would have expected to send a json header... but not the case.
 		header("Content-Type: text/json");
@@ -153,7 +154,7 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 		$order = $order === NULL ? $this->objectManager->get('Vanilla\Messenger\QueryElement\Order') : $order;
 		$pager = $pager === NULL ? $this->objectManager->get('Vanilla\Messenger\QueryElement\Pager') : $pager;
 
-		$messageIdentifier = \Vanilla\Messenger\Utility\BeUserPreference::get('messenger_message_template');
+		$messageIdentifier = BackendUserPreference::get('messenger_message_template');
 		$messageTemplate = $this->messageTemplateRepository->findByUid($messageIdentifier);
 
 		$this->view->assign('recipients', $this->listManager->findBy($matcher, $order, $pager->getLimit(), $pager->getOffset()));

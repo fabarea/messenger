@@ -24,11 +24,10 @@ namespace Vanilla\Messenger\Strategy\Html2Text;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/** @see http://www.chuggnutt.com/html2text
- *
+/**
+ * Use lynx to convert html 2 text
  */
-
-class LynxStrategy implements \Vanilla\Messenger\Strategy\Html2Text\StrategyInterface {
+class LynxStrategy implements StrategyInterface {
 
 	/**
 	 * @var string

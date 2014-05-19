@@ -35,8 +35,8 @@ use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Utility\Configuration;
 use Vanilla\Messenger\Utility\Context;
-use Vanilla\Messenger\Utility\Html2Text;
-use Vanilla\Messenger\Utility\Server;
+use Vanilla\Messenger\Service\Html2Text;
+use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
 /**
  * Message representation
@@ -90,12 +90,6 @@ class Message {
 	 * @var array
 	 */
 	protected $bcc = array();
-
-	/**
-	 * @var \Vanilla\Messenger\Utility\Marker
-	 * @inject
-	 */
-	protected $markerUtility;
 
 	/**
 	 * A set of markers.
@@ -169,7 +163,7 @@ class Message {
 	protected $context;
 
 	/**
-	 * @var \Vanilla\Messenger\Utility\Crawler
+	 * @var \Vanilla\Messenger\Service\Crawler
 	 * @inject
 	 */
 	protected $crawler;
@@ -250,7 +244,7 @@ class Message {
 			throw new MissingPropertyValueInMessageObjectException('Messenger: no recipient was defined', 1354536585);
 		}
 
-		$subject = $this->markerUtility->substitute($this->messageTemplate->getSubject(), $this->markers, 'text/plain');
+		$subject = $this->getMarkerUtility()->substitute($this->messageTemplate->getSubject(), $this->markers, 'text/plain');
 		$body = $this->formatBody();
 
 		// Set debug flag for not production context
@@ -258,7 +252,7 @@ class Message {
 			$body = $this->getMessageBodyForSimulation($body);
 			$this->to = $this->getRecipientsForSimulation();
 		}
-		$body = $this->markerUtility->substitute($body, $this->markers);
+		#$body = $this->markerUtility->substitute($body, $this->markers);
 		$body = Markdown::defaultTransform($body);
 
 		$this->getMailMessage()->setTo($this->to)
@@ -306,7 +300,7 @@ class Message {
 
 		$this->crawler->addGetVar('type', 1370537883)
 			->addGetVar('tx_messenger_pi1[registryIdentifier]', $registryIdentifier)
-			->setUrl(Server::getHostAndProtocol());
+			->setUrl(ServerUtility::getHostAndProtocol());
 
 		//echo $this->crawler->getFinalUrl(); exit();
 		$formattedBody = $this->crawler->exec();
@@ -706,5 +700,12 @@ class Message {
 	 */
 	public function getEmailValidator() {
 		return GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
+	}
+
+	/**
+	 * @return \Vanilla\Messenger\Utility\MarkerUtility
+	 */
+	public function getMarkerUtility() {
+		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\MarkerUtility');
 	}
 }

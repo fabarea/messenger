@@ -40,7 +40,7 @@ class Factory {
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
-			$className = \Vanilla\Messenger\Utility\BeUserPreference::get('messenger_list_manager');
+			$className = \Vanilla\Messenger\Utility\BackendUserPreference::get('messenger_list_manager');
 
 			if (! class_exists($className)) {
 				$className = \Vanilla\Messenger\Utility\Configuration::getInstance()->get('tableStructureFallBack');

@@ -23,6 +23,7 @@ namespace Vanilla\Messenger\ViewHelpers\Be;
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use Vanilla\Messenger\Utility\BackendUserPreference;
 
 /**
  * View helper that a render a development message
@@ -36,6 +37,6 @@ class UserPreferenceViewHelper extends AbstractViewHelper {
 	 * @return string
 	 */
 	public function render($key) {
-		return (string) \Vanilla\Messenger\Utility\BeUserPreference::get($key);
+		return (string) BackendUserPreference::get($key);
 	}
 }
