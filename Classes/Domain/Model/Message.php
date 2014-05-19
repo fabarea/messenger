@@ -23,11 +23,9 @@ namespace Vanilla\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 use Swift_Attachment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Vanilla\Messenger\Exception\MissingFileException;
-use Vanilla\Messenger\Exception\MissingPropertyValueInMessageObjectException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
 use Vanilla\Messenger\MessageStorage;
@@ -196,7 +194,6 @@ class Message {
 	 * Prepares the emails and send it.
 	 *
 	 * @throws WrongPluginConfigurationException
-	 * @throws MissingPropertyValueInMessageObjectException
 	 * @return boolean whether or not the email was sent successfully
 	 */
 	public function send() {
@@ -224,20 +221,20 @@ class Message {
 	/**
 	 * Prepares the emails by fetching an email template and formats its body.
 	 *
-	 * @throws MissingPropertyValueInMessageObjectException
+	 * @throws \RuntimeException
 	 * @return boolean whether or not the email was sent successfully
 	 */
 	protected function prepareMessage() {
 
-		// Substitute markers
 		if (empty($this->messageTemplate)) {
-			throw new MissingPropertyValueInMessageObjectException('Messenger: message template was not defined', 1354536584);
+			throw new \RuntimeException('Messenger: message template was not defined', 1354536584);
 		}
 
 		if (empty($this->to)) {
-			throw new MissingPropertyValueInMessageObjectException('Messenger: no recipient was defined', 1354536585);
+			throw new \RuntimeException('Messenger: no recipient was defined', 1354536585);
 		}
 
+		// Substitute markers
 		$subject = $this->getMarkerUtility()->substitute($this->messageTemplate->getSubject(), $this->markers, 'text/plain');
 		$body = $this->formatBody();
 
@@ -246,7 +243,6 @@ class Message {
 			$body = $this->getMessageBodyForSimulation($body);
 			$this->to = $this->getRecipientsForSimulation();
 		}
-		#$body = $this->markerUtility->substitute($body, $this->markers);
 		$body = Markdown::defaultTransform($body);
 
 		$this->getMailMessage()->setTo($this->to)
