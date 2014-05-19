@@ -81,4 +81,3 @@ interface ListableInterface {
 	public function getFilters();
 
 }
-?>

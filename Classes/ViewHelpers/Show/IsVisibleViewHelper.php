@@ -66,5 +66,3 @@ class IsVisibleViewHelper extends AbstractViewHelper {
 		return $isVisible;
 	}
 }
-
-?>

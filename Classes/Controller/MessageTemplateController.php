@@ -55,4 +55,3 @@ class MessageTemplateController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 		$this->redirect('index', 'Backend');
 	}
 }
-?>

@@ -39,5 +39,3 @@ class UserPreferenceViewHelper extends AbstractViewHelper {
 		return (string) \Vanilla\Messenger\Utility\BeUserPreference::get($key);
 	}
 }
-
-?>

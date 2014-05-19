@@ -68,5 +68,3 @@ class HeaderViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		return sprintf('style="%s"', $result);
 	}
 }
-
-?>

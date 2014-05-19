@@ -47,5 +47,3 @@ class LoggerService {
 		return $loggerManager->getLogger(get_class($object));
 	}
 }
-
-?>

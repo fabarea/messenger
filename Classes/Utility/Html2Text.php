@@ -134,5 +134,3 @@ class Html2Text implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 }
-
-?>

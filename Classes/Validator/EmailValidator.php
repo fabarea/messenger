@@ -51,4 +51,3 @@ class EmailValidator {
 		return TRUE;
 	}
 }
-?>

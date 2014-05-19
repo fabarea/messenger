@@ -208,5 +208,3 @@ class DemoListManager implements \Vanilla\Messenger\MessengerInterface\ListableI
 		);
 	}
 }
-
-?>

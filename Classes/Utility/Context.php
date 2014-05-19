@@ -155,5 +155,3 @@ class Context implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 }
-
-?>

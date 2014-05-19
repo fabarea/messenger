@@ -50,5 +50,3 @@ class ValueViewHelper extends AbstractViewHelper {
 		return $value;
 	}
 }
-
-?>

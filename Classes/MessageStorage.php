@@ -78,5 +78,3 @@ class MessageStorage implements SingletonInterface {
 	}
 
 }
-
-?>

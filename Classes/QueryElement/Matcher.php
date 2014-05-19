@@ -100,5 +100,3 @@ class Matcher {
 		return $this;
 	}
 }
-
-?>

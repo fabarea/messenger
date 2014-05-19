@@ -47,4 +47,3 @@ class MatcherValidator extends \TYPO3\CMS\Extbase\Validation\Validator\AbstractV
 	}
 
 }
-?>

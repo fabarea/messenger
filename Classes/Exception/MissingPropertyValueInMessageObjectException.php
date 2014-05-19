@@ -30,5 +30,3 @@ namespace Vanilla\Messenger\Exception;
 class MissingPropertyValueInMessageObjectException extends \Exception {
 
 }
-
-?>

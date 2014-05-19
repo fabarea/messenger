@@ -54,5 +54,3 @@ class CssViewHelper extends AbstractViewHelper {
 	}
 
 }
-
-?>

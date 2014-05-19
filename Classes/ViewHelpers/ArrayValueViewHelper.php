@@ -45,5 +45,3 @@ class ArrayValueViewHelper extends AbstractViewHelper {
 		return $result;
 	}
 }
-
-?>

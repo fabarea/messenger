@@ -46,5 +46,3 @@ class TranslateViewHelper extends AbstractViewHelper {
 	}
 
 }
-
-?>

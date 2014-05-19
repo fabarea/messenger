@@ -54,5 +54,3 @@ class JsViewHelper extends AbstractViewHelper {
 	}
 
 }
-
-?>

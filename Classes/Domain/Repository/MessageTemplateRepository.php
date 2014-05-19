@@ -84,4 +84,3 @@ class MessageTemplateRepository extends Repository {
 //		return $templateObject;
 //	}
 }
-?>

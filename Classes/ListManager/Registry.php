@@ -96,4 +96,3 @@ class Registry implements \TYPO3\CMS\Core\SingletonInterface {
 		return count($this->registry);
 	}
 }
-?>

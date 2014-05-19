@@ -105,5 +105,3 @@ class RowViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 		return sprintf('style="%s"', $result);
 	}
 }
-
-?>

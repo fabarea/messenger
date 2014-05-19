@@ -30,4 +30,3 @@ namespace Vanilla\Messenger\Exception;
 class MissingKeyInArrayException extends \Exception {
 
 }
-?>

@@ -103,5 +103,3 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 		$this->settings = $settings;
 	}
 }
-
-?>

@@ -40,5 +40,3 @@ class BodyViewHelper extends AbstractViewHelper {
 		return MessageStorage::getInstance()->get($key);
 	}
 }
-
-?>

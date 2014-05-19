@@ -51,5 +51,3 @@ class Recipient {
 		return $result;
 	}
 }
-
-?>

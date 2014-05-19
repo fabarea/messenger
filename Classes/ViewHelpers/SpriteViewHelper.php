@@ -41,5 +41,3 @@ class SpriteViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 		return \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon($name);
 	}
 }
-
-?>

@@ -45,5 +45,3 @@ class LabelViewHelper extends AbstractViewHelper {
 		return $label;
 	}
 }
-
-?>

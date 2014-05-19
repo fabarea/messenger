@@ -155,4 +155,3 @@ class MessageTemplate extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		$this->messageLayout = $layout;
 	}
 }
-?>

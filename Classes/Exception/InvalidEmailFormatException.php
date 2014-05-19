@@ -30,5 +30,3 @@ namespace Vanilla\Messenger\Exception;
 class InvalidEmailFormatException extends \Exception {
 
 }
-
-?>

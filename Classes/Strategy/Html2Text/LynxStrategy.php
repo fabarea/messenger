@@ -106,5 +106,3 @@ class LynxStrategy implements \Vanilla\Messenger\Strategy\Html2Text\StrategyInte
 		return !empty($this->lynx);
 	}
 }
-
-?>

@@ -96,5 +96,3 @@ class ObjectUtility {
 		return $result;
 	}
 }
-
-?>

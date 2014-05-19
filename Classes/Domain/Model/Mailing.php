@@ -55,4 +55,3 @@ class Mailing extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 		$this->identifier = $identifier;
 	}
 }
-?>

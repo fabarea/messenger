@@ -164,4 +164,3 @@ class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
 		$this->view->assign('pager', $pager);
 	}
 }
-?>

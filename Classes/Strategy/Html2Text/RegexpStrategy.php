@@ -394,5 +394,3 @@ class RegexpStrategy implements \Vanilla\Messenger\Strategy\Html2Text\StrategyIn
 	}
 
 }
-
-?>

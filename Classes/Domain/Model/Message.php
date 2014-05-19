@@ -665,5 +665,3 @@ class Message {
 		$this->mailing = $mailing;
 	}
 }
-
-?>

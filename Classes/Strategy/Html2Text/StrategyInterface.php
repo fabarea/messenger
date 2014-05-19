@@ -45,5 +45,3 @@ interface StrategyInterface {
 	 */
 	public function available();
 }
-
-?>

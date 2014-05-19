@@ -44,4 +44,3 @@ interface RecipientInterface {
 	public function getName();
 
 }
-?>

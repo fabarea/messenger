@@ -70,4 +70,3 @@ class SentMessageRepository extends Repository {
 		return $GLOBALS['TYPO3_DB'];
 	}
 }
-?>

@@ -50,4 +50,3 @@ class SentMessage extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	}
 
 }
-?>

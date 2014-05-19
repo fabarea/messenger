@@ -30,5 +30,3 @@ namespace Vanilla\Messenger\Exception;
 class MissingFileException extends \Exception {
 
 }
-
-?>

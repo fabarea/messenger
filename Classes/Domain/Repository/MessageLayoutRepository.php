@@ -72,5 +72,3 @@ class MessageLayoutRepository extends Repository {
 //		return $layoutObject;
 //	}
 }
-
-?>

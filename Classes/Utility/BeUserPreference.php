@@ -67,5 +67,3 @@ class BeUserPreference {
 		return $GLOBALS['BE_USER'];
 	}
 }
-
-?>

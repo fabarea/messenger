@@ -30,4 +30,3 @@ namespace Vanilla\Messenger\Exception;
 class UnknownMethodException extends \Exception {
 
 }
-?>
