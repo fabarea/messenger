@@ -41,6 +41,9 @@
 			<trans-unit id="source_page">
 				<source>Source page</source>
 			</trans-unit>
+			<trans-unit id="source_file">
+				<source>Source file</source>
+			</trans-unit>
 			<trans-unit id="qualifier">
 				<source>Key</source>
 			</trans-unit>
