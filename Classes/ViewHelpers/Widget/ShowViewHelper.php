@@ -23,7 +23,6 @@ namespace Vanilla\Messenger\ViewHelpers\Widget;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
-use Vanilla\Messenger\Utility\ObjectUtility;
 
 /**
  * View helper which render a generic item from the array of markers.
