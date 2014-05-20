@@ -33,10 +33,10 @@ class BodyViewHelper extends AbstractViewHelper {
 	/**
 	 * Return a key from the storage.
 	 *
-	 * @param string $key
+	 * @param string $identifier
 	 * @return string|NULL
 	 */
-	public function render($key) {
-		return MessageStorage::getInstance()->get($key);
+	public function render($identifier) {
+		return MessageStorage::getInstance()->get($identifier);
 	}
 }
