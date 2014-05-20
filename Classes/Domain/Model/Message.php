@@ -239,14 +239,20 @@ class Message {
 		}
 
 		// Substitute markers
-		$subject = $this->getMarkerUtility()->substitute($this->messageTemplate->getSubject(), $this->markers, 'text/plain');
-		$body = $this->formatBody();
+		if ($this->isFrontendMode()) {
+			$subject = $this->renderFrontendMode($this->messageTemplate->getSubject());
+			$body = $this->renderFrontendMode($this->messageTemplate->getBody());
+		} else {
+			$subject = $this->renderBackendMode($this->messageTemplate->getSubject(), $this->markers);
+			$body = $this->renderBackendMode($this->messageTemplate->getBody(), $this->markers);
+		}
 
-		// Set debug flag for not production context
+		// Tamper data in case the development context is activated.
 		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
 			$body = $this->getMessageBodyForSimulation($body);
 			$this->to = $this->getRecipientsForSimulation();
 		}
+
 		$body = Markdown::defaultTransform($body);
 
 		$this->getMailMessage()->setTo($this->to)
@@ -277,17 +283,30 @@ class Message {
 	}
 
 	/**
-	 * Format the body by fetching content from the FE.
-	 * This is required in order to "resolve" the View Helpers in the context of Fluid.
-	 * The crawling step is required to make it work in the Backend as well.
+	 * Render content in a Frontend mode.
 	 *
+	 * @param string $content
+	 * @return string the formatted string
+	 */
+	protected function renderFrontendMode($content) {
+		$view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
+		$view->setTemplateSource($content);
+		$view->assignMultiple($this->markers);
+		return trim($view->render());
+	}
+
+	/**
+	 * Render content in a Backend mode.
+	 * This is required in order to correctly resolve the View Helpers for Fluid in the context of the Backend.
+	 *
+	 * @param $content
 	 * @return string
 	 */
-	protected function formatBody() {
+	protected function renderBackendMode($content) {
 
 		$registryIdentifier = Algorithms::generateUUID();
 		$registryEntry = array(
-			'messageBody' => $this->messageTemplate->getBody(),
+			'content' => $content,
 			'markers' => $this->markers,
 		);
 
@@ -668,7 +687,6 @@ class Message {
 			'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
 			'sent_time' => time(),
 			'mailing' => is_object($this->mailing) ? $this->mailing->getUid() : 0,
-			'body_crawler_url' => $this->crawler->getFinalUrl(),
 		);
 
 		return $values;
@@ -721,9 +739,11 @@ class Message {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Utility\MarkerUtility
+	 * Returns whether the current mode is Frontend
+	 *
+	 * @return bool
 	 */
-	public function getMarkerUtility() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\MarkerUtility');
+	protected function isFrontendMode() {
+		return TYPO3_MODE == 'FE';
 	}
 }
