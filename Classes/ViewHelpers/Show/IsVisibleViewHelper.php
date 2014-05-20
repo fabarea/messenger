@@ -37,11 +37,16 @@ class IsVisibleViewHelper extends AbstractViewHelper {
 	 */
 	public function render() {
 
-		$fieldName = $this->templateVariableContainer->get('key');
+		$fieldName = $this->templateVariableContainer->get('fieldName');
 		$value = $this->templateVariableContainer->get('value');
 		$dataType = '';
 		if ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
+		}
+
+		// Early return in case value is null, no need to show anything.
+		if (is_null($value)) {
+			return FALSE;
 		}
 
 		// Early return if an empty string is detected

@@ -26,18 +26,18 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\CMS\Vidi\Tca\TcaService;
 
 /**
- * View helper which renders a label given by the key in the context.
+ * View helper which renders a label given by the fieldName in the context.
  */
 class LabelViewHelper extends AbstractViewHelper {
 
 	/**
-	 * Return a label given by the key in the context.
+	 * Return a label given by the fieldName in the context.
 	 *
 	 * @return string
 	 */
 	public function render() {
 		$label = '';
-		$fieldName = $this->templateVariableContainer->get('key');
+		$fieldName = $this->templateVariableContainer->get('fieldName');
 		if ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
 			$label = TcaService::table($dataType)->field($fieldName)->getLabel();

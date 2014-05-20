@@ -46,28 +46,7 @@ class ShowViewHelper extends AbstractWidgetViewHelper {
 	 * @return string
 	 */
 	public function render($item, $dataType = '', $exclude = array(), $displaySystemFields = FALSE) {
-		if ($this->templateVariableContainer->exists($item)) {
-			$item = $this->convertItemNameToArray($item);
-			$this->controller->initializeItem($item);
-		}
 		return $this->initiateSubRequest();
 	}
 
-	/**
-	 * Convert an item of type mixed to an array.
-	 *
-	 * @param string $itemName
-	 * @return array
-	 */
-	public function convertItemNameToArray($itemName) {
-
-		$item = $this->templateVariableContainer->get($itemName);
-
-		if (is_object($item)) {
-			$item = ObjectUtility::toArray($item);
-		} elseif (!is_array($item)) {
-			$item = array($item);
-		}
-		return $item;
-	}
 }

@@ -31,28 +31,12 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 class ShowController extends AbstractWidgetController {
 
 	/**
-	 * A key / value structure representing the item.
-	 *
-	 * @var array
-	 */
-	protected $item;
-
-	/**
 	 * @return void
 	 */
 	public function indexAction() {
 		$this->view->assign('dataType', $this->widgetConfiguration['dataType']);
 		$this->view->assign('exclude', $this->widgetConfiguration['exclude']);
 		$this->view->assign('displaySystemFields', $this->widgetConfiguration['displaySystemFields']);
-		$this->view->assign('item', $this->item);
-	}
-
-	/**
-	 * Special method for passing a reference to the item.
-	 *
-	 * @param array $item
-	 */
-	public function initializeItem(array $item) {
-		$this->item = $item;
+		$this->view->assign('item', $this->widgetConfiguration['item']);
 	}
 }

@@ -1,7 +1,7 @@
 <!-- special indentation for email -->
 <f:if condition="{item}">
 <table>
-<f:for each="{item}" as="value" key="key">
+<f:for each="{m:show.sanitize(item: '{item}')}" as="value" key="fieldName">
 <f:if condition="{m:show.isVisible()}">
 <tr>
 <td>{m:show.label()}</td>
