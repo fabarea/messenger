@@ -29,7 +29,7 @@ use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode;
 use Vanilla\Messenger\Exception\MissingFileException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
-use Vanilla\Messenger\MessageStorage;
+use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Utility\Configuration;

@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger;
+namespace Vanilla\Messenger\Service;
 /***************************************************************
 *  Copyright notice
 *
@@ -38,10 +38,10 @@ class MessageStorage implements SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \Vanilla\Messenger\MessageStorage
+	 * @return \Vanilla\Messenger\Service\MessageStorage
 	 */
 	static public function getInstance() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\MessageStorage');
+		return GeneralUtility::makeInstance('Vanilla\Messenger\Service\MessageStorage');
 	}
 
 	/**
