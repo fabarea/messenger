@@ -74,10 +74,6 @@ Usage::
 	$isSent = $message->send();
 
 
-Notice the debug method. When set, the email will be sent to a debug email instead of the real one.
-This debug email address can be configured in file `ext_typoscript_setup.txt`.
-
-
 Message View Helper
 ===================
 
