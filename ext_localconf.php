@@ -3,16 +3,6 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-# Register a new list manager for demo purposes.
-\Vanilla\Messenger\ListManager\Registry::getInstance()->add(
-
-	# Corresponds to a class name.
-	'Vanilla\Messenger\ListManager\DemoListManager',
-
-	# A string or label describing the recipients (for the BE module needs).
-	'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:demo_list_of_recipients'
-);
-
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
 	$_EXTKEY,
 	'Pi1',

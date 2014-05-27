@@ -25,6 +25,9 @@ namespace Vanilla\Messenger\Utility;
 
 /**
  * A class dealing with BE User preference.
+ *
+ * @deprecated
+ * @todo remove me if not used in two version - 27.05.14
  */
 class BackendUserPreference {
 

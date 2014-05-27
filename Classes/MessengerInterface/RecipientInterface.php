@@ -25,6 +25,7 @@ namespace Vanilla\Messenger\MessengerInterface;
  ***************************************************************/
 
 /**
+ * @todo remove me in two versions - 27.05.14
  */
 interface RecipientInterface {
 

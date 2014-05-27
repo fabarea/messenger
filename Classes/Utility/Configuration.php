@@ -55,9 +55,6 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var array
 	 */
 	protected $defaultSettings = array(
-		'tableStructure' => 'Vanilla\Messenger\ListManager\DemoListManager',
-		'tableStructureFallBack' => 'Vanilla\Messenger\ListManager\DemoListManager',
-		'developmentEmails' => 'john@doe.com, jane@doe.com',
 		'context' => 'Development',
 		'senderName' => 'John Doe',
 		'senderEmail' => 'john@doe.com',
