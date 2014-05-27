@@ -25,7 +25,8 @@ namespace Vanilla\Messenger\Controller;
  ***************************************************************/
 
 /**
- *
+ * @deprecated
+ * @todo class must be removed
  */
 class ListManagerController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 

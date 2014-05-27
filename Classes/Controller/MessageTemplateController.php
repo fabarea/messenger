@@ -26,7 +26,8 @@ namespace Vanilla\Messenger\Controller;
 use Vanilla\Messenger\Utility\BackendUserPreference;
 
 /**
- *
+ * @deprecated
+ * @todo remove me!
  */
 class MessageTemplateController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 

@@ -27,6 +27,9 @@ use Vanilla\Messenger\Utility\BackendUserPreference;
 
 /**
  * A controller for the BE module.
+ *
+ * @deprecated
+ * @todo remove me
  */
 class BackendController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 

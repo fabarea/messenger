@@ -37,7 +37,7 @@ return array(
 		),
 		'sender' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.sender',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -47,7 +47,7 @@ return array(
 		),
 		'recipient' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.recipient',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -57,7 +57,7 @@ return array(
 		),
 		'subject' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.subject',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -67,7 +67,7 @@ return array(
 		),
 		'body' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.body',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:body',
 			'config' => array(
 				'type' => 'text',
 				'rows' => 4,
@@ -77,7 +77,7 @@ return array(
 		),
 		'sent_time' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.sent_time',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_time',
 			'config' => array(
 				'type' => 'input',
 				'size' => 4,
@@ -89,7 +89,7 @@ return array(
 		),
 		'context' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.context',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -99,7 +99,7 @@ return array(
 		),
 		'attachment' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.attachment',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -109,7 +109,7 @@ return array(
 		),
 		'was_opened' => array(
 			'exclude' => 0,
-			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:.was_opened',
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:was_opened',
 			'config' => array(
 				'type' => 'input',
 				'size' => 50,
@@ -139,6 +139,7 @@ return array(
 			'subject' => array(),
 			'body' => array(
 				'width' => '500px',
+				'sortable' => FALSE,
 			),
 			'sent_time' => array(
 				'format' => 'datetime',

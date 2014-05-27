@@ -25,7 +25,8 @@ namespace Vanilla\Messenger\Controller;
  ***************************************************************/
 
 /**
- *
+ * @deprecated
+ * @todo remove me
  */
 class SentMessageController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 

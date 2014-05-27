@@ -56,30 +56,6 @@ if (TYPO3_MODE === 'BE') {
 
 	$enabledModules = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $configuration['enabledModules']['value']);
 
-	if (in_array('composer', $enabledModules)) {
-
-		/**
-		 * Registers a Backend Module
-		 */
-		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-			$_EXTKEY,
-			'messenger', // Make module a submodule of 'user'
-			'm1', // Submodule key
-			'', // Position
-			array(
-				'Backend' => 'index, sendMessage, sendMessageTest',
-				'ListManager' => 'list, save',
-				'MessageTemplate' => 'list, save',
-			),
-			array(
-				'access' => 'user,group',
-				'icon' => 'EXT:' . $_EXTKEY . '/ext_icon.png',
-				'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/module_composer.xlf',
-			)
-		);
-
-	}
-
 	// Load some vidi BE modules
 	if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
 
@@ -110,5 +86,3 @@ if (TYPO3_MODE === 'BE') {
 		}
 	}
 }
-
-?>
