@@ -52,34 +52,12 @@ class ExtensionManager {
 	 * @var array
 	 */
 	protected $modules = array(
-		'composer' => 'Composer',
 		'messagetemplate' => 'Message Template',
 		'messagelayout' => 'Message Layout',
 		'mailing' => 'Mailing',
 		'sentmessage' => 'Sent message',
 		'queue' => 'Queue'
 	);
-
-	/**
-	 * Constructor
-	 *
-	 * @return \Vanilla\Messenger\Backend\ExtensionManager
-	 */
-	public function __construct() {
-
-		/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
-
-		/** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-		$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-		$configuration = $configurationUtility->getCurrentConfiguration($this->extensionKey);
-
-		// Fill up configuration array with relevant values.
-		foreach ($configuration as $key => $data) {
-			$this->configuration[$key] = $data['value'];
-		}
-	}
-
 	/**
 	 * Render the BE modules list
 	 *
@@ -87,8 +65,10 @@ class ExtensionManager {
 	 */
 	public function renderBeModules() {
 
+		$configuration = $this->getConfiguration();
+
 		$options = '';
-		$enableModules = GeneralUtility::trimExplode(',', $this->configuration['enabledModules']);
+		$enableModules = GeneralUtility::trimExplode(',', $configuration['enabledModules']);
 
 		foreach ($this->modules as $moduleKey => $moduleName) {
 			$checked = '';
@@ -102,26 +82,52 @@ class ExtensionManager {
 		$output = <<<EOF
 				<div class="typo3-tstemplate-ceditor-row" id="userTS-enabledModules">
 					<script type="text/javascript">
-						$(document).ready(function() {
+						(function($) {
+						    $(function() {
 
-							// Handler which will concatenate selected data types.
-							$('.fieldEnabledModules').change(function() {
-								var selected = [];
+								// Handler which will concatenate selected data types.
+								$('.fieldEnabledModules').change(function() {
+									var selected = [];
 
-								$('.fieldEnabledModules').each(function(){
-									if ($(this).is(':checked')) {
-										selected.push($(this).val());
-									}
+									$('.fieldEnabledModules').each(function(){
+										if ($(this).is(':checked')) {
+											selected.push($(this).val());
+										}
+									});
+									$('#fieldEnabledModuless').val(selected.join(','));
 								});
-								$('#fieldEnabledModuless').val(selected.join(','));
-							});
-						});
+						    });
+						})(jQuery);
 					</script>
 					$options
-					<input type="hidden" id="fieldEnabledModuless" name="tx_extensionmanager_tools_extensionmanagerextensionmanager[config][enabledModules][value]" value="{$this->configuration['enabledModules']}" />
+					<input type="hidden" id="fieldEnabledModuless" name="tx_extensionmanager_tools_extensionmanagerextensionmanager[config][enabledModules][value]" value="{$configuration['enabledModules']}" />
 				</div>
 EOF;
 
 		return $output;
 	}
+
+	/**
+	 * Constructor
+	 *
+	 * @return array
+	 */
+	protected function getConfiguration() {
+
+		/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+		$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+		/** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
+		$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+		$rawConfiguration = $configurationUtility->getCurrentConfiguration($this->extensionKey);
+
+		$configuration = array();
+		// Fill up configuration array with relevant values.
+		foreach ($rawConfiguration as $key => $data) {
+			$configuration[$key] = $data['value'];
+		}
+
+		return $configuration;
+	}
+
 }
