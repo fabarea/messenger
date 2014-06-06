@@ -74,6 +74,24 @@ Usage::
 	$isSent = $message->send();
 
 
+Configuration
+=============
+
+Following configuration should be configured. The default sender name::
+
+	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] = 'John Doe';
+	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] = 'john@doe.com';
+
+Whenever Application Context is in Development, there is the chance to define
+default target recipients which is convenient for not leaking email.
+**Tip**: install extension ``EXT:application_context_hints`` to display some hints in the BE
+about the current application context along with some global variables.
+
+::
+
+	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['development']['recipients'] = 'fudriot@cobweb.ch';
+
+
 Message View Helper
 ===================
 
@@ -114,11 +132,8 @@ Todo
 
 Long term goals:
 
-+ Use Application Context as of TYPO3 6.2
-+ Improve message management in the BE module (create new one from scratch, edit, select, ...)
-+ Provide default FE / BE Users provider
-+ Add GUI to support layout wrapping
-+ A message can be sent in various language (alpha quality)
++ Provide default FE / BE Users provider in Vidi
++ The same message can be sent in various language (alpha quality)
 
 Recipient Interface
 ===================

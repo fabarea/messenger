@@ -55,7 +55,6 @@ class Configuration implements \TYPO3\CMS\Core\SingletonInterface {
 	 * @var array
 	 */
 	protected $defaultSettings = array(
-		'context' => 'Development',
 		'senderName' => 'John Doe',
 		'senderEmail' => 'john@doe.com',
 		'markerReplacedInLayout' => 'template',

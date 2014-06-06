@@ -33,7 +33,6 @@ use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Utility\Configuration;
-use Vanilla\Messenger\Utility\Context;
 use Vanilla\Messenger\Service\Html2Text;
 use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
@@ -110,11 +109,6 @@ class Message {
 	protected $mailing;
 
 	/**
-	 * @var boolean
-	 */
-	protected $simulate = FALSE;
-
-	/**
 	 * @var array
 	 */
 	protected $attachments = array();
@@ -154,11 +148,6 @@ class Message {
 	protected $configurationManager;
 
 	/**
-	 * @var Context
-	 */
-	protected $context;
-
-	/**
 	 * @var \Vanilla\Messenger\Service\Crawler
 	 * @inject
 	 */
@@ -175,7 +164,6 @@ class Message {
 	public function __construct() {
 		// @todo simplify
 		$this->configurationManager = Configuration::getInstance();
-		$this->context = Context::getInstance();
 
 		$this->sender = array(
 			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
@@ -247,10 +235,10 @@ class Message {
 			$body = $this->renderBackendMode($this->messageTemplate->getBody(), $this->markers);
 		}
 
-		// Tamper data in case the development context is activated.
-		if ($this->context->isContextNotSendingEmails() || $this->simulate) {
-			$body = $this->getMessageBodyForSimulation($body);
-			$this->to = $this->getRecipientsForSimulation();
+		// Tamper data in case the Development or Testing context is on.
+		if (!GeneralUtility::getApplicationContext()->isProduction()) {
+			$body = $this->getBodyForApplicationContext($body);
+			$this->to = $this->getToForApplicationContext();
 		}
 
 		$body = Markdown::defaultTransform($body);
@@ -322,14 +310,14 @@ class Message {
 	}
 
 	/**
-	 * Get a body message when email is simulated.
+	 * Get a body message when email is not in production.
 	 *
 	 * @param string $messageBody
 	 * @return string
 	 */
-	protected function getMessageBodyForSimulation($messageBody) {
+	protected function getBodyForApplicationContext($messageBody) {
 		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it would be sent to %s <br /><br />%s",
-			strtoupper($this->context->getName()),
+			strtoupper((string)GeneralUtility::getApplicationContext()),
 			implode(',', array_keys($this->to)),
 			$messageBody
 		);
@@ -337,12 +325,21 @@ class Message {
 	}
 
 	/**
-	 * Get the recipients whe email is simulated.
+	 * Get the recipients whe email is not in production.
 	 *
+	 * @throws \Exception
 	 * @return array
 	 */
-	protected function getRecipientsForSimulation() {
-		$emails = GeneralUtility::trimExplode(',', $this->configurationManager->get('developmentEmails'));
+	protected function getToForApplicationContext() {
+		$applicationContext = (string)GeneralUtility::getApplicationContext();
+		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
+			$message = sprintf('I could not found development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
+				strtolower($applicationContext)
+			);
+			throw new \Exception($message, 1402031636);
+		}
+
+		$emails = GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients']);
 
 		$recipients = array();
 		foreach ($emails as $email) {
@@ -497,16 +494,7 @@ class Message {
 	 * @return \Vanilla\Messenger\Domain\Model\Message
 	 */
 	public function setLanguage($language) {
-		$this->context->setLanguage($language);
-		return $this;
-	}
-
-	/**
-	 * @param boolean $simulate
-	 * @return \Vanilla\Messenger\Domain\Model\Message
-	 */
-	public function simulate($simulate = TRUE) {
-		$this->simulate = $simulate;
+		$this->language = $language;
 		return $this;
 	}
 
@@ -681,7 +669,7 @@ class Message {
 			'subject' => $this->getMailMessage()->getSubject(),
 			'body' => $this->getMailMessage()->getBody(),
 			'attachment' => count($this->getMailMessage()->getChildren()),
-			'context' => $this->context->getName(),
+			'context' => (string)GeneralUtility::getApplicationContext(),
 			'was_opened' => 0,
 			'message_template' => $this->messageTemplate->getUid(),
 			'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
