@@ -1,12 +1,3 @@
-# cat=basic; type=string; label=Default sender name: Specify default value for sender name.
-senderName = John Doe (remove me)
-
-# cat=basic; type=string; label=Default sender email: Specify default value for sender email.
-senderEmail = john@doe.com (remove me)
-
-# cat=basic//3; type=string; label= List of development emails: OBSOLETE!! A comma separated list of emails.
-developmentEmails = john@doe.com, jane@doe.com (remove me)
-
 # cat=basic//3; type=string; label= A root page uid : Define what is the root page of the website. This setting is mandatory only for the Backend to be able to convert Fluid View Helper in a Frontend context.
 rootPageUid = 1
 

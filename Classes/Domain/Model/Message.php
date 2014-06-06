@@ -32,7 +32,6 @@ use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
 use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
-use Vanilla\Messenger\Utility\Configuration;
 use Vanilla\Messenger\Service\Html2Text;
 use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
@@ -143,11 +142,6 @@ class Message {
 	protected $messageTemplate;
 
 	/**
-	 * @var Configuration
-	 */
-	protected $configurationManager;
-
-	/**
 	 * @var \Vanilla\Messenger\Service\Crawler
 	 * @inject
 	 */
@@ -162,11 +156,17 @@ class Message {
 	 * Constructor
 	 */
 	public function __construct() {
-		// @todo simplify
-		$this->configurationManager = Configuration::getInstance();
+
+		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
+			throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
+		}
+
+		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
+			throw new \Exception('I could not find a sender name. Missing value for "defaultMailFromName"', 1402032686);
+		}
 
 		$this->sender = array(
-			$this->configurationManager->get('senderEmail') => $this->configurationManager->get('senderName')
+			$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] => $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName']
 		);
 
 		$this->getEmailValidator()->validate($this->sender);
@@ -331,7 +331,7 @@ class Message {
 	 * @return array
 	 */
 	protected function getToForApplicationContext() {
-		$applicationContext = (string)GeneralUtility::getApplicationContext();
+		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
 		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
 			$message = sprintf('I could not found development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
 				strtolower($applicationContext)
