@@ -55,6 +55,8 @@ class ValueViewHelper extends AbstractViewHelper {
 
 			if ($fieldType === TcaService::RADIO || $fieldType === TcaService::SELECT) {
 				$value = TcaService::table($dataType)->field($fieldName)->getLabelForItem($value);
+			} elseif ($fieldType === TcaService::TEXTAREA) {
+				$value = nl2br($value);
 			} elseif ($fieldType === TcaService::MULTISELECT) {
 				$explodedValues = GeneralUtility::trimExplode(',', $value, TRUE);
 
