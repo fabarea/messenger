@@ -4,8 +4,8 @@
 <f:for each="{m:show.sanitize(item: '{item}')}" as="value" key="fieldName">
 <f:if condition="{m:show.isVisible()}">
 <tr>
-<td>{m:show.label()}</td>
-<td>{m:show.value()}</td>
+<td style="vertical-align: top">{m:show.label()}</td>
+<td style="vertical-align: top">{m:show.value()}</td>
 </tr>
 </f:if>
 </f:for>
