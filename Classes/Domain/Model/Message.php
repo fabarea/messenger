@@ -238,7 +238,7 @@ class Message {
 		// Tamper data in case the Development or Testing context is on.
 		if (!GeneralUtility::getApplicationContext()->isProduction()) {
 			$body = $this->getBodyForApplicationContext($body);
-			$this->to = $this->getToForApplicationContext();
+			$this->to = $this->getRecipientsForDevelopmentContext();
 		}
 
 		$body = Markdown::defaultTransform($body);
@@ -250,11 +250,17 @@ class Message {
 
 		// Add possible CC
 		if (!empty($this->cc)) {
+			if (!GeneralUtility::getApplicationContext()->isProduction()) {
+				$this->cc = $this->getRecipientsForDevelopmentContext();
+			}
 			$this->getMailMessage()->setCc($this->cc);
 		}
 
 		// Add possible BCC
 		if (!empty($this->bcc)) {
+			if (!GeneralUtility::getApplicationContext()->isProduction()) {
+				$this->bcc = $this->getRecipientsForDevelopmentContext();
+			}
 			$this->getMailMessage()->setBcc($this->bcc);
 		}
 
@@ -330,7 +336,7 @@ class Message {
 	 * @throws \Exception
 	 * @return array
 	 */
-	protected function getToForApplicationContext() {
+	protected function getRecipientsForDevelopmentContext() {
 		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
 		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
 			$message = sprintf('I could not found development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
