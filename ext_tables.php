@@ -81,7 +81,7 @@ if (TYPO3_MODE === 'BE') {
 	}
 
 	// Load some vidi BE modules
-	if (class_exists('TYPO3\CMS\Vidi\ModuleLoader')) {
+	if (class_exists('TYPO3\CMS\Vidi\Module\ModuleLoader')) {
 
 		$dataTypes = array(
 			'tx_messenger_domain_model_messagetemplate',
@@ -97,8 +97,8 @@ if (TYPO3_MODE === 'BE') {
 			$shortDataType = str_replace('tx_messenger_domain_model_', '', $dataType);
 			if (in_array($shortDataType, $enabledModules)) {
 
-				/** @var \TYPO3\CMS\Vidi\ModuleLoader $moduleLoader */
-				$moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Vidi\ModuleLoader', $dataType);
+				/** @var \TYPO3\CMS\Vidi\Module\ModuleLoader $moduleLoader */
+				$moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Vidi\Module\ModuleLoader', $dataType);
 				$moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.png')
 					->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
 					->addJavaScriptFiles(array(sprintf('EXT:messenger/Resources/Public/JavaScript/Backend/%s.js', $dataType)))
