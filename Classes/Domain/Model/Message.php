@@ -239,6 +239,9 @@ class Message {
 		if (!GeneralUtility::getApplicationContext()->isProduction()) {
 			$body = $this->getBodyForApplicationContext($body);
 			$this->to = $this->getRecipientsForDevelopmentContext();
+			// empty "cc" and "bcc" for non-production context -> has been put as debug info in the body of the message.
+			$this->cc = array();
+			$this->bcc = array();
 		}
 
 		$body = Markdown::defaultTransform($body);
@@ -248,19 +251,13 @@ class Message {
 			->setSubject($subject)
 			->setBody($body, 'text/html');
 
-		// Add possible CC
+		// Add possible CC.
 		if (!empty($this->cc)) {
-			if (!GeneralUtility::getApplicationContext()->isProduction()) {
-				$this->cc = $this->getRecipientsForDevelopmentContext();
-			}
 			$this->getMailMessage()->setCc($this->cc);
 		}
 
-		// Add possible BCC
+		// Add possible BCC.
 		if (!empty($this->bcc)) {
-			if (!GeneralUtility::getApplicationContext()->isProduction()) {
-				$this->bcc = $this->getRecipientsForDevelopmentContext();
-			}
 			$this->getMailMessage()->setBcc($this->bcc);
 		}
 
@@ -322,9 +319,11 @@ class Message {
 	 * @return string
 	 */
 	protected function getBodyForApplicationContext($messageBody) {
-		$messageBody = sprintf("%s CONTEXT: this message is for testing purposes.... In reality it would be sent to %s <br /><br />%s",
+		$messageBody = sprintf("%s CONTEXT: this message is for testing purpose. In reality, it would be sent... <br />to: %s<br />%s%s<br />%s",
 			strtoupper((string)GeneralUtility::getApplicationContext()),
 			implode(',', array_keys($this->to)),
+			empty($this->cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($this->cc))),
+			empty($this->bbc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($this->bcc))),
 			$messageBody
 		);
 		return $messageBody;
