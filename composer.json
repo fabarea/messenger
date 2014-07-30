@@ -1,5 +1,12 @@
 {
-    "name": "vanilla/messenger",
-    "description": "Send messages to a bunch of people. A message can be wrapped in a layout template.",
-    "type": "typo3-cms-extension"
+	"name": "fab/messenger",
+	"type": "typo3-cms-extension",
+	"description": "Send emails to a bunch of people. A message is wrapped in a template / layout that the User can freely edit in a BE module.",
+	"homepage": "https://github.com/fudriot/messenger",
+	"license": ["GPL-2.0+"],
+	"keywords": ["TYPO3 CMS", "mailing", "email", "newsletter", "api"],
+	"support": {
+		"issues": "https://github.com/fudriot/messenger/issues"
+	},
+	"version": "2.0.0-dev"
 }

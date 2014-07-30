@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Send messages to a bunch of people',
-	'description' => 'Send messages to a bunch of people. A message can be wrapped in a layout template.',
+	'description' => 'Send emails to a bunch of people. A message is wrapped in a template / layout that the User can freely edit in a BE module.',
 	'category' => 'plugin',
 	'author' => 'Fabien Udriot',
 	'author_email' => 'fabien.udriot@typo3.org',
