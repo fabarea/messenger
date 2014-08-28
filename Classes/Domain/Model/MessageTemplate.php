@@ -78,6 +78,11 @@ class MessageTemplate extends AbstractEntity {
 	protected $messageLayout;
 
 	/**
+	 * @var string
+	 */
+	protected $templateEngine;
+
+	/**
 	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
@@ -224,18 +229,32 @@ class MessageTemplate extends AbstractEntity {
 	}
 
 	/**
-	 * @return int
+	 * @return string
 	 */
 	public function getSourceFile() {
 		return $this->sourceFile;
 	}
 
 	/**
-	 * @param int $sourceFile
+	 * @param string $sourceFile
 	 * @return $this
 	 */
 	public function setSourceFile($sourceFile) {
 		$this->sourceFile = $sourceFile;
 		return $this;
+	}
+
+	/**
+	 * @param string $templateEngine
+	 */
+	public function setTemplateEngine($templateEngine) {
+		$this->templateEngine = $templateEngine;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTemplateEngine() {
+		return $this->templateEngine;
 	}
 }

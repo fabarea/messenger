@@ -13,6 +13,7 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
 	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
+	template_engine varchar(20) DEFAULT '' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,

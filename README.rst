@@ -110,6 +110,20 @@ after a form has been posted which is actually the same as of the email::
 
 	<m:show.body key="{settings.messageTemplate}"/>
 
+Fluid templates
+===============
+
+More of Fluid's power can be used if the template is stored in external files.
+In such a case layouts can be used. They have to be stored in a folder called
+"Layouts", placed in the same folder as the template itself.
+
+For example, if the template is located at "EXT:foo/Resource/Private/Templates/Mail/Bar.html"
+it may refer to layouts located in "EXT:foo/Resource/Private/Templates/Mail/Layouts".
+
+Furthermore, it is possible to choose "Fluid only" as a templating engine when
+defining a message template. In such a case the Markdown interpreter will not run.
+This means that the Fluid template can be written more freely.
+
 Queue
 =====
 
