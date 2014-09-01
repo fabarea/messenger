@@ -79,11 +79,18 @@ class Message {
 	protected $cc = array();
 
 	/**
-	 * The "cc" addresses
+	 * The "bcc" addresses
 	 *
 	 * @var array
 	 */
 	protected $bcc = array();
+
+	/**
+	 * Addresses for reply-to
+	 *
+	 * @var array
+	 */
+	protected $replyTo = array();
 
 	/**
 	 * A set of markers.
@@ -264,6 +271,11 @@ class Message {
 			$this->getMailMessage()->setBcc($this->bcc);
 		}
 
+		// Add possible reply-to.
+		if (!empty($this->replyTo)) {
+			$this->getMailMessage()->setReplyTo($this->replyTo);
+		}
+
 		// Attach plain text version if HTML tags are found in body
 		if ($this->hasHtml($body)) {
 			$text = Html2Text::getInstance()->convert($body);
@@ -336,7 +348,8 @@ class Message {
 			strtoupper((string)GeneralUtility::getApplicationContext()),
 			implode(',', array_keys($this->to)),
 			empty($this->cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($this->cc))),
-			empty($this->bbc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($this->bcc))),
+				empty($this->bbc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($this->bcc))),
+				empty($this->replyTo) ? '' : sprintf('Reply-To: %s <br/>', implode(',', array_keys($this->replyTo))),
 			$messageBody
 		);
 		return $messageBody;
@@ -351,7 +364,7 @@ class Message {
 	protected function getRecipientsForDevelopmentContext() {
 		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
 		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
-			$message = sprintf('I could not found development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
+			$message = sprintf('I could not find development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
 				strtolower($applicationContext)
 			);
 			throw new \Exception($message, 1402031636);
@@ -562,6 +575,18 @@ class Message {
 	}
 
 	/**
+	 * Set "reply-to" addresses. Should be an array('email' => 'name').
+	 *
+	 * @param mixed $addresses
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 */
+	public function setReplyTo($addresses) {
+		$this->getEmailValidator()->validate($addresses);
+		$this->replyTo = $addresses;
+		return $this;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getSender() {
@@ -684,6 +709,7 @@ class Message {
 			'to' => $this->formatAddresses($this->to),
 			'cc' => $this->formatAddresses($this->cc),
 			'bcc' => $this->formatAddresses($this->bcc),
+			'reply_to' => $this->formatAddresses($this->replyTo),
 			'subject' => $this->getMailMessage()->getSubject(),
 			'body' => $this->getMailMessage()->getBody(),
 			'attachment' => count($this->getMailMessage()->getChildren()),
