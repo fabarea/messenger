@@ -33,7 +33,7 @@ return array(
 	'types' => array(
 		'1' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, body, message_layout'),
 		'2' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_page, message_layout'),
-		'3' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_file, message_layout'),
+		'3' => array('showitem' => 'type, sys_language_uid, l10n_diffsource, hidden, qualifier, subject, source_file, template_engine, message_layout'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -142,6 +142,18 @@ return array(
 					),
 				),
 			),
+		),
+		'template_engine' => array(
+			'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine',
+			'config' => array(
+				'type' => 'select',
+				'items' => array(
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.both', 'both'),
+					array('LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.fluid', 'fluid'),
+				),
+				'size' => 1,
+				'maxitems' => 1,
+			)
 		),
 		'body' => array(
 			'exclude' => 0,

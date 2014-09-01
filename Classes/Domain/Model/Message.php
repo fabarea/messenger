@@ -244,7 +244,10 @@ class Message {
 			$this->bcc = array();
 		}
 
-		$body = Markdown::defaultTransform($body);
+		// Parse Markdown only if necessary
+		if ($this->messageTemplate->getTemplateEngine() == 'both') {
+			$body = Markdown::defaultTransform($body);
+		}
 
 		$this->getMailMessage()->setTo($this->to)
 			->setFrom($this->sender)
@@ -280,8 +283,18 @@ class Message {
 	 * @return string the formatted string
 	 */
 	protected function renderFrontendMode($content) {
+		/** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
 		$view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
 		$view->setTemplateSource($content);
+		// If a template file was defined, set its path, so that layouts and partials can be used
+		// NOTE: they have to be located in sub-folders called "Layouts" and "Partials" relative
+		// to the folder where the template is stored.
+		$sourceFile = $this->messageTemplate->getSourceFile();
+		if (!empty($sourceFile)) {
+			$view->setTemplatePathAndFilename(
+					GeneralUtility::getFileAbsFileName($sourceFile)
+			);
+		}
 		$view->assignMultiple($this->markers);
 		return trim($view->render());
 	}

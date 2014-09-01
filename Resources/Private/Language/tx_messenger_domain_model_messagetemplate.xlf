@@ -59,6 +59,15 @@
 			<trans-unit id="message_layout">
 				<source>Message Layout</source>
 			</trans-unit>
+			<trans-unit id="template_engine">
+				<source>Template engine</source>
+			</trans-unit>
+			<trans-unit id="template_engine.both">
+				<source>Both Fluid and Markdown</source>
+			</trans-unit>
+			<trans-unit id="template_engine.fluid">
+				<source>Only Fluid</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
