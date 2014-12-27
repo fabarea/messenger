@@ -341,43 +341,6 @@ class Message {
 	}
 
 	/**
-	 * Extract Fluid marker from the body or the subject source. A Fluid marker is formatted as follows {foo} .
-	 *
-	 * @param string $messagePart can be Message::BODY or Message::SUBJECT
-	 * @throws \RuntimeException
-	 * @return array
-	 */
-	public function extractMakersFromTemplate($messagePart = '') {
-
-		if (empty($this->messageTemplate)) {
-			throw new \RuntimeException('Messenger: message template was not defined', 1400511070);
-		}
-
-		if ($messagePart === self::SUBJECT) {
-			$content = $this->messageTemplate->getSubject();
-		} elseif ($messagePart === self::BODY) {
-			$content = $this->messageTemplate->getBody();
-		} else {
-			$content = $this->messageTemplate->getSubject();
-			$content .= $this->messageTemplate->getBody();
-		}
-
-		/** @var \TYPO3\CMS\Fluid\Core\Parser\TemplateParser $templateParser */
-		$templateParser = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Parser\TemplateParser');
-		$parsedTemplate = $templateParser->parse($content);
-
-		$markers = array();
-		/** @var ObjectAccessorNode $node */
-		foreach ($parsedTemplate->getRootNode()->getChildNodes() as $node) {
-			if ($node instanceof ObjectAccessorNode) {
-				$markers[] = $node->getObjectPath();
-			}
-		}
-
-		return $markers;
-	}
-
-	/**
 	 * Attach a file to the message.
 	 *
 	 * @throws MissingFileException
