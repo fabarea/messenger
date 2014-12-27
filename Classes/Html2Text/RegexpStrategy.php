@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Strategy\Html2Text;
+namespace Vanilla\Messenger\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
@@ -210,7 +210,7 @@ class RegexpStrategy implements StrategyInterface {
 	 *
 	 * @param string $source HTML content
 	 * @param boolean $from_file Indicates $source is a file to pull content from
-	 * @return \Vanilla\Messenger\Strategy\Html2Text\RegexpStrategy
+	 * @return \Vanilla\Messenger\Html2Text\RegexpStrategy
 	 */
 	public function  __construct($source = '', $from_file = FALSE) {
 		if (!empty($source)) {

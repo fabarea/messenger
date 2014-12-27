@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Strategy\Html2Text;
+namespace Vanilla\Messenger\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
@@ -37,7 +37,7 @@ class LynxStrategy implements StrategyInterface {
 	/**
 	 * Constructor
 	 *
-	 * @return \Vanilla\Messenger\Strategy\Html2Text\LynxStrategy
+	 * @return \Vanilla\Messenger\Html2Text\LynxStrategy
 	 */
 	public function __construct() {
 		$this->lynx = $this->getLynx();
