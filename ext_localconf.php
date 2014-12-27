@@ -15,6 +15,11 @@ if (!defined('TYPO3_MODE')) {
 	)
 );
 
+// Override classes for the Object Manager
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\CMS\Core\Mail\MailMessage'] = array(
+	'className' => 'Vanilla\Messenger\Override\Core\Mail\MailMessage'
+);
+
 // eID for resolving Frontend URL in the context of the Backend.
 $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = 'EXT:messenger/Classes/PagePath/Resolver.php';
 

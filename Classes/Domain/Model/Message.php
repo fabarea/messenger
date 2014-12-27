@@ -25,10 +25,10 @@ namespace Vanilla\Messenger\Domain\Model;
  ***************************************************************/
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode;
 use Vanilla\Messenger\Exception\MissingFileException;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
+use Vanilla\Messenger\Html2Text\TemplateEngine;
 use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Service\Html2Text;
@@ -149,26 +149,6 @@ class Message {
 	protected $mailMessage;
 
 	/**
-	 * Constructor
-	 */
-	public function __construct() {
-
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-			throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
-		}
-
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
-			throw new \Exception('I could not find a sender name. Missing value for "defaultMailFromName"', 1402032686);
-		}
-
-		$this->sender = array(
-			$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] => $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName']
-		);
-
-		$this->getEmailValidator()->validate($this->sender);
-	}
-
-	/**
 	 * Prepares the emails and queue it.
 	 *
 	 * @return void
@@ -226,39 +206,18 @@ class Message {
 		$subject = $this->getContentRenderer()->render($this->messageTemplate->getSubject(), $this->markers);
 		$body = $this->getContentRenderer()->render($this->messageTemplate->getBody(), $this->markers);
 
-		// Tamper data in case the Development or Testing context is on.
-//		if (!GeneralUtility::getApplicationContext()->isProduction()) {
-//			$body = $this->getBodyForApplicationContext($body);
-//			$this->to = $this->getRecipientsForDevelopmentContext();
-//			// empty "cc" and "bcc" for non-production context -> has been put as debug info in the body of the message.
-//			$this->cc = array();
-//			$this->bcc = array();
-//		}
-
 		// Parse Markdown only if necessary
-		if ($this->messageTemplate->getTemplateEngine() == 'both') {
+		if ($this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN) {
 			$body = Markdown::defaultTransform($body);
 		}
 
-		$this->getMailMessage()->setTo($this->to)
-			->setFrom($this->sender)
+		$this->getMailMessage()->setTo($this->getTo())
+			->setCc($this->getCc())
+			->setBcc($this->getBcc())
+			->setFrom($this->getSender())
+			->setReplyTo($this->getReplyTo())
 			->setSubject($subject)
 			->setBody($body, 'text/html');
-
-		// Add possible CC.
-		if (!empty($this->cc)) {
-			$this->getMailMessage()->setCc($this->cc);
-		}
-
-		// Add possible BCC.
-		if (!empty($this->bcc)) {
-			$this->getMailMessage()->setBcc($this->bcc);
-		}
-
-		// Add possible reply-to.
-		if (!empty($this->replyTo)) {
-			$this->getMailMessage()->setReplyTo($this->replyTo);
-		}
 
 		// Attach plain text version if HTML tags are found in body
 		if ($this->hasHtml($body)) {
@@ -270,49 +229,6 @@ class Message {
 		foreach ($this->attachments as $attachment) {
 			$this->getMailMessage()->attach($attachment);
 		}
-	}
-
-	/**
-	 * Get a body message when email is not in production.
-	 *
-	 * @param string $messageBody
-	 * @return string
-	 */
-	protected function getBodyForApplicationContext($messageBody) {
-		$messageBody = sprintf("%s CONTEXT: this message is for testing purpose. In reality, it would be sent... <br />to: %s<br />%s%s<br />%s",
-			strtoupper((string)GeneralUtility::getApplicationContext()),
-			implode(',', array_keys($this->to)),
-			empty($this->cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($this->cc))),
-				empty($this->bbc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($this->bcc))),
-				empty($this->replyTo) ? '' : sprintf('Reply-To: %s <br/>', implode(',', array_keys($this->replyTo))),
-			$messageBody
-		);
-		return $messageBody;
-	}
-
-	/**
-	 * Get the recipients whe email is not in production.
-	 *
-	 * @throws \Exception
-	 * @return array
-	 */
-	protected function getRecipientsForDevelopmentContext() {
-		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
-			$message = sprintf('I could not find development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
-				strtolower($applicationContext)
-			);
-			throw new \Exception($message, 1402031636);
-		}
-
-		$emails = GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients']);
-
-		$recipients = array();
-		foreach ($emails as $email) {
-			$recipients[$email] = $email;
-		}
-		$this->getEmailValidator()->validate($recipients);
-		return $recipients;
 	}
 
 	/**
@@ -440,6 +356,18 @@ class Message {
 	}
 
 	/**
+	 * Return "to" addresses.
+	 * Special case: override "to" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getTo() {
+		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
+		return empty($redirectTo) ? $this->to : $redirectTo;
+	}
+
+
+	/**
 	 * Set "to" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
@@ -449,6 +377,22 @@ class Message {
 		$this->getEmailValidator()->validate($addresses);
 		$this->to = $addresses;
 		return $this;
+	}
+
+	/**
+	 * Return "cc" addresses.
+	 * Special case: there is no "cc" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getCc() {
+		$addresses = array();
+		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
+
+		if (empty($redirectTo)) {
+			$addresses = $this->cc;
+		}
+		return $addresses;
 	}
 
 	/**
@@ -464,6 +408,22 @@ class Message {
 	}
 
 	/**
+	 * Return "bcc" addresses.
+	 * Special case: there is no "bcc" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getBcc() {
+		$addresses = array();
+		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
+
+		if (empty($redirectTo)) {
+			$addresses = $this->bcc;
+		}
+		return $addresses;
+	}
+
+	/**
 	 * Set "cc" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
@@ -473,6 +433,13 @@ class Message {
 		$this->getEmailValidator()->validate($addresses);
 		$this->bcc = $addresses;
 		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getReplyTo() {
+		return $this->replyTo;
 	}
 
 	/**
@@ -489,8 +456,28 @@ class Message {
 
 	/**
 	 * @return array
+	 * @throws \Exception
+	 * @throws \Vanilla\Messenger\Exception\InvalidEmailFormatException
 	 */
 	public function getSender() {
+
+		// Compute sender from global configuration.
+		if (empty($this->sender)) {
+			if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
+				throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
+			}
+
+			$email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+			if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
+				$name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'];
+			} else {
+				$name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+			}
+
+			$this->sender = array($email => $name);
+			$this->getEmailValidator()->validate($this->sender);
+		}
+
 		return $this->sender;
 	}
 
@@ -501,7 +488,7 @@ class Message {
 	 * @return Message
 	 */
 	public function setSender(array $sender) {
-		$this->getEmailValidator()->validate($this->sender);
+		$this->getEmailValidator()->validate($sender);
 		$this->sender = $sender;
 		return $this;
 	}
@@ -606,11 +593,11 @@ class Message {
 
 		$values = array(
 			'sender' => $this->formatAddresses($this->getSender()),
-			'recipient' => $this->formatAddresses($this->to), // @todo change me! recipient has been deprecated in favor of "to".
-			'to' => $this->formatAddresses($this->to),
-			'cc' => $this->formatAddresses($this->cc),
-			'bcc' => $this->formatAddresses($this->bcc),
-			'reply_to' => $this->formatAddresses($this->replyTo),
+			'recipient' => $this->formatAddresses($this->getTo()), // @todo change me! recipient has been deprecated in favor of "to".
+			'to' => $this->formatAddresses($this->getTo()),
+			'cc' => $this->formatAddresses($this->getCc()),
+			'bcc' => $this->formatAddresses($this->getBcc()),
+			'reply_to' => $this->formatAddresses($this->getReplyTo()),
 			'subject' => $this->getMailMessage()->getSubject(),
 			'body' => $this->getMailMessage()->getBody(),
 			'attachment' => count($this->getMailMessage()->getChildren()),
@@ -684,6 +671,13 @@ class Message {
 			$contentRenderer = GeneralUtility::makeInstance('Vanilla\Messenger\ContentRenderer\BackendRenderer');
 		}
 		return $contentRenderer;
+	}
+
+	/**
+	 * @return \Vanilla\Messenger\Redirect\RedirectService
+	 */
+	public function getRedirectService() {
+		return GeneralUtility::makeInstance('\Vanilla\Messenger\Redirect\RedirectService');
 	}
 
 	/**

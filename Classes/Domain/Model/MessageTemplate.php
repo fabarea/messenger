@@ -23,9 +23,11 @@ namespace Vanilla\Messenger\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use Vanilla\Messenger\Exception\RecordNotFoundException;
+use Vanilla\Messenger\Html2Text\TemplateEngine;
 
 /**
  * Message Template representation
@@ -135,7 +137,8 @@ class MessageTemplate extends AbstractEntity {
 		} elseif ($this->type === self::TYPE_FILE) {
 			$file = GeneralUtility::getFileAbsFileName($this->sourceFile);
 			if (!is_file($file)) {
-				throw new \Exception('Messenger: I could not found file ' . $file, 1400517074);
+				$message = sprintf('Messenger: I could not found file "%s"', $file);
+				throw new \Exception($message, 1400517074);
 			}
 			$this->body = file_get_contents($file);
 		}
@@ -255,6 +258,9 @@ class MessageTemplate extends AbstractEntity {
 	 * @return string
 	 */
 	public function getTemplateEngine() {
+		if (empty($this->templateEngine)) {
+			$this->templateEngine = TemplateEngine::FLUID_AND_MARKDOWN;
+		}
 		return $this->templateEngine;
 	}
 }

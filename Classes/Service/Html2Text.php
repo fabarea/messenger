@@ -29,7 +29,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * @see http://www.chuggnutt.com/html2text
  */
-
 class Html2Text implements SingletonInterface {
 
 	/**
