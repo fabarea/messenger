@@ -51,8 +51,11 @@ class MessageStorage implements SingletonInterface {
 	 * @return mixed
 	 */
 	public function get($key) {
-		$value = $this->getFrontendUser()->getKey('ses', $this->namespace . $key);
-		$this->getFrontendUser()->setKey('ses', $this->namespace . $key, NULL); // unset variable
+		$value = NULL;
+		if ($this->isFrontendMode()) {
+			$value = $this->getFrontendUser()->getKey('ses', $this->namespace . $key);
+			$this->getFrontendUser()->setKey('ses', $this->namespace . $key, NULL); // unset variable
+		}
 		return $value;
 	}
 
@@ -64,7 +67,9 @@ class MessageStorage implements SingletonInterface {
 	 * @return mixed
 	 */
 	public function set($key, $value) {
-		$this->getFrontendUser()->setKey('ses', $this->namespace . $key, $value);
+		if ($this->isFrontendMode()) {
+			$this->getFrontendUser()->setKey('ses', $this->namespace . $key, $value);
+		}
 		return $this;
 	}
 
@@ -77,4 +82,12 @@ class MessageStorage implements SingletonInterface {
 		return $GLOBALS['TSFE']->fe_user;
 	}
 
+	/**
+	 * Returns whether the current mode is Frontend
+	 *
+	 * @return bool
+	 */
+	protected function isFrontendMode() {
+		return TYPO3_MODE == 'FE';
+	}
 }
