@@ -404,14 +404,28 @@ class Message {
 	}
 
 	/**
-	 * Set Markers
+	 * Set multiple markers at once.
 	 *
 	 * @param mixed $values
 	 * @return \Vanilla\Messenger\Domain\Model\Message
-	 * @deprecated
 	 */
 	public function setMarkers($values) {
-		return $this->assignMultiple($values);
+		foreach ($values as $markerName => $value) {
+			$this->addMarker($markerName, $value);
+		}
+		return $this;
+	}
+
+	/**
+	 * Add a new marker and its value.
+	 *
+	 * @param string $markerName
+	 * @param mixed $value
+	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 */
+	public function addMarker($markerName, $value) {
+		$this->markers[$markerName] = $value;
+		return $this;
 	}
 
 	/**
@@ -419,12 +433,10 @@ class Message {
 	 *
 	 * @param mixed $values
 	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @deprecated
 	 */
 	public function assignMultiple(array $values) {
-		foreach ($values as $key => $value) {
-			$this->markers[$key] = $value;
-		}
-		return $this;
+		return $this->setMarkers($values);
 	}
 
 	/**
@@ -433,10 +445,10 @@ class Message {
 	 * @param string $markerName
 	 * @param mixed $value
 	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @deprecated
 	 */
 	public function assign($markerName, $value) {
-		$this->markers[$markerName] = $value;
-		return $this;
+		return $this->addMarker($markerName, $value);
 	}
 
 	/**
