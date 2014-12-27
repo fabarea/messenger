@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Strategy\Html2Text;
+namespace Vanilla\Messenger\Html2Text;
 /***************************************************************
  *  Copyright notice
  *
