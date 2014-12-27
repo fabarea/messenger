@@ -114,9 +114,7 @@ Footer to be replaced...
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'width' => '5px',
-				'sortable' => FALSE,
-				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+				'renderer' => new \TYPO3\CMS\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -128,8 +126,7 @@ Footer to be replaced...
 			),
 			'content' => array(),
 			'__buttons' => array(
-				'sortable' => FALSE,
-				'width' => '70px',
+				'renderer' => new \TYPO3\CMS\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

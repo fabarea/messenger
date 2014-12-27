@@ -6,7 +6,7 @@ if (!defined ('TYPO3_MODE')) {
 return array(
 	'ctrl' => array(
 		'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_message',
-		'label' => 'user',
+		'label' => 'subject',
 		'default_sortby' => 'ORDER BY uid DESC',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
@@ -125,9 +125,7 @@ return array(
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'width' => '5px',
-				'sortable' => FALSE,
-				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+				'renderer' => new \TYPO3\CMS\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -155,8 +153,7 @@ return array(
 				'width' => '100px',
 			),
 			'__buttons' => array(
-				'sortable' => FALSE,
-				'width' => '70px',
+				'renderer' => new \TYPO3\CMS\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),
