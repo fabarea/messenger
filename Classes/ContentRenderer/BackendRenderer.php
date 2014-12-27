@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ContentRenderer;
+namespace Fab\Messenger\ContentRenderer;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -14,8 +14,8 @@ namespace Vanilla\Messenger\ContentRenderer;
  * The TYPO3 project - inspiring people to share!
  */
 
-use Vanilla\Messenger\PagePath\PagePath;
-use Vanilla\Messenger\Utility\Algorithms;
+use Fab\Messenger\PagePath\PagePath;
+use Fab\Messenger\Utility\Algorithms;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -39,7 +39,7 @@ class BackendRenderer implements ContentRendererInterface {
 		);
 
 		// Register data to be fetch in the Frontend Context
-		$this->getRegistry()->set('Vanilla\Messenger', $registryIdentifier, $registryEntry);
+		$this->getRegistry()->set('Fab\Messenger', $registryIdentifier, $registryEntry);
 
 		// Prepare the URL for the Crawler.
 		$rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
@@ -58,10 +58,10 @@ class BackendRenderer implements ContentRendererInterface {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Utility\ConfigurationUtility
+	 * @return \Fab\Messenger\Utility\ConfigurationUtility
 	 */
 	public function getConfigurationUtility() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\ConfigurationUtility');
+		return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
 	}
 
 	/**

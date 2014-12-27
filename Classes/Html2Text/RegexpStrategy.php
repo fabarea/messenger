@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Html2Text;
+namespace Fab\Messenger\Html2Text;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -200,7 +200,7 @@ class RegexpStrategy implements StrategyInterface {
 	 *
 	 * @param string $source HTML content
 	 * @param boolean $from_file Indicates $source is a file to pull content from
-	 * @return \Vanilla\Messenger\Html2Text\RegexpStrategy
+	 * @return \Fab\Messenger\Html2Text\RegexpStrategy
 	 */
 	public function  __construct($source = '', $from_file = FALSE) {
 		if (!empty($source)) {

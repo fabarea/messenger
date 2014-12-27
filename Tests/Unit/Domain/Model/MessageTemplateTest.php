@@ -17,18 +17,18 @@
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \Vanilla\Messenger\Domain\Model\MessageTemplate.
+ * Test case for class \Fab\Messenger\Domain\Model\MessageTemplate.
  */
 class MessageTemplateTest extends Tx_Messenger_BaseTest {
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
+	 * @var \Fab\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $fixture;
 
 	public function setUp() {
 		parent::setUp();
-		$this->fixture = new \Vanilla\Messenger\Domain\Model\MessageTemplate();
+		$this->fixture = new \Fab\Messenger\Domain\Model\MessageTemplate();
 	}
 
 	public function tearDown() {
@@ -93,7 +93,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMarkerTemplateReturnsDefaultMarker() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
+			'Fab\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
 		);
 
 		$method->setAccessible(TRUE);

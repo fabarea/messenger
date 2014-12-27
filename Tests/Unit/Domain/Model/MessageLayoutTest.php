@@ -14,17 +14,17 @@
  */
 
 /**
- * Test case for class \Vanilla\Messenger\Domain\Model\MessageLayout.
+ * Test case for class \Fab\Messenger\Domain\Model\MessageLayout.
  */
 class MessageLayoutTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @var \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Domain\Model\MessageLayout();
+		$this->fixture = new \Fab\Messenger\Domain\Model\MessageLayout();
 	}
 
 	public function tearDown() {

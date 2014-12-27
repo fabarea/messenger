@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ViewHelpers\Show;
+namespace Fab\Messenger\ViewHelpers\Show;
 
 /**
  * This file is part of the TYPO3 CMS project.

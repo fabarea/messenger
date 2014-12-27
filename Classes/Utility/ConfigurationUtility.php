@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Utility;
+namespace Fab\Messenger\Utility;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -31,16 +31,16 @@ class ConfigurationUtility implements SingletonInterface {
 	/**
 	 * Returns a class instance.
 	 *
-	 * @return \Vanilla\Messenger\Utility\ConfigurationUtility
+	 * @return \Fab\Messenger\Utility\ConfigurationUtility
 	 */
 	static public function getInstance() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\ConfigurationUtility');
+		return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return \Vanilla\Messenger\Utility\ConfigurationUtility
+	 * @return \Fab\Messenger\Utility\ConfigurationUtility
 	 */
 	public function __construct() {
 

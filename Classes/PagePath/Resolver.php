@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\PagePath;
+namespace Fab\Messenger\PagePath;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -109,8 +109,8 @@ if (GeneralUtility::getIndpEnv('REMOTE_ADDR') != $_SERVER['SERVER_ADDR']) {
 	header('HTTP/1.0 403 Access denied');
 	// Empty output!!!
 } else {
-	$resolver = GeneralUtility::makeInstance('Vanilla\Messenger\PagePath\Resolver');
+	$resolver = GeneralUtility::makeInstance('Fab\Messenger\PagePath\Resolver');
 
-	/* @var $resolver \Vanilla\Messenger\PagePath\Resolver */
+	/* @var $resolver \Fab\Messenger\PagePath\Resolver */
 	$resolver->main();
 }

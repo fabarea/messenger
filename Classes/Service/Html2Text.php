@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Service;
+namespace Fab\Messenger\Service;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -23,7 +23,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class Html2Text implements SingletonInterface {
 
 	/**
-	 * @var \Vanilla\Messenger\Html2Text\StrategyInterface
+	 * @var \Fab\Messenger\Html2Text\StrategyInterface
 	 */
 	protected $converter;
 
@@ -35,20 +35,20 @@ class Html2Text implements SingletonInterface {
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \Vanilla\Messenger\Service\Html2Text
+	 * @return \Fab\Messenger\Service\Html2Text
 	 */
 	static public function getInstance() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Service\Html2Text');
+		return GeneralUtility::makeInstance('Fab\Messenger\Service\Html2Text');
 	}
 
 	/**
 	 * Constructor
 	 *
-	 * @return \Vanilla\Messenger\Service\Html2Text
+	 * @return \Fab\Messenger\Service\Html2Text
 	 */
 	public function __construct() {
-		$this->possibleConverters[] = GeneralUtility::makeInstance('Vanilla\Messenger\Html2Text\LynxStrategy');
-		$this->possibleConverters[] = GeneralUtility::makeInstance('Vanilla\Messenger\Html2Text\RegexpStrategy');
+		$this->possibleConverters[] = GeneralUtility::makeInstance('Fab\Messenger\Html2Text\LynxStrategy');
+		$this->possibleConverters[] = GeneralUtility::makeInstance('Fab\Messenger\Html2Text\RegexpStrategy');
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Html2Text implements SingletonInterface {
 	/**
 	 * Find the best suitable converter
 	 *
-	 * @return \Vanilla\Messenger\Html2Text\StrategyInterface
+	 * @return \Fab\Messenger\Html2Text\StrategyInterface
 	 */
 	public function findBestConverter() {
 
@@ -78,7 +78,7 @@ class Html2Text implements SingletonInterface {
 		// Else find the best suitable converter
 		$converter = end($this->possibleConverters);
 		foreach ($this->possibleConverters as $possibleConverter) {
-			/** @var \Vanilla\Messenger\Html2Text\StrategyInterface $possibleConverter */
+			/** @var \Fab\Messenger\Html2Text\StrategyInterface $possibleConverter */
 			if ($possibleConverter->available()) {
 				$converter = $possibleConverter;
 				break;
@@ -91,15 +91,15 @@ class Html2Text implements SingletonInterface {
 	/**
 	 * Set strategy
 	 *
-	 * @param \Vanilla\Messenger\Html2Text\StrategyInterface $converter
+	 * @param \Fab\Messenger\Html2Text\StrategyInterface $converter
 	 * @return void
 	 */
-	public function setConverter(\Vanilla\Messenger\Html2Text\StrategyInterface $converter) {
+	public function setConverter(\Fab\Messenger\Html2Text\StrategyInterface $converter) {
 		$this->converter = $converter;
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Html2Text\StrategyInterface
+	 * @return \Fab\Messenger\Html2Text\StrategyInterface
 	 */
 	public function getConverter() {
 		return $this->converter;
@@ -120,7 +120,7 @@ class Html2Text implements SingletonInterface {
 	}
 
 	/**
-	 * @param \Vanilla\Messenger\Html2Text\StrategyInterface $possibleConverter
+	 * @param \Fab\Messenger\Html2Text\StrategyInterface $possibleConverter
 	 */
 	public function addPossibleConverter($possibleConverter) {
 		$this->possibleConverters[] = $possibleConverter;

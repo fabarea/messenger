@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ViewHelpers\Show;
+namespace Fab\Messenger\ViewHelpers\Show;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -15,7 +15,7 @@ namespace Vanilla\Messenger\ViewHelpers\Show;
  */
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Vanilla\Messenger\Service\MessageStorage;
+use Fab\Messenger\Service\MessageStorage;
 
 /**
  * View helper which return a key from the storage.

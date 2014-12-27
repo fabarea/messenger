@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Service;
+namespace Fab\Messenger\Service;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -25,15 +25,15 @@ class MessageStorage implements SingletonInterface {
 	/**
 	 * @var string
 	 */
-	protected $namespace = 'Vanilla\Messenger\\';
+	protected $namespace = 'Fab\Messenger\\';
 
 	/**
 	 * Returns a class instance
 	 *
-	 * @return \Vanilla\Messenger\Service\MessageStorage
+	 * @return \Fab\Messenger\Service\MessageStorage
 	 */
 	static public function getInstance() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Service\MessageStorage');
+		return GeneralUtility::makeInstance('Fab\Messenger\Service\MessageStorage');
 	}
 
 	/**

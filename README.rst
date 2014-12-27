@@ -54,8 +54,8 @@ Usage::
 	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
 	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+	/** @var \Fab\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
 
 	# Minimum required to be set
 	$message->setMessageTemplate($templateIdentifier)
@@ -103,7 +103,7 @@ View Helper which are bundled with this extension. The first oen is to render a 
 	# Additional attributes
 	<m:widget.show item="markerName" dataType="tx_ext_foo" exclude="{0: 'fieldName'}" displaySystemFields="true"/>
 
-	{namespace m=Vanilla\Messenger\ViewHelpers}
+	{namespace m=Fab\Messenger\ViewHelpers}
 
 Retrieve the body of the email being sent. Useful to display to the User a feedback message
 after a form has been posted which is actually the same as of the email::
@@ -135,8 +135,8 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 
 ::
 
-	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+	/** @var \Fab\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
 	$message->
 		... // same as in the example above
 		->queue();

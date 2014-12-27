@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Domain\Model;
+namespace Fab\Messenger\Domain\Model;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -16,13 +16,13 @@ namespace Vanilla\Messenger\Domain\Model;
 
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Vanilla\Messenger\Exception\MissingFileException;
-use Vanilla\Messenger\Exception\RecordNotFoundException;
-use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
-use Vanilla\Messenger\Html2Text\TemplateEngine;
-use Vanilla\Messenger\Service\MessageStorage;
-use Vanilla\Messenger\Service\LoggerService;
-use Vanilla\Messenger\Service\Html2Text;
+use Fab\Messenger\Exception\MissingFileException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
+use Fab\Messenger\Html2Text\TemplateEngine;
+use Fab\Messenger\Service\MessageStorage;
+use Fab\Messenger\Service\LoggerService;
+use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 
 /**
@@ -91,12 +91,12 @@ class Message {
 	protected $language;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @var \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\Mailing
+	 * @var \Fab\Messenger\Domain\Model\Mailing
 	 */
 	protected $mailing;
 
@@ -106,31 +106,31 @@ class Message {
 	protected $attachments = array();
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\SentMessageRepository
+	 * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
 	 * @inject
 	 */
 	protected $sentMessageRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\QueueRepository
+	 * @var \Fab\Messenger\Domain\Repository\QueueRepository
 	 * @inject
 	 */
 	protected $queueRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
+	 * @var \Fab\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
 
@@ -225,7 +225,7 @@ class Message {
 	/**
 	 * Retrieves the message template object
 	 *
-	 * @return \Vanilla\Messenger\Domain\Model\Mailing
+	 * @return \Fab\Messenger\Domain\Model\Mailing
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -448,7 +448,7 @@ class Message {
 	/**
 	 * @return array
 	 * @throws \Exception
-	 * @throws \Vanilla\Messenger\Exception\InvalidEmailFormatException
+	 * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
 	 */
 	public function getSender() {
 
@@ -485,7 +485,7 @@ class Message {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @return \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		return $this->messageLayout;
@@ -493,7 +493,7 @@ class Message {
 
 	/**
 	 * parameter $messageLayout can be:
-	 *      + \Vanilla\Messenger\Domain\Model\MessageLayout $messageLayout
+	 *      + \Fab\Messenger\Domain\Model\MessageLayout $messageLayout
 	 *      + int $messageLayout which corresponds to an uid
 	 *      + string $messageLayout which corresponds to a value for property "identifier".
 	 *
@@ -525,7 +525,7 @@ class Message {
 
 	/**
 	 * parameter $messageTemplate can be:
-	 *      + \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate
+	 *      + \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
 	 *
@@ -545,7 +545,7 @@ class Message {
 			}
 			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
 
-			/** @var \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate */
+			/** @var \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate */
 			$messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
 			if (is_object($this->getMessageLayout())) {
 				$messageTemplate->setMessageLayout($this->getMessageLayout());
@@ -629,46 +629,46 @@ class Message {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Domain\Model\Mailing
+	 * @return \Fab\Messenger\Domain\Model\Mailing
 	 */
 	public function getMailing() {
 		return $this->mailing;
 	}
 
 	/**
-	 * @param \Vanilla\Messenger\Domain\Model\Mailing $mailing
+	 * @param \Fab\Messenger\Domain\Model\Mailing $mailing
 	 */
 	public function setMailing($mailing) {
 		$this->mailing = $mailing;
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Validator\EmailValidator
+	 * @return \Fab\Messenger\Validator\EmailValidator
 	 */
 	public function getEmailValidator() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
+		return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\ContentRenderer\ContentRendererInterface
+	 * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
 	 */
 	public function getContentRenderer() {
 
 		if ($this->isFrontendMode()) {
-			/** @var \Vanilla\Messenger\ContentRenderer\FrontendRenderer $contentRenderer */
-			$contentRenderer = GeneralUtility::makeInstance('Vanilla\Messenger\ContentRenderer\FrontendRenderer', $this->messageTemplate);
+			/** @var \Fab\Messenger\ContentRenderer\FrontendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\FrontendRenderer', $this->messageTemplate);
 		} else {
-			/** @var \Vanilla\Messenger\ContentRenderer\BackendRenderer $contentRenderer */
-			$contentRenderer = GeneralUtility::makeInstance('Vanilla\Messenger\ContentRenderer\BackendRenderer');
+			/** @var \Fab\Messenger\ContentRenderer\BackendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\BackendRenderer');
 		}
 		return $contentRenderer;
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Redirect\RedirectService
+	 * @return \Fab\Messenger\Redirect\RedirectService
 	 */
 	public function getRedirectService() {
-		return GeneralUtility::makeInstance('\Vanilla\Messenger\Redirect\RedirectService');
+		return GeneralUtility::makeInstance('\Fab\Messenger\Redirect\RedirectService');
 	}
 
 	/**

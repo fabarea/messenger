@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ContentRenderer;
+namespace Fab\Messenger\ContentRenderer;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -15,7 +15,7 @@ namespace Vanilla\Messenger\ContentRenderer;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Vanilla\Messenger\Domain\Model\MessageTemplate;
+use Fab\Messenger\Domain\Model\MessageTemplate;
 
 /**
  * This class is for rendering content in the context of the Frontend.

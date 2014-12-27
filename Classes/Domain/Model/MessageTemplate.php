@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Domain\Model;
+namespace Fab\Messenger\Domain\Model;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -16,8 +16,8 @@ namespace Vanilla\Messenger\Domain\Model;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Vanilla\Messenger\Exception\RecordNotFoundException;
-use Vanilla\Messenger\Html2Text\TemplateEngine;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 
 /**
  * Message Template representation
@@ -65,7 +65,7 @@ class MessageTemplate extends AbstractEntity {
 	protected $layoutBody;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @var \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
@@ -75,7 +75,7 @@ class MessageTemplate extends AbstractEntity {
 	protected $templateEngine;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
@@ -166,12 +166,12 @@ class MessageTemplate extends AbstractEntity {
 	}
 
 	/**
-	 * @throws \Vanilla\Messenger\Exception\RecordNotFoundException
-	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @throws \Fab\Messenger\Exception\RecordNotFoundException
+	 * @return \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		if (!is_object($this->messageLayout)) {
-			/** @var $layout \Vanilla\Messenger\Domain\Model\MessageLayout */
+			/** @var $layout \Fab\Messenger\Domain\Model\MessageLayout */
 			$this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
 			if (!$this->messageLayout) {
 				$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);

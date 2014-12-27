@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Domain\Repository;
+namespace Fab\Messenger\Domain\Repository;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -48,7 +48,7 @@ class MessageLayoutRepository extends Repository {
 //	 * Finds a layout record by its identifier.
 //	 *
 //	 * @param string $identifier
-//	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout or NULL if no Layout object is found
+//	 * @return \Fab\Messenger\Domain\Model\MessageLayout or NULL if no Layout object is found
 //	 */
 //	public function findByIdentifier($identifier) {
 //
@@ -59,12 +59,12 @@ class MessageLayoutRepository extends Repository {
 //
 //		// Translates record and create the Layout object
 //		if (class_exists('tx_overlays')) {
-//			$language = \Vanilla\Messenger\Utility\Context::getInstance()->getLanguage();
+//			$language = \Fab\Messenger\Utility\Context::getInstance()->getLanguage();
 //			$records = tx_overlays::overlayRecordSet($tableName, $records, intval($language));
 //		}
 //		$layoutObject = NULL;
 //		if (!empty($records[0])) {
-//			$layoutObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Vanilla\Messenger\Domain\Model\MessageLayout', $records[0]);
+//			$layoutObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Fab\Messenger\Domain\Model\MessageLayout', $records[0]);
 //		}
 //		return $layoutObject;
 //	}

@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Html2Text;
+namespace Fab\Messenger\Html2Text;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -27,7 +27,7 @@ class LynxStrategy implements StrategyInterface {
 	/**
 	 * Constructor
 	 *
-	 * @return \Vanilla\Messenger\Html2Text\LynxStrategy
+	 * @return \Fab\Messenger\Html2Text\LynxStrategy
 	 */
 	public function __construct() {
 		$this->lynx = $this->getLynx();
