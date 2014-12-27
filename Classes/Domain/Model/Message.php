@@ -33,11 +33,10 @@ use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
 use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Service\Html2Text;
-use Vanilla\Messenger\Utility\ServerUtility;
 use \Michelf\Markdown;
 
 // Make sure Swift's auto-loader is registered
-require_once PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+//require_once PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
 
 /**
  * Message representation
@@ -147,12 +146,6 @@ class Message {
 	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
-
-	/**
-	 * @var \Vanilla\Messenger\Service\Crawler
-	 * @inject
-	 */
-	protected $crawler;
 
 	/**
 	 * @var \TYPO3\CMS\Core\Mail\MailMessage
@@ -326,15 +319,30 @@ class Message {
 			'markers' => $this->markers,
 		);
 
+		// Register data to be fetch in the Frontend Context
 		$this->getRegistry()->set('Vanilla\Messenger', $registryIdentifier, $registryEntry);
 
-		$this->crawler->addGetVar('type', 1370537883)
-			->addGetVar('tx_messenger_pi1[registryIdentifier]', $registryIdentifier)
-			->setUrl(ServerUtility::getHostAndProtocol());
+		// Prepare the URL for the Crawler.
+		$rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
+		$parameters['type'] = 1370537883;
+		$parameters['tx_messenger_pi1[registryIdentifier]'] = $registryIdentifier;
+		$url = \Vanilla\Messenger\PagePath\PagePath::getUrl($rootPageUid, $parameters);
 
-		//echo $this->crawler->getFinalUrl(); exit();
-		$formattedBody = $this->crawler->exec();
-		return trim($formattedBody);
+		// Send TYPO3 cookies as this may affect path generation
+		$headers = array(
+			'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
+		);
+
+		// Fetch content
+		$formattedContent = GeneralUtility::getURL($url, false, $headers);
+		return trim($formattedContent);
+	}
+
+	/**
+	 * @return \Vanilla\Messenger\Utility\ConfigurationUtility
+	 */
+	public function getConfigurationUtility() {
+		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\ConfigurationUtility');
 	}
 
 	/**
