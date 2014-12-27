@@ -16,7 +16,7 @@ if (!defined('TYPO3_MODE')) {
 );
 
 // eID for resolving Frontend URL in the context of the Backend.
-$GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = 'EXT:messenger/class.tx_messenger_resolver.php';
+$GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = 'EXT:messenger/Classes/PagePath/Resolver.php';
 
 # Install PSR-0-compatible class autoloader for Markdown Library in Resources/PHP/Michelf
 spl_autoload_register(function ($class) {
