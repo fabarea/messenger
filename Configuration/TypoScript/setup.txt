@@ -63,7 +63,7 @@ page_1370537883 {
 config.tx_extbase {
 	view {
 		widget {
-			Vanilla\Messenger\ViewHelpers\Widget\ShowViewHelper {
+			Fab\Messenger\ViewHelpers\Widget\ShowViewHelper {
 				templateRootPath = EXT:messenger/Resources/Private/Templates/
 			}
 		}

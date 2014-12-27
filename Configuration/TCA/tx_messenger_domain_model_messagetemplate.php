@@ -187,7 +187,7 @@ Show detail of an item:
 
 <m:widget.show item="markerName" dataType="tx_ext_foo"/>
 
-{namespace m=Vanilla\Messenger\ViewHelpers}
+{namespace m=Fab\Messenger\ViewHelpers}
 			'),
 		),
 		'message_layout' => array(

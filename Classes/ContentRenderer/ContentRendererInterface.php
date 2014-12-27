@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ContentRenderer;
+namespace Fab\Messenger\ContentRenderer;
 
 /**
  * This file is part of the TYPO3 CMS project.

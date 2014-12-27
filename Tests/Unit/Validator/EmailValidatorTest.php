@@ -15,17 +15,17 @@
 
 
 /**
- * Test case for class \Vanilla\Messenger\Validator\EmailValidator.
+ * Test case for class \Fab\Messenger\Validator\EmailValidator.
  */
 class EmailValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \Vanilla\Messenger\Validator\EmailValidator
+	 * @var \Fab\Messenger\Validator\EmailValidator
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Validator\EmailValidator();
+		$this->fixture = new \Fab\Messenger\Validator\EmailValidator();
 	}
 
 	public function tearDown() {
@@ -50,7 +50,7 @@ class EmailValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidEmailsProvider
-	 * @expectedException \Vanilla\Messenger\Exception\InvalidEmailFormatException
+	 * @expectedException \Fab\Messenger\Exception\InvalidEmailFormatException
 	 */
 	public function wrongEmailsRaiseException($emails) {
 		$this->fixture->validate($emails);

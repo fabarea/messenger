@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\PagePath;
+namespace Fab\Messenger\PagePath;
 
 /**
  * This file is part of the TYPO3 CMS project.

@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Html2Text;
+namespace Fab\Messenger\Html2Text;
 
 /**
  * This file is part of the TYPO3 CMS project.

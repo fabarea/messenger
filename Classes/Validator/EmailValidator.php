@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Validator;
+namespace Fab\Messenger\Validator;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -15,7 +15,7 @@ namespace Vanilla\Messenger\Validator;
  */
 
 use TYPO3\CMS\Core\SingletonInterface;
-use Vanilla\Messenger\Exception\InvalidEmailFormatException;
+use Fab\Messenger\Exception\InvalidEmailFormatException;
 
 /**
  * Validate Email in the context of SwiftMailer

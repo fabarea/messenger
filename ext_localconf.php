@@ -17,7 +17,7 @@ if (!defined('TYPO3_MODE')) {
 
 // Override classes for the Object Manager
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\CMS\Core\Mail\MailMessage'] = array(
-	'className' => 'Vanilla\Messenger\Override\Core\Mail\MailMessage'
+	'className' => 'Fab\Messenger\Override\Core\Mail\MailMessage'
 );
 
 // eID for resolving Frontend URL in the context of the Backend.

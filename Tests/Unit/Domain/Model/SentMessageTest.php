@@ -15,16 +15,16 @@
 
 
 /**
- * Test case for class \Vanilla\Messenger\Domain\Model\SentMessage.
+ * Test case for class \Fab\Messenger\Domain\Model\SentMessage.
  */
 class SentMessageTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\SentMessage
+	 * @var \Fab\Messenger\Domain\Model\SentMessage
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Domain\Model\SentMessage();
+		$this->fixture = new \Fab\Messenger\Domain\Model\SentMessage();
 	}
 
 	public function tearDown() {

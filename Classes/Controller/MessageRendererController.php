@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Controller;
+namespace Fab\Messenger\Controller;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace Vanilla\Messenger\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use Vanilla\Messenger\Domain\Model\MessageTemplate;
+use Fab\Messenger\Domain\Model\MessageTemplate;
 
 /**
  * Controller which take the GET / POST arguments and generates an output given a Message Template.
@@ -50,8 +50,8 @@ class MessageRendererController extends ActionController {
 	 * @return \TYPO3\CMS\Core\Registry
 	 */
 	protected function fetchRegistryEntry($registryIdentifier) {
-		$registryEntry = $this->getRegistry()->get('Vanilla\Messenger', $registryIdentifier);
-		$this->getRegistry()->remove('Vanilla\Messenger', $registryIdentifier);
+		$registryEntry = $this->getRegistry()->get('Fab\Messenger', $registryIdentifier);
+		$this->getRegistry()->remove('Fab\Messenger', $registryIdentifier);
 		return $registryEntry;
 	}
 

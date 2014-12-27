@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Backend;
+namespace Fab\Messenger\Backend;
 
 /**
  * This file is part of the TYPO3 CMS project.

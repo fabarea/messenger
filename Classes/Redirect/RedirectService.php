@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Redirect;
+namespace Fab\Messenger\Redirect;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace Vanilla\Messenger\Redirect;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Vanilla\Messenger\Utility\ConfigurationUtility;
+use Fab\Messenger\Utility\ConfigurationUtility;
 
 /**
  * Class providing service for redirection of emails
@@ -54,10 +54,10 @@ class RedirectService implements SingletonInterface {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Validator\EmailValidator
+	 * @return \Fab\Messenger\Validator\EmailValidator
 	 */
 	public function getEmailValidator() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
+		return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
 	}
 
 }

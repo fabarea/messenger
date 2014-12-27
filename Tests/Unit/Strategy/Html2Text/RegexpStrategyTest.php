@@ -15,17 +15,17 @@
 
 
 /**
- * Test case for class \Vanilla\Messenger\Html2Text\RegexpStrategy.
+ * Test case for class \Fab\Messenger\Html2Text\RegexpStrategy.
  */
 class RegexpStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var \Vanilla\Messenger\Html2Text\RegexpStrategy
+	 * @var \Fab\Messenger\Html2Text\RegexpStrategy
 	 */
 	private $fixture;
 
 	public function setUp() {
-		$this->fixture = new \Vanilla\Messenger\Html2Text\RegexpStrategy();
+		$this->fixture = new \Fab\Messenger\Html2Text\RegexpStrategy();
 	}
 
 	public function tearDown() {

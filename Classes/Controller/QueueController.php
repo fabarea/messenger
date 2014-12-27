@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Controller;
+namespace Fab\Messenger\Controller;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -20,7 +20,7 @@ namespace Vanilla\Messenger\Controller;
 class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\QueueRepository
+	 * @var \Fab\Messenger\Domain\Repository\QueueRepository
 	 * @inject
 	 */
 	protected $queueRepository;
@@ -38,8 +38,8 @@ class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
 		foreach ($queuedMessages as $queuedMessage) {
 
-			/** @var \Vanilla\Messenger\Domain\Model\Message $message */
-			$message = $this->objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+			/** @var \Fab\Messenger\Domain\Model\Message $message */
+			$message = $this->objectManager->get('Fab\Messenger\Domain\Model\Message');
 			// @todo
 			$message->hydrate($queuedMessage);
 			$message->send();

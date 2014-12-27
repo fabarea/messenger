@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\Override\Core\Mail;
+namespace Fab\Messenger\Override\Core\Mail;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -67,10 +67,10 @@ class MailMessage extends \TYPO3\CMS\Core\Mail\MailMessage {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Redirect\RedirectService
+	 * @return \Fab\Messenger\Redirect\RedirectService
 	 */
 	public function getRedirectService() {
-		return GeneralUtility::makeInstance('\Vanilla\Messenger\Redirect\RedirectService');
+		return GeneralUtility::makeInstance('\Fab\Messenger\Redirect\RedirectService');
 	}
 
 }

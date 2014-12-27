@@ -1,5 +1,5 @@
 <?php
-namespace Vanilla\Messenger\ViewHelpers\Widget;
+namespace Fab\Messenger\ViewHelpers\Widget;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -22,7 +22,7 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 class ShowViewHelper extends AbstractWidgetViewHelper {
 
 	/**
-	 * @var \Vanilla\Messenger\ViewHelpers\Widget\Controller\ShowController
+	 * @var \Fab\Messenger\ViewHelpers\Widget\Controller\ShowController
 	 * @inject
 	 */
 	protected $controller;
