@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Utility\HttpUtility;
 /**
  * This class create frontend page address from the page id value and parameters.
  *
- * @author    Dmitry Dulepov <dmitry@typo3.org>
+ * @author Dmitry Dulepov <dmitry@typo3.org>
  */
 class PagePath {
 

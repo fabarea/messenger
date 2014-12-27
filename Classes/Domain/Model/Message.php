@@ -31,12 +31,8 @@ use Vanilla\Messenger\Exception\RecordNotFoundException;
 use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
 use Vanilla\Messenger\Service\MessageStorage;
 use Vanilla\Messenger\Service\LoggerService;
-use Vanilla\Messenger\Utility\Algorithms;
 use Vanilla\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
-
-// Make sure Swift's auto-loader is registered
-//require_once PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
 
 /**
  * Message representation
@@ -227,22 +223,17 @@ class Message {
 		}
 
 		// Substitute markers
-		if ($this->isFrontendMode()) {
-			$subject = $this->renderFrontendMode($this->messageTemplate->getSubject());
-			$body = $this->renderFrontendMode($this->messageTemplate->getBody());
-		} else {
-			$subject = $this->renderBackendMode($this->messageTemplate->getSubject(), $this->markers);
-			$body = $this->renderBackendMode($this->messageTemplate->getBody(), $this->markers);
-		}
+		$subject = $this->getContentRenderer()->render($this->messageTemplate->getSubject(), $this->markers);
+		$body = $this->getContentRenderer()->render($this->messageTemplate->getBody(), $this->markers);
 
 		// Tamper data in case the Development or Testing context is on.
-		if (!GeneralUtility::getApplicationContext()->isProduction()) {
-			$body = $this->getBodyForApplicationContext($body);
-			$this->to = $this->getRecipientsForDevelopmentContext();
-			// empty "cc" and "bcc" for non-production context -> has been put as debug info in the body of the message.
-			$this->cc = array();
-			$this->bcc = array();
-		}
+//		if (!GeneralUtility::getApplicationContext()->isProduction()) {
+//			$body = $this->getBodyForApplicationContext($body);
+//			$this->to = $this->getRecipientsForDevelopmentContext();
+//			// empty "cc" and "bcc" for non-production context -> has been put as debug info in the body of the message.
+//			$this->cc = array();
+//			$this->bcc = array();
+//		}
 
 		// Parse Markdown only if necessary
 		if ($this->messageTemplate->getTemplateEngine() == 'both') {
@@ -279,70 +270,6 @@ class Message {
 		foreach ($this->attachments as $attachment) {
 			$this->getMailMessage()->attach($attachment);
 		}
-	}
-
-	/**
-	 * Render content in a Frontend mode.
-	 *
-	 * @param string $content
-	 * @return string the formatted string
-	 */
-	protected function renderFrontendMode($content) {
-		/** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
-		$view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
-		$view->setTemplateSource($content);
-		// If a template file was defined, set its path, so that layouts and partials can be used
-		// NOTE: they have to be located in sub-folders called "Layouts" and "Partials" relative
-		// to the folder where the template is stored.
-		$sourceFile = $this->messageTemplate->getSourceFile();
-		if (!empty($sourceFile)) {
-			$view->setTemplatePathAndFilename(
-					GeneralUtility::getFileAbsFileName($sourceFile)
-			);
-		}
-		$view->assignMultiple($this->markers);
-		return trim($view->render());
-	}
-
-	/**
-	 * Render content in a Backend mode.
-	 * This is required in order to correctly resolve the View Helpers for Fluid in the context of the Backend.
-	 *
-	 * @param $content
-	 * @return string
-	 */
-	protected function renderBackendMode($content) {
-
-		$registryIdentifier = Algorithms::generateUUID();
-		$registryEntry = array(
-			'content' => $content,
-			'markers' => $this->markers,
-		);
-
-		// Register data to be fetch in the Frontend Context
-		$this->getRegistry()->set('Vanilla\Messenger', $registryIdentifier, $registryEntry);
-
-		// Prepare the URL for the Crawler.
-		$rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
-		$parameters['type'] = 1370537883;
-		$parameters['tx_messenger_pi1[registryIdentifier]'] = $registryIdentifier;
-		$url = \Vanilla\Messenger\PagePath\PagePath::getUrl($rootPageUid, $parameters);
-
-		// Send TYPO3 cookies as this may affect path generation
-		$headers = array(
-			'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
-		);
-
-		// Fetch content
-		$formattedContent = GeneralUtility::getURL($url, false, $headers);
-		return trim($formattedContent);
-	}
-
-	/**
-	 * @return \Vanilla\Messenger\Utility\ConfigurationUtility
-	 */
-	public function getConfigurationUtility() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Utility\ConfigurationUtility');
 	}
 
 	/**
@@ -510,15 +437,6 @@ class Message {
 	public function assign($markerName, $value) {
 		$this->markers[$markerName] = $value;
 		return $this;
-	}
-
-	/**
-	 * Returns an instance of the Frontend object.
-	 *
-	 * @return \TYPO3\CMS\Core\Registry
-	 */
-	protected function getRegistry() {
-		return GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
 	}
 
 	/**
@@ -779,6 +697,21 @@ class Message {
 	}
 
 	/**
+	 * @return \Vanilla\Messenger\ContentRenderer\ContentRendererInterface
+	 */
+	public function getContentRenderer() {
+
+		if ($this->isFrontendMode()) {
+			/** @var \Vanilla\Messenger\ContentRenderer\FrontendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Vanilla\Messenger\ContentRenderer\FrontendRenderer', $this->messageTemplate);
+		} else {
+			/** @var \Vanilla\Messenger\ContentRenderer\BackendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Vanilla\Messenger\ContentRenderer\BackendRenderer');
+		}
+		return $contentRenderer;
+	}
+
+	/**
 	 * Returns whether the current mode is Frontend
 	 *
 	 * @return bool
@@ -786,4 +719,5 @@ class Message {
 	protected function isFrontendMode() {
 		return TYPO3_MODE == 'FE';
 	}
+
 }
