@@ -382,7 +382,7 @@ class Message {
 	 *
 	 * @throws MissingFileException
 	 * @param string $attachment an absolute path to a file
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function addAttachment($attachment) {
 
@@ -407,7 +407,7 @@ class Message {
 	 * Set multiple markers at once.
 	 *
 	 * @param mixed $values
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setMarkers($values) {
 		foreach ($values as $markerName => $value) {
@@ -421,7 +421,7 @@ class Message {
 	 *
 	 * @param string $markerName
 	 * @param mixed $value
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function addMarker($markerName, $value) {
 		$this->markers[$markerName] = $value;
@@ -432,7 +432,7 @@ class Message {
 	 * Set Markers
 	 *
 	 * @param mixed $values
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 * @deprecated
 	 */
 	public function assignMultiple(array $values) {
@@ -444,7 +444,7 @@ class Message {
 	 *
 	 * @param string $markerName
 	 * @param mixed $value
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 * @deprecated
 	 */
 	public function assign($markerName, $value) {
@@ -460,7 +460,7 @@ class Message {
 
 	/**
 	 * @param int $language
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setLanguage($language) {
 		$this->language = $language;
@@ -469,7 +469,7 @@ class Message {
 
 	/**
 	 * @param mixed $recipients
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 * @deprecated as of 2.0 will be removed in 2 version
 	 */
 	public function setRecipients($recipients) {
@@ -480,7 +480,7 @@ class Message {
 	 * Set "to" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setTo($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -492,7 +492,7 @@ class Message {
 	 * Set "cc" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setCc($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -504,7 +504,7 @@ class Message {
 	 * Set "cc" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setBcc($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -516,7 +516,7 @@ class Message {
 	 * Set "reply-to" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setReplyTo($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -535,7 +535,7 @@ class Message {
 	 * Re-set default sender
 	 *
 	 * @param array $sender
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setSender(array $sender) {
 		$this->getEmailValidator()->validate($this->sender);
@@ -558,7 +558,7 @@ class Message {
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageLayout
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setMessageLayout($messageLayout) {
 
@@ -590,7 +590,7 @@ class Message {
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setMessageTemplate($messageTemplate) {
 
