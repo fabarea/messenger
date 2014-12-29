@@ -36,6 +36,7 @@ Installation
 
 Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
 
+
 Message API
 ===========
 
@@ -141,13 +142,27 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 		... // same as in the example above
 		->queue();
 
+
+Scheduler tip
+=============
+
+When sending messages using Messenger within a Scheduler task, the base url must be transmitted **as environment variable "TYPO3_BASE_URL"**.
+The reasons is to have Fluid having the good context so that the ViewHelpers work as they would be in the context of the Frontend::
+
+	TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
+
+Additionally, you can set Development context with the environment variable "TYPO3_CONTEXT". Example::
+
+	TYPO3_CONTEXT=Development TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
+
+
 Todo
 ====
 
 Long term goals:
 
 + Provide default FE / BE Users provider in Vidi
-+ The same message can be sent in various language (alpha quality)
++ The same message can be sent in various language
 
 Recipient Interface
 ===================
