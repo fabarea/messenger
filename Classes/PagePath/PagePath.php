@@ -43,6 +43,7 @@ class PagePath {
 			$data['parameters'] = $parameters;
 		}
 		$siteUrl = self::getSiteUrl($pageId);
+
 		if ($siteUrl) {
 			$url = $siteUrl . 'index.php?eID=messenger&data=' . base64_encode(serialize($data));
 
@@ -50,7 +51,9 @@ class PagePath {
 			$headers = array(
 				'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
 			);
+
 			$result = GeneralUtility::getURL($url, false, $headers);
+
 			$urlParts = parse_url($result);
 			if (!is_array($urlParts)) {
 
@@ -63,10 +66,10 @@ class PagePath {
 					$result = rtrim($siteUrl, '/') . '/' . ltrim($result, '/');
 				}
 			}
+
 		} else {
 			$result = '';
 		}
-
 		return $result;
 	}
 
@@ -78,9 +81,27 @@ class PagePath {
 	 * @return string
 	 */
 	static protected function getSiteUrl($pageId) {
-		$domain = BackendUtility::firstDomainRecord(BackendUtility::BEgetRootLine($pageId));
-		$pageRecord = BackendUtility::getRecord('pages', $pageId);
-		$scheme = is_array($pageRecord) && isset($pageRecord['url_scheme']) && $pageRecord['url_scheme'] == HttpUtility::SCHEME_HTTPS ? 'https' : 'http';
-		return $domain ? $scheme . '://' . $domain . '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+
+		// CLI must define its own environment variable.
+		if (TYPO3_cliMode === TRUE) {
+
+			$environmentBaseUrl = getenv('TYPO3_BASE_URL');
+			$baseUrl = rtrim($environmentBaseUrl, '/') . '/';
+			if (!$baseUrl) {
+				$message = 'ERROR in Messenger!' . chr(10);
+				$message .= 'I can not send emails because of missing environment variable TYPO3_BASE_URL' . chr(10);
+				$message .= 'You can set it when calling the CLI script as follows:' . chr(10) . chr(10);
+				$message .= 'TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler' . chr(10);
+				die($message);
+			}
+		} else {
+			$domain = BackendUtility::firstDomainRecord(BackendUtility::BEgetRootLine($pageId));
+			$pageRecord = BackendUtility::getRecord('pages', $pageId);
+			$scheme = is_array($pageRecord) && isset($pageRecord['url_scheme']) && $pageRecord['url_scheme'] == HttpUtility::SCHEME_HTTPS ? 'https' : 'http';
+			$baseUrl = $domain ? $scheme . '://' . $domain . '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+		}
+
+		return $baseUrl;
 	}
+
 }

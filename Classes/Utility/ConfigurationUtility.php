@@ -65,7 +65,7 @@ class ConfigurationUtility implements SingletonInterface {
 	 * Returns a setting key.
 	 *
 	 * @param string $key
-	 * @return array
+	 * @return mixed
 	 */
 	public function get($key) {
 		return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : NULL;

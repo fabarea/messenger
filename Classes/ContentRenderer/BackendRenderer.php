@@ -47,6 +47,12 @@ class BackendRenderer implements ContentRendererInterface {
 		$parameters['tx_messenger_pi1[registryIdentifier]'] = $registryIdentifier;
 		$url = PagePath::getUrl($rootPageUid, $parameters);
 
+		if (!$url) {
+			$message = 'ERROR in Messenger!' . chr(10);
+			$message .= 'I could not determine the URL for an unknown reason. Please debug me!' . chr(10);
+			die($message);
+		}
+
 		// Send TYPO3 cookies as this may affect path generation
 		$headers = array(
 			'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
