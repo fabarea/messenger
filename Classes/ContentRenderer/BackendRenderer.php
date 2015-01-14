@@ -49,7 +49,11 @@ class BackendRenderer implements ContentRendererInterface {
 
 		if (!$url) {
 			$message = 'ERROR in Messenger!' . chr(10);
-			$message .= 'I could not determine the URL for an unknown reason. Please debug me!' . chr(10);
+			$message .= sprintf(
+				'As a first measure, add this IP "%s" to your "devIPmask" settings. Debug me if the problem persists...%s',
+				GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+				chr(10)
+			);
 			die($message);
 		}
 

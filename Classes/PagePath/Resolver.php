@@ -105,12 +105,15 @@ class Resolver {
 	}
 }
 
-if (GeneralUtility::getIndpEnv('REMOTE_ADDR') != $_SERVER['SERVER_ADDR']) {
-	header('HTTP/1.0 403 Access denied');
-	// Empty output!!!
-} else {
+$myIp = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+$devIPMask = trim($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
+
+if ($myIp == $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
 	$resolver = GeneralUtility::makeInstance('Fab\Messenger\PagePath\Resolver');
 
 	/* @var $resolver \Fab\Messenger\PagePath\Resolver */
 	$resolver->main();
+} else {
+	echo 'Access denied!';
+	header('HTTP/1.0 403 Access denied');
 }
