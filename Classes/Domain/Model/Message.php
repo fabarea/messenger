@@ -353,8 +353,7 @@ class Message {
 	 * @return array
 	 */
 	public function getTo() {
-		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
-		return empty($redirectTo) ? $this->to : $redirectTo;
+		return $this->to;
 	}
 
 
@@ -377,13 +376,7 @@ class Message {
 	 * @return array
 	 */
 	public function getCc() {
-		$addresses = array();
-		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
-
-		if (empty($redirectTo)) {
-			$addresses = $this->cc;
-		}
-		return $addresses;
+		return $this->cc;
 	}
 
 	/**
@@ -405,13 +398,7 @@ class Message {
 	 * @return array
 	 */
 	public function getBcc() {
-		$addresses = array();
-		$redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
-
-		if (empty($redirectTo)) {
-			$addresses = $this->bcc;
-		}
-		return $addresses;
+		return $this->bcc;
 	}
 
 	/**
@@ -662,13 +649,6 @@ class Message {
 			$contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\BackendRenderer');
 		}
 		return $contentRenderer;
-	}
-
-	/**
-	 * @return \Fab\Messenger\Redirect\RedirectService
-	 */
-	public function getRedirectService() {
-		return GeneralUtility::makeInstance('\Fab\Messenger\Redirect\RedirectService');
 	}
 
 	/**
