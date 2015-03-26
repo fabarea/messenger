@@ -13,7 +13,7 @@ Messenger Extension is a TYPO3 extension for listing recipients in a flexible wa
   alongside with **Fluid View Helper** which will be be rendered when sending the email.
 * A message can be queued and scheduled for mass mailing
 
-.. image:: https://raw.github.com/fudriot/messenger/master/Documentation/Screenshot.png
+.. image:: https://raw.github.com/fabarea/messenger/master/Documentation/Screenshot.png
 
 Project info and releases
 =========================
@@ -22,11 +22,11 @@ Project info and releases
 .. http://typo3.org/extensions/repository/view/messenger (not yet released on the TER)
 
 Development version:
-https://github.com/fudriot/messenger.git
+https://github.com/fabarea/messenger.git
 
 ::
 
-    git clone https://github.com/fudriot/messenger.git
+    git clone https://github.com/fabarea/messenger.git
 
 Flash news about latest development or release
 http://twitter.com/fudriot
