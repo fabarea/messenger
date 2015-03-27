@@ -72,7 +72,6 @@ class RegexpStrategy implements StrategyInterface {
 		'/(<ol[^>]*>|<\/ol>)/i', // <ol> and </ol>
 		'/<li[^>]*>(.*?)<\/li>/i', // <li> and </li>
 		'/<li[^>]*>/i', // <li>
-		'/<a [^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/ie',
 		// <a href="">
 		'/<hr[^>]*>/i', // <hr>
 		'/(<table[^>]*>|<\/table>)/i', // <table> and </table>
