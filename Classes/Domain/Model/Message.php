@@ -25,6 +25,13 @@ use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 
+// For TYPO3 6.x, make sure Swift's auto-loader is registered.
+// @todo check the situation with 7.x again. Reference https://github.com/fabarea/messenger/pull/8
+$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+if (is_readable($swift1)) {
+	require_once $swift1;
+}
+
 /**
  * Message representation
  * @todo remove language handling from the class which should be managed outside - or not?
