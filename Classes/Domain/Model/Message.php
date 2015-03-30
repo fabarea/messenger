@@ -25,6 +25,16 @@ use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 
+// For TYPO3 6.X or TYPO3 7.X, make sure Swift's auto-loader is registered
+$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+$swift2 = PATH_typo3 . 'contrib/swiftmailer/lib/swift_required.php';
+
+if (is_readable($swift1)) {
+    require_once $swift1;
+} elseif (is_readable($swift2)) {
+    require_once $swift2;
+}
+
 /**
  * Message representation
  * @todo remove language handling from the class which should be managed outside - or not?
