@@ -15,7 +15,7 @@ namespace Fab\Messenger\ViewHelpers\Show;
  */
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Fab\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\Tca;
 
 /**
  * View helper which renders a label given by the fieldName in the context.
@@ -32,7 +32,7 @@ class LabelViewHelper extends AbstractViewHelper {
 		$fieldName = $this->templateVariableContainer->get('fieldName');
 		if ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
-			$label = TcaService::table($dataType)->field($fieldName)->getLabel();
+			$label = Tca::table($dataType)->field($fieldName)->getLabel();
 		}
 		return $label;
 	}

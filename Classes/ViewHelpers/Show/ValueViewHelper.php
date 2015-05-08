@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Fab\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\Tca;
 
 /**
  * View helper which renders a value given by the context.
@@ -44,10 +44,10 @@ class ValueViewHelper extends AbstractViewHelper {
 			}
 		} elseif ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
-			$fieldType = TcaService::table($dataType)->field($fieldName)->getType();
+			$fieldType = Tca::table($dataType)->field($fieldName)->getType();
 
 			if ($fieldType === FieldType::RADIO || $fieldType === FieldType::SELECT) {
-				$value = TcaService::table($dataType)->field($fieldName)->getLabelForItem($value);
+				$value = Tca::table($dataType)->field($fieldName)->getLabelForItem($value);
 			} elseif ($fieldType === FieldType::TEXTAREA) {
 				$value = nl2br($value);
 			} elseif ($fieldType === FieldType::MULTISELECT) {
@@ -55,7 +55,7 @@ class ValueViewHelper extends AbstractViewHelper {
 
 				$labels = array();
 				foreach ($explodedValues as $_value) {
-					$label = TcaService::table($dataType)->field($fieldName)->getLabelForItem($_value);
+					$label = Tca::table($dataType)->field($fieldName)->getLabelForItem($_value);
 					if ($label) {
 						$labels[] = $label;
 					}

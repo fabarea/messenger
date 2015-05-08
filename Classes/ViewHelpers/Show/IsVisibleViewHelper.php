@@ -15,7 +15,7 @@ namespace Fab\Messenger\ViewHelpers\Show;
  */
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Fab\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\Tca;
 
 /**
  * View helper which tells whether the row of item should be rendered.
@@ -52,7 +52,7 @@ class IsVisibleViewHelper extends AbstractViewHelper {
 		// Check whether the field name is not system.
 		$displaySystemFields = $this->templateVariableContainer->get('displaySystemFields');
 		if (FALSE === $displaySystemFields && $dataType) {
-			$isVisible = TcaService::table($dataType)->field($fieldName)->isNotSystem();
+			$isVisible = Tca::table($dataType)->field($fieldName)->isNotSystem();
 		}
 
 		// Check whether the field name is not to be excluded.

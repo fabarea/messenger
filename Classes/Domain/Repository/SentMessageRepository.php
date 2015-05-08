@@ -15,7 +15,7 @@ namespace Fab\Messenger\Domain\Repository;
  */
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
-use Fab\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\Tca;
 
 /**
  * A repository for handling sent message
@@ -38,7 +38,7 @@ class SentMessageRepository extends Repository {
 		$values['tstamp'] = $values['crdate'] = time(); // default values
 
 		// Make sure fields are allowed for this table.
-		$fields = TcaService::table($this->tableName)->getFields();
+		$fields = Tca::table($this->tableName)->getFields();
 		foreach ($message as $fieldName => $value) {
 			if (in_array($fieldName, $fields)) {
 				$values[$fieldName] = $value;
