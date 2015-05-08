@@ -211,7 +211,7 @@ Show detail of an item:
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\CheckBoxComponent(),
+				'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -230,7 +230,7 @@ Show detail of an item:
 //			),
 			'body' => array(),
 			'__buttons' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\ButtonGroupComponent(),
+				'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

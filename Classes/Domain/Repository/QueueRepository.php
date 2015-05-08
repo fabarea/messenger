@@ -15,7 +15,7 @@ namespace Fab\Messenger\Domain\Repository;
  */
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
-use TYPO3\CMS\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\TcaService;
 
 /**
  * A repository for the Queue.

@@ -114,7 +114,7 @@ Footer to be replaced...
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\CheckBoxComponent(),
+				'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -126,7 +126,7 @@ Footer to be replaced...
 			),
 			'content' => array(),
 			'__buttons' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\ButtonGroupComponent(),
+				'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

@@ -75,7 +75,7 @@ return array(
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\CheckBoxComponent(),
+				'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -84,7 +84,7 @@ return array(
 			),
 			'title' => array(),
 			'__buttons' => array(
-				'renderer' => new \TYPO3\CMS\Vidi\Grid\ButtonGroupComponent(),
+				'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

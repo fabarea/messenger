@@ -15,7 +15,7 @@ namespace Fab\Messenger\ViewHelpers\Show;
  */
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\CMS\Vidi\Tca\TcaService;
+use Fab\Vidi\Tca\TcaService;
 
 /**
  * View helper which renders a label given by the fieldName in the context.
