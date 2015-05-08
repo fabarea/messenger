@@ -14,6 +14,7 @@ namespace Fab\Messenger\ViewHelpers\Show;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\Vidi\Tca\FieldType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -45,11 +46,11 @@ class ValueViewHelper extends AbstractViewHelper {
 			$dataType = $this->templateVariableContainer->get('dataType');
 			$fieldType = TcaService::table($dataType)->field($fieldName)->getType();
 
-			if ($fieldType === TcaService::RADIO || $fieldType === TcaService::SELECT) {
+			if ($fieldType === FieldType::RADIO || $fieldType === FieldType::SELECT) {
 				$value = TcaService::table($dataType)->field($fieldName)->getLabelForItem($value);
-			} elseif ($fieldType === TcaService::TEXTAREA) {
+			} elseif ($fieldType === FieldType::TEXTAREA) {
 				$value = nl2br($value);
-			} elseif ($fieldType === TcaService::MULTISELECT) {
+			} elseif ($fieldType === FieldType::MULTISELECT) {
 				$explodedValues = GeneralUtility::trimExplode(',', $value, TRUE);
 
 				$labels = array();
