@@ -13,11 +13,12 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Test case for class \Fab\Messenger\Html2Text\LynxStrategy.
  */
-class LynxStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class LynxStrategyTest extends UnitTestCase {
 
 	/**
 	 * @var \Fab\Messenger\Html2Text\LynxStrategy
@@ -75,4 +76,3 @@ class LynxStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->assertTrue($this->fixture->available());
 	}
 }
-?>

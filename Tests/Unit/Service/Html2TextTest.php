@@ -13,12 +13,14 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
+
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
  * Test case for class \Fab\Messenger\Service\Html2Text.
  */
-class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class Html2TextTest extends UnitTestCase {
 
 	/**
 	 * @var \Fab\Messenger\Service\Html2Text
@@ -78,4 +80,3 @@ class Html2TextTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$this->assertTrue($converter instanceof \Fab\Messenger\Html2Text\RegexpStrategy);
 	}
 }
-?>

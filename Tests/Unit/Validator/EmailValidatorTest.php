@@ -13,11 +13,12 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Test case for class \Fab\Messenger\Validator\EmailValidator.
  */
-class EmailValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class EmailValidatorTest extends UnitTestCase {
 
 	/**
 	 * @var \Fab\Messenger\Validator\EmailValidator
@@ -82,4 +83,3 @@ class EmailValidatorTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		);
 	}
 }
-?>

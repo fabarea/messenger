@@ -13,11 +13,12 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Test case for class \Fab\Messenger\Html2Text\RegexpStrategy.
  */
-class RegexpStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class RegexpStrategyTest extends UnitTestCase {
 
 	/**
 	 * @var \Fab\Messenger\Html2Text\RegexpStrategy
@@ -41,5 +42,5 @@ class RegexpStrategyTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$actual = $this->fixture->convert($input);
 		$this->assertEquals($expected, $actual);
 	}
+
 }
-?>

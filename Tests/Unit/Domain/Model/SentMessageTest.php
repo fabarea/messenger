@@ -59,4 +59,3 @@ class SentMessageTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	public function setSentTimeForIntSetsSentTime() { }
 
 }
-?>

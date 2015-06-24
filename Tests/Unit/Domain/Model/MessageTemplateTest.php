@@ -39,11 +39,6 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getSubjectReturnsInitialValueForString() { }
-
-	/**
-	 * @test
-	 */
 	public function setSubjectForStringSetsSubject() {
 		$this->fixture->setSubject('Conceived at T3CON10');
 
@@ -111,4 +106,3 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 		$this->assertEquals($expected, $this->fixture->getBody());
 	}
 }
-?>

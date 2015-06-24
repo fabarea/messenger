@@ -334,4 +334,3 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		);
 	}
 }
-?>

@@ -13,11 +13,12 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
  * Group together some utility for testing purposes
  */
-class Tx_Messenger_BaseTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class Tx_Messenger_BaseTest extends UnitTestCase {
 
 	/**
 	 * @var Tx_Phpunit_Framework
@@ -162,4 +163,3 @@ class Tx_Messenger_BaseTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		);
 	}
 }
-?>

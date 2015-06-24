@@ -13,10 +13,12 @@
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Tests\UnitTestCase;
+
 /**
  * Test case for class \Fab\Messenger\Domain\Model\MessageLayout.
  */
-class MessageLayoutTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class MessageLayoutTest extends UnitTestCase {
 
 	/**
 	 * @var \Fab\Messenger\Domain\Model\MessageLayout
@@ -74,4 +76,3 @@ class MessageLayoutTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	}
 
 }
-?>
