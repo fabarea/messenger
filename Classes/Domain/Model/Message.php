@@ -1,43 +1,36 @@
 <?php
-namespace Vanilla\Messenger\Domain\Model;
-/***************************************************************
- *  Copyright notice
+namespace Fab\Messenger\Domain\Model;
+
+/**
+ * This file is part of the TYPO3 CMS project.
  *
- *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- *  All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * The TYPO3 project - inspiring people to share!
+ */
+
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode;
-use Vanilla\Messenger\Exception\MissingFileException;
-use Vanilla\Messenger\Exception\RecordNotFoundException;
-use Vanilla\Messenger\Exception\WrongPluginConfigurationException;
-use Vanilla\Messenger\Service\MessageStorage;
-use Vanilla\Messenger\Service\LoggerService;
-use Vanilla\Messenger\Utility\Algorithms;
-use Vanilla\Messenger\Service\Html2Text;
-use Vanilla\Messenger\Utility\ServerUtility;
+use Fab\Messenger\Exception\MissingFileException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
+use Fab\Messenger\Html2Text\TemplateEngine;
+use Fab\Messenger\Service\MessageStorage;
+use Fab\Messenger\Service\LoggerService;
+use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 
-// Make sure Swift's auto-loader is registered
-require_once PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+// For TYPO3 6.x, make sure Swift's auto-loader is registered.
+// @todo check the situation with 7.x again. Reference https://github.com/fabarea/messenger/pull/8
+$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+if (is_readable($swift1)) {
+	require_once $swift1;
+}
 
 /**
  * Message representation
@@ -105,12 +98,12 @@ class Message {
 	protected $language;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @var \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\Mailing
+	 * @var \Fab\Messenger\Domain\Model\Mailing
 	 */
 	protected $mailing;
 
@@ -120,64 +113,38 @@ class Message {
 	protected $attachments = array();
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageTemplateRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
 	 * @inject
 	 */
 	protected $messageTemplateRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\SentMessageRepository
+	 * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
 	 * @inject
 	 */
 	protected $sentMessageRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\QueueRepository
+	 * @var \Fab\Messenger\Domain\Repository\QueueRepository
 	 * @inject
 	 */
 	protected $queueRepository;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
+	 * @var \Fab\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $messageTemplate;
-
-	/**
-	 * @var \Vanilla\Messenger\Service\Crawler
-	 * @inject
-	 */
-	protected $crawler;
 
 	/**
 	 * @var \TYPO3\CMS\Core\Mail\MailMessage
 	 */
 	protected $mailMessage;
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-			throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
-		}
-
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
-			throw new \Exception('I could not find a sender name. Missing value for "defaultMailFromName"', 1402032686);
-		}
-
-		$this->sender = array(
-			$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] => $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName']
-		);
-
-		$this->getEmailValidator()->validate($this->sender);
-	}
 
 	/**
 	 * Prepares the emails and queue it.
@@ -234,47 +201,21 @@ class Message {
 		}
 
 		// Substitute markers
-		if ($this->isFrontendMode()) {
-			$subject = $this->renderFrontendMode($this->messageTemplate->getSubject());
-			$body = $this->renderFrontendMode($this->messageTemplate->getBody());
-		} else {
-			$subject = $this->renderBackendMode($this->messageTemplate->getSubject(), $this->markers);
-			$body = $this->renderBackendMode($this->messageTemplate->getBody(), $this->markers);
-		}
-
-		// Tamper data in case the Development or Testing context is on.
-		if (!GeneralUtility::getApplicationContext()->isProduction()) {
-			$body = $this->getBodyForApplicationContext($body);
-			$this->to = $this->getRecipientsForDevelopmentContext();
-			// empty "cc" and "bcc" for non-production context -> has been put as debug info in the body of the message.
-			$this->cc = array();
-			$this->bcc = array();
-		}
+		$subject = $this->getContentRenderer()->render($this->messageTemplate->getSubject(), $this->markers);
+		$body = $this->getContentRenderer()->render($this->messageTemplate->getBody(), $this->markers);
 
 		// Parse Markdown only if necessary
-		if ($this->messageTemplate->getTemplateEngine() == 'both') {
+		if ($this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN) {
 			$body = Markdown::defaultTransform($body);
 		}
 
-		$this->getMailMessage()->setTo($this->to)
-			->setFrom($this->sender)
+		$this->getMailMessage()->setTo($this->getTo())
+			->setCc($this->getCc())
+			->setBcc($this->getBcc())
+			->setFrom($this->getSender())
+			->setReplyTo($this->getReplyTo())
 			->setSubject($subject)
 			->setBody($body, 'text/html');
-
-		// Add possible CC.
-		if (!empty($this->cc)) {
-			$this->getMailMessage()->setCc($this->cc);
-		}
-
-		// Add possible BCC.
-		if (!empty($this->bcc)) {
-			$this->getMailMessage()->setBcc($this->bcc);
-		}
-
-		// Add possible reply-to.
-		if (!empty($this->replyTo)) {
-			$this->getMailMessage()->setReplyTo($this->replyTo);
-		}
 
 		// Attach plain text version if HTML tags are found in body
 		if ($this->hasHtml($body)) {
@@ -289,101 +230,9 @@ class Message {
 	}
 
 	/**
-	 * Render content in a Frontend mode.
-	 *
-	 * @param string $content
-	 * @return string the formatted string
-	 */
-	protected function renderFrontendMode($content) {
-		/** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
-		$view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
-		$view->setTemplateSource($content);
-		// If a template file was defined, set its path, so that layouts and partials can be used
-		// NOTE: they have to be located in sub-folders called "Layouts" and "Partials" relative
-		// to the folder where the template is stored.
-		$sourceFile = $this->messageTemplate->getSourceFile();
-		if (!empty($sourceFile)) {
-			$view->setTemplatePathAndFilename(
-					GeneralUtility::getFileAbsFileName($sourceFile)
-			);
-		}
-		$view->assignMultiple($this->markers);
-		return trim($view->render());
-	}
-
-	/**
-	 * Render content in a Backend mode.
-	 * This is required in order to correctly resolve the View Helpers for Fluid in the context of the Backend.
-	 *
-	 * @param $content
-	 * @return string
-	 */
-	protected function renderBackendMode($content) {
-
-		$registryIdentifier = Algorithms::generateUUID();
-		$registryEntry = array(
-			'content' => $content,
-			'markers' => $this->markers,
-		);
-
-		$this->getRegistry()->set('Vanilla\Messenger', $registryIdentifier, $registryEntry);
-
-		$this->crawler->addGetVar('type', 1370537883)
-			->addGetVar('tx_messenger_pi1[registryIdentifier]', $registryIdentifier)
-			->setUrl(ServerUtility::getHostAndProtocol());
-
-		//echo $this->crawler->getFinalUrl(); exit();
-		$formattedBody = $this->crawler->exec();
-		return trim($formattedBody);
-	}
-
-	/**
-	 * Get a body message when email is not in production.
-	 *
-	 * @param string $messageBody
-	 * @return string
-	 */
-	protected function getBodyForApplicationContext($messageBody) {
-		$messageBody = sprintf("%s CONTEXT: this message is for testing purpose. In reality, it would be sent... <br />to: %s<br />%s%s<br />%s",
-			strtoupper((string)GeneralUtility::getApplicationContext()),
-			implode(',', array_keys($this->to)),
-			empty($this->cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($this->cc))),
-				empty($this->bbc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($this->bcc))),
-				empty($this->replyTo) ? '' : sprintf('Reply-To: %s <br/>', implode(',', array_keys($this->replyTo))),
-			$messageBody
-		);
-		return $messageBody;
-	}
-
-	/**
-	 * Get the recipients whe email is not in production.
-	 *
-	 * @throws \Exception
-	 * @return array
-	 */
-	protected function getRecipientsForDevelopmentContext() {
-		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
-		if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients'])) {
-			$message = sprintf('I could not find development recipients. Missing value for $GLOBALS[\'TYPO3_CONF_VARS\'][\'MAIL\'][\'%s\'][\'recipients\']',
-				strtolower($applicationContext)
-			);
-			throw new \Exception($message, 1402031636);
-		}
-
-		$emails = GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$applicationContext]['recipients']);
-
-		$recipients = array();
-		foreach ($emails as $email) {
-			$recipients[$email] = $email;
-		}
-		$this->getEmailValidator()->validate($recipients);
-		return $recipients;
-	}
-
-	/**
 	 * Retrieves the message template object
 	 *
-	 * @return \Vanilla\Messenger\Domain\Model\Mailing
+	 * @return \Fab\Messenger\Domain\Model\Mailing
 	 */
 	public function getMessageTemplate() {
 		return $this->messageTemplate;
@@ -406,48 +255,11 @@ class Message {
 	}
 
 	/**
-	 * Extract Fluid marker from the body or the subject source. A Fluid marker is formatted as follows {foo} .
-	 *
-	 * @param string $messagePart can be Message::BODY or Message::SUBJECT
-	 * @throws \RuntimeException
-	 * @return array
-	 */
-	public function extractMakersFromTemplate($messagePart = '') {
-
-		if (empty($this->messageTemplate)) {
-			throw new \RuntimeException('Messenger: message template was not defined', 1400511070);
-		}
-
-		if ($messagePart === self::SUBJECT) {
-			$content = $this->messageTemplate->getSubject();
-		} elseif ($messagePart === self::BODY) {
-			$content = $this->messageTemplate->getBody();
-		} else {
-			$content = $this->messageTemplate->getSubject();
-			$content .= $this->messageTemplate->getBody();
-		}
-
-		/** @var \TYPO3\CMS\Fluid\Core\Parser\TemplateParser $templateParser */
-		$templateParser = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Parser\TemplateParser');
-		$parsedTemplate = $templateParser->parse($content);
-
-		$markers = array();
-		/** @var ObjectAccessorNode $node */
-		foreach ($parsedTemplate->getRootNode()->getChildNodes() as $node) {
-			if ($node instanceof ObjectAccessorNode) {
-				$markers[] = $node->getObjectPath();
-			}
-		}
-
-		return $markers;
-	}
-
-	/**
 	 * Attach a file to the message.
 	 *
 	 * @throws MissingFileException
 	 * @param string $attachment an absolute path to a file
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function addAttachment($attachment) {
 
@@ -469,27 +281,39 @@ class Message {
 	}
 
 	/**
-	 * Set Markers
+	 * Set multiple markers at once.
 	 *
 	 * @param mixed $values
-	 * @return \Vanilla\Messenger\Domain\Model\Message
-	 * @deprecated
+	 * @return Message
 	 */
 	public function setMarkers($values) {
-		return $this->assignMultiple($values);
+		foreach ($values as $markerName => $value) {
+			$this->addMarker($markerName, $value);
+		}
+		return $this;
+	}
+
+	/**
+	 * Add a new marker and its value.
+	 *
+	 * @param string $markerName
+	 * @param mixed $value
+	 * @return Message
+	 */
+	public function addMarker($markerName, $value) {
+		$this->markers[$markerName] = $value;
+		return $this;
 	}
 
 	/**
 	 * Set Markers
 	 *
 	 * @param mixed $values
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
+	 * @deprecated
 	 */
 	public function assignMultiple(array $values) {
-		foreach ($values as $key => $value) {
-			$this->markers[$key] = $value;
-		}
-		return $this;
+		return $this->setMarkers($values);
 	}
 
 	/**
@@ -497,20 +321,11 @@ class Message {
 	 *
 	 * @param string $markerName
 	 * @param mixed $value
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
+	 * @deprecated
 	 */
 	public function assign($markerName, $value) {
-		$this->markers[$markerName] = $value;
-		return $this;
-	}
-
-	/**
-	 * Returns an instance of the Frontend object.
-	 *
-	 * @return \TYPO3\CMS\Core\Registry
-	 */
-	protected function getRegistry() {
-		return GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
+		return $this->addMarker($markerName, $value);
 	}
 
 	/**
@@ -522,7 +337,7 @@ class Message {
 
 	/**
 	 * @param int $language
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setLanguage($language) {
 		$this->language = $language;
@@ -531,7 +346,7 @@ class Message {
 
 	/**
 	 * @param mixed $recipients
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 * @deprecated as of 2.0 will be removed in 2 version
 	 */
 	public function setRecipients($recipients) {
@@ -539,10 +354,21 @@ class Message {
 	}
 
 	/**
+	 * Return "to" addresses.
+	 * Special case: override "to" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getTo() {
+		return $this->to;
+	}
+
+
+	/**
 	 * Set "to" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setTo($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -551,10 +377,20 @@ class Message {
 	}
 
 	/**
+	 * Return "cc" addresses.
+	 * Special case: there is no "cc" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getCc() {
+		return $this->cc;
+	}
+
+	/**
 	 * Set "cc" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setCc($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -563,10 +399,20 @@ class Message {
 	}
 
 	/**
+	 * Return "bcc" addresses.
+	 * Special case: there is no "bcc" if a redirection has been set for a Context.
+	 *
+	 * @return array
+	 */
+	public function getBcc() {
+		return $this->bcc;
+	}
+
+	/**
 	 * Set "cc" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setBcc($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -575,10 +421,17 @@ class Message {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getReplyTo() {
+		return $this->replyTo;
+	}
+
+	/**
 	 * Set "reply-to" addresses. Should be an array('email' => 'name').
 	 *
 	 * @param mixed $addresses
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setReplyTo($addresses) {
 		$this->getEmailValidator()->validate($addresses);
@@ -588,8 +441,28 @@ class Message {
 
 	/**
 	 * @return array
+	 * @throws \Exception
+	 * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
 	 */
 	public function getSender() {
+
+		// Compute sender from global configuration.
+		if (empty($this->sender)) {
+			if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
+				throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
+			}
+
+			$email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+			if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
+				$name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'];
+			} else {
+				$name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+			}
+
+			$this->sender = array($email => $name);
+			$this->getEmailValidator()->validate($this->sender);
+		}
+
 		return $this->sender;
 	}
 
@@ -597,16 +470,16 @@ class Message {
 	 * Re-set default sender
 	 *
 	 * @param array $sender
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setSender(array $sender) {
-		$this->getEmailValidator()->validate($this->sender);
+		$this->getEmailValidator()->validate($sender);
 		$this->sender = $sender;
 		return $this;
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @return \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		return $this->messageLayout;
@@ -614,13 +487,13 @@ class Message {
 
 	/**
 	 * parameter $messageLayout can be:
-	 *      + \Vanilla\Messenger\Domain\Model\MessageLayout $messageLayout
+	 *      + \Fab\Messenger\Domain\Model\MessageLayout $messageLayout
 	 *      + int $messageLayout which corresponds to an uid
 	 *      + string $messageLayout which corresponds to a value for property "identifier".
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageLayout
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setMessageLayout($messageLayout) {
 
@@ -646,13 +519,13 @@ class Message {
 
 	/**
 	 * parameter $messageTemplate can be:
-	 *      + \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate
+	 *      + \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate
 	 *      + int $messageTemplate which corresponds to an uid
 	 *      + string $messageTemplate which corresponds to a value for property "identifier".
 	 *
 	 * @throws RecordNotFoundException
 	 * @param mixed $messageTemplate
-	 * @return \Vanilla\Messenger\Domain\Model\Message
+	 * @return Message
 	 */
 	public function setMessageTemplate($messageTemplate) {
 
@@ -666,7 +539,7 @@ class Message {
 			}
 			$methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
 
-			/** @var \Vanilla\Messenger\Domain\Model\MessageTemplate $messageTemplate */
+			/** @var \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate */
 			$messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
 			if (is_object($this->getMessageLayout())) {
 				$messageTemplate->setMessageLayout($this->getMessageLayout());
@@ -705,11 +578,11 @@ class Message {
 
 		$values = array(
 			'sender' => $this->formatAddresses($this->getSender()),
-			'recipient' => $this->formatAddresses($this->to), // @todo change me! recipient has been deprecated in favor of "to".
-			'to' => $this->formatAddresses($this->to),
-			'cc' => $this->formatAddresses($this->cc),
-			'bcc' => $this->formatAddresses($this->bcc),
-			'reply_to' => $this->formatAddresses($this->replyTo),
+			'recipient' => $this->formatAddresses($this->getTo()), // @todo change me! recipient has been deprecated in favor of "to".
+			'to' => $this->formatAddresses($this->getTo()),
+			'cc' => $this->formatAddresses($this->getCc()),
+			'bcc' => $this->formatAddresses($this->getBcc()),
+			'reply_to' => $this->formatAddresses($this->getReplyTo()),
 			'subject' => $this->getMailMessage()->getSubject(),
 			'body' => $this->getMailMessage()->getBody(),
 			'attachment' => count($this->getMailMessage()->getChildren()),
@@ -750,24 +623,39 @@ class Message {
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Domain\Model\Mailing
+	 * @return \Fab\Messenger\Domain\Model\Mailing
 	 */
 	public function getMailing() {
 		return $this->mailing;
 	}
 
 	/**
-	 * @param \Vanilla\Messenger\Domain\Model\Mailing $mailing
+	 * @param \Fab\Messenger\Domain\Model\Mailing $mailing
 	 */
 	public function setMailing($mailing) {
 		$this->mailing = $mailing;
 	}
 
 	/**
-	 * @return \Vanilla\Messenger\Validator\EmailValidator
+	 * @return \Fab\Messenger\Validator\EmailValidator
 	 */
 	public function getEmailValidator() {
-		return GeneralUtility::makeInstance('Vanilla\Messenger\Validator\EmailValidator');
+		return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
+	}
+
+	/**
+	 * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
+	 */
+	public function getContentRenderer() {
+
+		if ($this->isFrontendMode()) {
+			/** @var \Fab\Messenger\ContentRenderer\FrontendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\FrontendRenderer', $this->messageTemplate);
+		} else {
+			/** @var \Fab\Messenger\ContentRenderer\BackendRenderer $contentRenderer */
+			$contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\BackendRenderer');
+		}
+		return $contentRenderer;
 	}
 
 	/**
@@ -778,4 +666,5 @@ class Message {
 	protected function isFrontendMode() {
 		return TYPO3_MODE == 'FE';
 	}
+
 }

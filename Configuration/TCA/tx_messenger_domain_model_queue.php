@@ -103,9 +103,7 @@ return array(
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'width' => '5px',
-				'sortable' => FALSE,
-				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+				'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -125,8 +123,7 @@ return array(
 				'width' => '100px',
 			),
 			'__buttons' => array(
-				'sortable' => FALSE,
-				'width' => '70px',
+				'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

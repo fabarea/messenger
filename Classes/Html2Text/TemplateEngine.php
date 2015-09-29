@@ -1,5 +1,5 @@
 <?php
-namespace Fab\Messenger\Exception;
+namespace Fab\Messenger\Html2Text;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -14,9 +14,14 @@ namespace Fab\Messenger\Exception;
  * The TYPO3 project - inspiring people to share!
  */
 
-/**
- *
- */
-class WrongPluginConfigurationException extends \Exception {
+use TYPO3\CMS\Core\Type\Enumeration;
 
+/**
+ * Enumeration object for access template engine.
+ */
+class TemplateEngine extends Enumeration {
+
+	const FLUID_ONLY = 'fluid';
+
+	const FLUID_AND_MARKDOWN = 'both';
 }

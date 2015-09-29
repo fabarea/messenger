@@ -4,7 +4,7 @@ if (!defined('TYPO3_MODE')) {
 }
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-	$_EXTKEY,
+	'messenger',
 	'Pi1',
 	array(
 		'MessageRenderer' => 'render',
@@ -15,6 +15,14 @@ if (!defined('TYPO3_MODE')) {
 	)
 );
 
+// Override classes for the Object Manager
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\CMS\Core\Mail\MailMessage'] = array(
+	'className' => 'Fab\Messenger\Override\Core\Mail\MailMessage'
+);
+
+// eID for resolving Frontend URL in the context of the Backend.
+$GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = 'EXT:messenger/Classes/PagePath/Resolver.php';
+
 # Install PSR-0-compatible class autoloader for Markdown Library in Resources/PHP/Michelf
 spl_autoload_register(function ($class) {
 	if (strpos($class, 'Michelf\Markdown') !== FALSE) {
@@ -24,4 +32,3 @@ spl_autoload_register(function ($class) {
 		);
 	}
 });
-?>

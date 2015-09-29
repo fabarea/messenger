@@ -1,33 +1,23 @@
 <?php
 
-/***************************************************************
- *  Copyright notice
+/**
+ * This file is part of the TYPO3 CMS project.
  *
- *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- *  All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * The TYPO3 project - inspiring people to share!
+ */
+
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \Vanilla\Messenger\Domain\Model\Message.
+ * Test case for class \Fab\Messenger\Domain\Model\Message.
  */
 class MessageTest extends Tx_Messenger_BaseTest {
 
@@ -37,7 +27,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	protected $testingFramework;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\Message
+	 * @var \Fab\Messenger\Domain\Model\Message
 	 */
 	protected $fixture;
 
@@ -69,7 +59,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 			'first_name' => uniqid('first_name_'),
 			'last_name' => uniqid('last_name_'),
 		);
-		$this->fixture = new \Vanilla\Messenger\Domain\Model\Message();
+		$this->fixture = new \Fab\Messenger\Domain\Model\Message();
 		$this->attachment = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Resources/Sample.pdf';
 
 		// Compute temporary directory.
@@ -121,13 +111,13 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForUidOfTypeInt() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
+			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Fab\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -136,13 +126,13 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForUidOfTypeString() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
+			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate((string) $this->uidTemplate);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Fab\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
@@ -151,23 +141,23 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getTemplateReturnsMessageTemplateForIdentifier() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'getTemplate'
+			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
 
 		$this->fixture->setMessageTemplate($this->identifier);
 		$method->setAccessible(TRUE);
 		$this->assertInstanceOf(
-			'Vanilla\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
+			'Fab\Messenger\Domain\Model\MessageTemplate', $method->invoke($this->fixture)
 		);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \Vanilla\Messenger\Exception\RecordNotFoundException
+	 * @expectedException \Fab\Messenger\Exception\RecordNotFoundException
 	 */
 	public function setTemplateRaisesException() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'setTemplate'
+			'Fab\Messenger\Domain\Model\Message', 'setTemplate'
 		);
 
 		$method->setAccessible(TRUE);
@@ -197,7 +187,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		$this->fixture->setTo($this->recipients);
 
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
+			'Fab\Messenger\Domain\Model\Message', 'getRecipientsForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -209,7 +199,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMessageBodyForSimulationPrependsBodyMessage() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
+			'Fab\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
 		);
 
 		$method->setAccessible(TRUE);
@@ -291,7 +281,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 
 	/**
 	 * @test
-	 * @expectedException \Vanilla\Messenger\Exception\MissingFileException
+	 * @expectedException \Fab\Messenger\Exception\MissingFileException
 	 */
 	public function addAttachmentRaisesAnExceptionWhenFileDoesNotExistToMessage() {
 		$attachment = '/unknown/file.pdf';
@@ -328,7 +318,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
 		$method = $setterName . ucfirst($propertyName);
 		$actual = call_user_func_array(array($this->fixture, $method), array($value));
-		$this->assertTrue($actual instanceof \Vanilla\Messenger\Domain\Model\Message);
+		$this->assertTrue($actual instanceof \Fab\Messenger\Domain\Model\Message);
 	}
 
 	/**
@@ -344,4 +334,3 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		);
 	}
 }
-?>

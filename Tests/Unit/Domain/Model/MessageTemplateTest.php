@@ -1,55 +1,40 @@
 <?php
 
-/***************************************************************
- *  Copyright notice
+/**
+ * This file is part of the TYPO3 CMS project.
  *
- *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- *  All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * The TYPO3 project - inspiring people to share!
+ */
+
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
- * Test case for class \Vanilla\Messenger\Domain\Model\MessageTemplate.
+ * Test case for class \Fab\Messenger\Domain\Model\MessageTemplate.
  */
 class MessageTemplateTest extends Tx_Messenger_BaseTest {
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageTemplate
+	 * @var \Fab\Messenger\Domain\Model\MessageTemplate
 	 */
 	protected $fixture;
 
 	public function setUp() {
 		parent::setUp();
-		$this->fixture = new \Vanilla\Messenger\Domain\Model\MessageTemplate();
+		$this->fixture = new \Fab\Messenger\Domain\Model\MessageTemplate();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->fixture);
 	}
-
-	/**
-	 * @test
-	 */
-	public function getSubjectReturnsInitialValueForString() { }
 
 	/**
 	 * @test
@@ -103,7 +88,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	 */
 	public function getMarkerTemplateReturnsDefaultMarker() {
 		$method = new ReflectionMethod(
-			'Vanilla\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
+			'Fab\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
 		);
 
 		$method->setAccessible(TRUE);
@@ -121,4 +106,3 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 		$this->assertEquals($expected, $this->fixture->getBody());
 	}
 }
-?>

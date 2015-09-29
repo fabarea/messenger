@@ -13,7 +13,7 @@ Messenger Extension is a TYPO3 extension for listing recipients in a flexible wa
   alongside with **Fluid View Helper** which will be be rendered when sending the email.
 * A message can be queued and scheduled for mass mailing
 
-.. image:: https://raw.github.com/fudriot/messenger/master/Documentation/Screenshot.png
+.. image:: https://raw.github.com/fabarea/messenger/master/Documentation/Screenshot.png
 
 Project info and releases
 =========================
@@ -22,11 +22,11 @@ Project info and releases
 .. http://typo3.org/extensions/repository/view/messenger (not yet released on the TER)
 
 Development version:
-https://github.com/fudriot/messenger.git
+https://github.com/fabarea/messenger.git
 
 ::
 
-    git clone https://github.com/fudriot/messenger.git
+    git clone https://github.com/fabarea/messenger.git
 
 Flash news about latest development or release
 http://twitter.com/fudriot
@@ -35,6 +35,7 @@ Installation
 ============
 
 Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
+
 
 Message API
 ===========
@@ -54,8 +55,8 @@ Usage::
 	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
 	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+	/** @var \Fab\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
 
 	# Minimum required to be set
 	$message->setMessageTemplate($templateIdentifier)
@@ -103,7 +104,7 @@ View Helper which are bundled with this extension. The first oen is to render a 
 	# Additional attributes
 	<m:widget.show item="markerName" dataType="tx_ext_foo" exclude="{0: 'fieldName'}" displaySystemFields="true"/>
 
-	{namespace m=Vanilla\Messenger\ViewHelpers}
+	{namespace m=Fab\Messenger\ViewHelpers}
 
 Retrieve the body of the email being sent. Useful to display to the User a feedback message
 after a form has been posted which is actually the same as of the email::
@@ -135,11 +136,25 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 
 ::
 
-	/** @var \Vanilla\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Vanilla\Messenger\Domain\Model\Message');
+	/** @var \Fab\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
 	$message->
 		... // same as in the example above
 		->queue();
+
+
+Scheduler tip
+=============
+
+When sending messages using Messenger within a Scheduler task, the base url must be transmitted **as environment variable "TYPO3_BASE_URL"**.
+The reasons is to have Fluid having the good context so that the ViewHelpers work as they would be in the context of the Frontend::
+
+	TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
+
+Additionally, you can set Development context with the environment variable "TYPO3_CONTEXT". Example::
+
+	TYPO3_CONTEXT=Development TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
+
 
 Todo
 ====
@@ -147,7 +162,7 @@ Todo
 Long term goals:
 
 + Provide default FE / BE Users provider in Vidi
-+ The same message can be sent in various language (alpha quality)
++ The same message can be sent in various language
 
 Recipient Interface
 ===================

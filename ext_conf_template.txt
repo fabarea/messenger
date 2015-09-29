@@ -1,5 +1,14 @@
 # cat=basic//3; type=string; label= A root page uid : Define what is the root page of the website. This setting is mandatory only for the Backend to be able to convert Fluid View Helper in a Frontend context.
 rootPageUid = 1
 
-# cat=basic//; type=user[EXT:messenger/Classes/Backend/ExtensionManager.php:Vanilla\Messenger\Backend\ExtensionManager->renderBeModules]; label = Select BE modules to display: Since the extension can be used as standalone library, decide what BE module to show.
+# cat=basic//; type=user[EXT:messenger/Classes/Backend/ExtensionManager.php:Fab\Messenger\Backend\ExtensionManager->renderBeModules]; label = Select BE modules to display: Since the extension can be used as standalone library, decide what BE module to show.
 enabledModules = composer, messagetemplate, messagelayout, mailing, sentmessage, queue
+
+# cat=redirect//; type=string; label= Development redirect to: List of email addresses where to redirect all messages for "development" context. Notice, it can also be defined in $GLOBALS['TYPO3_CONF_VARS']['MAIL']['development_redirect_to'] = 'email@example.com' which will take the precedence if configured so..
+development_redirect_to =
+
+# cat=redirect//; type=string; label= Testing redirect to: List of email addresses where to redirect all messages for "testing" context. Notice, it can also be defined in $GLOBALS['TYPO3_CONF_VARS']['MAIL']['testing_redirect_to'] = 'email@example.com' which will take the precedence  if configured so..
+testing_redirect_to =
+
+# cat=redirect//; type=string; label= Production redirect to: List of email addresses where to redirect all messages for "production" context. Notice, it can also be defined in $GLOBALS['TYPO3_CONF_VARS']['MAIL']['production_redirect_to'] = 'email@example.com' which will take the precedence if configured so..
+production_redirect_to =

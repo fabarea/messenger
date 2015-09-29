@@ -1,5 +1,5 @@
 <?php
-namespace Fab\Messenger\Exception;
+namespace Fab\Messenger\ContentRenderer;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -14,9 +14,17 @@ namespace Fab\Messenger\Exception;
  * The TYPO3 project - inspiring people to share!
  */
 
-/**
- *
- */
-class WrongPluginConfigurationException extends \Exception {
 
+/**
+ * Interface for rendering content.
+ */
+interface ContentRendererInterface {
+
+	/**
+	 *
+	 * @param string $content
+	 * @param array $markers
+	 * @return string
+	 */
+	public function render($content, array $markers);
 }

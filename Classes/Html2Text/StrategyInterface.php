@@ -1,5 +1,5 @@
 <?php
-namespace Fab\Messenger\Exception;
+namespace Fab\Messenger\Html2Text;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -15,8 +15,22 @@ namespace Fab\Messenger\Exception;
  */
 
 /**
- *
+ * Strategy Interface for converting HTML to text.
  */
-class WrongPluginConfigurationException extends \Exception {
+interface StrategyInterface {
 
+	/**
+	 * Convert a given HTML input to Text
+	 *
+	 * @param string $input
+	 * @return string
+	 */
+	public function convert($input);
+
+	/**
+	 * Whether the converter is available
+	 *
+	 * @return boolean
+	 */
+	public function available();
 }

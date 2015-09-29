@@ -187,7 +187,7 @@ Show detail of an item:
 
 <m:widget.show item="markerName" dataType="tx_ext_foo"/>
 
-{namespace m=Vanilla\Messenger\ViewHelpers}
+{namespace m=Fab\Messenger\ViewHelpers}
 			'),
 		),
 		'message_layout' => array(
@@ -211,9 +211,7 @@ Show detail of an item:
 		),
 		'columns' => array(
 			'__checkbox' => array(
-				'width' => '5px',
-				'sortable' => FALSE,
-				'html' => '<input type="checkbox" class="checkbox-row-top"/>',
+				'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
 			),
 			'uid' => array(
 				'visible' => FALSE,
@@ -232,8 +230,7 @@ Show detail of an item:
 //			),
 			'body' => array(),
 			'__buttons' => array(
-				'sortable' => FALSE,
-				'width' => '70px',
+				'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
 			),
 		),
 	),

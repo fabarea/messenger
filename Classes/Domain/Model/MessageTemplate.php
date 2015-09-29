@@ -1,31 +1,23 @@
 <?php
-namespace Vanilla\Messenger\Domain\Model;
-/***************************************************************
- *  Copyright notice
+namespace Fab\Messenger\Domain\Model;
+
+/**
+ * This file is part of the TYPO3 CMS project.
  *
- *  (c) 2014 Fabien Udriot <fabien.udriot@typo3.org>
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- *  All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * The TYPO3 project - inspiring people to share!
+ */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Vanilla\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 
 /**
  * Message Template representation
@@ -73,7 +65,7 @@ class MessageTemplate extends AbstractEntity {
 	protected $layoutBody;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @var \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	protected $messageLayout;
 
@@ -83,7 +75,7 @@ class MessageTemplate extends AbstractEntity {
 	protected $templateEngine;
 
 	/**
-	 * @var \Vanilla\Messenger\Domain\Repository\MessageLayoutRepository
+	 * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
 	 * @inject
 	 */
 	protected $messageLayoutRepository;
@@ -135,7 +127,8 @@ class MessageTemplate extends AbstractEntity {
 		} elseif ($this->type === self::TYPE_FILE) {
 			$file = GeneralUtility::getFileAbsFileName($this->sourceFile);
 			if (!is_file($file)) {
-				throw new \Exception('Messenger: I could not found file ' . $file, 1400517074);
+				$message = sprintf('Messenger: I could not found file "%s"', $file);
+				throw new \Exception($message, 1400517074);
 			}
 			$this->body = file_get_contents($file);
 		}
@@ -173,12 +166,12 @@ class MessageTemplate extends AbstractEntity {
 	}
 
 	/**
-	 * @throws \Vanilla\Messenger\Exception\RecordNotFoundException
-	 * @return \Vanilla\Messenger\Domain\Model\MessageLayout
+	 * @throws \Fab\Messenger\Exception\RecordNotFoundException
+	 * @return \Fab\Messenger\Domain\Model\MessageLayout
 	 */
 	public function getMessageLayout() {
 		if (!is_object($this->messageLayout)) {
-			/** @var $layout \Vanilla\Messenger\Domain\Model\MessageLayout */
+			/** @var $layout \Fab\Messenger\Domain\Model\MessageLayout */
 			$this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
 			if (!$this->messageLayout) {
 				$message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
@@ -255,6 +248,9 @@ class MessageTemplate extends AbstractEntity {
 	 * @return string
 	 */
 	public function getTemplateEngine() {
+		if (empty($this->templateEngine)) {
+			$this->templateEngine = TemplateEngine::FLUID_AND_MARKDOWN;
+		}
 		return $this->templateEngine;
 	}
 }
