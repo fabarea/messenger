@@ -36,12 +36,15 @@ class ValueViewHelper extends AbstractViewHelper {
 		$fieldName = $this->templateVariableContainer->get('fieldName');
 
 		if ($value instanceof ObjectStorage) {
-			$object = $value->current();
-
 			// special case for file reference which is ok to be hardcoded
-			if ($object instanceof FileReference) {
-				$value = $object->getOriginalResource()->getName();
+			$objectsArray = $value->toArray();
+			$value = array();
+			foreach($objectsArray as $object) {
+				if ($object instanceof FileReference) {
+					$value[] = $object->getOriginalResource()->getName();
+				}
 			}
+			$value = implode(', ', $value);
 		} elseif ($this->templateVariableContainer->exists('dataType')) {
 			$dataType = $this->templateVariableContainer->get('dataType');
 			$fieldType = Tca::table($dataType)->field($fieldName)->getType();
