@@ -46,6 +46,11 @@ class IsVisibleViewHelper extends AbstractViewHelper {
 			return FALSE;
 		}
 
+		// Early return if the value is countable and contains nothing
+		if ($value instanceof \Countable && $value->count() === 0) {
+			return FALSE;
+		}
+
 		$isVisible = TRUE;
 
 
