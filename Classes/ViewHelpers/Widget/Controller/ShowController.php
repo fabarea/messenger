@@ -19,15 +19,17 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 /**
  * Controller for the "show" widget.
  */
-class ShowController extends AbstractWidgetController {
+class ShowController extends AbstractWidgetController
+{
 
-	/**
-	 * @return void
-	 */
-	public function indexAction() {
-		$this->view->assign('dataType', $this->widgetConfiguration['dataType']);
-		$this->view->assign('exclude', $this->widgetConfiguration['exclude']);
-		$this->view->assign('displaySystemFields', $this->widgetConfiguration['displaySystemFields']);
-		$this->view->assign('item', $this->widgetConfiguration['item']);
-	}
+    /**
+     * @return void
+     */
+    public function indexAction()
+    {
+        $this->view->assign('dataType', $this->widgetConfiguration['dataType']);
+        $this->view->assign('exclude', $this->widgetConfiguration['exclude']);
+        $this->view->assign('displaySystemFields', $this->widgetConfiguration['displaySystemFields']);
+        $this->view->assign('item', $this->widgetConfiguration['item']);
+    }
 }

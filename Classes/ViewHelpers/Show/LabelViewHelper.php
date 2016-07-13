@@ -20,20 +20,22 @@ use Fab\Vidi\Tca\Tca;
 /**
  * View helper which renders a label given by the fieldName in the context.
  */
-class LabelViewHelper extends AbstractViewHelper {
+class LabelViewHelper extends AbstractViewHelper
+{
 
-	/**
-	 * Return a label given by the fieldName in the context.
-	 *
-	 * @return string
-	 */
-	public function render() {
-		$label = '';
-		$fieldName = $this->templateVariableContainer->get('fieldName');
-		if ($this->templateVariableContainer->exists('dataType')) {
-			$dataType = $this->templateVariableContainer->get('dataType');
-			$label = Tca::table($dataType)->field($fieldName)->getLabel();
-		}
-		return $label;
-	}
+    /**
+     * Return a label given by the fieldName in the context.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        $label = '';
+        $fieldName = $this->templateVariableContainer->get('fieldName');
+        if ($this->templateVariableContainer->exists('dataType')) {
+            $dataType = $this->templateVariableContainer->get('dataType');
+            $label = Tca::table($dataType)->field($fieldName)->getLabel();
+        }
+        return $label;
+    }
 }

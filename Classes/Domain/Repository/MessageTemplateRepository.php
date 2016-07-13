@@ -19,36 +19,39 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 /**
  * @todo check how to handle language flag.
  */
-class MessageTemplateRepository extends Repository {
+class MessageTemplateRepository extends Repository
+{
 
-	/**
-	 * Initialize Repository
-	 */
-	public function initializeObject() {
-		$querySettings = $this->objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings');
-		$querySettings->setRespectStoragePage(FALSE);
-		$this->setDefaultQuerySettings($querySettings);
-	}
+    /**
+     * Initialize Repository
+     */
+    public function initializeObject()
+    {
+        $querySettings = $this->objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings');
+        $querySettings->setRespectStoragePage(FALSE);
+        $this->setDefaultQuerySettings($querySettings);
+    }
 
-	/**
-	 * Finds an object given a qualifier name.
-	 *
-	 * @param string $qualifier
-	 * @return object|NULL
-	 * @api
-	 */
-	public function findByQualifier($qualifier) {
-		$query = $this->createQuery();
-		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
-		$query->getQuerySettings()->setRespectStoragePage(FALSE);
-		$object = $query
-			->matching(
-				$query->equals('qualifier', $qualifier)
-			)
-			->execute()
-			->getFirst();
-		return $object;
-	}
+    /**
+     * Finds an object given a qualifier name.
+     *
+     * @param string $qualifier
+     * @return object|NULL
+     * @api
+     */
+    public function findByQualifier($qualifier)
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectSysLanguage(FALSE);
+        $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $object = $query
+            ->matching(
+                $query->equals('qualifier', $qualifier)
+            )
+            ->execute()
+            ->getFirst();
+        return $object;
+    }
 
 //	/** @todo resolve overlays of record
 //	 * Finds a template record by its identifier.

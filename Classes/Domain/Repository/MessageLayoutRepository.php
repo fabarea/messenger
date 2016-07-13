@@ -20,27 +20,29 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
  *
  * @todo check how to handle language flag.
  */
-class MessageLayoutRepository extends Repository {
+class MessageLayoutRepository extends Repository
+{
 
-	/**
-	 * Finds an object given a qualifier name.
-	 *
-	 * @param string $qualifier
-	 * @return object|NULL
-	 * @api
-	 */
-	public function findByQualifier($qualifier) {
-		$query = $this->createQuery();
-		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
-		$query->getQuerySettings()->setRespectStoragePage(FALSE);
-		$object = $query
-			->matching(
-				$query->equals('qualifier', $qualifier)
-			)
-			->execute()
-			->getFirst();
-		return $object;
-	}
+    /**
+     * Finds an object given a qualifier name.
+     *
+     * @param string $qualifier
+     * @return object|NULL
+     * @api
+     */
+    public function findByQualifier($qualifier)
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectSysLanguage(FALSE);
+        $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $object = $query
+            ->matching(
+                $query->equals('qualifier', $qualifier)
+            )
+            ->execute()
+            ->getFirst();
+        return $object;
+    }
 
 
 

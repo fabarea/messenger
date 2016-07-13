@@ -19,52 +19,58 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /**
  * Message Layout representation
  */
-class MessageLayout extends AbstractEntity {
+class MessageLayout extends AbstractEntity
+{
 
-	/**
-	 * @var string
-	 */
-	protected $identifier;
+    /**
+     * @var string
+     */
+    protected $identifier;
 
-	/**
-	 * @var string
-	 */
-	protected $content;
+    /**
+     * @var string
+     */
+    protected $content;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct(array $data = array()) {
-		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
-		$this->content = !empty($data['content']) ? $data['content'] : '';
-	}
+    /**
+     * Constructor
+     */
+    public function __construct(array $data = array())
+    {
+        $this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
+        $this->content = !empty($data['content']) ? $data['content'] : '';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return $this->identifier;
-	}
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
 
-	/**
-	 * @param string $identifier
-	 */
-	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
-	}
+    /**
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getContent() {
-		return $this->content;
-	}
+    /**
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
 
-	/**
-	 * @param string $content
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
+    /**
+     * @param string $content
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
 
 }

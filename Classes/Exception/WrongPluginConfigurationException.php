@@ -17,6 +17,7 @@ namespace Fab\Messenger\Exception;
 /**
  *
  */
-class WrongPluginConfigurationException extends \Exception {
+class WrongPluginConfigurationException extends \Exception
+{
 
 }

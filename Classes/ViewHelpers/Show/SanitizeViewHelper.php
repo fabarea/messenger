@@ -21,44 +21,48 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * View helper which makes possible to traverse an object as for an associative array(key => value).
  */
-class SanitizeViewHelper extends AbstractViewHelper {
+class SanitizeViewHelper extends AbstractViewHelper
+{
 
-	/**
-	 * Return a traversable object as for an associative array(key => value).
-	 *
-	 * @param mixed $item
-	 * @return string
-	 */
-	public function render($item) {
-		$item = $this->makeItemTraversable($item);
-		$item = $this->convertPropertiesToFields($item);
-		return $item;
-	}
+    /**
+     * Return a traversable object as for an associative array(key => value).
+     *
+     * @param mixed $item
+     * @return string
+     */
+    public function render($item)
+    {
+        $item = $this->makeItemTraversable($item);
+        $item = $this->convertPropertiesToFields($item);
+        return $item;
+    }
 
-	/**
-	 * @param mixed $item
-	 * @return string
-	 */
-	protected function convertPropertiesToFields($item) {
-		$convertedItem = array();
-		foreach ($item as $propertyName => $value) {
-			$fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
-			$convertedItem[$fieldName] = $value;
-		}
-		return $convertedItem;
-	}
+    /**
+     * @param mixed $item
+     * @return string
+     */
+    protected function convertPropertiesToFields($item)
+    {
+        $convertedItem = array();
+        foreach ($item as $propertyName => $value) {
+            $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
+            $convertedItem[$fieldName] = $value;
+        }
+        return $convertedItem;
+    }
 
-	/**
-	 * Return a traversable object as for an associative array(key => value).
-	 *
-	 * @param mixed $item
-	 * @return string
-	 */
-	protected function makeItemTraversable($item) {
-		if ($item instanceof AbstractEntity) {
-			$item = $item->_getProperties();
-		}
-		return $item;
-	}
+    /**
+     * Return a traversable object as for an associative array(key => value).
+     *
+     * @param mixed $item
+     * @return string
+     */
+    protected function makeItemTraversable($item)
+    {
+        if ($item instanceof AbstractEntity) {
+            $item = $item->_getProperties();
+        }
+        return $item;
+    }
 
 }

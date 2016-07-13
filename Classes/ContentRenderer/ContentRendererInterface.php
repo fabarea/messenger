@@ -18,13 +18,14 @@ namespace Fab\Messenger\ContentRenderer;
 /**
  * Interface for rendering content.
  */
-interface ContentRendererInterface {
+interface ContentRendererInterface
+{
 
-	/**
-	 *
-	 * @param string $content
-	 * @param array $markers
-	 * @return string
-	 */
-	public function render($content, array $markers);
+    /**
+     *
+     * @param string $content
+     * @param array $markers
+     * @return string
+     */
+    public function render($content, array $markers);
 }

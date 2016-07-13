@@ -19,31 +19,35 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /**
  * Mailing representation
  */
-class Mailing extends AbstractEntity {
+class Mailing extends AbstractEntity
+{
 
-	/**
-	 * @var string
-	 */
-	protected $identifier;
+    /**
+     * @var string
+     */
+    protected $identifier;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct(array $data = array()) {
-		$this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
-	}
+    /**
+     * Constructor
+     */
+    public function __construct(array $data = array())
+    {
+        $this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getIdentifier() {
-		return $this->identifier;
-	}
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
 
-	/**
-	 * @param string $identifier
-	 */
-	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
-	}
+    /**
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
 }

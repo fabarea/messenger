@@ -17,6 +17,7 @@ namespace Fab\Messenger\Exception;
 /**
  *
  */
-class RecordNotFoundException extends \Exception {
+class RecordNotFoundException extends \Exception
+{
 
 }

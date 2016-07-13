@@ -20,44 +20,47 @@ use Fab\Vidi\Tca\Tca;
 /**
  * A repository for handling sent message
  */
-class SentMessageRepository extends Repository {
+class SentMessageRepository extends Repository
+{
 
-	/**
-	 * @var string
-	 */
-	protected $tableName = 'tx_messenger_domain_model_sentmessage';
+    /**
+     * @var string
+     */
+    protected $tableName = 'tx_messenger_domain_model_sentmessage';
 
-	/**
-	 * @param array $message
-	 * @throws \Exception
-	 * @return int
-	 */
-	public function add($message){
+    /**
+     * @param array $message
+     * @throws \Exception
+     * @return int
+     */
+    public function add($message)
+    {
 
-		$values = array();
-		$values['tstamp'] = $values['crdate'] = time(); // default values
+        $values = array();
+        $values['tstamp'] = $values['crdate'] = time(); // default values
 
-		// Make sure fields are allowed for this table.
-		$fields = Tca::table($this->tableName)->getFields();
-		foreach ($message as $fieldName => $value) {
-			if (in_array($fieldName, $fields)) {
-				$values[$fieldName] = $value;
-			}
-		}
+        // Make sure fields are allowed for this table.
+        $fields = Tca::table($this->tableName)->getFields();
+        foreach ($message as $fieldName => $value) {
+            if (in_array($fieldName, $fields)) {
+                $values[$fieldName] = $value;
+            }
+        }
 
-		$result = $this->getDatabaseConnection()->exec_INSERTquery($this->tableName, $values);
-		if (!$result) {
-			throw new \Exception('I could not save the message as "sent message"', 1389721852);
-		}
-		return $this->getDatabaseConnection()->sql_insert_id();
-	}
+        $result = $this->getDatabaseConnection()->exec_INSERTquery($this->tableName, $values);
+        if (!$result) {
+            throw new \Exception('I could not save the message as "sent message"', 1389721852);
+        }
+        return $this->getDatabaseConnection()->sql_insert_id();
+    }
 
-	/**
-	 * Returns a pointer to the database.
-	 *
-	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
-	 */
-	protected function getDatabaseConnection() {
-		return $GLOBALS['TYPO3_DB'];
-	}
+    /**
+     * Returns a pointer to the database.
+     *
+     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     */
+    protected function getDatabaseConnection()
+    {
+        return $GLOBALS['TYPO3_DB'];
+    }
 }

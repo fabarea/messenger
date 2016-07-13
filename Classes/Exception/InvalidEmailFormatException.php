@@ -17,6 +17,7 @@ namespace Fab\Messenger\Exception;
 /**
  *
  */
-class InvalidEmailFormatException extends \Exception {
+class InvalidEmailFormatException extends \Exception
+{
 
 }

@@ -19,9 +19,10 @@ use TYPO3\CMS\Core\Type\Enumeration;
 /**
  * Enumeration object for access template engine.
  */
-class TemplateEngine extends Enumeration {
+class TemplateEngine extends Enumeration
+{
 
-	const FLUID_ONLY = 'fluid';
+    const FLUID_ONLY = 'fluid';
 
-	const FLUID_AND_MARKDOWN = 'both';
+    const FLUID_AND_MARKDOWN = 'both';
 }

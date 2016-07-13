@@ -17,32 +17,34 @@ namespace Fab\Messenger\Controller;
 /**
  * A controller for managing the queue.
  */
-class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+class QueueController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+{
 
-	/**
-	 * @var \Fab\Messenger\Domain\Repository\QueueRepository
-	 * @inject
-	 */
-	protected $queueRepository;
+    /**
+     * @var \Fab\Messenger\Domain\Repository\QueueRepository
+     * @inject
+     */
+    protected $queueRepository;
 
-	/**
-	 * Fetch message from the queue and send them.
-	 *
-	 * @return void
-	 */
-	public function processAction() {
+    /**
+     * Fetch message from the queue and send them.
+     *
+     * @return void
+     */
+    public function processAction()
+    {
 
-		// @todo get this limit by configuration.
-		$limit = 100;
-		$queuedMessages = $this->queueRepository->fetch($limit);
+        // @todo get this limit by configuration.
+        $limit = 100;
+        $queuedMessages = $this->queueRepository->fetch($limit);
 
-		foreach ($queuedMessages as $queuedMessage) {
+        foreach ($queuedMessages as $queuedMessage) {
 
-			/** @var \Fab\Messenger\Domain\Model\Message $message */
-			$message = $this->objectManager->get('Fab\Messenger\Domain\Model\Message');
-			// @todo
-			$message->hydrate($queuedMessage);
-			$message->send();
-		}
-	}
+            /** @var \Fab\Messenger\Domain\Model\Message $message */
+            $message = $this->objectManager->get('Fab\Messenger\Domain\Model\Message');
+            // @todo
+            $message->hydrate($queuedMessage);
+            $message->send();
+        }
+    }
 }

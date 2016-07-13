@@ -17,20 +17,21 @@ namespace Fab\Messenger\Html2Text;
 /**
  * Strategy Interface for converting HTML to text.
  */
-interface StrategyInterface {
+interface StrategyInterface
+{
 
-	/**
-	 * Convert a given HTML input to Text
-	 *
-	 * @param string $input
-	 * @return string
-	 */
-	public function convert($input);
+    /**
+     * Convert a given HTML input to Text
+     *
+     * @param string $input
+     * @return string
+     */
+    public function convert($input);
 
-	/**
-	 * Whether the converter is available
-	 *
-	 * @return boolean
-	 */
-	public function available();
+    /**
+     * Whether the converter is available
+     *
+     * @return boolean
+     */
+    public function available();
 }

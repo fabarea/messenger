@@ -21,43 +21,46 @@ use Fab\Messenger\Utility\ConfigurationUtility;
 /**
  * Class providing service for redirection of emails
  */
-class RedirectService implements SingletonInterface {
+class RedirectService implements SingletonInterface
+{
 
-	/**
-	 * Get possible redirect recipients.
-	 *
-	 * @return array
-	 */
-	public function redirectionForCurrentContext() {
+    /**
+     * Get possible redirect recipients.
+     *
+     * @return array
+     */
+    public function redirectionForCurrentContext()
+    {
 
-		// Fetch email from PHP configuration array at first.
-		$applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
-		$key = $applicationContext . '_redirect_to';
-		if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
-			$recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
-		} else {
-			$recipientList = ConfigurationUtility::getInstance()->get($key);
-		}
+        // Fetch email from PHP configuration array at first.
+        $applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
+        $key = $applicationContext . '_redirect_to';
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
+            $recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
+        } else {
+            $recipientList = ConfigurationUtility::getInstance()->get($key);
+        }
 
-		$recipients = array();
-		if (strlen(trim($recipientList))> 0) {
-			$emails = GeneralUtility::trimExplode(',', $recipientList);
+        $recipients = array();
+        if (strlen(trim($recipientList)) > 0) {
+            $emails = GeneralUtility::trimExplode(',', $recipientList);
 
-			foreach ($emails as $email) {
-				$recipients[$email] = $email;
-			}
+            foreach ($emails as $email) {
+                $recipients[$email] = $email;
+            }
 
-			$this->getEmailValidator()->validate($recipients);
-		}
+            $this->getEmailValidator()->validate($recipients);
+        }
 
-		return $recipients;
-	}
+        return $recipients;
+    }
 
-	/**
-	 * @return \Fab\Messenger\Validator\EmailValidator
-	 */
-	public function getEmailValidator() {
-		return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
-	}
+    /**
+     * @return \Fab\Messenger\Validator\EmailValidator
+     */
+    public function getEmailValidator()
+    {
+        return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
+    }
 
 }

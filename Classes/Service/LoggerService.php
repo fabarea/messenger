@@ -19,18 +19,20 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * A class to return an appropriate logger.
  */
-class LoggerService {
+class LoggerService
+{
 
-	/**
-	 * @param object $object
-	 * @return \TYPO3\CMS\Core\Log\Logger
-	 */
-	static public function getLogger($object) {
+    /**
+     * @param object $object
+     * @return \TYPO3\CMS\Core\Log\Logger
+     */
+    static public function getLogger($object)
+    {
 
-		/** @var $loggerManager \TYPO3\CMS\Core\Log\LogManager */
-		$loggerManager = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager');
+        /** @var $loggerManager \TYPO3\CMS\Core\Log\LogManager */
+        $loggerManager = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager');
 
-		/** @var $logger \TYPO3\CMS\Core\Log\Logger */
-		return $loggerManager->getLogger(get_class($object));
-	}
+        /** @var $logger \TYPO3\CMS\Core\Log\Logger */
+        return $loggerManager->getLogger(get_class($object));
+    }
 }

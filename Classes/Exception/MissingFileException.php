@@ -17,6 +17,7 @@ namespace Fab\Messenger\Exception;
 /**
  *
  */
-class MissingFileException extends \Exception {
+class MissingFileException extends \Exception
+{
 
 }

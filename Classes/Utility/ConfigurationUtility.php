@@ -21,72 +21,79 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 /**
  * A class for handling configuration of the extension
  */
-class ConfigurationUtility implements SingletonInterface {
+class ConfigurationUtility implements SingletonInterface
+{
 
-	/**
-	 * @var array
-	 */
-	protected $configuration = array();
+    /**
+     * @var array
+     */
+    protected $configuration = array();
 
-	/**
-	 * Returns a class instance.
-	 *
-	 * @return \Fab\Messenger\Utility\ConfigurationUtility
-	 */
-	static public function getInstance() {
-		return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
-	}
+    /**
+     * Returns a class instance.
+     *
+     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     */
+    static public function getInstance()
+    {
+        return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @return \Fab\Messenger\Utility\ConfigurationUtility
-	 */
-	public function __construct() {
+    /**
+     * Constructor
+     *
+     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     */
+    public function __construct()
+    {
 
-		/** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-		$configurationUtility = $this->getObjectManager()->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-		$configuration = $configurationUtility->getCurrentConfiguration('messenger');
+        /** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
+        $configurationUtility = $this->getObjectManager()->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+        $configuration = $configurationUtility->getCurrentConfiguration('messenger');
 
-		// Fill up configuration array with relevant values.
-		foreach ($configuration as $key => $data) {
-			$this->configuration[$key] = $data['value'];
-		}
-	}
+        // Fill up configuration array with relevant values.
+        foreach ($configuration as $key => $data) {
+            $this->configuration[$key] = $data['value'];
+        }
+    }
 
-	/**
-	 * @return ObjectManager
-	 */
-	protected function getObjectManager() {
-		return GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
-	}
+    /**
+     * @return ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        return GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+    }
 
-	/**
-	 * Returns a setting key.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key) {
-		return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : NULL;
-	}
+    /**
+     * Returns a setting key.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : NULL;
+    }
 
-	/**
-	 * Set a setting key.
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 */
-	public function set($key, $value) {
-		$this->configuration[$key] = $value;
-	}
+    /**
+     * Set a setting key.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function set($key, $value)
+    {
+        $this->configuration[$key] = $value;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getConfiguration() {
-		return $this->configuration;
-	}
+    /**
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
 
 }

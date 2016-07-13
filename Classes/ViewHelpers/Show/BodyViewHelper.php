@@ -20,15 +20,17 @@ use Fab\Messenger\Service\MessageStorage;
 /**
  * View helper which return a key from the storage.
  */
-class BodyViewHelper extends AbstractViewHelper {
+class BodyViewHelper extends AbstractViewHelper
+{
 
-	/**
-	 * Return a key from the storage.
-	 *
-	 * @param string $identifier
-	 * @return string|NULL
-	 */
-	public function render($identifier) {
-		return MessageStorage::getInstance()->get($identifier);
-	}
+    /**
+     * Return a key from the storage.
+     *
+     * @param string $identifier
+     * @return string|NULL
+     */
+    public function render($identifier)
+    {
+        return MessageStorage::getInstance()->get($identifier);
+    }
 }

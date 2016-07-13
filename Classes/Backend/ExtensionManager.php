@@ -19,56 +19,59 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Integration with the Extension Manager
  */
-class ExtensionManager {
+class ExtensionManager
+{
 
-	/**
-	 * The extension key
-	 *
-	 * @var string
-	 */
-	protected $extensionKey = 'messenger';
+    /**
+     * The extension key
+     *
+     * @var string
+     */
+    protected $extensionKey = 'messenger';
 
-	/**
-	 * The Configuration array
-	 *
-	 * @var array
-	 */
-	protected $configuration = array();
+    /**
+     * The Configuration array
+     *
+     * @var array
+     */
+    protected $configuration = array();
 
-	/**
-	 * The Configuration array
-	 *
-	 * @var array
-	 */
-	protected $modules = array(
-		'messagetemplate' => 'Message Template',
-		'messagelayout' => 'Message Layout',
-		'mailing' => 'Mailing',
-		'sentmessage' => 'Sent message',
-		'queue' => 'Queue'
-	);
-	/**
-	 * Render the BE modules list
-	 *
-	 * @return string
-	 */
-	public function renderBeModules() {
+    /**
+     * The Configuration array
+     *
+     * @var array
+     */
+    protected $modules = array(
+        'messagetemplate' => 'Message Template',
+        'messagelayout' => 'Message Layout',
+        'mailing' => 'Mailing',
+        'sentmessage' => 'Sent message',
+        'queue' => 'Queue'
+    );
 
-		$configuration = $this->getConfiguration();
+    /**
+     * Render the BE modules list
+     *
+     * @return string
+     */
+    public function renderBeModules()
+    {
 
-		$options = '';
-		$enableModules = GeneralUtility::trimExplode(',', $configuration['enabledModules']);
+        $configuration = $this->getConfiguration();
 
-		foreach ($this->modules as $moduleKey => $moduleName) {
-			$checked = '';
+        $options = '';
+        $enableModules = GeneralUtility::trimExplode(',', $configuration['enabledModules']);
 
-			if (in_array($moduleKey, $enableModules)) {
-				$checked = 'checked="checked"';
-			}
-			$options .= '<label><input type="checkbox" class="fieldEnabledModules" value="' . $moduleKey . '" ' . $checked . ' /> ' . $moduleName . '</label>';
-		}
+        foreach ($this->modules as $moduleKey => $moduleName) {
+            $checked = '';
 
-		$output = <<<EOF
+            if (in_array($moduleKey, $enableModules)) {
+                $checked = 'checked="checked"';
+            }
+            $options .= '<label><input type="checkbox" class="fieldEnabledModules" value="' . $moduleKey . '" ' . $checked . ' /> ' . $moduleName . '</label>';
+        }
+
+        $output = <<<EOF
 				<div class="typo3-tstemplate-ceditor-row" id="userTS-enabledModules">
 					<script type="text/javascript">
 						(function($) {
@@ -93,30 +96,31 @@ class ExtensionManager {
 				</div>
 EOF;
 
-		return $output;
-	}
+        return $output;
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @return array
-	 */
-	protected function getConfiguration() {
+    /**
+     * Constructor
+     *
+     * @return array
+     */
+    protected function getConfiguration()
+    {
 
-		/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
-		$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+        /** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-		/** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-		$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-		$rawConfiguration = $configurationUtility->getCurrentConfiguration($this->extensionKey);
+        /** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
+        $configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+        $rawConfiguration = $configurationUtility->getCurrentConfiguration($this->extensionKey);
 
-		$configuration = array();
-		// Fill up configuration array with relevant values.
-		foreach ($rawConfiguration as $key => $data) {
-			$configuration[$key] = $data['value'];
-		}
+        $configuration = array();
+        // Fill up configuration array with relevant values.
+        foreach ($rawConfiguration as $key => $data) {
+            $configuration[$key] = $data['value'];
+        }
 
-		return $configuration;
-	}
+        return $configuration;
+    }
 
 }
