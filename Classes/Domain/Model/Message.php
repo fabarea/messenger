@@ -332,7 +332,6 @@ class Message
      * @param string $markerName
      * @param mixed $value
      * @return Message
-     * @deprecated
      */
     public function assign($markerName, $value)
     {
