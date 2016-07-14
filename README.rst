@@ -53,14 +53,14 @@ Usage::
 	$pathToFile = 'some-path-to-file'; // @todo replace me with FAL identifier
 
 	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
-	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::messenger);
 
 	/** @var \Fab\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
+	$message = $objectManager->get(Fab\Messenger\Domain\Model\Message:class);
 
 	# Minimum required to be set
 	$message->setMessageTemplate($templateIdentifier)
-		->setTo($recipients)
+		->setTo($recipients);
 
 	# Additional setter
 	$message->assign('foo', $bar)
