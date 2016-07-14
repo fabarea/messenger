@@ -14,6 +14,7 @@ namespace Fab\Messenger\Override\Core\Mail;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\Messenger\Redirect\RedirectService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -70,11 +71,12 @@ class MailMessage extends \TYPO3\CMS\Core\Mail\MailMessage
     }
 
     /**
-     * @return \Fab\Messenger\Redirect\RedirectService
+     * @return RedirectService
+     * @throws \InvalidArgumentException
      */
     public function getRedirectService()
     {
-        return GeneralUtility::makeInstance('\Fab\Messenger\Redirect\RedirectService');
+        return GeneralUtility::makeInstance(RedirectService::class);
     }
 
 }
