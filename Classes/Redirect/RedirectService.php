@@ -14,6 +14,7 @@ namespace Fab\Messenger\Redirect;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\Messenger\Validator\EmailValidator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Messenger\Utility\ConfigurationUtility;
@@ -28,12 +29,18 @@ class RedirectService implements SingletonInterface
      * Get possible redirect recipients.
      *
      * @return array
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
     public function redirectionForCurrentContext()
     {
 
         // Fetch email from PHP configuration array at first.
-        $applicationContext = strtolower((string)GeneralUtility::getApplicationContext());
+        $applicationContext = (string)GeneralUtility::getApplicationContext()->getParent();
+        if (empty($applicationContext)) {
+            $applicationContext = (string)GeneralUtility::getApplicationContext();
+        }
+        $applicationContext = strtolower($applicationContext);
+
         $key = $applicationContext . '_redirect_to';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
             $recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
@@ -56,11 +63,11 @@ class RedirectService implements SingletonInterface
     }
 
     /**
-     * @return \Fab\Messenger\Validator\EmailValidator
+     * @return EmailValidator
      */
     public function getEmailValidator()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
+        return GeneralUtility::makeInstance(EmailValidator::class);
     }
 
 }
