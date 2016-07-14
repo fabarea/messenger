@@ -1,12 +1,28 @@
 {
 	"name": "fab/messenger",
 	"type": "typo3-cms-extension",
-	"description": "Send emails to a bunch of people. A message is wrapped in a template / layout that the User can freely edit in a BE module.",
-	"homepage": "https://github.com/fudriot/messenger",
-	"license": ["GPL-2.0+"],
-	"keywords": ["TYPO3 CMS", "mailing", "email", "newsletter", "api"],
+	"description": "Send emails to a bunch of people. A message is wrapped in a template / layout that a BE user can freely edit in a BE module.",
+	"homepage": "https://github.com/fabarea/messenger",
+	"license": [
+		"GPL-2.0+"
+	],
+	"keywords": [
+		"TYPO3 CMS",
+		"mailing",
+		"email",
+		"newsletter",
+		"api"
+	],
 	"support": {
-		"issues": "https://github.com/fudriot/messenger/issues"
+		"issues": "https://github.com/fabarea/messenger/issues"
 	},
-	"version": "2.0.0-dev"
+	"autoload": {
+		"psr-4": {
+			"Fab\\Messenger\\": "Classes/"
+		}
+	},
+	"replace": {
+		"messenger": "self.version",
+		"typo3-ter/messenger": "self.version"
+	}
 }
