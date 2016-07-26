@@ -114,7 +114,7 @@ Footer to be replaced...
         ],
         'columns' => [
             '__checkbox' => [
-                'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
+                'renderer' => new \Fab\Vidi\Grid\CheckBoxRenderer(),
             ],
             'uid' => [
                 'visible' => FALSE,
@@ -126,7 +126,7 @@ Footer to be replaced...
             ],
             'content' => [],
             '__buttons' => [
-                'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
+                'renderer' => new \Fab\Vidi\Grid\ButtonGroupRenderer(),
             ],
         ],
     ],

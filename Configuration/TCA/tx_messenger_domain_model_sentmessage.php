@@ -125,7 +125,7 @@ return [
         ],
         'columns' => [
             '__checkbox' => [
-                'renderer' => new \Fab\Vidi\Grid\CheckBoxComponent(),
+                'renderer' => new \Fab\Vidi\Grid\CheckBoxRenderer(),
             ],
             'uid' => [
                 'visible' => FALSE,
@@ -153,7 +153,7 @@ return [
                 'width' => '100px',
             ],
             '__buttons' => [
-                'renderer' => new \Fab\Vidi\Grid\ButtonGroupComponent(),
+                'renderer' => new \Fab\Vidi\Grid\ButtonGroupRenderer(),
             ],
         ],
     ],
