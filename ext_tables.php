@@ -11,7 +11,6 @@ $models = array(
     'messagetemplate',
     'messagelayout',
     'queue',
-    'mailing',
 );
 
 foreach ($models as $model) {
@@ -62,7 +61,6 @@ if (TYPO3_MODE === 'BE') {
         $dataTypes = [
             'tx_messenger_domain_model_messagetemplate',
             'tx_messenger_domain_model_messagelayout',
-            'tx_messenger_domain_model_mailing',
             'tx_messenger_domain_model_sentmessage',
             'tx_messenger_domain_model_queue',
         ];

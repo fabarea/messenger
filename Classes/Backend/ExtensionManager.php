@@ -44,7 +44,6 @@ class ExtensionManager
     protected $modules = array(
         'messagetemplate' => 'Message Template',
         'messagelayout' => 'Message Layout',
-        'mailing' => 'Mailing',
         'sentmessage' => 'Sent message',
         'queue' => 'Queue'
     );

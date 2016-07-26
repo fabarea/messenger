@@ -47,8 +47,8 @@
 			<trans-unit id="message_layout">
 				<source>Layout Template</source>
 			</trans-unit>
-			<trans-unit id="mailing">
-				<source>Mailing</source>
+			<trans-unit id="mailing_name">
+				<source>Mailing name</source>
 			</trans-unit>
 			<trans-unit id="sent_time">
 				<source>Sent Time</source>
