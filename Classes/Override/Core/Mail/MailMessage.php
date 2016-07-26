@@ -59,7 +59,8 @@ class MailMessage extends \TYPO3\CMS\Core\Mail\MailMessage
         $cc = $this->getCc();
         $bcc = $this->getBcc();
 
-        $messageBody = sprintf("%s CONTEXT: this message is for testing purpose. In reality, it would be sent: <br />to: %s<br />%s%s<br />%s",
+        $messageBody = sprintf(
+            "%s CONTEXT: this message is for testing purposes. In Production, it will be sent as follows. \nto: %s\n%s%s\n%s",
             strtoupper((string)GeneralUtility::getApplicationContext()),
             implode(',', array_keys($to)),
             empty($cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($cc))),

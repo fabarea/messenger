@@ -11,7 +11,7 @@
 		"mailing",
 		"email",
 		"newsletter",
-		"api"
+		"email queue"
 	],
 	"support": {
 		"issues": "https://github.com/fabarea/messenger/issues"

@@ -94,15 +94,4 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 		$method->setAccessible(TRUE);
 		$this->assertEquals('{template}', $method->invoke($this->fixture));
 	}
-
-	/**
-	 * @test
-	 */
-	public function getBodyIsWrappedIfLayoutIsSet() {
-		$body = uniqid('I am singing in the rain!');
-		$this->fixture->setBody($body);
-		$this->fixture->setMessageLayout($this->layoutIdentifier);
-		$expected = str_replace('{template}', $body, $this->layoutContent);
-		$this->assertEquals($expected, $this->fixture->getBody());
-	}
 }

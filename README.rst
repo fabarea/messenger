@@ -128,11 +128,7 @@ This means that the Fluid template can be written more freely.
 Queue
 =====
 
-Alpha feature!
-
-Messenger has the feature to queue emails. This is mandatory as soon as making mass-mailing.
-
-@todo scheduler is not yet implemented.
+Messenger has the feature to queue emails. This is required as soon as making mass-mailing.
 
 ::
 
@@ -140,7 +136,7 @@ Messenger has the feature to queue emails. This is mandatory as soon as making m
 	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
 	$message->
 		... // same as in the example above
-		->queue();
+		->enqueue();
 
 
 Scheduler tip

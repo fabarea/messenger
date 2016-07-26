@@ -12,7 +12,6 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	qualifier varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
-	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
 	template_engine varchar(20) DEFAULT '' NOT NULL,
 
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
@@ -28,11 +27,8 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	l10n_parent int(11) DEFAULT '0' NOT NULL,
 	l10n_diffsource mediumblob,
 
-	is_dummy_record tinyint(1) unsigned DEFAULT '0' NOT NULL,
-
 	PRIMARY KEY (uid),
 	KEY parent (pid),
-	KEY phpunit_dummy (is_dummy_record),
 
 	KEY language (l10n_parent,sys_language_uid)
 
@@ -62,11 +58,8 @@ CREATE TABLE tx_messenger_domain_model_messagelayout (
 	l10n_parent int(11) DEFAULT '0' NOT NULL,
 	l10n_diffsource mediumblob,
 
-	is_dummy_record tinyint(1) unsigned DEFAULT '0' NOT NULL,
-
 	PRIMARY KEY (uid),
 	KEY parent (pid),
-	KEY phpunit_dummy (is_dummy_record),
 
 	KEY language (l10n_parent,sys_language_uid)
 
@@ -92,12 +85,13 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 	body text,
 	attachment text,
 	context varchar(255) DEFAULT '' NOT NULL,
-	was_opened int(11) DEFAULT '0' NOT NULL,
+	mailing_name varchar(255) DEFAULT '' NOT NULL,
+	message_template int(11) unsigned DEFAULT '0' NOT NULL,
+	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
+	scheduled_distribution_time int(11) unsigned DEFAULT '0' NOT NULL,
 
-	message_template int(11) DEFAULT '0' NOT NULL,
-	message_layout int(11) DEFAULT '0' NOT NULL,
-	sent_time int(11) DEFAULT '0' NOT NULL,
-	mailing int(11) DEFAULT '0' NOT NULL,
+	sent_time int(11) unsigned DEFAULT '0' NOT NULL,
+	was_opened int(11) unsigned DEFAULT '0' NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)
@@ -123,28 +117,10 @@ CREATE TABLE tx_messenger_domain_model_queue (
 	body text,
 	attachment text,
 	context varchar(255) DEFAULT '' NOT NULL,
-
-	PRIMARY KEY (uid),
-	KEY parent (pid)
-);
-
-#
-# Table structure for table 'tx_messenger_domain_model_mailing'
-#
-CREATE TABLE tx_messenger_domain_model_mailing (
-
-	uid int(11) NOT NULL auto_increment,
-	pid int(11) DEFAULT '0' NOT NULL,
-
-	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
-	crdate int(11) unsigned DEFAULT '0' NOT NULL,
-	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
-	deleted tinyint(4) unsigned DEFAULT '0' NOT NULL,
-	hidden tinyint(4) unsigned DEFAULT '0' NOT NULL,
-
-	title varchar(255) DEFAULT '' NOT NULL,
-	start_sending_time int(11) unsigned DEFAULT '0' NOT NULL,
-	comment text,
+	mailing_name varchar(255) DEFAULT '' NOT NULL,
+	message_template int(11) unsigned DEFAULT '0' NOT NULL,
+	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
+	scheduled_distribution_time int(11) unsigned DEFAULT '0' NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)

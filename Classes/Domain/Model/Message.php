@@ -1,19 +1,17 @@
 <?php
 namespace Fab\Messenger\Domain\Model;
 
-/**
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+/*
+ * This file is part of the Fab/Messenger project under GPLv2 or later.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\ContentRenderer\BackendRenderer;
+use Fab\Messenger\ContentRenderer\FrontendRenderer;
+use Fab\Messenger\Validator\EmailValidator;
+use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Messenger\Exception\MissingFileException;
@@ -27,10 +25,10 @@ use \Michelf\Markdown;
 
 // For TYPO3 6.x, make sure Swift's auto-loader is registered.
 // @todo check the situation with 7.x again. Reference https://github.com/fabarea/messenger/pull/8
-$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
-if (is_readable($swift1)) {
-    require_once $swift1;
-}
+#$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
+#if (is_readable($swift1)) {
+#    require_once $swift1;
+#}
 
 /**
  * Message representation
@@ -56,42 +54,42 @@ class Message
     /**
      * @var array
      */
-    protected $sender = array();
+    protected $sender = [];
 
     /**
      * The "to" addresses
      *
      * @var array
      */
-    protected $to = array();
+    protected $to = [];
 
     /**
      * The "cc" addresses
      *
      * @var array
      */
-    protected $cc = array();
+    protected $cc = [];
 
     /**
      * The "bcc" addresses
      *
      * @var array
      */
-    protected $bcc = array();
+    protected $bcc = [];
 
     /**
      * Addresses for reply-to
      *
      * @var array
      */
-    protected $replyTo = array();
+    protected $replyTo = [];
 
     /**
      * A set of markers.
      *
      * @var array
      */
-    protected $markers = array();
+    protected $markers = [];
 
     /**
      * @var int
@@ -104,14 +102,19 @@ class Message
     protected $messageLayout;
 
     /**
-     * @var \Fab\Messenger\Domain\Model\Mailing
+     * @var string
      */
-    protected $mailing;
+    protected $mailingName;
+
+    /**
+     * @var \DateTime
+     */
+    protected $scheduleDistributionTime;
 
     /**
      * @var array
      */
-    protected $attachments = array();
+    protected $attachments = [];
 
     /**
      * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
@@ -143,16 +146,42 @@ class Message
     protected $messageTemplate;
 
     /**
-     * @var \TYPO3\CMS\Core\Mail\MailMessage
+     * @var MailMessage
      */
     protected $mailMessage;
+
+    /**
+     * @var string
+     */
+    protected $subject = '';
+
+    /**
+     * @var string
+     */
+    protected $body = '';
+
+    /**
+     * @var string
+     */
+    protected $processedSubject = '';
+
+    /**
+     * @var string
+     */
+    protected $processedBody = '';
+
+    /**
+     * @var bool
+     */
+    protected $parseToMarkdown = false;
 
     /**
      * Prepares the emails and queue it.
      *
      * @return void
+     * @throws \Exception
      */
-    public function queue()
+    public function enqueue()
     {
         $this->prepareMessage();
         $this->queueRepository->add($this->toArray());
@@ -163,6 +192,10 @@ class Message
      *
      * @throws WrongPluginConfigurationException
      * @return boolean whether or not the email was sent successfully
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \Exception
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function send()
     {
@@ -177,7 +210,9 @@ class Message
             $this->sentMessageRepository->add($message);
 
             // Store body of the message for possible later use.
-            MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $message['body']);
+            if ($this->messageTemplate) {
+                MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $message['body']);
+            }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
             LoggerService::getLogger($this)->error($message);
@@ -190,41 +225,32 @@ class Message
     /**
      * Prepares the emails by fetching an email template and formats its body.
      *
-     * @throws \RuntimeException
      * @return boolean whether or not the email was sent successfully
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function prepareMessage()
     {
-
-        if (empty($this->messageTemplate)) {
-            throw new \RuntimeException('Messenger: message template was not defined', 1354536584);
-        }
-
-        if (empty($this->to)) {
+        if (!$this->to) {
             throw new \RuntimeException('Messenger: no recipient was defined', 1354536585);
         }
 
-        // Substitute markers
-        $subject = $this->getContentRenderer()->render($this->messageTemplate->getSubject(), $this->markers);
-        $body = $this->getContentRenderer()->render($this->messageTemplate->getBody(), $this->markers);
-
-        // Parse Markdown only if necessary
-        if ($this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN) {
-            $body = Markdown::defaultTransform($body);
-        }
-
-        $this->getMailMessage()->setTo($this->getTo())
+        $message = $this->getMailMessage()
+            ->setTo($this->getTo())
             ->setCc($this->getCc())
             ->setBcc($this->getBcc())
             ->setFrom($this->getSender())
             ->setReplyTo($this->getReplyTo())
-            ->setSubject($subject)
-            ->setBody($body, 'text/html');
+            ->setSubject($this->getProcessedSubject());
 
         // Attach plain text version if HTML tags are found in body
-        if ($this->hasHtml($body)) {
-            $text = Html2Text::getInstance()->convert($body);
+        if ($this->hasHtml($this->getProcessedBody())) {
+            $message->setBody($this->getProcessedBody(), 'text/html');
+            $text = Html2Text::getInstance()->convert($this->getProcessedBody());
             $this->getMailMessage()->addPart($text, 'text/plain');
+        } else {
+            $message->setBody($this->getProcessedBody(), 'text/plain');
         }
 
         // Handle attachment
@@ -236,7 +262,7 @@ class Message
     /**
      * Retrieves the message template object
      *
-     * @return \Fab\Messenger\Domain\Model\Mailing
+     * @return \Fab\Messenger\Domain\Model\MessageTemplate
      */
     public function getMessageTemplate()
     {
@@ -254,7 +280,7 @@ class Message
     {
         $result = FALSE;
         //we compare the length of the string with html tags and without html tags
-        if (strlen($content) != strlen(strip_tags($content))) {
+        if (strlen($content) !== strlen(strip_tags($content))) {
             $result = TRUE;
         }
         return $result;
@@ -290,7 +316,7 @@ class Message
     /**
      * Set multiple markers at once.
      *
-     * @param mixed $values
+     * @param array $values
      * @return Message
      */
     public function setMarkers($values)
@@ -383,6 +409,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function setTo($addresses)
     {
@@ -407,6 +435,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function setCc($addresses)
     {
@@ -431,6 +461,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function setBcc($addresses)
     {
@@ -462,16 +494,17 @@ class Message
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
     public function getSender()
     {
 
         // Compute sender from global configuration.
-        if (empty($this->sender)) {
+        if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new \Exception('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
+                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -493,11 +526,93 @@ class Message
      *
      * @param array $sender
      * @return Message
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function setSender(array $sender)
     {
         $this->getEmailValidator()->validate($sender);
         $this->sender = $sender;
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function getProcessedSubject()
+    {
+        if ($this->processedSubject === '') {
+
+            $processedSubject = $this->subject;
+            if ($this->messageTemplate) {
+                $processedSubject = $this->messageTemplate->getSubject();
+            }
+            // Possible markers substitution.
+            if ($this->markers) {
+                $processedSubject = $this->getContentRenderer()->render($processedSubject, $this->markers);
+            }
+            $this->processedSubject = $processedSubject;
+        }
+
+        return $this->processedSubject;
+    }
+
+    /**
+     * @param string $subject
+     * @return $this
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * @return string
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     */
+    public function getProcessedBody()
+    {
+        if ($this->processedBody === '') {
+
+            $processedBody = $this->body;
+
+            if ($this->messageTemplate) {
+                $processedBody = $this->messageTemplate->getBody();
+            }
+
+            // Possible wrap body in Layout content.
+            if ($this->messageLayout) {
+                $processedBody = str_replace('{BODY}', $processedBody, $this->messageLayout->getContent());
+            }
+
+            // Parse Markdown only if necessary.
+            if ($this->parseToMarkdown
+                || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)) {
+                $processedBody = Markdown::defaultTransform($processedBody);
+            }
+
+            // Possible markers substitution.
+            if ($this->markers) {
+                $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
+            }
+
+
+            $this->processedBody = $processedBody;
+        }
+
+        return $this->processedBody;
+    }
+
+    /**
+     * @param string $body
+     * @return $this
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
         return $this;
     }
 
@@ -521,7 +636,6 @@ class Message
      */
     public function setMessageLayout($messageLayout)
     {
-
         if ($messageLayout instanceof MessageLayout) {
             $this->messageLayout = $messageLayout;
         } else {
@@ -533,8 +647,8 @@ class Message
             $methodName = is_int($messageLayout) ? 'findByUid' : 'findByQualifier';
             $this->messageLayout = $this->messageLayoutRepository->$methodName($messageLayout);
 
-            if (is_null($this->messageLayout)) {
-                $message = sprintf('I could not find message layout ""', $messageLayout);
+            if ($this->messageLayout === null) {
+                $message = sprintf('I could not find message layout "%s"', $messageLayout);
                 throw new RecordNotFoundException($message, 1389769449);
             }
         }
@@ -567,11 +681,8 @@ class Message
 
             /** @var \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate */
             $messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
-            if (is_object($this->getMessageLayout())) {
-                $messageTemplate->setMessageLayout($this->getMessageLayout());
-            }
 
-            if (is_null($messageTemplate)) {
+            if ($messageTemplate === null) {
                 $message = sprintf('I could not find message template "%s"', $messageTemplate);
                 throw new RecordNotFoundException($message, 1350124207);
             }
@@ -596,6 +707,7 @@ class Message
      * Convert this object to an array.
      *
      * @return array
+     * @throws \Exception
      */
     public function toArray()
     {
@@ -616,13 +728,23 @@ class Message
             'attachment' => count($this->getMailMessage()->getChildren()),
             'context' => (string)GeneralUtility::getApplicationContext(),
             'was_opened' => 0,
-            'message_template' => $this->messageTemplate->getUid(),
+            'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
             'sent_time' => time(),
-            'mailing' => is_object($this->mailing) ? $this->mailing->getUid() : 0,
+            'mailing_mane' => $this->mailingName,
         );
 
         return $values;
+    }
+
+    /**
+     * @param $parseToMarkdown
+     * @return $this
+     */
+    public function parseToMarkdown($parseToMarkdown)
+    {
+        $this->parseToMarkdown = (bool)$parseToMarkdown;
+        return $this;
     }
 
     /**
@@ -633,7 +755,7 @@ class Message
      */
     protected function formatAddresses(array $addresses)
     {
-        $formattedAddresses = array();
+        $formattedAddresses = [];
         foreach ($addresses as $email => $name) {
             $formattedAddresses[] = sprintf('%s <%s>', $name, $email);
         }
@@ -642,52 +764,73 @@ class Message
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Mail\MailMessage
+     * @return MailMessage
      */
     public function getMailMessage()
     {
-        if (is_null($this->mailMessage)) {
-            $this->mailMessage = $this->objectManager->get('TYPO3\CMS\Core\Mail\MailMessage');
+        if ($this->mailMessage === null) {
+            $this->mailMessage = $this->objectManager->get(MailMessage::class);
         }
         return $this->mailMessage;
     }
 
     /**
-     * @return \Fab\Messenger\Domain\Model\Mailing
+     * @return string
      */
-    public function getMailing()
+    public function getMailingName()
     {
-        return $this->mailing;
+        return $this->mailingName;
     }
 
     /**
-     * @param \Fab\Messenger\Domain\Model\Mailing $mailing
+     * @param string $mailingName
+     * @return $this
      */
-    public function setMailing($mailing)
+    public function setMailingName($mailingName)
     {
-        $this->mailing = $mailing;
+        $this->mailingName = $mailingName;
+        return $this;
     }
 
     /**
-     * @return \Fab\Messenger\Validator\EmailValidator
+     * @return \DateTime
+     */
+    public function getScheduleDistributionTime()
+    {
+        return $this->scheduleDistributionTime;
+    }
+
+    /**
+     * @param \DateTime $scheduleDistributionTime
+     * @return $this
+     */
+    public function setScheduleDistributionTime(\DateTime $scheduleDistributionTime)
+    {
+        $this->scheduleDistributionTime = $scheduleDistributionTime;
+        return $this;
+    }
+
+    /**
+     * @return EmailValidator
+     * @throws \InvalidArgumentException
      */
     public function getEmailValidator()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Validator\EmailValidator');
+        return GeneralUtility::makeInstance(EmailValidator::class);
     }
 
     /**
      * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
+     * @throws \InvalidArgumentException
      */
-    public function getContentRenderer()
+    protected function getContentRenderer()
     {
-
         if ($this->isFrontendMode()) {
-            /** @var \Fab\Messenger\ContentRenderer\FrontendRenderer $contentRenderer */
-            $contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\FrontendRenderer', $this->messageTemplate);
+            /** @var FrontendRenderer $contentRenderer */
+            $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
         } else {
-            /** @var \Fab\Messenger\ContentRenderer\BackendRenderer $contentRenderer */
-            $contentRenderer = GeneralUtility::makeInstance('Fab\Messenger\ContentRenderer\BackendRenderer');
+            /** @var BackendRenderer $contentRenderer */
+            $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
         }
         return $contentRenderer;
     }
@@ -699,7 +842,7 @@ class Message
      */
     protected function isFrontendMode()
     {
-        return TYPO3_MODE == 'FE';
+        return TYPO3_MODE === 'FE';
     }
 
 }

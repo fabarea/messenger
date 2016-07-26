@@ -63,23 +63,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @var string
      */
-    protected $layoutBody;
-
-    /**
-     * @var \Fab\Messenger\Domain\Model\MessageLayout
-     */
-    protected $messageLayout;
-
-    /**
-     * @var string
-     */
     protected $templateEngine;
-
-    /**
-     * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
-     * @inject
-     */
-    protected $messageLayoutRepository;
 
     /**
      * Constructor
@@ -92,7 +76,6 @@ class MessageTemplate extends AbstractEntity
         $this->sourceFile = empty($data['source_file']) ? '' : $data['source_file'];
         $this->subject = empty($data['subject']) ? '' : $data['subject'];
         $this->body = empty($data['body']) ? '' : $data['body'];
-        $this->messageLayout = empty($data['message_layout']) ? '' : $data['message_layout'];
     }
 
     /**
@@ -119,7 +102,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * Returns the body according to the type of the message template.
      *
-     * @throws \Exception
+     * @throws \RuntimeException
      * @return string $body
      */
     public function getBody()
@@ -127,21 +110,17 @@ class MessageTemplate extends AbstractEntity
 
         if ($this->type === self::TYPE_PAGE) {
             // @todo use $crawler to fetch body content of page
-            throw new \Exception('Messenger: not implemented', 1400517075);
+            throw new \RuntimeException('Messenger: not implemented', 1400517075);
 
         } elseif ($this->type === self::TYPE_FILE) {
             $file = GeneralUtility::getFileAbsFileName($this->sourceFile);
             if (!is_file($file)) {
                 $message = sprintf('Messenger: I could not found file "%s"', $file);
-                throw new \Exception($message, 1400517074);
+                throw new \RuntimeException($message, 1400517074);
             }
             $this->body = file_get_contents($file);
         }
 
-        // Possible wrap body in Layout content.
-        if ($this->messageLayout) {
-            $this->body = str_replace('{BODY}', $this->body, $this->messageLayout->getContent());
-        }
         return $this->body;
     }
 
@@ -171,32 +150,6 @@ class MessageTemplate extends AbstractEntity
     public function setQualifier($qualifier)
     {
         $this->qualifier = $qualifier;
-    }
-
-    /**
-     * @throws \Fab\Messenger\Exception\RecordNotFoundException
-     * @return \Fab\Messenger\Domain\Model\MessageLayout
-     */
-    public function getMessageLayout()
-    {
-        if (!is_object($this->messageLayout)) {
-            /** @var $layout \Fab\Messenger\Domain\Model\MessageLayout */
-            $this->messageLayout = $this->messageLayoutRepository->findByUid($this->messageLayout);
-            if (!$this->messageLayout) {
-                $message = sprintf('No Email Layout record was found for identity "%s"', $this->messageLayout);
-                throw new RecordNotFoundException($message, 1389779386);
-            }
-        }
-
-        return $this->messageLayout;
-    }
-
-    /**
-     * @param string $layout
-     */
-    public function setMessageLayout($layout)
-    {
-        $this->messageLayout = $layout;
     }
 
     /**
@@ -266,7 +219,7 @@ class MessageTemplate extends AbstractEntity
      */
     public function getTemplateEngine()
     {
-        if (empty($this->templateEngine)) {
+        if (!$this->templateEngine) {
             $this->templateEngine = TemplateEngine::FLUID_AND_MARKDOWN;
         }
         return $this->templateEngine;
