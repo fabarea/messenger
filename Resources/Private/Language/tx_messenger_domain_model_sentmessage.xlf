@@ -47,8 +47,14 @@
 			<trans-unit id="message_layout">
 				<source>Layout Template</source>
 			</trans-unit>
+			<trans-unit id="ip">
+				<source>IP Address</source>
+			</trans-unit>
 			<trans-unit id="mailing_name">
 				<source>Mailing name</source>
+			</trans-unit>
+			<trans-unit id="scheduled_distribution_time">
+				<source>Schedule sending time</source>
 			</trans-unit>
 			<trans-unit id="sent_time">
 				<source>Sent Time</source>

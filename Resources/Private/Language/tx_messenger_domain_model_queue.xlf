@@ -19,35 +19,8 @@
 			<trans-unit id="queue">
 				<source>Sent Message</source>
 			</trans-unit>
-			<trans-unit id="sender">
-				<source>Sender</source>
-			</trans-unit>
-			<trans-unit id="recipient">
-				<source>Recipient</source>
-			</trans-unit>
-			<trans-unit id="subject">
-				<source>Subject</source>
-			</trans-unit>
-			<trans-unit id="body">
-				<source>Body</source>
-			</trans-unit>
-			<trans-unit id="attachment">
-				<source>Attachment</source>
-			</trans-unit>
-			<trans-unit id="context">
-				<source>context</source>
-			</trans-unit>
-			<trans-unit id="was_opened">
-				<source>Was opened</source>
-			</trans-unit>
-			<trans-unit id="message_template">
-				<source>Message Template</source>
-			</trans-unit>
-			<trans-unit id="message_layout">
-				<source>Layout Template</source>
-			</trans-unit>
-			<trans-unit id="mailing_name">
-				<source>Mailing name</source>
+			<trans-unit id="message_serialized">
+				<source>Message serialized</source>
 			</trans-unit>
 		</body>
 	</file>

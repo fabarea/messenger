@@ -29,26 +29,24 @@ class RedirectService implements SingletonInterface
      * Get possible redirect recipients.
      *
      * @return array
+     * @throws \InvalidArgumentException
      * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
-    public function redirectionForCurrentContext()
+    public function getRedirections()
     {
+        $recipientList = $this->getRedirectionList();
+        return $this->transformEmailListToArray($recipientList);
+    }
 
-        // Fetch email from PHP configuration array at first.
-        $applicationContext = (string)GeneralUtility::getApplicationContext()->getParent();
-        if (empty($applicationContext)) {
-            $applicationContext = (string)GeneralUtility::getApplicationContext();
-        }
-        $applicationContext = strtolower($applicationContext);
-
-        $key = $applicationContext . '_redirect_to';
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
-            $recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
-        } else {
-            $recipientList = ConfigurationUtility::getInstance()->get($key);
-        }
-
-        $recipients = array();
+    /**
+     * @param string $recipientList
+     * @return array
+     * @throws \InvalidArgumentException
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     */
+    public function transformEmailListToArray($recipientList)
+    {
+        $recipients = [];
         if (strlen(trim($recipientList)) > 0) {
             $emails = GeneralUtility::trimExplode(',', $recipientList);
 
@@ -58,12 +56,34 @@ class RedirectService implements SingletonInterface
 
             $this->getEmailValidator()->validate($recipients);
         }
-
         return $recipients;
     }
 
     /**
+     * Get possible redirect recipients.
+     *
+     * @return array
+     */
+    public function getRedirectionList()
+    {
+        // Fetch email from PHP configuration array at first.
+        $applicationContext = (string)GeneralUtility::getApplicationContext()->getParent();
+        if (!$applicationContext) {
+            $applicationContext = (string)GeneralUtility::getApplicationContext();
+        }
+
+        $key = strtolower($applicationContext) . '_redirect_to';
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
+            $recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
+        } else {
+            $recipientList = ConfigurationUtility::getInstance()->get($key);
+        }
+        return $recipientList;
+    }
+
+    /**
      * @return EmailValidator
+     * @throws \InvalidArgumentException
      */
     public function getEmailValidator()
     {

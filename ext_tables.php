@@ -30,11 +30,11 @@ foreach ($models as $model) {
 // Add Messenger main module before 'user'
 // There are not API for doing this... ;(
 // Some hope with this patch merged into 6.2 http://forge.typo3.org/issues/49643?
-if (TYPO3_MODE == 'BE') {
+if (TYPO3_MODE === 'BE') {
     if (!isset($GLOBALS['TBE_MODULES']['messenger'])) {
         $beModules = [];
         foreach ($GLOBALS['TBE_MODULES'] as $key => $val) {
-            if ($key == 'user') {
+            if ($key === 'user') {
                 $beModules['messenger'] = '';
             }
             $beModules[$key] = $val;

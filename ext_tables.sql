@@ -72,15 +72,12 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
-
-	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
-	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
-	deleted tinyint(4) unsigned DEFAULT '0' NOT NULL,
-	hidden tinyint(4) unsigned DEFAULT '0' NOT NULL,
 
 	sender varchar(255) DEFAULT '' NOT NULL,
 	recipient varchar(255) DEFAULT '' NOT NULL,
+	recipient_cc varchar(255) DEFAULT '' NOT NULL,
+	recipient_bcc varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
 	attachment text,
@@ -89,9 +86,10 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 	message_template int(11) unsigned DEFAULT '0' NOT NULL,
 	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
 	scheduled_distribution_time int(11) unsigned DEFAULT '0' NOT NULL,
-
+	ip varchar(255) DEFAULT '' NOT NULL,
 	sent_time int(11) unsigned DEFAULT '0' NOT NULL,
 	was_opened int(11) unsigned DEFAULT '0' NOT NULL,
+	redirect_email varchar(255) DEFAULT '' NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)
@@ -104,15 +102,12 @@ CREATE TABLE tx_messenger_domain_model_queue (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
-
-	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
-	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,
-	deleted tinyint(4) unsigned DEFAULT '0' NOT NULL,
-	hidden tinyint(4) unsigned DEFAULT '0' NOT NULL,
 
 	sender varchar(255) DEFAULT '' NOT NULL,
 	recipient varchar(255) DEFAULT '' NOT NULL,
+	recipient_cc varchar(255) DEFAULT '' NOT NULL,
+	recipient_bcc varchar(255) DEFAULT '' NOT NULL,
 	subject varchar(255) DEFAULT '' NOT NULL,
 	body text,
 	attachment text,
@@ -121,6 +116,10 @@ CREATE TABLE tx_messenger_domain_model_queue (
 	message_template int(11) unsigned DEFAULT '0' NOT NULL,
 	message_layout int(11) unsigned DEFAULT '0' NOT NULL,
 	scheduled_distribution_time int(11) unsigned DEFAULT '0' NOT NULL,
+	ip varchar(255) DEFAULT '' NOT NULL,
+	error_count int(11) unsigned DEFAULT '0' NOT NULL,
+	message_serialized text,
+	redirect_email varchar(255) DEFAULT '' NOT NULL,
 
 	PRIMARY KEY (uid),
 	KEY parent (pid)

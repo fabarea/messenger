@@ -13,9 +13,7 @@ return [
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
-        'dividers2tabs' => TRUE,
         'requestUpdate' => 'type',
-
         'origUid' => 't3_origuid',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
@@ -24,7 +22,7 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden'
         ],
-        'searchFields' => 'qualifier, subject,body,',
+        'searchFields' => 'qualifier, subject, body',
         'type' => 'type',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-messagetemplate',
@@ -225,9 +223,6 @@ Show detail of an item:
             'subject' => [
                 'editable' => TRUE,
             ],
-//			'message_layout' => array(
-//				'visible' => FALSE,
-//			),
             'body' => [],
             '__buttons' => [
                 'renderer' => new \Fab\Vidi\Grid\ButtonGroupRenderer(),

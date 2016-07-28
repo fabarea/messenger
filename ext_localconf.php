@@ -15,6 +15,8 @@ if (!defined('TYPO3_MODE')) {
     )
 );
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \Fab\Messenger\Command\MessageQueueCommandController::class;
+
 // Override classes for the Object Manager
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\CMS\Core\Mail\MailMessage'] = [
     'className' => 'Fab\Messenger\Override\Core\Mail\MailMessage'

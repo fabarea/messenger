@@ -14,13 +14,12 @@ namespace Fab\Messenger\Domain\Repository;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Extbase\Persistence\Repository;
 use Fab\Vidi\Tca\Tca;
 
 /**
  * A repository for handling sent message
  */
-class SentMessageRepository extends Repository
+class SentMessageRepository
 {
 
     /**
@@ -30,26 +29,26 @@ class SentMessageRepository extends Repository
 
     /**
      * @param array $message
-     * @throws \Exception
+     * @throws \RuntimeException
      * @return int
      */
-    public function add($message)
+    public function add(array $message)
     {
-
-        $values = array();
-        $values['tstamp'] = $values['crdate'] = time(); // default values
+        $values = [];
+        $values['crdate'] = time();
+        $values['sent_time'] = time();
 
         // Make sure fields are allowed for this table.
         $fields = Tca::table($this->tableName)->getFields();
         foreach ($message as $fieldName => $value) {
-            if (in_array($fieldName, $fields)) {
+            if (in_array($fieldName, $fields, true)) {
                 $values[$fieldName] = $value;
             }
         }
 
         $result = $this->getDatabaseConnection()->exec_INSERTquery($this->tableName, $values);
         if (!$result) {
-            throw new \Exception('I could not save the message as "sent message"', 1389721852);
+            throw new \RuntimeException('I could not save the message as "sent message"', 1389721852);
         }
         return $this->getDatabaseConnection()->sql_insert_id();
     }

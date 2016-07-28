@@ -27,20 +27,39 @@ class MailMessage extends \TYPO3\CMS\Core\Mail\MailMessage
      * Sends the message.
      *
      * @return integer the number of recipients who were accepted for delivery
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function send()
     {
-        $redirectTo = $this->getRedirectService()->redirectionForCurrentContext();
+
+        $applicationContext = (string)GeneralUtility::getApplicationContext();
+        $redirectTo = $this->getRedirectService()->getRedirections();
+
+        // hack! Retrieve from the message subject the application context
+        // Reason: in CLI, when processing the email queue, we loose the FE application context information.
+        // We use the subject to pass info / state of the FE application context.
+        $subject = $this->getSubject();
+        $subjectParts = explode('###REDIRECT###', $subject);
+
+        if (count($subjectParts) > 1) {
+            list($redirection, $sanitizedSubject) = $subjectParts;
+            $this->setSubject($sanitizedSubject); // reset clean-up subject.
+
+            $redirectionParts = explode('---', $redirection);
+            list($applicationContext, $email) = $redirectionParts;
+            $redirectTo = $this->getRedirectService()->transformEmailListToArray($email);
+        }
 
         // Means we want to redirect email.
-        if (!empty($redirectTo)) {
+        if ($redirectTo) {
             $body = $this->addDebugInfoToBody($this->getBody());
             $this->setBody($body);
             $this->setTo($redirectTo);
-            $this->setCc(array()); // reset cc which was written as debug in the body message previously.
-            $this->setBcc(array()); // same remark as bcc.
+            $this->setCc([]); // reset cc which was written as debug in the body message previously.
+            $this->setBcc([]); // same remark as bcc.
 
-            $subject = strtoupper((string)GeneralUtility::getApplicationContext()) . ' CONTEXT! ' . $this->getSubject();
+            $subject = strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
             $this->setSubject($subject);
         }
         return parent::send();

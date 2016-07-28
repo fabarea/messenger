@@ -10,6 +10,7 @@ namespace Fab\Messenger\Domain\Model;
 
 use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
+use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Validator\EmailValidator;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
@@ -23,16 +24,8 @@ use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 
-// For TYPO3 6.x, make sure Swift's auto-loader is registered.
-// @todo check the situation with 7.x again. Reference https://github.com/fabarea/messenger/pull/8
-#$swift1 = PATH_typo3 . 'contrib/swiftmailer/swift_required.php';
-#if (is_readable($swift1)) {
-#    require_once $swift1;
-#}
-
 /**
  * Message representation
- * @todo remove language handling from the class which should be managed outside - or not?
  */
 class Message
 {
@@ -92,11 +85,6 @@ class Message
     protected $markers = [];
 
     /**
-     * @var int
-     */
-    protected $language;
-
-    /**
      * @var \Fab\Messenger\Domain\Model\MessageLayout
      */
     protected $messageLayout;
@@ -107,9 +95,9 @@ class Message
     protected $mailingName;
 
     /**
-     * @var \DateTime
+     * @var int
      */
-    protected $scheduleDistributionTime;
+    protected $scheduleDistributionTime = 0;
 
     /**
      * @var array
@@ -179,7 +167,9 @@ class Message
      * Prepares the emails and queue it.
      *
      * @return void
-     * @throws \Exception
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
     public function enqueue()
     {
@@ -206,8 +196,7 @@ class Message
         $isSent = $this->getMailMessage()->isSent();
 
         if ($isSent) {
-            $message = $this->toArray();
-            $this->sentMessageRepository->add($message);
+            $this->sentMessageRepository->add($this->toArray());
 
             // Store body of the message for possible later use.
             if ($this->messageTemplate) {
@@ -365,34 +354,6 @@ class Message
     }
 
     /**
-     * @return int
-     */
-    public function getLanguage()
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param int $language
-     * @return Message
-     */
-    public function setLanguage($language)
-    {
-        $this->language = $language;
-        return $this;
-    }
-
-    /**
-     * @param mixed $recipients
-     * @return Message
-     * @deprecated as of 2.0 will be removed in 2 version
-     */
-    public function setRecipients($recipients)
-    {
-        return $this->setTo($recipients);
-    }
-
-    /**
      * Return "to" addresses.
      * Special case: override "to" if a redirection has been set for a Context.
      *
@@ -484,6 +445,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @throws \InvalidArgumentException
      */
     public function setReplyTo($addresses)
     {
@@ -718,20 +681,25 @@ class Message
 
         $values = array(
             'sender' => $this->formatAddresses($this->getSender()),
-            'recipient' => $this->formatAddresses($this->getTo()), // @todo change me! recipient has been deprecated in favor of "to".
             'to' => $this->formatAddresses($this->getTo()),
             'cc' => $this->formatAddresses($this->getCc()),
             'bcc' => $this->formatAddresses($this->getBcc()),
+            'recipient' => $this->formatAddresses($this->getTo()),
+            'recipient_cc' => $this->formatAddresses($this->getCc()),
+            'recipient_bcc' => $this->formatAddresses($this->getBcc()),
             'reply_to' => $this->formatAddresses($this->getReplyTo()),
             'subject' => $this->getMailMessage()->getSubject(),
             'body' => $this->getMailMessage()->getBody(),
-            'attachment' => count($this->getMailMessage()->getChildren()),
+            'attachment' => count($this->attachments),
             'context' => (string)GeneralUtility::getApplicationContext(),
             'was_opened' => 0,
             'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
-            'sent_time' => time(),
-            'mailing_mane' => $this->mailingName,
+            'scheduled_distribution_time' => $this->scheduleDistributionTime,
+            'mailing_name' => $this->mailingName,
+            'redirect_email' => $this->getRedirectService()->getRedirectionList(),
+            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+            'mail_message' => $this->getMailMessage()
         );
 
         return $values;
@@ -793,7 +761,7 @@ class Message
     }
 
     /**
-     * @return \DateTime
+     * @return int
      */
     public function getScheduleDistributionTime()
     {
@@ -801,10 +769,10 @@ class Message
     }
 
     /**
-     * @param \DateTime $scheduleDistributionTime
+     * @param int $scheduleDistributionTime
      * @return $this
      */
-    public function setScheduleDistributionTime(\DateTime $scheduleDistributionTime)
+    public function setScheduleDistributionTime($scheduleDistributionTime)
     {
         $this->scheduleDistributionTime = $scheduleDistributionTime;
         return $this;
@@ -843,6 +811,15 @@ class Message
     protected function isFrontendMode()
     {
         return TYPO3_MODE === 'FE';
+    }
+
+    /**
+     * @return RedirectService
+     * @throws \InvalidArgumentException
+     */
+    public function getRedirectService()
+    {
+        return GeneralUtility::makeInstance(RedirectService::class);
     }
 
 }

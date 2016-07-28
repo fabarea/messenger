@@ -7,22 +7,15 @@ return [
     'ctrl' => [
         'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_message',
         'label' => 'subject',
-        'default_sortby' => 'ORDER BY uid DESC',
-        'tstamp' => 'tstamp',
+        'default_sortby' => 'ORDER BY sent_time DESC',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
-        'dividers2tabs' => TRUE,
-        'delete' => 'deleted',
-        'enablecolumns' => [
-            'disabled' => 'hidden',
-        ],
-        'searchFields' => 'content,',
+        'searchFields' => 'subject, body',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-sentmessage',
         ],
     ],
     'types' => [
-        '1' => ['showitem' => 'sender, recipient, subject, body, sent_time, attachment, was_opened, context'],
+        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, scheduled_distribution_time, message_template, message_layout, sent_time'],
     ],
     'palettes' => [
         '1' => ['showitem' => ''],
@@ -41,7 +34,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
                 'eval' => 'trim',
             ],
         ],
@@ -51,8 +44,35 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
                 'eval' => 'trim',
+            ],
+        ],
+        'recipient_cc' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_cc',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'recipient_bcc' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_bcc',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'redirect_email' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.redirect_email',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
             ],
         ],
         'subject' => [
@@ -61,7 +81,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
                 'eval' => 'trim',
             ],
         ],
@@ -72,7 +92,80 @@ return [
                 'type' => 'text',
                 'rows' => 4,
                 'cols' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
+            ],
+        ],
+        'context' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+                'eval' => 'trim',
+            ],
+        ],
+        'attachment' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+                'eval' => 'trim',
+            ],
+        ],
+        'mailing_name' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.mailing_name',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'scheduled_distribution_time' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.scheduled_distribution_time',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+                'eval' => 'datetime',
+            ],
+        ],
+        'message_template' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
+            'config' => [
+                'type' => 'select',
+                'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
+                'size' => 1,
+                'minitems' => 1,
+                'maxitems' => 1,
+                'readOnly' => true,
+            ],
+        ],
+        'message_layout' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
+            'config' => [
+                'type' => 'select',
+                'table_foreign' => 'tx_messenger_domain_model_messagelayout',
+                'size' => 1,
+                'minitems' => 1,
+                'maxitems' => 1,
+                'readOnly' => true,
+            ],
+        ],
+        'ip' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:ip',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+                'eval' => 'trim',
             ],
         ],
         'sent_time' => [
@@ -83,28 +176,7 @@ return [
                 'size' => 4,
                 'eval' => 'time',
                 'checkbox' => 1,
-                'readOnly' => TRUE,
-                'default' => time(),
-            ],
-        ],
-        'context' => [
-            'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
-            'config' => [
-                'type' => 'input',
-                'size' => 50,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
-            ],
-        ],
-        'attachment' => [
-            'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
-            'config' => [
-                'type' => 'input',
-                'size' => 50,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
+                'readOnly' => true,
             ],
         ],
         'was_opened' => [
@@ -113,7 +185,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
                 'eval' => 'trim',
             ],
         ],
@@ -128,7 +200,7 @@ return [
                 'renderer' => new \Fab\Vidi\Grid\CheckBoxRenderer(),
             ],
             'uid' => [
-                'visible' => FALSE,
+                'visible' => false,
                 'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
@@ -137,17 +209,17 @@ return [
             'subject' => [],
             'body' => [
                 'width' => '500px',
-                'sortable' => FALSE,
+                'sortable' => false,
             ],
             'sent_time' => [
                 'format' => 'datetime',
                 'width' => '150px',
             ],
             'attachment' => [
-                'visible' => FALSE,
+                'visible' => false,
             ],
             'was_opened' => [
-                'visible' => FALSE,
+                'visible' => false,
             ],
             'context' => [
                 'width' => '100px',

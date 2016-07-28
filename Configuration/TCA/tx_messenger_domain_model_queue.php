@@ -5,93 +5,162 @@ if (!defined('TYPO3_MODE')) {
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.qeue',
-        'label' => 'user',
-        'default_sortby' => 'ORDER BY uid ASC',
-        'tstamp' => 'tstamp',
+        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.qeue',
+        'label' => 'subject',
+        'default_sortby' => 'ORDER BY scheduled_distribution_time ASC',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
-        'dividers2tabs' => TRUE,
-        'delete' => 'deleted',
-        'enablecolumns' => [
-            'disabled' => 'hidden',
-        ],
-        'searchFields' => 'content,',
+        'searchFields' => 'subject, body',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-queue',
         ],
     ],
     'types' => [
-        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context'],
+        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, scheduled_distribution_time, message_template, message_layout'],
     ],
     'palettes' => [
         '1' => ['showitem' => ''],
     ],
     'columns' => [
-        'hidden' => [
-            'exclude' => 1,
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
-            'config' => [
-                'type' => 'check',
-            ],
-        ],
         'sender' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.sender',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.sender',
             'config' => [
-                'type' => 'text',
-                'rows' => 4,
-                'cols' => 50,
-                'readOnly' => TRUE,
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
             ],
         ],
         'recipient' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.recipient',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
+                'readOnly' => true,
+            ],
+        ],
+        'recipient_cc' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_cc',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'recipient_bcc' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_bcc',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'message_serialized' => [
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.message_serialized',
+            'config' => [
+                'type' => 'text',
+                'rows' => 4,
+                'cols' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'redirect_email' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.redirect_email',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
             ],
         ],
         'subject' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.subject',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.subject',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
+                'readOnly' => true,
             ],
         ],
         'body' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.body',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.body',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
+                'readOnly' => true,
             ],
         ],
         'context' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.context',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.context',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
-                'eval' => 'trim',
+                'readOnly' => true,
             ],
         ],
         'attachment' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.attachment',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.attachment',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
-                'readOnly' => TRUE,
+                'readOnly' => true,
+            ],
+        ],
+        'mailing_name' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.mailing_name',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+            ],
+        ],
+        'scheduled_distribution_time' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.scheduled_distribution_time',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
+                'eval' => 'datetime',
+            ],
+        ],
+        'message_template' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
+            'config' => [
+                'type' => 'select',
+                'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
+                'size' => 1,
+                'minitems' => 1,
+                'maxitems' => 1,
+                'readOnly' => true,
+            ],
+        ],
+        'message_layout' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
+            'config' => [
+                'type' => 'select',
+                'table_foreign' => 'tx_messenger_domain_model_messagelayout',
+                'size' => 1,
+                'minitems' => 1,
+                'maxitems' => 1,
+                'readOnly' => true,
+            ],
+        ],
+        'ip' => [
+            'exclude' => 0,
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:ip',
+            'config' => [
+                'type' => 'input',
+                'size' => 50,
+                'readOnly' => true,
                 'eval' => 'trim',
             ],
         ],
@@ -106,10 +175,11 @@ return [
                 'renderer' => new \Fab\Vidi\Grid\CheckBoxRenderer(),
             ],
             'uid' => [
-                'visible' => FALSE,
+                'visible' => false,
                 'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
+            'scheduled_distribution_time' => [],
             'sender' => [],
             'recipient' => [],
             'subject' => [],
@@ -117,7 +187,7 @@ return [
                 'width' => '500px',
             ],
             'attachment' => [
-                'visible' => FALSE,
+                'visible' => false,
             ],
             'context' => [
                 'width' => '100px',
