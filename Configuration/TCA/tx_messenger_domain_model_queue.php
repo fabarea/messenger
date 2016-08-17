@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.qeue',
+        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:qeue',
         'label' => 'subject',
         'default_sortby' => 'ORDER BY scheduled_distribution_time ASC',
         'crdate' => 'crdate',
@@ -23,7 +23,7 @@ return [
     'columns' => [
         'sender' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.sender',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -32,7 +32,7 @@ return [
         ],
         'recipient' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -41,7 +41,7 @@ return [
         ],
         'recipient_cc' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_cc',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -50,7 +50,7 @@ return [
         ],
         'recipient_bcc' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_bcc',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -68,7 +68,7 @@ return [
         ],
         'redirect_email' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.redirect_email',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -77,7 +77,7 @@ return [
         ],
         'subject' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.subject',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -86,7 +86,7 @@ return [
         ],
         'body' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.body',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:body',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -95,7 +95,7 @@ return [
         ],
         'context' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.context',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -104,7 +104,7 @@ return [
         ],
         'attachment' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.attachment',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -113,7 +113,7 @@ return [
         ],
         'mailing_name' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.mailing_name',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -122,7 +122,7 @@ return [
         ],
         'scheduled_distribution_time' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.scheduled_distribution_time',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -156,7 +156,7 @@ return [
         ],
         'ip' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:ip',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:ip',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -170,6 +170,7 @@ return [
             'uid',
             'subject',
         ],
+        'excluded_fields' => 'message_serialized',
         'columns' => [
             '__checkbox' => [
                 'renderer' => new \Fab\Vidi\Grid\CheckBoxRenderer(),
@@ -179,7 +180,9 @@ return [
                 'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
-            'scheduled_distribution_time' => [],
+            'scheduled_distribution_time' => [
+                'format' => 'datetime',
+            ],
             'sender' => [],
             'recipient' => [],
             'subject' => [],
