@@ -34,7 +34,7 @@ class MessageQueueCommandController extends CommandController
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function dequeueCommand($itemsPerRun = 20)
+    public function dequeueCommand($itemsPerRun = 100)
     {
         $pendingMessages = $this->queueRepository->findPendingMessages($itemsPerRun);
 
