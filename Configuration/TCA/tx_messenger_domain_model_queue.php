@@ -6,10 +6,10 @@ if (!defined('TYPO3_MODE')) {
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:qeue',
-        'label' => 'subject',
+        'label' => 'sender',
         'default_sortby' => 'ORDER BY scheduled_distribution_time ASC',
         'crdate' => 'crdate',
-        'searchFields' => 'subject, body',
+        'searchFields' => 'subject, body, mailing_name, ip',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-queue',
         ],
@@ -180,20 +180,24 @@ return [
                 'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
-            'scheduled_distribution_time' => [
-                'format' => 'datetime',
-            ],
             'sender' => [],
             'recipient' => [],
             'subject' => [],
             'body' => [
                 'width' => '500px',
+                'sortable' => false,
+                'visible' => false,
             ],
+            'scheduled_distribution_time' => [
+                'format' => \Fab\Vidi\Formatter\Datetime::class,
+            ],
+            'mailing_name' => [],
             'attachment' => [
                 'visible' => false,
             ],
             'context' => [
                 'width' => '100px',
+                'visible' => false,
             ],
             '__buttons' => [
                 'renderer' => new \Fab\Vidi\Grid\ButtonGroupRenderer(),

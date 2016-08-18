@@ -6,10 +6,10 @@ if (!defined('TYPO3_MODE')) {
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_message',
-        'label' => 'subject',
+        'label' => 'sender',
         'default_sortby' => 'ORDER BY sent_time DESC',
         'crdate' => 'crdate',
-        'searchFields' => 'subject, body',
+        'searchFields' => 'subject, body, mailing_name, ip',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-sentmessage',
         ],
@@ -50,7 +50,7 @@ return [
         ],
         'recipient_cc' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_cc',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -59,7 +59,7 @@ return [
         ],
         'recipient_bcc' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.recipient_bcc',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -68,7 +68,7 @@ return [
         ],
         'redirect_email' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.redirect_email',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -117,7 +117,7 @@ return [
         ],
         'mailing_name' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.mailing_name',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -126,7 +126,7 @@ return [
         ],
         'scheduled_distribution_time' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf.scheduled_distribution_time',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
                 'size' => 50,
@@ -210,11 +210,13 @@ return [
             'body' => [
                 'width' => '500px',
                 'sortable' => false,
+                'visible' => false,
             ],
             'sent_time' => [
-                'format' => 'datetime',
+                'format' => \Fab\Vidi\Formatter\Datetime::class,
                 'width' => '150px',
             ],
+            'mailing_name' => [],
             'attachment' => [
                 'visible' => false,
             ],
@@ -223,6 +225,7 @@ return [
             ],
             'context' => [
                 'width' => '100px',
+                'visible' => false,
             ],
             '__buttons' => [
                 'renderer' => new \Fab\Vidi\Grid\ButtonGroupRenderer(),
