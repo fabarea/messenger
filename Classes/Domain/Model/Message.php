@@ -562,7 +562,6 @@ class Message
                 $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
             }
 
-
             $this->processedBody = $processedBody;
         }
 
@@ -696,7 +695,7 @@ class Message
             'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
             'scheduled_distribution_time' => $this->scheduleDistributionTime,
-            'mailing_name' => $this->mailingName,
+            'mailing_name' => $this->mailingName ?: '',
             'redirect_email' => $this->getRedirectService()->getRedirectionList(),
             'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
             'mail_message' => $this->getMailMessage()

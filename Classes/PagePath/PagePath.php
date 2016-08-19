@@ -35,10 +35,10 @@ class PagePath
         $data = array(
             'id' => intval($pageId),
         );
-        if ($parameters != '' && $parameters{0} == '&') {
+        if ($parameters !== '' && $parameters{0} === '&') {
             $data['parameters'] = $parameters;
         }
-        $siteUrl = self::getSiteUrl($pageId);
+        $siteUrl = self::getSiteBaseUrl($pageId);
 
         if ($siteUrl) {
             $url = $siteUrl . 'index.php?eID=messenger&data=' . base64_encode(serialize($data));
@@ -48,7 +48,7 @@ class PagePath
                 'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
             );
 
-            $result = GeneralUtility::getURL($url, false, $headers);
+            $result = GeneralUtility::getUrl($url, false, $headers);
 
             $urlParts = parse_url($result);
             if (!is_array($urlParts)) {
@@ -58,7 +58,7 @@ class PagePath
             } elseif ($result) {
 
                 // See if we need to prepend domain part
-                if ($urlParts['host'] == '') {
+                if ($urlParts['host'] === '') {
                     $result = rtrim($siteUrl, '/') . '/' . ltrim($result, '/');
                 }
             }
@@ -75,8 +75,9 @@ class PagePath
      * @static
      * @param int $pageId
      * @return string
+     * @throws \UnexpectedValueException
      */
-    static protected function getSiteUrl($pageId)
+    static public function getSiteBaseUrl($pageId)
     {
 
         // CLI must define its own environment variable.

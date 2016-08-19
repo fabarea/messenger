@@ -26,10 +26,11 @@ class MessageStorage implements SingletonInterface
      * Returns a class instance
      *
      * @return \Fab\Messenger\Service\MessageStorage
+     * @throws \InvalidArgumentException
      */
     static public function getInstance()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Service\MessageStorage');
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
@@ -80,6 +81,6 @@ class MessageStorage implements SingletonInterface
      */
     protected function isFrontendMode()
     {
-        return TYPO3_MODE == 'FE';
+        return TYPO3_MODE === 'FE';
     }
 }

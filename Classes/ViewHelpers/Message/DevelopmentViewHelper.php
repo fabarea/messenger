@@ -1,0 +1,55 @@
+<?php
+namespace Fab\Messenger\ViewHelpers\Message;
+
+/*
+ * This file is part of the Fab/Messenger project under GPLv2 or later.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.md file that was distributed with this source code.
+ */
+
+use Fab\Messenger\Redirect\RedirectService;
+use Fab\Messenger\Service\SenderProvider;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+/**
+ * View helper to some honey pot field.
+ */
+class DevelopmentViewHelper extends AbstractViewHelper
+{
+
+    /**
+     * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception\InvalidVariableException
+     * @return string
+     * @throws \InvalidArgumentException
+     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     */
+    public function render()
+    {
+        $redirectTo = $this->getRedirectService()->getRedirections();
+        $output = '';
+
+        // Means we want to redirect email.
+        if (is_array($redirectTo) && $redirectTo) {
+
+            $output = sprintf(
+                "<pre style='clear: both'>%s CONTEXT<br /> %s %s</pre>",
+                strtoupper((string)GeneralUtility::getApplicationContext()),
+                '<br />- All emails will be redirected to ' . implode(', ', array_keys($redirectTo)) . '.',
+                SenderProvider::getInstance()->getPossibleSenders() ? '' : '<br/>- ATTENTION! No sender could be found. This will be a problem when sending emails.'
+            );
+        }
+
+        return $output;
+    }
+
+    /**
+     * @return RedirectService
+     * @throws \InvalidArgumentException
+     */
+    public function getRedirectService() {
+        return GeneralUtility::makeInstance(RedirectService::class);
+    }
+
+}

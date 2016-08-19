@@ -25,6 +25,7 @@ class BackendRenderer implements ContentRendererInterface
      * @param string $content
      * @param array $markers
      * @return string
+     * @throws \UnexpectedValueException
      */
     public function render($content, array $markers)
     {

@@ -8,6 +8,8 @@ namespace Fab\Messenger\Service;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Html2Text\LynxStrategy;
+use Fab\Messenger\Html2Text\RegexpStrategy;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -31,21 +33,23 @@ class Html2Text implements SingletonInterface
      * Returns a class instance
      *
      * @return \Fab\Messenger\Service\Html2Text
+     * @throws \InvalidArgumentException
      */
     static public function getInstance()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Service\Html2Text');
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
      * Constructor
      *
      * @return \Fab\Messenger\Service\Html2Text
+     * @throws \InvalidArgumentException
      */
     public function __construct()
     {
-        $this->possibleConverters[] = GeneralUtility::makeInstance('Fab\Messenger\Html2Text\LynxStrategy');
-        $this->possibleConverters[] = GeneralUtility::makeInstance('Fab\Messenger\Html2Text\RegexpStrategy');
+        $this->possibleConverters[] = GeneralUtility::makeInstance(LynxStrategy::class);
+        $this->possibleConverters[] = GeneralUtility::makeInstance(RegexpStrategy::class);
     }
 
     /**
@@ -56,7 +60,7 @@ class Html2Text implements SingletonInterface
      */
     public function convert($content)
     {
-        if (empty($this->converter)) {
+        if ($this->converter === null) {
             $this->converter = $this->findBestConverter();
         }
         return $this->converter->convert($content);
@@ -70,7 +74,7 @@ class Html2Text implements SingletonInterface
     public function findBestConverter()
     {
 
-        if (!empty($this->converter)) {
+        if ($this->converter) {
             return $this->converter;
         }
 
@@ -107,7 +111,7 @@ class Html2Text implements SingletonInterface
     }
 
     /**
-     * @return Array
+     * @return array
      */
     public function getPossibleConverters()
     {

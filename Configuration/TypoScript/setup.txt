@@ -45,7 +45,8 @@ page_1370537883 {
     10 {
         10 = USER_INT
         10 {
-            userFunc = tx_extbase_core_bootstrap->run
+			userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+			vendorName = Fab
             extensionName = Messenger
             pluginName = Pi1
 			switchableControllerActions {

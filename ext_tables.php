@@ -4,28 +4,21 @@ if (!defined('TYPO3_MODE')) {
 }
 
 // Add static TypoScript template
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'Send a message to a group of people');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('messenger', 'Configuration/TypoScript', 'Send a message to a group of people');
 
-$models = array(
-    'sentmessage',
-    'messagetemplate',
-    'messagelayout',
-    'queue',
-);
+// Allow domain model to be on standard pages.
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_queue');
 
-foreach ($models as $model) {
+// Sprite icon
+$icons['sentmessage'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png';
+$icons['messagetemplate'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png';
+$icons['messagelayout'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png';
+$icons['queue'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_queue.png';
 
-    // Allow domain model to be on standard pages.
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_' . $model);
-
-    // Sprite icon
-    $icons[$model] = sprintf('%sResources/Public/Icons/tx_messenger_domain_model_%s.png',
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY),
-        $model
-    );
-}
-
-\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, $_EXTKEY);
+\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, 'messenger');
 
 // Add Messenger main module before 'user'
 // There are not API for doing this... ;(
@@ -46,41 +39,48 @@ if (TYPO3_MODE === 'BE') {
 
 if (TYPO3_MODE === 'BE') {
 
-    /** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
-    $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
-
-    /** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-    $configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-    $configuration = $configurationUtility->getCurrentConfiguration($_EXTKEY);
-
-    $enabledModules = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $configuration['enabledModules']['value']);
-
     // Load some vidi BE modules
     if (class_exists('Fab\Vidi\Module\ModuleLoader')) {
 
-        $dataTypes = [
-            'tx_messenger_domain_model_messagetemplate',
-            'tx_messenger_domain_model_messagelayout',
-            'tx_messenger_domain_model_sentmessage',
-            'tx_messenger_domain_model_queue',
-        ];
+        \Fab\Messenger\Module\ModuleLoader::register('messagetemplate');
+        \Fab\Messenger\Module\ModuleLoader::register('messagelayout');
+        \Fab\Messenger\Module\ModuleLoader::register('sentmessage');
+        \Fab\Messenger\Module\ModuleLoader::register('queue');
 
-        foreach ($dataTypes as $dataType) {
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'Fab.messenger',
+            'user', // Make media module a submodule of 'user'
+            'm1',
+            'bottom', // Position
+            array(
+                'BackendMessage' => 'compose, send, sendAsTest, feedback',
+            ),
+            array(
+                'access' => 'user,group',
+                'icon' => 'EXT:messenger/ext_icon.png',
+                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
+            )
+        );
 
-            // Only load if requested by the User.
-            $shortDataType = str_replace('tx_messenger_domain_model_', '', $dataType);
-            if (in_array($shortDataType, $enabledModules)) {
+        // Default User TSConfig to be added in any case.
+        TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
 
-                /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-                $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Fab\Vidi\Module\ModuleLoader', $dataType);
-                $moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.png')
-                    ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
-                    ->addJavaScriptFiles(array(sprintf('EXT:messenger/Resources/Public/JavaScript/Backend/%s.js', $dataType)))
-                    ->addStyleSheetFiles(array(sprintf('EXT:messenger/Resources/Public/StyleSheet/Backend/%s.css', $dataType)))
-                    ->setDefaultPid(1)
-                    ->setMainModule('messenger')
-                    ->register();
-            }
-        }
+            # Hide the module in the BE.
+            options.hideModules.user := addToList(MessengerM1)
+
+        ');
+
+        // Extend FE User module
+        /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+        $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            \Fab\Vidi\Module\ModuleLoader::class,
+            'fe_users'
+        );
+
+        $moduleLoader->addMenuMassActionComponents([
+            \Fab\Messenger\View\MenuItem\SendMenuItem::class,
+            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+        ]);
+        $moduleLoader->register();
     }
 }

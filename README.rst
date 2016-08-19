@@ -93,6 +93,33 @@ about the current application context along with some global variables.
 	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['development']['recipients'] = 'fudriot@cobweb.ch';
 
 
+Tool to send emails to Frontend Users
+=====================================
+
+When EXT:vidi is installed, Messenger extends the Frontend User module in the BE and make it possible to send bulk messages to a selection / group of users.
+
+To things must be considered. First, consider adding and configuring a scheduler task as messages are put into a queue and are sent by patch.
+There is BE module to see the state of the queue where you can supervise the list of emails being sent.
+
+Secondly, you may want to configure the list of possible senders (the contact person displayed as "from"). They could be retrieved from three different sources
+
+- The currently logged-in BE User if the email address is defined.
+- The PHP global configuration `defaultMailFromName` and `defaultMailFromAddress`
+- User TSConfig where
+
+
+```
+    options.messenger {
+
+        senders {
+            0 {
+                name = My Name
+                email = test@example.tld
+            }
+        }
+    }
+```
+
 Message View Helper
 ===================
 

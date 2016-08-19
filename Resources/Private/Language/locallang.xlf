@@ -28,8 +28,29 @@
 			<trans-unit id="recipients">
 				<source>Recipients</source>
 			</trans-unit>
+			<trans-unit id="sender.name">
+				<source>Sender name</source>
+			</trans-unit>
+			<trans-unit id="sender.email">
+				<source>Sender email</source>
+			</trans-unit>
+			<trans-unit id="subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="body">
+				<source>Body</source>
+			</trans-unit>
 			<trans-unit id="send">
 				<source>Send</source>
+			</trans-unit>
+			<trans-unit id="recipient.test">
+				<source>Test recipient(s) - max 10 emails</source>
+			</trans-unit>
+			<trans-unit id="recipient.test.placeholder">
+				<source>Comma separated emails to send this message as a test.</source>
+			</trans-unit>
+			<trans-unit id="send.test">
+				<source>Send a test</source>
 			</trans-unit>
 			<trans-unit id="first_name">
 				<source>First name</source>
@@ -81,6 +102,18 @@
 			</trans-unit>
 			<trans-unit id="search">
 				<source>Search...</source>
+			</trans-unit>
+			<trans-unit id="send.message">
+				<source>Send a message</source>
+			</trans-unit>
+			<trans-unit id="send.page">
+				<source>Send a page</source>
+			</trans-unit>
+			<trans-unit id="message.success">
+				<source>Message has been sent to</source>
+			</trans-unit>
+			<trans-unit id="message.invalidEmails">
+				<source>Some user(s) have an invalid email address. Please sort the list to find out which ones.</source>
 			</trans-unit>
 		</body>
 	</file>
