@@ -553,7 +553,8 @@ class Message
 
             // Parse Markdown only if necessary.
             if ($this->parseToMarkdown
-                || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)) {
+                || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
+            ) {
                 $processedBody = Markdown::defaultTransform($processedBody);
             }
 
@@ -697,7 +698,7 @@ class Message
             'scheduled_distribution_time' => $this->scheduleDistributionTime,
             'mailing_name' => $this->mailingName ?: '',
             'redirect_email' => $this->getRedirectService()->getRedirectionList(),
-            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
             'mail_message' => $this->getMailMessage()
         );
 
