@@ -48,6 +48,27 @@ class SentMessageRepository
     }
 
     /**
+     * @param $days
+     * @return array
+     */
+    public function findOlderThanDays($days)
+    {
+        $time = time() - ($days * 86400);
+        $records = $this->getDatabaseConnection()->exec_SELECTgetRows('*', $this->tableName, 'crdate < ' . $time);
+        return (array)$records;
+    }
+
+    /**
+     * @param $days
+     * @return void
+     */
+    public function removeOlderThanDays($days)
+    {
+        $time = time() - ($days * 86400);
+        $this->getDatabaseConnection()->exec_DELETEquery($this->tableName, 'crdate < ' . $time);
+    }
+
+    /**
      * Returns a pointer to the database.
      *
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
@@ -56,4 +77,5 @@ class SentMessageRepository
     {
         return $GLOBALS['TYPO3_DB'];
     }
+
 }
