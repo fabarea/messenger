@@ -10,8 +10,8 @@ $EM_CONF[$_EXTKEY] = [
 	'version' => '1.0.0-dev',
 	'constraints' => [
 		'depends' => [
-			'vidi' => '',
 			'typo3' => '7.6.0-8.7.99',
+			'vidi' => '0.0.0-0.0.0',
 		],
 		'conflicts' => [
 		],
