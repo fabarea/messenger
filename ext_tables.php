@@ -12,13 +12,25 @@ if (!defined('TYPO3_MODE')) {
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_queue');
 
-// Sprite icon
-$icons['sentmessage'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png';
-$icons['messagetemplate'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png';
-$icons['messagelayout'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png';
-$icons['queue'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('messenger') . 'Resources/Public/Icons/tx_messenger_domain_model_queue.png';
+$icons = [
+    'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',
+    'messagetemplate' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png',
+    'messagelayout' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
+    'queue' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.png',
+];
 
-\TYPO3\CMS\Backend\Sprite\SpriteManager::addSingleIcons($icons, 'messenger');
+/** @var \TYPO3\CMS\Core\Imaging\IconRegistry $iconRegistry */
+$iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
+foreach ($icons as $key => $icon) {
+    $iconRegistry->registerIcon(
+        'extensions-messenger-' . $key,
+        \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+        [
+            'source' => $icon
+        ]
+    );
+}
+unset($iconRegistry);
 
 // Add Messenger main module before 'user'
 // There are not API for doing this... ;(
@@ -70,17 +82,25 @@ if (TYPO3_MODE === 'BE') {
 
         ');
 
-        // Extend FE User module
         /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-        $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \Fab\Vidi\Module\ModuleLoader::class,
-            'fe_users'
-        );
+        if($moduleLoader->isRegistered('fe_users')) {
 
-        $moduleLoader->addMenuMassActionComponents([
-            \Fab\Messenger\View\MenuItem\SendMenuItem::class,
-            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-        ]);
-        $moduleLoader->register();
+            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                \Fab\Vidi\Module\ModuleLoader::class,
+                'fe_users'
+            );
+            // Extend FE User module
+            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                \Fab\Vidi\Module\ModuleLoader::class,
+                'fe_users'
+            );
+
+            $moduleLoader->addMenuMassActionComponents([
+                \Fab\Messenger\View\MenuItem\SendMenuItem::class,
+                \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+            ]);
+            $moduleLoader->register();
+        }
     }
 }
