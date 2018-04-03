@@ -8,6 +8,9 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'fabien@ecodev.ch',
     'state' => 'beta',
     'version' => '1.0.0-dev',
+    'autoload' => [
+        'psr-4' => ['Fab\\Messenger\\' => 'Classes']
+    ],
     'constraints' => [
         'depends' => [
             'typo3' => '8.7.0-8.7.99',
