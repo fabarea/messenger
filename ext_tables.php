@@ -82,13 +82,13 @@ if (TYPO3_MODE === 'BE') {
 
         ');
 
+        $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+
         /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
         if($moduleLoader->isRegistered('fe_users')) {
 
-            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \Fab\Vidi\Module\ModuleLoader::class,
-                'fe_users'
-            );
+            $moduleLoader->setDataType('fe_users');
+
             // Extend FE User module
             /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
             $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
