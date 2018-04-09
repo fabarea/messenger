@@ -14,7 +14,6 @@ return [
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
         'requestUpdate' => 'type',
-        'origUid' => 't3_origuid',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
         'transOrigDiffSourceField' => 'l10n_diffsource',
@@ -65,14 +64,6 @@ return [
             'config' => [
                 'type' => 'passthrough',
             ],
-        ],
-        't3ver_label' => [
-            'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.versionLabel',
-            'config' => [
-                'type' => 'input',
-                'size' => 30,
-                'max' => 255,
-            ]
         ],
         'type' => [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type',

@@ -22,7 +22,6 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	starttime int(11) unsigned DEFAULT '0' NOT NULL,
 	endtime int(11) unsigned DEFAULT '0' NOT NULL,
 
-	t3_origuid int(11) DEFAULT '0' NOT NULL,
 	sys_language_uid int(11) DEFAULT '0' NOT NULL,
 	l10n_parent int(11) DEFAULT '0' NOT NULL,
 	l10n_diffsource mediumblob,
@@ -31,7 +30,6 @@ CREATE TABLE tx_messenger_domain_model_messagetemplate (
 	KEY parent (pid),
 
 	KEY language (l10n_parent,sys_language_uid)
-
 );
 
 #
@@ -53,7 +51,6 @@ CREATE TABLE tx_messenger_domain_model_messagelayout (
 	starttime int(11) unsigned DEFAULT '0' NOT NULL,
 	endtime int(11) unsigned DEFAULT '0' NOT NULL,
 
-	t3_origuid int(11) DEFAULT '0' NOT NULL,
 	sys_language_uid int(11) DEFAULT '0' NOT NULL,
 	l10n_parent int(11) DEFAULT '0' NOT NULL,
 	l10n_diffsource mediumblob,
@@ -62,7 +59,6 @@ CREATE TABLE tx_messenger_domain_model_messagelayout (
 	KEY parent (pid),
 
 	KEY language (l10n_parent,sys_language_uid)
-
 );
 
 #
