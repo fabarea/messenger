@@ -36,7 +36,7 @@ class ModuleLoader
                 \Fab\Vidi\Module\ModuleLoader::class,
                 $dataType
             );
-            $moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.png')
+            $moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/module-' . $shortDataType . '.svg')
                 ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
                 #->addStyleSheetFiles(['EXT:messenger/Resources/Public/StyleSheet/Backend/' . $dataType .'.css'])
                 ->setDefaultPid(1)
