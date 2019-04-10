@@ -26,7 +26,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -35,7 +34,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -44,7 +42,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -53,7 +50,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -71,7 +67,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -80,7 +75,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -88,8 +82,7 @@ return [
             'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:body',
             'config' => [
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'text',
                 'readOnly' => true,
             ],
         ],
@@ -98,7 +91,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -107,7 +99,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -116,7 +107,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
             ],
         ],
@@ -125,7 +115,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
                 'eval' => 'datetime',
             ],
@@ -136,7 +125,6 @@ return [
             'config' => [
                 'type' => 'select',
                 'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
-                'size' => 1,
                 'minitems' => 0,
                 'maxitems' => 1,
                 'readOnly' => true,
@@ -148,7 +136,6 @@ return [
             'config' => [
                 'type' => 'select',
                 'table_foreign' => 'tx_messenger_domain_model_messagelayout',
-                'size' => 1,
                 'minitems' => 0,
                 'maxitems' => 1,
                 'readOnly' => true,
@@ -159,7 +146,6 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:ip',
             'config' => [
                 'type' => 'input',
-                'size' => 50,
                 'readOnly' => true,
                 'eval' => 'trim',
             ],

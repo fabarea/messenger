@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Controller;
 
 /*
@@ -8,7 +9,6 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Mailing\Service\RecipientService;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
@@ -25,13 +25,10 @@ class BackendMessageController extends ActionController
 {
 
     /**
-     * @throws \Fab\Media\Exception\StorageNotOnlineException
-     * @throws \InvalidArgumentException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException
+     * @return void
      */
-    public function initializeAction()
+    public function initializeAction(): void
     {
-
         // Configure property mapping to retrieve the file object.
         if ($this->arguments->hasArgument('body')) {
 
@@ -45,12 +42,9 @@ class BackendMessageController extends ActionController
 
     /**
      * @param array $matches
-     * @throws \InvalidArgumentException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
-     * @throws \Fab\Vidi\Exception\InvalidKeyInArrayException
+     * @param int $pageId
      */
-    public function composeAction(array $matches = array())
+    public function composeAction(array $matches = array(), $pageId = 0): void
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');
@@ -58,8 +52,21 @@ class BackendMessageController extends ActionController
         // Fetch objects via the Content Service.
         $contentService = $this->getContentService()->findBy($matcher);
 
-        $this->view->assign('senders', SenderProvider::getInstance()->getFormattedPossibleSenders());
-        $this->view->assign('numberOfRecipients', $contentService->getNumberOfObjects());
+        $emailSubject = '';
+        if ($pageId > 0) {
+            $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
+            if (is_array($page) && isset($page['title'])) {
+                $emailSubject = $page['title'];
+            }
+        }
+
+        $this->view->assignMultiple([
+            'matches' => $matches,
+            'pageId' => $pageId,
+            'emailSubject' => $emailSubject,
+            'senders' => SenderProvider::getInstance()->getFormattedPossibleSenders(),
+            'numberOfRecipients' => $contentService->getNumberOfObjects(),
+        ]);
     }
 
     /**
@@ -67,18 +74,9 @@ class BackendMessageController extends ActionController
      * @param string $body
      * @param string $sender
      * @param array $matches
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
-     * @validate $body \Fab\Messenger\Domain\Validator\NotEmptyValidator
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Vidi\Exception\InvalidKeyInArrayException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
-     * @throws \RuntimeException
      */
-    public function sendAction($subject, $body, $sender, array $matches = array())
+    public function sendAction(string $subject, string $body, string $sender, array $matches = array()): void
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');
@@ -91,7 +89,6 @@ class BackendMessageController extends ActionController
         if (is_array($possibleSenders) && $possibleSenders[$sender]) {
             $sender = $possibleSenders[$sender];
             $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
-
             foreach ($contentService->getObjects() as $recipient) {
 
                 if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
@@ -100,6 +97,8 @@ class BackendMessageController extends ActionController
                     /** @var Message $message */
                     $message = $this->objectManager->get(Message::class);
 
+                    $markers = $recipient->toArray();
+
                     # Minimum required to be set
                     $message->setBody($body)
                         ->setSubject($subject)
@@ -107,19 +106,15 @@ class BackendMessageController extends ActionController
                         ->setMailingName($mailingName)
                         ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
                         ->parseToMarkdown(true)// (bool)$this->settings['parseToMarkdown']
-                        ->assign('recipient', $recipient->toArray())
-                        ->setTo($this->getTo($recipient));
-
-                    #if ($this->settings['layout']) {
-                    #    $message->setMessageLayout($this->settings['layout']);
-                    #}
-
-                    $message->enqueue();
+                        ->assign('recipient', $markers)
+                        ->assignMultiple($markers)
+                        ->setTo($this->getTo($recipient))
+                        ->enqueue();
                 }
             }
         }
 
-        $this->redirect('feedback', null, null, [
+        $this->redirect('feedbackQueued', null, null, [
             'numberOfSentEmails' => $numberOfSentEmails,
             'numberOfRecipients' => $contentService->getNumberOfObjects(),
         ]);
@@ -130,7 +125,7 @@ class BackendMessageController extends ActionController
      * @param Content $recipient
      * @return array
      */
-    protected function getTo(Content $recipient)
+    protected function getTo(Content $recipient): array
     {
         $email = $recipient['email'];
 
@@ -143,7 +138,7 @@ class BackendMessageController extends ActionController
             $nameParts[] = $recipient['last_name'];
         }
 
-        if (count($nameParts) > 0) {
+        if (count($nameParts) === 0) {
             $nameParts[] = $email;
         }
 
@@ -157,17 +152,9 @@ class BackendMessageController extends ActionController
      * @param string $body
      * @param string $sender
      * @param string $recipientList
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Vidi\Exception\InvalidKeyInArrayException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
-     * @throws \RuntimeException
      */
-    public function sendAsTestAction($subject, $body, $sender, $recipientList)
+    public function sendAsTestAction(string $subject, string $body, string $sender, string $recipientList): void
     {
         $recipients = GeneralUtility::trimExplode(',', $recipientList, true);
         $numberOfSentEmails = 0;
@@ -205,7 +192,7 @@ class BackendMessageController extends ActionController
             }
         }
 
-        $this->redirect('feedback', null, null, [
+        $this->redirect('feedbackSent', null, null, [
             'numberOfSentEmails' => $numberOfSentEmails,
             'numberOfRecipients' => count($recipients),
         ]);
@@ -215,16 +202,24 @@ class BackendMessageController extends ActionController
      * @param int $numberOfSentEmails
      * @param int $numberOfRecipients
      */
-    public function feedbackAction($numberOfSentEmails, $numberOfRecipients)
+    public function feedbackSentAction(int $numberOfSentEmails, int $numberOfRecipients): void
     {
-        /** @var RecipientService $recipientService */
-        $this->view->assign('numberOfSentEmails', (int)$numberOfSentEmails);
-        $this->view->assign('numberOfRecipients', (int)$numberOfRecipients);
+        $this->view->assign('numberOfSentEmails', $numberOfSentEmails);
+        $this->view->assign('numberOfRecipients', $numberOfRecipients);
     }
 
     /**
-     * @return ContentService
-     * @throws \InvalidArgumentException
+     * @param int $numberOfSentEmails
+     * @param int $numberOfRecipients
+     */
+    public function feedbackQueuedAction(int $numberOfSentEmails, int $numberOfRecipients): void
+    {
+        $this->view->assign('numberOfSentEmails', $numberOfSentEmails);
+        $this->view->assign('numberOfRecipients', $numberOfRecipients);
+    }
+
+    /**
+     * @return ContentService|object
      */
     protected function getContentService()
     {

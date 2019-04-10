@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\PagePath;
 
 /*
@@ -35,7 +36,7 @@ class Resolver
     {
         $params = unserialize(base64_decode(GeneralUtility::_GP('data')));
         if (is_array($params)) {
-            $this->pageId = $params['id'];
+            $this->pageId = (int)$params['id'];
             $this->parameters = $params['parameters'];
         }
     }
@@ -43,76 +44,42 @@ class Resolver
     /**
      * Handles incoming trackback requests
      *
-     * @return    void
+     * @return void
      */
-    public function main()
+    public function resolveUrl(): void
     {
-        header('Content-type: text/plain; charset=iso-8859-1');
-        if ($this->pageId) {
-            $this->createTSFE();
+        $myIp = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+        $devIPMask = trim($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
 
-            $cObj = GeneralUtility::makeInstance('tslib_cObj');
+        if ($myIp === $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
+            header('Content-type: text/plain; charset=iso-8859-1');
+            if ($this->pageId > 0) {
 
-            /* @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-            $typoLinkConfiguration = array(
-                'parameter' => $this->pageId,
-                'useCacheHash' => $this->parameters != '',
-            );
-            if ($this->parameters) {
-                $typoLinkConfiguration['additionalParams'] = $this->parameters;
+                $cObj = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
+
+                /* @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
+                $typoLinkConfiguration = array(
+                    'parameter' => $this->pageId,
+                    'useCacheHash' => $this->parameters !== '',
+                );
+                if ($this->parameters) {
+                    $typoLinkConfiguration['additionalParams'] = $this->parameters;
+                }
+                $url = $cObj->typoLink_URL($typoLinkConfiguration);
+                if ($url === '') {
+                    $url = '/';
+                }
+                $parts = parse_url($url);
+                if ($parts['host'] === '') {
+                    $url = GeneralUtility::locationHeaderUrl($url);
+                }
+                echo $url;
+                exit();
             }
-            $url = $cObj->typoLink_URL($typoLinkConfiguration);
-            if ($url == '') {
-                $url = '/';
-            }
-            $parts = parse_url($url);
-            if ($parts['host'] == '') {
-                $url = GeneralUtility::locationHeaderUrl($url);
-            }
-            echo $url;
+        } else {
+            echo 'Access denied!';
+            header('HTTP/1.0 403 Access denied');
         }
     }
 
-    /**
-     * Initializes TSFE. This is necessary to have proper environment for typoLink.
-     *
-     * @return    void
-     */
-    protected function createTSFE()
-    {
-
-        $this->getFrontendObject()->connectToDB();
-        $this->getFrontendObject()->initFEuser();
-        $this->getFrontendObject()->determineId();
-        $this->getFrontendObject()->initTemplate();
-        $this->getFrontendObject()->getConfigArray();
-
-        \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
-    }
-
-    /**
-     * Returns an instance of the Frontend object.
-     *
-     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
-     */
-    protected function getFrontendObject()
-    {
-        if (is_null($GLOBALS['TSFE'])) {
-            $GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], $this->pageId, 0);
-        }
-        return $GLOBALS['TSFE'];
-    }
-}
-
-$myIp = GeneralUtility::getIndpEnv('REMOTE_ADDR');
-$devIPMask = trim($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
-
-if ($myIp == $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
-    $resolver = GeneralUtility::makeInstance('Fab\Messenger\PagePath\Resolver');
-
-    /* @var $resolver \Fab\Messenger\PagePath\Resolver */
-    $resolver->main();
-} else {
-    echo 'Access denied!';
-    header('HTTP/1.0 403 Access denied');
 }

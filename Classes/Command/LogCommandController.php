@@ -8,38 +8,75 @@ namespace Fab\Messenger\Command;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class LogCommandController
  */
-class LogCommandController extends CommandController
+class LogCommandController extends Command
 {
 
     /**
-     * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
-     * @inject
+     * Configure the command by defining the name, options and arguments
      */
-    protected $sendMessageRepository;
+    protected function configure(): void
+    {
+        $this->setDescription('Sent messages older than 100 days will be removed.')
+            ->addOption(
+                'older-than-days',
+                '',
+                InputOption::VALUE_OPTIONAL,
+                'Remove messages older than x days',
+                100
+            );
+    }
 
     /**
-     * @param int $olderThanDays
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    public function cleanUpCommand($olderThanDays = 100)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $oldSentMessages = $this->sendMessageRepository->findOlderThanDays($olderThanDays);
+        $io = new SymfonyStyle($input, $output);
+
+        $olderThanDays = $input->getOption('older-than-days');
+        $oldSentMessages = $this->getSentMessageRepository()->findOlderThanDays($olderThanDays);
 
         $numberOfOldSentMessage = count($oldSentMessages);
 
         if ($numberOfOldSentMessage > 0) {
-            $this->sendMessageRepository->removeOlderThanDays($olderThanDays);
-            $this->outputFormatted(
-                'I removed %s entries older than %s days from the log of sent messages.',
-                [$numberOfOldSentMessage, $olderThanDays]
+            $this->getSentMessageRepository()->removeOlderThanDays($olderThanDays);
+            $io->text(
+                sprintf(
+                    'I removed %s sent messages older than %s days from the log.',
+                    $numberOfOldSentMessage,
+                    $olderThanDays
+                )
             );
         }
+    }
+
+    /**
+     * @return object|SentMessageRepository
+     */
+    protected function getSentMessageRepository(): SentMessageRepository
+    {
+        return GeneralUtility::makeInstance(SentMessageRepository::class);
+    }
+
+    /**
+     * @return object|ObjectManager
+     */
+    protected function getObjectManager(): ObjectManager
+    {
+        return GeneralUtility::makeInstance(ObjectManager::class);
     }
 
 }

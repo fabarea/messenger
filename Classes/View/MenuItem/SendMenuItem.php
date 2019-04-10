@@ -9,7 +9,7 @@ namespace Fab\Messenger\View\MenuItem;
  */
 
 use Fab\Messenger\Module\MessengerModule;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use Fab\Messenger\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use Fab\Vidi\View\AbstractComponentView;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -40,15 +40,24 @@ class SendMenuItem extends AbstractComponentView
      * @return string
      * @throws \InvalidArgumentException
      */
-    protected function getBulkSendUri()
+    protected function getBulkSendUri(): string
     {
-
         $urlParameters = [
             MessengerModule::getParameterPrefix() => [
                 'controller' => 'BackendMessage',
                 'action' => 'compose',
             ],
         ];
+
+        $pid = $this->getModuleLoader()->getCurrentPid();
+        if ($pid > 0) {
+            $urlParameters = [
+                MessengerModule::getParameterPrefix() => [
+                    'pageId' => $pid,
+                ],
+            ];
+
+        }
         return BackendUtility::getModuleUrl(MessengerModule::getSignature(), $urlParameters);
     }
 
@@ -56,12 +65,13 @@ class SendMenuItem extends AbstractComponentView
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function loadRequireJsCode()
+    protected function loadRequireJsCode(): void
     {
+        /** @var PageRenderer $pageRenderer */
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 
-        $configuration['paths']['Fab/Messenger'] = '../typo3conf/ext/messenger/Resources/Public/JavaScript';
+        $configuration['paths']['TYPO3/CMS/Messenger'] = '../typo3conf/ext/messenger/Resources/Public/JavaScript';
         $pageRenderer->addRequireJsConfiguration($configuration);
-        $pageRenderer->loadRequireJsModule('Fab/Messenger/SendMenuItem');
+        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Messenger/SendMenuItem');
     }
 }

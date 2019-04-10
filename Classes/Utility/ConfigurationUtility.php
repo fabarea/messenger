@@ -26,37 +26,26 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * Returns a class instance.
      *
-     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     * @return \Fab\Messenger\Utility\ConfigurationUtility|object
      */
-    static public function getInstance()
+    public static function getInstance()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
      * Constructor
-     *
-     * @return \Fab\Messenger\Utility\ConfigurationUtility
      */
     public function __construct()
     {
-
-        /** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-        $configurationUtility = $this->getObjectManager()->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-        $configuration = $configurationUtility->getCurrentConfiguration('messenger');
+        $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
+        )->get('messenger');
 
         // Fill up configuration array with relevant values.
-        foreach ($configuration as $key => $data) {
-            $this->configuration[$key] = $data['value'];
+        foreach ($configuration as $key => $value) {
+            $this->configuration[$key] = $value;
         }
-    }
-
-    /**
-     * @return ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
     }
 
     /**
@@ -77,7 +66,7 @@ class ConfigurationUtility implements SingletonInterface
      * @param mixed $value
      * @return void
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->configuration[$key] = $value;
     }
@@ -85,7 +74,7 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * @return array
      */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }

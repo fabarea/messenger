@@ -61,6 +61,12 @@
 			<trans-unit id="email">
 				<source>Email</source>
 			</trans-unit>
+			<trans-unit id="message_text">
+				<source>message</source>
+			</trans-unit>
+			<trans-unit id="messages_text">
+				<source>messages</source>
+			</trans-unit>
 			<trans-unit id="send_selected">
 				<source>Send email for selected recipients</source>
 			</trans-unit>
@@ -110,10 +116,16 @@
 				<source>Send a page</source>
 			</trans-unit>
 			<trans-unit id="message.success">
-				<source>Message has been sent to</source>
+				<source>Messages have been sent</source>
+			</trans-unit>
+			<trans-unit id="message.queued.success">
+				<source>Messages have been queued</source>
 			</trans-unit>
 			<trans-unit id="message.invalidEmails">
 				<source>Some user(s) have an invalid email address. Please sort the list to find out which ones.</source>
+			</trans-unit>
+			<trans-unit id="message.custom.body">
+				<source>Replace message body by a free text instead of the page content.</source>
 			</trans-unit>
 		</body>
 	</file>

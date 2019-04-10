@@ -43,12 +43,9 @@ class BodyConverter extends AbstractTypeConverter
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
-     * @throws \UnexpectedValueException
-     * @throws \Exception
-     * @throws \TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
     {
 
         $body = $source;
@@ -75,8 +72,7 @@ class BodyConverter extends AbstractTypeConverter
     }
 
     /**
-     * @return \Fab\Messenger\ContentRenderer\BackendRenderer
-     * @throws \InvalidArgumentException
+     * @return \Fab\Messenger\ContentRenderer\BackendRenderer|object
      */
     protected function getContentRenderer()
     {

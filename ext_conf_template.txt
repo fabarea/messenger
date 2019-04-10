@@ -1,8 +1,23 @@
 # cat=basic//3; type=string; label= A root page uid : Define what is the root page of the website. This setting is mandatory only for the Backend to be able to convert Fluid View Helper in a Frontend context.
 rootPageUid = 1
 
-# cat=basic//; type=user[EXT:messenger/Classes/Backend/ExtensionManager.php:Fab\Messenger\Backend\ExtensionManager->renderBeModules]; label = Select BE modules to display: Since the extension can be used as standalone library, decide what BE module to show.
-enabledModules = composer, messagetemplate, messagelayout, mailing, sentmessage, queue
+# cat=basic//; type=boolean; label=Autoload TypoScript: If enabled, Messenger will automatically load the TypoScript setup that is required. When un-checking make sure to include / load the TypoScript on your own as a Static TypoScript .
+autoload_typoscript = 1
+
+# cat=basic//; type=boolean; label=Display "newsletter" module: If extension Vidi is installed, Messenger could load a module to send pages as newsletter.
+load_newsletter_module = 1
+
+# cat=basic//; type=boolean; label=Display message "template" module: If extension Vidi is installed, display a message template module in the Backend.
+load_message_template_module = 1
+
+# cat=basic//; type=boolean; label=Display message "layout" module: If extension Vidi is installed, display a message layoue in the Backend.
+load_message_layout_module = 1
+
+# cat=basic//; type=boolean; label=Display message "sent" module: If extension Vidi is installed, display a log module in the Backend where to see the sent messages.
+load_message_sent_module = 1
+
+# cat=basic//; type=boolean; label=Display message "queue" module: If extension Vidi is installed, display a queue module in the Backend.
+load_message_queue_module = 1
 
 # cat=redirect//; type=string; label= Development redirect to: List of email addresses where to redirect all messages for "development" context. Notice, it can also be defined in $GLOBALS['TYPO3_CONF_VARS']['MAIL']['development_redirect_to'] = 'email@example.com' which will take the precedence if configured so..
 development_redirect_to =

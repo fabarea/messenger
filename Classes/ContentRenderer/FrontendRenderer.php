@@ -39,11 +39,10 @@ class FrontendRenderer implements ContentRendererInterface
      * @param array $markers
      * @return string
      */
-    public function render($content, array $markers)
+    public function render($content, array $markers): string
     {
-
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
-        $view = $this->getObjectManager()->get('TYPO3\CMS\Fluid\View\StandaloneView');
+        $view = $this->getObjectManager()->get(\TYPO3\CMS\Fluid\View\StandaloneView::class);
         $view->setTemplateSource($content);
 
         // If a template file was defined, set its path, so that layouts and partials can be used
@@ -60,10 +59,10 @@ class FrontendRenderer implements ContentRendererInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager|object
      */
     protected function getObjectManager()
     {
-        return GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
     }
 }

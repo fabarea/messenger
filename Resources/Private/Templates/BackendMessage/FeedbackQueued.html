@@ -1,0 +1,9 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
+      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+
+<f:layout name="Default"/>
+
+<f:section name="main">
+{f:translate(key: 'message.queued.success')} {numberOfSentEmails} / {numberOfRecipients}. <f:if condition="{numberOfSentEmails} != {numberOfRecipients}">{f:translate(key: 'message.invalidEmails')}</f:if>
+</f:section>
+</html>

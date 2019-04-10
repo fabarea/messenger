@@ -7,14 +7,14 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'Fabien Udriot',
     'author_email' => 'fabien@ecodev.ch',
     'state' => 'beta',
-    'version' => '1.1.0-dev',
+    'version' => '2.0.0-dev',
     'autoload' => [
         'psr-4' => ['Fab\\Messenger\\' => 'Classes']
     ],
     'constraints' => [
         'depends' => [
             'typo3' => '9.5.0-9.5.99',
-            'vidi' => '2.6.0-0.0.0',
+            'vidi' => '3.0.0-0.0.0',
         ],
         'conflicts' => [
         ],

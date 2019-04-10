@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\PagePath;
 
 /*
@@ -8,7 +9,9 @@ namespace Fab\Messenger\PagePath;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use Fab\Messenger\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 
@@ -24,16 +27,16 @@ class PagePath
      * Creates URL to page using page id and parameters
      *
      * @param int $pageId
-     * @param string $parameters
-     * @return    string    Path to page or empty string
+     * @param mixed $parameters
+     * @return  string
      */
-    static public function getUrl($pageId, $parameters = '')
+    public static function getUrl($pageId, $parameters): string
     {
         if (is_array($parameters)) {
             $parameters = GeneralUtility::implodeArrayForUrl('', $parameters);
         }
         $data = array(
-            'id' => intval($pageId),
+            'id' => (int)$pageId,
         );
         if ($parameters !== '' && $parameters{0} === '&') {
             $data['parameters'] = $parameters;
@@ -47,7 +50,6 @@ class PagePath
             $headers = array(
                 'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
             );
-
             $result = GeneralUtility::getUrl($url, false, $headers);
 
             $urlParts = parse_url($result);
@@ -58,7 +60,7 @@ class PagePath
             } elseif ($result) {
 
                 // See if we need to prepend domain part
-                if ($urlParts['host'] === '') {
+                if (!isset($urlParts['host']) || $urlParts['host'] === '') {
                     $result = rtrim($siteUrl, '/') . '/' . ltrim($result, '/');
                 }
             }
@@ -77,11 +79,10 @@ class PagePath
      * @return string
      * @throws \UnexpectedValueException
      */
-    static public function getSiteBaseUrl($pageId)
+    public static function getSiteBaseUrl($pageId): string
     {
-
         // CLI must define its own environment variable.
-        if (TYPO3_cliMode === TRUE) {
+        if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI) {
 
             $environmentBaseUrl = getenv('TYPO3_BASE_URL');
             $baseUrl = rtrim($environmentBaseUrl, '/') . '/';
@@ -93,13 +94,72 @@ class PagePath
                 die($message);
             }
         } else {
-            $domain = BackendUtility::firstDomainRecord(BackendUtility::BEgetRootLine($pageId));
-            $pageRecord = BackendUtility::getRecord('pages', $pageId);
-            $scheme = is_array($pageRecord) && isset($pageRecord['url_scheme']) && $pageRecord['url_scheme'] == HttpUtility::SCHEME_HTTPS ? 'https' : 'http';
-            $baseUrl = $domain ? $scheme . '://' . $domain . '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
+            $siteRootPage = [];
+            $domainName = '';
+            foreach (\TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId) as $page) {
+                if ((int)$page['is_siteroot'] === 1) {
+                    $siteRootPage = $page;
+                }
+            }
+            if (!empty($siteRootPage)) {
+                $domain = self::guessFistDomain($siteRootPage['uid']);
+                if (!empty($domain)) {
+                    $domainName = $domain['domainName'];
+
+                }
+            }
+            $baseUrl = $domainName
+                ? self::getScheme($siteRootPage['uid']) . '://' . $domainName . '/'
+                : GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
         }
 
         return $baseUrl;
+    }
+
+    /**
+     * @param int $pageId
+     * @return array
+     */
+    protected static function getScheme($pageId): string
+    {
+        $pageRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
+        return is_array($pageRecord) && isset($pageRecord['url_scheme']) && $pageRecord['url_scheme'] === HttpUtility::SCHEME_HTTPS
+            ? 'https'
+            : 'http';
+    }
+
+    /**
+     * @param int $pageId
+     * @return array
+     */
+    protected static function guessFistDomain(int $pageId): array
+    {
+        /** @var QueryBuilder $query */
+        $queryBuilder = self::getQueryBuilder('sys_domain');
+        $queryBuilder->select('*')
+            ->from('sys_domain')
+            ->andWhere(
+                'pid = ' . $pageId
+            )
+            ->addOrderBy('sorting', 'ASC');
+
+        $record = $queryBuilder
+            ->execute()
+            ->fetch();
+        return is_array($record)
+            ? $record
+            : [];
+    }
+
+    /**
+     * @param string $tableName
+     * @return object|QueryBuilder
+     */
+    protected static function getQueryBuilder($tableName): QueryBuilder
+    {
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        return $connectionPool->getQueryBuilderForTable($tableName);
     }
 
 }

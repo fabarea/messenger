@@ -25,9 +25,8 @@ class BackendRenderer implements ContentRendererInterface
      * @param string $content
      * @param array $markers
      * @return string
-     * @throws \UnexpectedValueException
      */
-    public function render($content, array $markers)
+    public function render($content, array $markers): string
     {
         $registryIdentifier = Algorithms::generateUUID();
         $registryEntry = array(
@@ -47,7 +46,7 @@ class BackendRenderer implements ContentRendererInterface
         if (!$url) {
             $message = 'ERROR in Messenger!' . chr(10);
             $message .= sprintf(
-                'As a first measure, add this IP "%s" to your "devIPmask" settings. Debug me if the problem persists...%s',
+                'To sort it out, you could add this IP "%s" to your "devIPmask" settings. Debug me if the problem persists...%s',
                 GeneralUtility::getIndpEnv('REMOTE_ADDR'),
                 chr(10)
             );
@@ -65,19 +64,19 @@ class BackendRenderer implements ContentRendererInterface
     }
 
     /**
-     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     * @return \Fab\Messenger\Utility\ConfigurationUtility|object
      */
     public function getConfigurationUtility()
     {
-        return GeneralUtility::makeInstance('Fab\Messenger\Utility\ConfigurationUtility');
+        return GeneralUtility::makeInstance(\Fab\Messenger\Utility\ConfigurationUtility::class);
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Registry
+     * @return \TYPO3\CMS\Core\Registry|object
      */
     protected function getRegistry()
     {
-        return GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
     }
 
 }

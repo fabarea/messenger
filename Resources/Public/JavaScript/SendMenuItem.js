@@ -17,204 +17,172 @@
  * Module: Fab/Messenger/Media
  */
 define([
-	'jquery',
-	'TYPO3/CMS/Backend/Modal',
-	'TYPO3/CMS/Backend/Notification',
-	'TYPO3/CMS/Lang/Lang'
-], function($, Modal, Notification, Lang) {
+    'jquery',
+    'TYPO3/CMS/Backend/Modal',
+    'TYPO3/CMS/Backend/Notification'
+], function($, Modal, Notification) {
 
-	'use strict';
+    'use strict';
 
-	var Messenger = {
+    var Messenger = {
 
-		/**
-		 * Get edit storage URL.
-		 *
-		 * @param {string} url
-		 * @return string
-		 * @private
-		 */
-		getEditStorageUrl: function(url) {
+        /**
+         * Get edit storage URL.
+         *
+         * @param {string} url
+         * @return string
+         * @private
+         */
+        getEditStorageUrl: function(url) {
 
-			var uri = new Uri(url);
+            var uri = new Uri(url);
 
-			if (Vidi.Grid.hasSelectedRows()) {
-				// Case 1: mass editing for selected rows.
+            if (Vidi.Grid.hasSelectedRows()) {
+                // Case 1: mass editing for selected rows.
 
-				// Add parameters to the Uri object.
-				uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', Vidi.Grid.getSelectedIdentifiers().join(','));
+                // Add parameters to the Uri object.
+                uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', Vidi.Grid.getSelectedIdentifiers().join(','));
 
-			} else {
+            } else {
 
-				var storedParameters = Vidi.Grid.getStoredParameters();
+                var storedParameters = Vidi.Grid.getStoredParameters();
 
-				if (typeof storedParameters === 'object') {
+                if (typeof storedParameters === 'object') {
 
-					if (storedParameters.search) {
-						uri.addQueryParam('search[value]', storedParameters.search.value);
-					}
+                    if (storedParameters.search) {
+                        uri.addQueryParam('search[value]', storedParameters.search.value);
+                    }
 
-					if (storedParameters.order) {
-						uri.addQueryParam('order[0][column]', storedParameters.order[0].column);
-						uri.addQueryParam('order[0][dir]', storedParameters.order[0].dir);
-					}
-				}
+                    if (storedParameters.order) {
+                        uri.addQueryParam('order[0][column]', storedParameters.order[0].column);
+                        uri.addQueryParam('order[0][dir]', storedParameters.order[0].dir);
+                    }
+                }
 
-			}
+            }
 
-			return uri.toString();
-		},
+            return uri.toString();
+        },
 
-		/**
-		 * @return void
-		 */
-		initialize: function() {
+        /**
+         * @return void
+         */
+        initialize: function() {
 
-			// Add listener on bulk send button
-			$(document).on('click', '.btn-bulk-send', function(e) {
+            // Add listener on bulk send button
+            $(document).on('click', '.btn-bulk-send', function(e) {
 
-				e.preventDefault();
+                e.preventDefault();
 
-				var me = this;
-				var url = Messenger.getEditStorageUrl($(this).attr('href'));
+                var me = this;
+                var url = Messenger.getEditStorageUrl($(this).attr('href'));
 
-				Vidi.modal = Modal.loadUrl(
-					TYPO3.l10n.localize('message.send'),
-					top.TYPO3.Severity.notice,
-					// buttons
-					[
-						{
-							text: TYPO3.l10n.localize('close'),
-							btnClass: 'btn btn-primary',
-							trigger: function() {
-								Modal.dismiss();
-							}
-						}
-					],
-					url,
-					function() {
+                Vidi.modal = Modal.advanced({
+                    type: Modal.types.ajax,
+                    title: TYPO3.l10n.localize('message.send'),
+                    severity: top.TYPO3.Severity.notice,
+                    content: decodeURIComponent(url),
+                    buttons: [
+                        {
+                            text: TYPO3.l10n.localize('close'),
+                            btnClass: 'btn btn-primary',
+                            trigger: function() {
+                                Modal.dismiss();
+                            }
+                        }
+                    ],
+                    ajaxCallback: function() {
 
-						// format modal title.
-						var modalTitle = $('.modal-title', Vidi.modal).html() + ' (' + $('#numberOfRecipients', Vidi.modal).html() + ')';
-						$('.modal-title', Vidi.modal).html(modalTitle);
+                        // format modal title.
+                        var modalTitle = $('.modal-title', Vidi.modal).html() + ' (' + $('#numberOfRecipients', Vidi.modal).html() + ')';
+                        $('.modal-title', Vidi.modal).html(modalTitle);
 
-						/**
-						 * Delete a selection in the form just opened in the popup.
-						 */
-						$(Vidi.modal).on('submit', '#form-bulk-send', function(e) {
+                        /**
+                         * Delete a selection in the form just opened in the popup.
+                         */
+                        $(Vidi.modal).on('submit', '#form-bulk-send', function(e) {
 
-							// Stop default behaviour.
-							e.preventDefault();
-
-
-							$('.modal-body', Vidi.modal).css('opacity', 0.6);
-							$('#btn-bulk-send', Vidi.modal).attr('disabled', 'disabled');
-
-							var $form = $(this).closest('form');
+                            // Stop default behaviour.
+                            e.preventDefault();
 
 
-							// Ajax request
-							$.ajax({
-								url: $($form).attr('action'),
-								data: $form.serialize(),
-								method: 'post',
+                            $('.modal-body', Vidi.modal).css('opacity', 0.6);
+                            $('#btn-bulk-send', Vidi.modal).attr('disabled', 'disabled');
 
-								/**
-								 * On success call back
-								 *
-								 * @param response
-								 */
-								success: function(response) {
+                            // If body contains a numerical corresponding to a page id, the page will be rendered.
+                            if (!$('#has-body-text', Vidi.modal).is(':checked') && $('#messenger-page-id', Vidi.modal).val()) {
+                                $('#messenger-body', Vidi.modal).val($('#messenger-page-id', Vidi.modal).val());
+                            }
 
-									Notification.success(null, response, 3);
-									Modal.dismiss();
-								}
-							});
-						});
+                            var $form = $(this).closest('form');
 
-						/**
-						 * Delete a selection in the form just opened in the popup.
-						 */
-						$(Vidi.modal).on('submit', '#form-send-test', function(e) {
+                            // Ajax request
+                            $.ajax({
+                                url: $($form).attr('action'),
+                                data: $form.serialize(),
+                                method: 'post',
 
-							// Stop default behaviour.
-							e.preventDefault();
+                                /**
+                                 * On success call back
+                                 *
+                                 * @param response
+                                 */
+                                success: function(response) {
+                                    Notification.success('', response);
+                                    Modal.dismiss();
+                                }
+                            });
+                        });
 
-							$('.modal-body', Vidi.modal).css('opacity', 0.6);
-							$('#btn-send-test', Vidi.modal).attr('disabled', 'disabled');
+                        /**
+                         * Delete a selection in the form just opened in the popup.
+                         */
+                        $(Vidi.modal).on('submit', '#form-send-test', function(e) {
 
-							$('#messenger-sender-test', Vidi.modal).val($('#messenger-sender', Vidi.modal).val());
-							$('#messenger-subject-test', Vidi.modal).val($('#messenger-subject', Vidi.modal).val());
-							$('#messenger-body-test', Vidi.modal).val($('#messenger-body', Vidi.modal).val());
+                            // Stop default behaviour.
+                            e.preventDefault();
 
-							var $form = $(this).closest('form');
+                            $('.modal-body', Vidi.modal).css('opacity', 0.6);
+                            $('#btn-send-test', Vidi.modal).attr('disabled', 'disabled');
 
-							// Ajax request
-							$.ajax({
-								url: $($form).attr('action'),
-								data: $form.serialize(),
-								method: 'post',
+                            // If body contains a numerical corresponding to a page id, the page will be rendered.
+                            if (!$('#has-body-text', Vidi.modal).is(':checked') && $('#messenger-page-id', Vidi.modal).val()) {
+                                $('#messenger-body', Vidi.modal).val($('#messenger-page-id', Vidi.modal).val());
+                            }
 
-								/**
-								 * On success call back
-								 *
-								 * @param response
-								 */
-								success: function(response) {
-									$('.modal-body', Vidi.modal).css('opacity', 1);
-									$('#btn-send-test', Vidi.modal).removeAttr('disabled');
+                            $('#messenger-sender-test', Vidi.modal).val($('#messenger-sender', Vidi.modal).val());
+                            $('#messenger-subject-test', Vidi.modal).val($('#messenger-subject', Vidi.modal).val());
+                            $('#messenger-body-test', Vidi.modal).val($('#messenger-body', Vidi.modal).val());
 
-									Notification.success(null, response, 3);
-								}
-							});
-						});
-					}
-				);
-			});
+                            var $form = $(this).closest('form');
 
-		}
+                            // Ajax request
+                            $.ajax({
+                                url: $($form).attr('action'),
+                                data: $form.serialize(),
+                                method: 'post',
 
+                                /**
+                                 * On success call back
+                                 * @param response
+                                 */
+                                success: function(response) {
+                                    $('.modal-body', Vidi.modal).css('opacity', 1);
+                                    $('#btn-send-test', Vidi.modal).removeAttr('disabled');
 
-		///**
-		// * Fetch the form and handle its action
-		// *
-		// * @param {string} url where to send the form data
-		// * @return void
-		// */
-		//handleForm: function(url) {
-		//	Panel.showForm();
-		//	$.ajax({
-		//		url: url,
-		//		success: function(data) {
-		//			Media.setContent(data);
-		//		}
-		//	});
-		//},
-		//
-		///**
-		// * Update the content on the GUI.
-		// *
-		// * @param {string} data
-		// * @return void
-		// */
-		//setContent: function(data) {
-		//
-		//	// replace content
-		//	var content;
-		//	$.each(['header', 'body', 'footer'], function(index, value) {
-		//		// @bug filter() only find the first element after tag body...
-		//		//var content = $(data).filter('#content-middle');
-		//
-		//		// find method will remove the outer tag
-		//		content = $(data).find('#content-' + value).html();
-		//
-		//		if (content.length > 0) {
-		//			$('.ajax-response-' + value).html(content);
-		//		}
-		//	});
-		//}
-	};
+                                    Notification.success(response);
+                                }
+                            });
+                        });
+                    }
+                })
 
-	Messenger.initialize();
-	return Messenger;
+            });
+
+        }
+
+    };
+
+    Messenger.initialize();
+    return Messenger;
 });

@@ -34,8 +34,6 @@ call_user_func(
         unset($iconRegistry);
 
         // Add Messenger main module before 'user'
-        // There are not API for doing this... ;(
-        // Some hope with this patch merged into 6.2 http://forge.typo3.org/issues/49643?
         if (TYPO3_MODE === 'BE') {
             if (!isset($GLOBALS['TBE_MODULES']['messenger'])) {
                 $beModules = [];
@@ -46,63 +44,103 @@ call_user_func(
                     $beModules[$key] = $val;
                 }
                 $GLOBALS['TBE_MODULES'] = $beModules;
-                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('messenger', '', '', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'mod/messenger/');
+
+                // Module Dms
+                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule(
+                    'messenger',
+                    '',
+                    '', // does not work for a main module before:tools
+                    '',
+                    [
+                        #'routeTarget' => \Hemmer\MrDmsExport\Controller\BackendModuleController::class . '::mainAction',
+                        'access' => 'group,user',
+                        'icon' => 'EXT:messenger/Resources/Public/Icons/module-messenger.svg',
+                        'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
+                    ]
+                );
             }
         }
 
-        if (TYPO3_MODE === 'BE') {
+        // Load some vidi BE modules
+        if (TYPO3_MODE === 'BE' && class_exists(\Fab\Vidi\Module\ModuleLoader::class)) {
 
-            // Load some vidi BE modules
-            if (class_exists('Fab\Vidi\Module\ModuleLoader')) {
+            // Register newsletter BE module
+            $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
+            )->get('messenger');
 
-                \Fab\Messenger\Module\ModuleLoader::register('messagetemplate');
-                \Fab\Messenger\Module\ModuleLoader::register('messagelayout');
-                \Fab\Messenger\Module\ModuleLoader::register('sentmessage');
-                \Fab\Messenger\Module\ModuleLoader::register('queue');
+            if (!isset($configuration['load_message_template_module']) || (bool)$configuration['load_message_template_module']) {
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_messagetemplate');
+            }
+            if (!isset($configuration['load_message_layout_module']) || (bool)$configuration['load_message_layout_module']) {
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_messagelayout');
+            }
+            if (!isset($configuration['load_message_sent_module']) || (bool)$configuration['load_message_sent_module']) {
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage');
+            }
+            if (!isset($configuration['load_message_queue_module']) || (bool)$configuration['load_message_queue_module']) {
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue');
+            }
 
-                \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                    'Fab.messenger',
-                    'user', // Make media module a submodule of 'user'
-                    'm1',
-                    'bottom', // Position
-                    array(
-                        'BackendMessage' => 'compose, send, sendAsTest, feedback',
-                    ),
-                    array(
-                        'access' => 'user,group',
-                        'icon' => 'EXT:messenger/ext_icon.png',
-                        'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
-                    )
-                );
+            \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+                'Fab.messenger',
+                'user', // Make media module a submodule of 'user'
+                'm1',
+                'bottom', // Position
+                array(
+                    'BackendMessage' => 'compose, send, sendAsTest, feedbackSent, feedbackQueued',
+                ),
+                array(
+                    'access' => 'user,group',
+                    'icon' => 'EXT:messenger/ext_icon.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
+                )
+            );
 
-                // Default User TSConfig to be added in any case.
-                TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
+            // Default User TSConfig to be added in any case.
+            TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
 
                     # Hide the module in the BE.
                     options.hideModules.user := addToList(MessengerM1)
 
                 ');
 
-                $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
 
+            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+            if ($moduleLoader->isRegistered('fe_users')) {
+
+                $moduleLoader
+                    ->setDataType('fe_users')
+                    ->setModuleLanguageFile('LLL:EXT:vidi/Resources/Private/Language/fe_users.xlf')
+                    ->setIcon('EXT:vidi/Resources/Public/Images/fe_users.svg')
+                    ->addMenuMassActionComponents(
+                        [
+                            \Fab\Messenger\View\MenuItem\SendMenuItem::class,
+                            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                        ]
+                    )
+                    ->register();
+            }
+
+            if (!isset($configuration['load_newsletter_module']) || (bool)$configuration['load_newsletter_module']) {
+                // Register a new BE Module to send newsletter
                 /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-                if ($moduleLoader->isRegistered('fe_users')) {
-
-                    $moduleLoader->setDataType('fe_users');
-
-                    // Extend FE User module
-                    /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-                    $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                        \Fab\Vidi\Module\ModuleLoader::class,
-                        'fe_users'
-                    );
-
-                    $moduleLoader->addMenuMassActionComponents([
-                        \Fab\Messenger\View\MenuItem\SendMenuItem::class,
-                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                    ]);
-                    $moduleLoader->register();
-                }
+                $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+                $moduleLoader->setMainModule('web')
+                    ->setDataType('fe_users')
+                    ->setIcon('EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg')
+                    ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/module_newsletter.xlf')
+                    ->removeComponentFromDocHeader(\Fab\Vidi\View\Button\NewButton::class)
+                    ->addMenuMassActionComponents(
+                        [
+                            \Fab\Messenger\View\MenuItem\SendMenuItem::class,
+                            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                        ]
+                    )
+                    ->ignorePid(true)
+                    ->register();
             }
         }
 

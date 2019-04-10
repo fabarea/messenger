@@ -11,7 +11,7 @@ namespace Fab\Messenger\ViewHelpers\Message;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Service\SenderProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper to some honey pot field.
@@ -20,12 +20,15 @@ class DevelopmentViewHelper extends AbstractViewHelper
 {
 
     /**
-     * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception\InvalidVariableException
-     * @return string
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
+     * @var boolean
+     * @api
      */
-    public function render()
+    protected $escapeOutput = false;
+
+    /**
+     * @return string
+     */
+    public function render(): string
     {
         $redirectTo = $this->getRedirectService()->getRedirections();
         $output = '';
@@ -45,8 +48,7 @@ class DevelopmentViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return RedirectService
-     * @throws \InvalidArgumentException
+     * @return RedirectService|object
      */
     public function getRedirectService() {
         return GeneralUtility::makeInstance(RedirectService::class);

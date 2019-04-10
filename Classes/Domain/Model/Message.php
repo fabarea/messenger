@@ -167,11 +167,8 @@ class Message
      * Prepares the emails and queue it.
      *
      * @return void
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
-    public function enqueue()
+    public function enqueue(): void
     {
         $this->prepareMessage();
         $this->queueRepository->add($this->toArray());
@@ -180,14 +177,9 @@ class Message
     /**
      * Prepares the emails and send it.
      *
-     * @throws WrongPluginConfigurationException
      * @return boolean whether or not the email was sent successfully
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \Exception
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      */
-    public function send()
+    public function send(): bool
     {
 
         $this->prepareMessage();
@@ -214,12 +206,9 @@ class Message
     /**
      * Prepares the emails by fetching an email template and formats its body.
      *
-     * @return boolean whether or not the email was sent successfully
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @return void
      */
-    protected function prepareMessage()
+    protected function prepareMessage(): void
     {
         if (!$this->to) {
             throw new \RuntimeException('Messenger: no recipient was defined', 1354536585);
@@ -253,7 +242,7 @@ class Message
      *
      * @return \Fab\Messenger\Domain\Model\MessageTemplate
      */
-    public function getMessageTemplate()
+    public function getMessageTemplate(): MessageTemplate
     {
         return $this->messageTemplate;
     }
@@ -265,7 +254,7 @@ class Message
      * @param string $content the content to be analyzed
      * @return boolean
      */
-    public function hasHtml($content)
+    public function hasHtml($content): bool
     {
         $result = FALSE;
         //we compare the length of the string with html tags and without html tags
@@ -278,11 +267,10 @@ class Message
     /**
      * Attach a file to the message.
      *
-     * @throws MissingFileException
      * @param string $attachment an absolute path to a file
      * @return Message
      */
-    public function addAttachment($attachment)
+    public function addAttachment($attachment): Message
     {
 
         // Convert $file to absolute path.
@@ -308,7 +296,7 @@ class Message
      * @param array $values
      * @return Message
      */
-    public function setMarkers($values)
+    public function setMarkers($values): Message
     {
         foreach ($values as $markerName => $value) {
             $this->addMarker($markerName, $value);
@@ -323,7 +311,7 @@ class Message
      * @param mixed $value
      * @return Message
      */
-    public function addMarker($markerName, $value)
+    public function addMarker($markerName, $value): Message
     {
         $this->markers[$markerName] = $value;
         return $this;
@@ -334,11 +322,13 @@ class Message
      *
      * @param mixed $values
      * @return Message
-     * @deprecated
      */
-    public function assignMultiple(array $values)
+    public function assignMultiple(array $values): Message
     {
-        return $this->setMarkers($values);
+        foreach ($values as $markerName => $value) {
+            $this->addMarker($markerName, $value);
+        }
+        return $this;
     }
 
     /**
@@ -348,7 +338,7 @@ class Message
      * @param mixed $value
      * @return Message
      */
-    public function assign($markerName, $value)
+    public function assign($markerName, $value): Message
     {
         return $this->addMarker($markerName, $value);
     }
@@ -359,7 +349,7 @@ class Message
      *
      * @return array
      */
-    public function getTo()
+    public function getTo(): array
     {
         return $this->to;
     }
@@ -370,10 +360,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \InvalidArgumentException
      */
-    public function setTo($addresses)
+    public function setTo($addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->to = $addresses;
@@ -386,7 +374,7 @@ class Message
      *
      * @return array
      */
-    public function getCc()
+    public function getCc(): array
     {
         return $this->cc;
     }
@@ -396,10 +384,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \InvalidArgumentException
      */
-    public function setCc($addresses)
+    public function setCc($addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->cc = $addresses;
@@ -412,7 +398,7 @@ class Message
      *
      * @return array
      */
-    public function getBcc()
+    public function getBcc(): array
     {
         return $this->bcc;
     }
@@ -422,10 +408,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \InvalidArgumentException
      */
-    public function setBcc($addresses)
+    public function setBcc($addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->bcc = $addresses;
@@ -435,7 +419,7 @@ class Message
     /**
      * @return array
      */
-    public function getReplyTo()
+    public function getReplyTo(): array
     {
         return $this->replyTo;
     }
@@ -445,10 +429,8 @@ class Message
      *
      * @param mixed $addresses
      * @return Message
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \InvalidArgumentException
      */
-    public function setReplyTo($addresses)
+    public function setReplyTo($addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->replyTo = $addresses;
@@ -457,13 +439,9 @@ class Message
 
     /**
      * @return array
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
-    public function getSender()
+    public function getSender(): array
     {
-
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
@@ -489,10 +467,8 @@ class Message
      *
      * @param array $sender
      * @return Message
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
-     * @throws \InvalidArgumentException
      */
-    public function setSender(array $sender)
+    public function setSender(array $sender): Message
     {
         $this->getEmailValidator()->validate($sender);
         $this->sender = $sender;
@@ -501,9 +477,8 @@ class Message
 
     /**
      * @return string
-     * @throws \InvalidArgumentException
      */
-    public function getProcessedSubject()
+    public function getProcessedSubject(): string
     {
         if ($this->processedSubject === '') {
 
@@ -525,7 +500,7 @@ class Message
      * @param string $subject
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject($subject): self
     {
         $this->subject = $subject;
         return $this;
@@ -533,10 +508,8 @@ class Message
 
     /**
      * @return string
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      */
-    public function getProcessedBody()
+    protected function getProcessedBody(): string
     {
         if ($this->processedBody === '') {
 
@@ -573,7 +546,7 @@ class Message
      * @param string $body
      * @return $this
      */
-    public function setBody($body)
+    public function setBody($body): self
     {
         $this->body = $body;
         return $this;
@@ -582,7 +555,7 @@ class Message
     /**
      * @return \Fab\Messenger\Domain\Model\MessageLayout
      */
-    public function getMessageLayout()
+    public function getMessageLayout(): MessageLayout
     {
         return $this->messageLayout;
     }
@@ -593,11 +566,10 @@ class Message
      *      + int $messageLayout which corresponds to an uid
      *      + string $messageLayout which corresponds to a value for property "identifier".
      *
-     * @throws RecordNotFoundException
      * @param mixed $messageLayout
      * @return Message
      */
-    public function setMessageLayout($messageLayout)
+    public function setMessageLayout($messageLayout): Message
     {
         if ($messageLayout instanceof MessageLayout) {
             $this->messageLayout = $messageLayout;
@@ -625,11 +597,10 @@ class Message
      *      + int $messageTemplate which corresponds to an uid
      *      + string $messageTemplate which corresponds to a value for property "identifier".
      *
-     * @throws RecordNotFoundException
      * @param mixed $messageTemplate
      * @return Message
      */
-    public function setMessageTemplate($messageTemplate)
+    public function setMessageTemplate($messageTemplate): Message
     {
 
         if ($messageTemplate instanceof MessageTemplate) {
@@ -661,7 +632,7 @@ class Message
      *
      * @return boolean
      */
-    protected function isMessagePrepared()
+    protected function isMessagePrepared(): bool
     {
         return !empty($this->mailMessage);
     }
@@ -670,9 +641,8 @@ class Message
      * Convert this object to an array.
      *
      * @return array
-     * @throws \Exception
      */
-    public function toArray()
+    public function toArray(): array
     {
 
         if (!$this->isMessagePrepared()) {
@@ -709,7 +679,7 @@ class Message
      * @param $parseToMarkdown
      * @return $this
      */
-    public function parseToMarkdown($parseToMarkdown)
+    public function parseToMarkdown($parseToMarkdown): self
     {
         $this->parseToMarkdown = (bool)$parseToMarkdown;
         return $this;
@@ -721,7 +691,7 @@ class Message
      * @param array $addresses
      * @return string
      */
-    protected function formatAddresses(array $addresses)
+    protected function formatAddresses(array $addresses): string
     {
         $formattedAddresses = [];
         foreach ($addresses as $email => $name) {
@@ -734,7 +704,7 @@ class Message
     /**
      * @return MailMessage
      */
-    public function getMailMessage()
+    public function getMailMessage(): MailMessage
     {
         if ($this->mailMessage === null) {
             $this->mailMessage = $this->objectManager->get(MailMessage::class);
@@ -745,7 +715,7 @@ class Message
     /**
      * @return string
      */
-    public function getMailingName()
+    public function getMailingName(): string
     {
         return $this->mailingName;
     }
@@ -754,7 +724,7 @@ class Message
      * @param string $mailingName
      * @return $this
      */
-    public function setMailingName($mailingName)
+    public function setMailingName($mailingName): self
     {
         $this->mailingName = $mailingName;
         return $this;
@@ -763,7 +733,7 @@ class Message
     /**
      * @return int
      */
-    public function getScheduleDistributionTime()
+    public function getScheduleDistributionTime(): int
     {
         return $this->scheduleDistributionTime;
     }
@@ -772,15 +742,14 @@ class Message
      * @param int $scheduleDistributionTime
      * @return $this
      */
-    public function setScheduleDistributionTime($scheduleDistributionTime)
+    public function setScheduleDistributionTime($scheduleDistributionTime): self
     {
         $this->scheduleDistributionTime = $scheduleDistributionTime;
         return $this;
     }
 
     /**
-     * @return EmailValidator
-     * @throws \InvalidArgumentException
+     * @return EmailValidator|object
      */
     public function getEmailValidator()
     {
@@ -789,9 +758,8 @@ class Message
 
     /**
      * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
-     * @throws \InvalidArgumentException
      */
-    protected function getContentRenderer()
+    protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\ContentRendererInterface
     {
         if ($this->isFrontendMode()) {
             /** @var FrontendRenderer $contentRenderer */
@@ -808,14 +776,13 @@ class Message
      *
      * @return bool
      */
-    protected function isFrontendMode()
+    protected function isFrontendMode(): bool
     {
         return TYPO3_MODE === 'FE';
     }
 
     /**
-     * @return RedirectService
-     * @throws \InvalidArgumentException
+     * @return RedirectService|object
      */
     public function getRedirectService()
     {

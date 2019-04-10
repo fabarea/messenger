@@ -8,40 +8,60 @@ namespace Fab\Messenger\Command;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Domain\Repository\QueueRepository;
+use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Mail\MailMessage;
-use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Controller
  */
-class MessageQueueCommandController extends CommandController
+class MessageQueueCommandController extends Command
 {
 
     /**
-     * @var \Fab\Messenger\Domain\Repository\QueueRepository
-     * @inject
+     * Configure the command by defining the name, options and arguments
      */
-    protected $queueRepository;
-
-    /**
-     * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
-     * @inject
-     */
-    protected $sendMessageRepository;
-
-    /**
-     * @param int $itemsPerRun
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     */
-    public function dequeueCommand($itemsPerRun = 100)
+    protected function configure(): void
     {
-        $pendingMessages = $this->queueRepository->findPendingMessages($itemsPerRun);
+        $this->setDescription('Send messages and remove them from the queue by batch of 100 messages.')
+            ->addOption(
+                'items-per-run',
+                'i',
+                InputOption::VALUE_OPTIONAL,
+                'Items to be processed by each run',
+                100
+            )
+            ->addOption(
+                'silent',
+                's',
+                InputOption::VALUE_OPTIONAL,
+                'If true, only the errors are displayed on the CLI',
+                false
+            );
+    }
 
-        $errorCount = 0;
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    public function execute(InputInterface $input, OutputInterface $output): void
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $itemsPerRun = $input->getOption('items-per-run');
+        $pendingMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
+
+        $errorCount = $numberOfSentMessages = 0;
         foreach ($pendingMessages as $pendingMessage) {
             /** @var MailMessage $message */
-            $message = unserialize($pendingMessage['message_serialized']);
+            $message = unserialize($pendingMessage['message_serialized'], ['allowed_classes' => true]);
 
             if ($pendingMessage['redirect_email']) {
 
@@ -57,18 +77,49 @@ class MessageQueueCommandController extends CommandController
 
             $isSent = $message->send();
             if ($isSent) {
-                $this->queueRepository->remove($pendingMessage);
-                $this->sendMessageRepository->add($pendingMessage);
+                $numberOfSentMessages++;
+                $this->getQueueRepository()->remove($pendingMessage);
+                $this->getSentMessageRepository()->add($pendingMessage);
             } else {
                 $errorCount++;
                 $pendingMessage['error_count'] += 1;
-                $this->queueRepository->update($pendingMessage);
+                $this->getQueueRepository()->update($pendingMessage);
             }
         }
 
+        if (!$input->getOption('silent')) {
+            $io->text(sprintf(
+                'I Just sent %s messages', $numberOfSentMessages
+            ));
+        }
         if ($errorCount > 0) {
-            $this->outputFormatted('I encountered %s problem while processing the message queue.', [$errorCount]);
+            $io->text(sprintf(
+                'I encountered %s problem while processing the message queue.', $errorCount
+            ));
         }
     }
 
+    /**
+     * @return object|QueueRepository
+     */
+    protected function getQueueRepository(): QueueRepository
+    {
+        return GeneralUtility::makeInstance(QueueRepository::class);
+    }
+
+    /**
+     * @return object|SentMessageRepository
+     */
+    protected function getSentMessageRepository(): SentMessageRepository
+    {
+        return GeneralUtility::makeInstance(SentMessageRepository::class);
+    }
+
+    /**
+     * @return object|ObjectManager
+     */
+    protected function getObjectManager(): ObjectManager
+    {
+        return GeneralUtility::makeInstance(ObjectManager::class);
+    }
 }

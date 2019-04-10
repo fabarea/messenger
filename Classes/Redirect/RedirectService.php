@@ -23,10 +23,8 @@ class RedirectService implements SingletonInterface
      * Get possible redirect recipients.
      *
      * @return array
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
-    public function getRedirections()
+    public function getRedirections(): array
     {
         $recipientList = $this->getRedirectionList();
         return $this->transformEmailListToArray($recipientList);
@@ -35,13 +33,11 @@ class RedirectService implements SingletonInterface
     /**
      * @param string $recipientList
      * @return array
-     * @throws \InvalidArgumentException
-     * @throws \Fab\Messenger\Exception\InvalidEmailFormatException
      */
-    public function transformEmailListToArray($recipientList)
+    public function transformEmailListToArray($recipientList): array
     {
         $recipients = [];
-        if (strlen(trim($recipientList)) > 0) {
+        if (trim($recipientList) !== '') {
             $emails = GeneralUtility::trimExplode(',', $recipientList);
 
             foreach ($emails as $email) {
@@ -56,9 +52,9 @@ class RedirectService implements SingletonInterface
     /**
      * Get possible redirect recipients.
      *
-     * @return array
+     * @return string
      */
-    public function getRedirectionList()
+    public function getRedirectionList(): string
     {
         // Fetch email from PHP configuration array at first.
         $applicationContext = (string)GeneralUtility::getApplicationContext()->getParent();
@@ -76,10 +72,9 @@ class RedirectService implements SingletonInterface
     }
 
     /**
-     * @return EmailValidator
-     * @throws \InvalidArgumentException
+     * @return EmailValidator|object
      */
-    public function getEmailValidator()
+    public function getEmailValidator(): EmailValidator
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
     }
