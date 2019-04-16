@@ -8,18 +8,13 @@ namespace Fab\Messenger\Command;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\Domain\Model\Message;
-use Fab\Messenger\Domain\Repository\QueueRepository;
-use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Queue\QueueManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Controller

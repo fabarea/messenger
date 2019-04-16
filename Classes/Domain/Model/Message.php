@@ -198,7 +198,7 @@ class Message
 
             // Store body of the message for possible later use.
             if ($this->messageTemplate) {
-                MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $message['body']);
+                MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $this->getMailMessage()->getBody());
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
@@ -826,18 +826,19 @@ class Message
     }
 
     /**
-     * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
+     * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface|object
      */
     protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\ContentRendererInterface
     {
-        if ($this->isFrontendMode()) {
-            /** @var FrontendRenderer $contentRenderer */
-            $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        } else {
-            /** @var BackendRenderer $contentRenderer */
-            $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        }
-        return $contentRenderer;
+        return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
+        #if ($this->isFrontendMode()) {
+        #    /** @var FrontendRenderer $contentRenderer */
+        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
+        #} else {
+        #    /** @var BackendRenderer $contentRenderer */
+        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
+        #}
+        #return $contentRenderer;
     }
 
     /**

@@ -9,6 +9,7 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
@@ -89,6 +90,7 @@ class BackendMessageController extends ActionController
         if (is_array($possibleSenders) && $possibleSenders[$sender]) {
             $sender = $possibleSenders[$sender];
             $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
+
             foreach ($contentService->getObjects() as $recipient) {
 
                 if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
@@ -99,7 +101,6 @@ class BackendMessageController extends ActionController
 
                     $markers = $recipient->toArray();
 
-                    # Minimum required to be set
                     $message->setBody($body)
                         ->setSubject($subject)
                         ->setSender($sender)
@@ -119,7 +120,6 @@ class BackendMessageController extends ActionController
             'numberOfRecipients' => $contentService->getNumberOfObjects(),
         ]);
     }
-
 
     /**
      * @param Content $recipient

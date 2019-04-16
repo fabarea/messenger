@@ -27,7 +27,7 @@ class FrontendRenderer implements ContentRendererInterface
      *
      * @param MessageTemplate $messageTemplate
      */
-    public function __construct(MessageTemplate $messageTemplate)
+    public function __construct(MessageTemplate $messageTemplate = null)
     {
         $this->messageTemplate = $messageTemplate;
     }
@@ -48,10 +48,12 @@ class FrontendRenderer implements ContentRendererInterface
         // If a template file was defined, set its path, so that layouts and partials can be used
         // NOTE: they have to be located in sub-folders called "Layouts" and "Partials" relative
         // to the folder where the template is stored.
-        $sourceFile = $this->messageTemplate->getSourceFile();
-        if (!empty($sourceFile)) {
-            $sourceFileNameAndPath = GeneralUtility::getFileAbsFileName($sourceFile);
-            $view->setTemplatePathAndFilename($sourceFileNameAndPath);
+        if ($this->messageTemplate && $this->messageTemplate->getSourceFile()) {
+            $sourceFile = $this->messageTemplate->getSourceFile();
+            if (!empty($sourceFile)) {
+                $sourceFileNameAndPath = GeneralUtility::getFileAbsFileName($sourceFile);
+                $view->setTemplatePathAndFilename($sourceFileNameAndPath);
+            }
         }
 
         $view->assignMultiple($markers);
