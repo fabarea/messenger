@@ -127,6 +127,18 @@
 			<trans-unit id="message.custom.body">
 				<source>Replace message body by a free text instead of the page content.</source>
 			</trans-unit>
+			<trans-unit id="scheduler.dequeue.name">
+				<source>Dequeue</source>
+			</trans-unit>
+			<trans-unit id="scheduler.dequeue.description">
+				<source>Send emails stacked in the queue</source>
+			</trans-unit>
+			<trans-unit id="message.invalidNumberOfItemsPerRun">
+				<source>Not a valid number of items per run.</source>
+			</trans-unit>
+			<trans-unit id="label.messenger.itemsPerRun">
+				<source>Number of emails sent per run</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

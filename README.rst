@@ -34,7 +34,7 @@ http://twitter.com/fudriot
 Installation
 ============
 
-Extension have settings mainly in the Extension Manager. Most of them are self-explanatory.
+Extension have self-explanatory settings in the Extension Manager.
 
 
 Message API
@@ -72,6 +72,19 @@ Usage::
 	$isSent = $message->send();
 
 
+Queue
+=====
+
+Messenger has the feature to queue up emails. This is advised as soon as sending many emails at once.
+
+::
+
+	/** @var \Fab\Messenger\Domain\Model\Message $message */
+	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
+	$message->
+		... // same as in the example above
+		->enqueue();
+
 Configuration
 =============
 
@@ -80,30 +93,26 @@ Following configuration should be configured. The default sender name::
 	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] = 'John Doe';
 	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] = 'john@doe.com';
 
-Whenever Application Context is in Development, there is the chance to define
-default target recipients which is convenient for not leaking email.
-**Tip**: install extension ``EXT:application_context_hints`` to display some hints in the BE
-about the current application context along with some global variables.
+Whenever Application Context is in Development, there is the possibility to define
+a default target recipient which is convenient for sending unwanted emails to real people.
 
 ::
 
-	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['development']['recipients'] = 'fudriot@cobweb.ch';
+	$GLOBALS['TYPO3_CONF_VARS']['MAIL']['development']['recipients'] = 'fabien@omic.ch';
 
 
 Tool to send emails to Frontend Users
 =====================================
 
 When EXT:vidi is installed, Messenger extends the Frontend User module in the BE and make it possible to send bulk messages to a selection / group of users.
+There is BE module to see the state of the queue and the messages waiting to be sent.
+Consider setting up the scheduler task to properly send the emails as messages are put into a queue and are sent by patch.
 
-To things must be considered. First, consider adding and configuring a scheduler task as messages are put into a queue and are sent by patch.
-There is BE module to see the state of the queue where you can supervise the list of emails being sent.
-
-Secondly, you may want to configure the list of possible senders (the contact person displayed as "from"). They could be retrieved from three different sources
+You have the possibility to configure a list of possible senders (the contact person displayed as "from"). They could be retrieved from three different sources
 
 - The currently logged-in BE User if the email address is defined.
 - The PHP global configuration `defaultMailFromName` and `defaultMailFromAddress`
-- User TSConfig where
-
+- User TSConfig:
 
 ```
     options.messenger {
@@ -117,10 +126,25 @@ Secondly, you may want to configure the list of possible senders (the contact pe
     }
 ```
 
+CLI
+===
+
+Messenger provides two commands.
+
+Send messages and remove them from the queue by batch of 100 messages::
+
+    ./vendor/bin/typo3 messenger:dequeue
+
+Sent messages older than 100 days will be removed::
+
+    ./vendor/bin/typo3 messenger:cleanUp
+
 Message View Helper
 ===================
 
-View Helper which are bundled with this extension. The first oen is to render a generic item from the array of markers::
+Messenger provides two interesting View Helpers.
+
+The first one is to render a generic item from the array of markers::
 
 	# The minimum declaration
 	<m:widget.show item="markerName" dataType="tx_ext_foo"/>
@@ -130,10 +154,10 @@ View Helper which are bundled with this extension. The first oen is to render a 
 
 	{namespace m=Fab\Messenger\ViewHelpers}
 
-Retrieve the body of the email being sent. Useful to display to the User a feedback message
-after a form has been posted which is actually the same as of the email::
+The second one is for retrieving the body of the email. Useful to display a feedback message to the user::
 
 	<m:show.body key="{settings.messageTemplate}"/>
+
 
 Fluid templates
 ===============
@@ -148,50 +172,6 @@ it may refer to layouts located in "EXT:foo/Resource/Private/Templates/Mail/Layo
 Furthermore, it is possible to choose "Fluid only" as a templating engine when
 defining a message template. In such a case the Markdown interpreter will not run.
 This means that the Fluid template can be written more freely.
-
-Queue
-=====
-
-Messenger has the feature to queue emails. This is required as soon as making mass-mailing.
-
-::
-
-	/** @var \Fab\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
-	$message->
-		... // same as in the example above
-		->enqueue();
-
-
-Scheduler tip
-=============
-
-When sending messages using Messenger within a Scheduler task, the base url must be transmitted **as environment variable "TYPO3_BASE_URL"**.
-The reasons is to have Fluid having the good context so that the ViewHelpers work as they would be in the context of the Frontend::
-
-	TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
-
-Additionally, you can set Development context with the environment variable "TYPO3_CONTEXT". Example::
-
-	TYPO3_CONTEXT=Development TYPO3_BASE_URL=http://www.domain.tld typo3/cli_dispatch.phpsh scheduler
-
-
-Todo
-====
-
-Long term goals:
-
-+ Provide default FE / BE Users provider in Vidi
-+ The same message can be sent in various language
-
-Recipient Interface
-===================
-
-@todo check if that is still true with Vidi integration
-
-A recipient interface is provided making sure a user can be correctly displayed within the table. The interface is not mandatory to
-be implemented since a recipient can be in the form of an array. However, a minimum of ``uid`` and ``email`` must be provided.
-An exception will be raised on the run time if something goes wrong.
 
 Sponsors
 ========

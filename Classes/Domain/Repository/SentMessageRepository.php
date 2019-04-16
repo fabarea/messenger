@@ -9,6 +9,9 @@ namespace Fab\Messenger\Domain\Repository;
  */
 
 use Fab\Vidi\Tca\Tca;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * A repository for handling sent message
@@ -26,7 +29,7 @@ class SentMessageRepository
      * @throws \RuntimeException
      * @return int
      */
-    public function add(array $message)
+    public function add(array $message): int
     {
         $values = [];
         $values['crdate'] = time();
@@ -40,42 +43,58 @@ class SentMessageRepository
             }
         }
 
-        $result = $this->getDatabaseConnection()->exec_INSERTquery($this->tableName, $values);
+        $query = $this->getQueryBuilder();
+        $query->insert($this->tableName)
+            ->values($values);
+
+        $result = $query->execute();
         if (!$result) {
             throw new \RuntimeException('I could not save the message as "sent message"', 1389721852);
         }
-        return $this->getDatabaseConnection()->sql_insert_id();
+        return $result;
     }
 
     /**
-     * @param $days
+     * @param int $days
      * @return array
      */
-    public function findOlderThanDays($days)
+    public function findOlderThanDays(int $days): array
     {
         $time = time() - ($days * 86400);
-        $records = $this->getDatabaseConnection()->exec_SELECTgetRows('*', $this->tableName, 'crdate < ' . $time);
-        return (array)$records;
+        $query = $this->getQueryBuilder();
+        $query->select('*')
+            ->from($this->tableName)
+            ->where(
+                'crdate < ' . $time
+            );
+
+        $messages = $query->execute()->fetchAll();
+        return is_array($messages) ? $messages : [];
     }
 
     /**
-     * @param $days
-     * @return void
+     * @param int $days
+     * @return int
      */
-    public function removeOlderThanDays($days)
+    public function removeOlderThanDays(int $days): int
     {
         $time = time() - ($days * 86400);
-        $this->getDatabaseConnection()->exec_DELETEquery($this->tableName, 'crdate < ' . $time);
+
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)
+            ->where('crdate < ' . $time);
+
+        return $query->execute();
     }
 
     /**
-     * Returns a pointer to the database.
-     *
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return object|QueryBuilder
      */
-    protected function getDatabaseConnection()
+    protected function getQueryBuilder(): QueryBuilder
     {
-        return $GLOBALS['TYPO3_DB'];
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
 }

@@ -48,5 +48,14 @@ call_user_func(
             }
         });
 
+
+        // Add caching framework garbage collection task
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Fab\Messenger\Task\MessengerDequeueTask::class] = [
+            'extension' => 'messenger',
+            'title' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:scheduler.dequeue.name',
+            'description' => 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:scheduler.dequeue.description',
+            'additionalFields' => \Fab\Messenger\Task\MessengerDequeueFieldProvider::class
+        ];
+
     }
 );

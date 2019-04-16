@@ -82,8 +82,11 @@ class PagePath
     public static function getSiteBaseUrl($pageId): string
     {
         // CLI must define its own environment variable.
-        if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI) {
+        if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI) { // TODO remove this condition
 
+            die('You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case');
+
+            // @deprecated.
             $environmentBaseUrl = getenv('TYPO3_BASE_URL');
             $baseUrl = rtrim($environmentBaseUrl, '/') . '/';
             if (!$baseUrl) {

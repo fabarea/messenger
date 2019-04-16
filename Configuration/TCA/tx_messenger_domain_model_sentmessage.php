@@ -15,7 +15,7 @@ return [
         ],
     ],
     'types' => [
-        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, scheduled_distribution_time, message_template, message_layout, sent_time', 'redirect_email_from'],
+        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, scheduled_distribution_time, message_template, message_layout, sent_time, redirect_email_from'],
     ],
     'palettes' => [
         '1' => ['showitem' => ''],

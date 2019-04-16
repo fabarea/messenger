@@ -11,6 +11,7 @@ namespace Fab\Messenger\Command;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Queue\QueueManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,7 +38,7 @@ class MessageQueueCommandController extends Command
                 'i',
                 InputOption::VALUE_OPTIONAL,
                 'Items to be processed by each run',
-                100
+                300
             )
             ->addOption(
                 'silent',
@@ -54,74 +55,27 @@ class MessageQueueCommandController extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $io = new SymfonyStyle($input, $output);
-
         $itemsPerRun = $input->getOption('items-per-run');
-        $pendingMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
+        $result = $this->getQueueManager()->dequeue($itemsPerRun);
 
-        $errorCount = $numberOfSentMessages = 0;
-        /** @var Message $pendingMessage */
-        foreach ($pendingMessages as $pendingMessage) {
-            /** @var MailMessage $message */
-            $message = unserialize($pendingMessage['message_serialized'], ['allowed_classes' => true]);
-
-//            if ($pendingMessage['redirect_email']) {
-//
-//                // hack! Transmit in the message subject the application context to apply possible email redirect.
-//                $dirtySubject = sprintf(
-//                    '%s---%s###REDIRECT###%s',
-//                    $pendingMessage['context'],
-//                    $pendingMessage['redirect_email'],
-//                    $message->getSubject()
-//                );
-//                $message->setSubject($dirtySubject);
-//            }
-
-            $isSent = $message->send();
-            if ($isSent) {
-                $numberOfSentMessages++;
-                $this->getQueueRepository()->remove($pendingMessage);
-                $this->getSentMessageRepository()->add($pendingMessage);
-            } else {
-                $errorCount++;
-                $pendingMessage['error_count'] += 1;
-                $this->getQueueRepository()->update($pendingMessage);
-            }
-        }
-
+        $io = new SymfonyStyle($input, $output);
         if (!$input->getOption('silent')) {
             $io->text(sprintf(
-                'I Just sent %s messages', $numberOfSentMessages
+                'I just sent %s messages', $result['numberOfSentMessages']
             ));
         }
-        if ($errorCount > 0) {
+        if ($result['errorCount'] > 0) {
             $io->text(sprintf(
-                'I encountered %s problem while processing the message queue.', $errorCount
+                'I encountered %s problem(s) while processing the message queue.', $result['errorCount']
             ));
         }
     }
 
     /**
-     * @return object|QueueRepository
+     * @return object|QueueManager
      */
-    protected function getQueueRepository(): QueueRepository
+    protected function getQueueManager(): QueueManager
     {
-        return GeneralUtility::makeInstance(QueueRepository::class);
-    }
-
-    /**
-     * @return object|SentMessageRepository
-     */
-    protected function getSentMessageRepository(): SentMessageRepository
-    {
-        return GeneralUtility::makeInstance(SentMessageRepository::class);
-    }
-
-    /**
-     * @return object|ObjectManager
-     */
-    protected function getObjectManager(): ObjectManager
-    {
-        return GeneralUtility::makeInstance(ObjectManager::class);
+        return GeneralUtility::makeInstance(QueueManager::class);
     }
 }
