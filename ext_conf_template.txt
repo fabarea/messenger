@@ -8,10 +8,10 @@ autoload_typoscript = 1
 load_newsletter_module = 1
 
 # cat=basic//; type=boolean; label=Display message "template" module: If extension Vidi is installed, display a message template module in the Backend.
-load_message_template_module = 1
+load_message_template_module = 0
 
 # cat=basic//; type=boolean; label=Display message "layout" module: If extension Vidi is installed, display a message layoue in the Backend.
-load_message_layout_module = 1
+load_message_layout_module = 0
 
 # cat=basic//; type=boolean; label=Display message "sent" module: If extension Vidi is installed, display a log module in the Backend where to see the sent messages.
 load_message_sent_module = 1
