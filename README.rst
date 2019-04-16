@@ -26,9 +26,9 @@ https://github.com/fabarea/messenger.git
 
 ::
 
-    git clone https://github.com/fabarea/messenger.git
+    composer require fab/messenger
 
-Flash news about latest development or release
+Flash info about latest development or release
 http://twitter.com/fudriot
 
 Installation
@@ -36,6 +36,12 @@ Installation
 
 Extension have self-explanatory settings in the Extension Manager.
 
+
+Message composing
+=================
+
+When composing content, you can take full advantage of the Fluid syntax and make use of View Helper within your messages.
+Markers should be defined as follows `{first_name}` and will be processed when rendering the email.
 
 Message API
 ===========
@@ -112,9 +118,8 @@ You have the possibility to configure a list of possible senders (the contact pe
 
 - The currently logged-in BE User if the email address is defined.
 - The PHP global configuration `defaultMailFromName` and `defaultMailFromAddress`
-- User TSConfig:
+- User TSConfig::
 
-```
     options.messenger {
 
         senders {
@@ -124,7 +129,6 @@ You have the possibility to configure a list of possible senders (the contact pe
             }
         }
     }
-```
 
 CLI
 ===
@@ -176,10 +180,10 @@ This means that the Fluid template can be written more freely.
 Sponsors
 ========
 
+* `Ecodev`_ Ingénierie du développement durable – CMS – application web – bases de données – Webdesign
 * `Gebrüderheitz`_ – Agentur für Webkommunikation
 * `Cobweb`_ Agence web spécialisée dans le conseil web, le webdesign et la réalisation de sites internet
-* `Ecodev`_ Ingénierie du développement durable – CMS – application web – bases de données – Webdesign
 
-.. _Gebrüderheitz: http://gebruederheitz.de/
-.. _Cobweb: http://www.cobweb.ch/
-.. _Ecodev: http://www.ecodev.ch/
+.. _Gebrüderheitz: https://gebruederheitz.de/
+.. _Cobweb: https://www.cobweb.ch/
+.. _Ecodev: https://www.ecodev.ch/
