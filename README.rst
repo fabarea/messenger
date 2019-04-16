@@ -68,9 +68,6 @@ Usage::
 		->addAttachment($pathToFile)
 		->setMessageLayout($layoutIdentifier);
 
-	# Possible debug before sending.
-	# var_dump($message->toArray());
-
 	# Send the email...
 	$isSent = $message->send();
 

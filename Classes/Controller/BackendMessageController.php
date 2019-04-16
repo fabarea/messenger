@@ -177,13 +177,8 @@ class BackendMessageController extends ActionController
                         ->setSender($sender)
                         ->parseToMarkdown(true)// (bool)$this->settings['parseToMarkdown']
                         // ->assign('recipient', $recipient->toArray()) could be a security risk
-                        ->setTo([$recipient => $recipient]);
-
-                    #if ($this->settings['layout']) {
-                    #    $message->setMessageLayout($this->settings['layout']);
-                    #}
-
-                    $message->send();
+                        ->setTo([$recipient => $recipient])
+                        ->send();
 
                     if ($numberOfSentEmails >= 10) {
                         break; // we want to stop sending email as it is for demo only.

@@ -8,6 +8,7 @@ namespace Fab\Messenger\Command;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Symfony\Component\Console\Command\Command;
@@ -59,21 +60,22 @@ class MessageQueueCommandController extends Command
         $pendingMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
 
         $errorCount = $numberOfSentMessages = 0;
+        /** @var Message $pendingMessage */
         foreach ($pendingMessages as $pendingMessage) {
             /** @var MailMessage $message */
             $message = unserialize($pendingMessage['message_serialized'], ['allowed_classes' => true]);
 
-            if ($pendingMessage['redirect_email']) {
-
-                // hack! Transmit in the message subject the application context to apply possible email redirect.
-                $dirtySubject = sprintf(
-                    '%s---%s###REDIRECT###%s',
-                    $pendingMessage['context'],
-                    $pendingMessage['redirect_email'],
-                    $message->getSubject()
-                );
-                $message->setSubject($dirtySubject);
-            }
+//            if ($pendingMessage['redirect_email']) {
+//
+//                // hack! Transmit in the message subject the application context to apply possible email redirect.
+//                $dirtySubject = sprintf(
+//                    '%s---%s###REDIRECT###%s',
+//                    $pendingMessage['context'],
+//                    $pendingMessage['redirect_email'],
+//                    $message->getSubject()
+//                );
+//                $message->setSubject($dirtySubject);
+//            }
 
             $isSent = $message->send();
             if ($isSent) {

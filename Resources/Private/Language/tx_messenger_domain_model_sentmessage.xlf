@@ -32,8 +32,8 @@
 			<trans-unit id="recipient_bcc">
 				<source>Recipient BCC</source>
 			</trans-unit>
-			<trans-unit id="redirect_email">
-				<source>Redirect email</source>
+			<trans-unit id="redirect_email_from">
+				<source>Redirect email from</source>
 			</trans-unit>
 			<trans-unit id="subject">
 				<source>Subject</source>

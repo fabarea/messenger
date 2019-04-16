@@ -78,6 +78,13 @@ class Message
     protected $replyTo = [];
 
     /**
+     * Possible email redirect
+     *
+     * @var array
+     */
+    protected $redirectEmailFrom = [];
+
+    /**
      * A set of markers.
      *
      * @var array
@@ -181,7 +188,6 @@ class Message
      */
     public function send(): bool
     {
-
         $this->prepareMessage();
 
         $this->getMailMessage()->send();
@@ -235,6 +241,52 @@ class Message
         foreach ($this->attachments as $attachment) {
             $this->getMailMessage()->attach($attachment);
         }
+
+        // Handle email "redirection"
+        $redirectTo = $this->getRedirectService()->getRedirections();
+
+        // Means we want to redirect email.
+        if ($redirectTo) {
+            $this->redirectEmailFrom = $this->getMailMessage()->getTo();
+
+            $this->getMailMessage()
+                ->setBody($this->getDebugInfoBody())
+                ->setTo($redirectTo)
+                ->setCc([]) // reset cc which was written as debug in the body message previously.
+                ->setBcc([]) // same remark as bcc.
+                ->setSubject($this->getDebugInfoSubject());
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDebugInfoSubject(): string
+    {
+        $applicationContext = (string)GeneralUtility::getApplicationContext();
+        return strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
+    }
+
+    /**
+     * Get a body message when email is not in production.
+     *
+     * @return string
+     */
+    protected function getDebugInfoBody(): string
+    {
+        $to = $this->getMailMessage()->getTo();
+        $cc = $this->getMailMessage()->getCc();
+        $bcc = $this->getMailMessage()->getBcc();
+
+        return sprintf(
+            "%s CONTEXT: this message is for testing purposes. In Production, it will be sent as follows. \nto: %s\n%s%s\n%s",
+            strtoupper((string)GeneralUtility::getApplicationContext()),
+            implode(',', array_keys($to)),
+            empty($cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($cc))),
+            empty($bcc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($bcc))),
+            $this->getMailMessage()->getBody()
+        );
     }
 
     /**
@@ -478,7 +530,7 @@ class Message
     /**
      * @return string
      */
-    public function getProcessedSubject(): string
+    protected function getProcessedSubject(): string
     {
         if ($this->processedSubject === '') {
 
@@ -494,6 +546,14 @@ class Message
         }
 
         return $this->processedSubject;
+    }
+
+    /**
+     * @return $this
+     */
+    public function getSubject(): string
+    {
+        return $this->subject;
     }
 
     /**
@@ -540,6 +600,14 @@ class Message
         }
 
         return $this->processedBody;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody(): string
+    {
+        return $this->body;
     }
 
     /**
@@ -649,17 +717,18 @@ class Message
             $this->prepareMessage();
         }
 
-        $values = array(
-            'sender' => $this->formatAddresses($this->getSender()),
-            'to' => $this->formatAddresses($this->getTo()),
-            'cc' => $this->formatAddresses($this->getCc()),
-            'bcc' => $this->formatAddresses($this->getBcc()),
-            'recipient' => $this->formatAddresses($this->getTo()),
-            'recipient_cc' => $this->formatAddresses($this->getCc()),
-            'recipient_bcc' => $this->formatAddresses($this->getBcc()),
-            'reply_to' => $this->formatAddresses($this->getReplyTo()),
-            'subject' => $this->getMailMessage()->getSubject(),
-            'body' => $this->getMailMessage()->getBody(),
+        $mailMessage = $this->getMailMessage();
+        $values = [
+            'sender' => $this->formatAddresses($mailMessage->getFrom()),
+            'to' => $this->formatAddresses($mailMessage->getTo()),
+            'cc' => $this->formatAddresses($mailMessage->getCc()),
+            'bcc' => $this->formatAddresses($mailMessage->getBcc()),
+            'recipient' => $this->formatAddresses($mailMessage->getTo()),
+            'recipient_cc' => $this->formatAddresses($mailMessage->getCc()),
+            'recipient_bcc' => $this->formatAddresses($mailMessage->getBcc()),
+            'reply_to' => $mailMessage->getReplyTo(),
+            'subject' => $mailMessage->getSubject(),
+            'body' => $mailMessage->getBody(),
             'attachment' => count($this->attachments),
             'context' => (string)GeneralUtility::getApplicationContext(),
             'was_opened' => 0,
@@ -667,10 +736,10 @@ class Message
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
             'scheduled_distribution_time' => $this->scheduleDistributionTime,
             'mailing_name' => $this->mailingName ?: '',
-            'redirect_email' => $this->getRedirectService()->getRedirectionList(),
+            'redirect_email_from' => $this->formatAddresses($this->redirectEmailFrom),
             'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
-            'mail_message' => $this->getMailMessage()
-        );
+            'mail_message' => $mailMessage,
+        ];
 
         return $values;
     }

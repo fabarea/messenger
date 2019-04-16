@@ -35,11 +35,6 @@ call_user_func(
             ]
         );
 
-        // Override classes for the Object Manager
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Core\Mail\MailMessage::class] = [
-            'className' => \Fab\Messenger\Override\Core\Mail\MailMessage::class
-        ];
-
         // eID for resolving Frontend URL in the context of the Backend.
         $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = \Fab\Messenger\PagePath\Resolver::class . '::resolveUrl';
 

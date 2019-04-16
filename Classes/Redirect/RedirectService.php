@@ -8,6 +8,7 @@ namespace Fab\Messenger\Redirect;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Validator\EmailValidator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -26,18 +27,10 @@ class RedirectService implements SingletonInterface
      */
     public function getRedirections(): array
     {
-        $recipientList = $this->getRedirectionList();
-        return $this->transformEmailListToArray($recipientList);
-    }
-
-    /**
-     * @param string $recipientList
-     * @return array
-     */
-    public function transformEmailListToArray($recipientList): array
-    {
         $recipients = [];
-        if (trim($recipientList) !== '') {
+
+        $recipientList = $this->getRedirectionList();
+        if ($recipientList !== '') {
             $emails = GeneralUtility::trimExplode(',', $recipientList);
 
             foreach ($emails as $email) {
@@ -64,11 +57,11 @@ class RedirectService implements SingletonInterface
 
         $key = strtolower($applicationContext) . '_redirect_to';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
-            $recipientList = $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
+            $recipientList = (string)$GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
         } else {
-            $recipientList = ConfigurationUtility::getInstance()->get($key);
+            $recipientList = (string)ConfigurationUtility::getInstance()->get($key);
         }
-        return $recipientList;
+        return trim($recipientList);
     }
 
     /**
