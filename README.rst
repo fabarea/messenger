@@ -11,7 +11,7 @@ Messenger Extension is a TYPO3 extension for listing recipients in a flexible wa
   version next to a plain text within the same email.
 * Body message can be written in **Markdown syntax**
   alongside with **Fluid View Helper** which will be be rendered when sending the email.
-* A message can be queued and scheduled for mass mailing
+* Messages can be queued and scheduled for mass mailing. In this case, emails are sent via a scheduler task or a CLI command.
 
 .. image:: https://raw.github.com/fabarea/messenger/master/Documentation/Screenshot.png
 
