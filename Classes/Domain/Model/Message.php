@@ -501,7 +501,7 @@ class Message
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
-            if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
+            if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
                 $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'];
             } else {
                 $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
