@@ -54,12 +54,12 @@ class SenderProvider implements SingletonInterface
     public function getPossibleSenders()
     {
         $senders = $this->getFromTSConfig();
-        if ($this->getMe()) {
-            $senders['me'] = $this->getMe();
-        }
-
         if ($this->getFromPhpSettings()) {
             $senders['php'] = $this->getFromPhpSettings();
+        }
+
+        if ($this->getMe()) {
+            $senders['me'] = $this->getMe();
         }
 
         return $senders;
