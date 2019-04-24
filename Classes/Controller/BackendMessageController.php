@@ -76,9 +76,10 @@ class BackendMessageController extends ActionController
      * @param string $body
      * @param string $sender
      * @param array $matches
+     * @param bool $parseMarkdown
      * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
      */
-    public function sendAction(string $subject, string $body, string $sender, array $matches = array()): void
+    public function sendAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');
@@ -109,7 +110,7 @@ class BackendMessageController extends ActionController
                         ->setSender($sender)
                         ->setMailingName($mailingName)
                         ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
-                        ->parseToMarkdown(true)// (bool)$this->settings['parseToMarkdown']
+                        ->parseToMarkdown($parseMarkdown)
                         ->assign('recipient', $markers)
                         ->assignMultiple($markers)
                         ->setTo($this->getTo($recipient))

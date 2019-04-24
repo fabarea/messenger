@@ -49,8 +49,13 @@
             <f:if condition="{pageId}">
                 <f:then>
                     <div class="checkbox">
+                        <input type="hidden"
+                               name="tx_messenger_user_messengerm1[parseMarkdown]"
+                               value="0"/>
                         <label><input type="checkbox"
                                       id="has-body-text"
+                                      name="tx_messenger_user_messengerm1[parseMarkdown]"
+                                      value="1"
                                       onchange="
                         this.checked
                         ? document.getElementById('message-body-container').style = 'display: block'

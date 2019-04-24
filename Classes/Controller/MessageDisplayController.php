@@ -26,7 +26,7 @@ class MessageDisplayController extends ActionController
     public function showAction(): string
     {
 
-        $result = '';
+        $result = 'Nothing to show!';
         $uuid = (string)GeneralUtility::_GP('uuid');
         if ($this->isUuidValid($uuid)) {
             $source = (string)GeneralUtility::_GP('source');
