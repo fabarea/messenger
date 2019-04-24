@@ -63,7 +63,6 @@ return [
             ],
         ],
         'hidden' => [
-            'exclude' => 1,
             'l10n_mode' => 'exclude',
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
             'config' => [
@@ -71,7 +70,6 @@ return [
             ],
         ],
         'qualifier' => [
-            'exclude' => 0,
             'l10n_mode' => 'exclude',
             'l10n_display' => 'defaultAsReadonly',
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:qualifier',
@@ -82,7 +80,6 @@ return [
             ],
         ],
         'content' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:content',
             'config' => [
                 'type' => 'text',

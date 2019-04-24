@@ -13,6 +13,7 @@ use Fab\Messenger\Utility\Algorithms;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
+ * @deprecated should not be necessary anymore
  * This class is for rendering content in the context of the Backend.
  */
 class BackendRenderer implements ContentRendererInterface

@@ -35,6 +35,18 @@ call_user_func(
             ]
         );
 
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+            'messenger',
+            'MessageDisplay',
+            [
+                'MessageDisplay' => 'show',
+            ],
+            // non-cacheable actions
+            [
+                'MessageDisplay' => 'show',
+            ]
+        );
+
         // eID for resolving Frontend URL in the context of the Backend.
         $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = \Fab\Messenger\PagePath\Resolver::class . '::resolveUrl';
 

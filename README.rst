@@ -43,6 +43,32 @@ Message composing
 When composing content, you can take full advantage of the Fluid syntax and make use of View Helper within your messages.
 Markers should be defined as follows `{first_name}` and will be processed when rendering the email.
 
+Note, you can use a double curly bracket `{{text}}` to have the marker interpreted as HTML. This would be the equivalent to
+`<f:format.raw>{text}</f:format.raw>` in Fluid.
+
+
+Retrieve sent messages
+======================
+
+It could be handy to show sent messages or messages from the queue on the FE. We can achieve that knowing the UUID of the message.
+In newsletter we often have see links like ""
+
+```
+
+# Display a sent message
+https://domain.tld/?type=1556100596&uuid=a7760851-2349-4b5c-bc9e-ae43eecc01a9
+
+# Display a message to be sent in the queue
+https://domain.tld/?type=1556100596&uuid=a7760851-2349-4b5c-bc9e-ae43eecc01a9&source=queue
+```
+
+This can be used in a HTML content element in TYPO3 to generate a link to show the content that was sent to the User in the browser.
+
+```
+If this email is not shown correctly <a href="https://domain.tld?type=1556100596&uuid={uuid}">click here</a>.
+```
+
+
 Message API
 ===========
 

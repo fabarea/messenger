@@ -9,27 +9,25 @@ return [
         'label' => 'sender',
         'default_sortby' => 'ORDER BY sent_time DESC',
         'crdate' => 'crdate',
-        'searchFields' => 'subject, body, mailing_name, ip',
+        'searchFields' => 'subject, body, mailing_name, uid',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-sentmessage',
         ],
     ],
     'types' => [
-        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, scheduled_distribution_time, message_template, message_layout, sent_time, redirect_email_from'],
+        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, uuid, scheduled_distribution_time, message_template, message_layout, sent_time, redirect_email_from'],
     ],
     'palettes' => [
         '1' => ['showitem' => ''],
     ],
     'columns' => [
         'hidden' => [
-            'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
             'config' => [
                 'type' => 'check',
             ],
         ],
         'sender' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender',
             'config' => [
                 'type' => 'input',
@@ -39,7 +37,6 @@ return [
             ],
         ],
         'recipient' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
             'config' => [
                 'type' => 'input',
@@ -49,7 +46,6 @@ return [
             ],
         ],
         'recipient_cc' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
@@ -58,7 +54,6 @@ return [
             ],
         ],
         'recipient_bcc' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
@@ -67,7 +62,6 @@ return [
             ],
         ],
         'redirect_email_from' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email_from',
             'config' => [
                 'type' => 'input',
@@ -76,7 +70,6 @@ return [
             ],
         ],
         'subject' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject',
             'config' => [
                 'type' => 'input',
@@ -86,7 +79,6 @@ return [
             ],
         ],
         'body' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:body',
             'config' => [
                 'type' => 'text',
@@ -96,7 +88,6 @@ return [
             ],
         ],
         'context' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
             'config' => [
                 'type' => 'input',
@@ -106,7 +97,6 @@ return [
             ],
         ],
         'attachment' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
             'config' => [
                 'type' => 'input',
@@ -116,7 +106,6 @@ return [
             ],
         ],
         'mailing_name' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
@@ -124,8 +113,14 @@ return [
                 'readOnly' => true,
             ],
         ],
+        'uuid' => [
+            'label' => 'UUID',
+            'config' => [
+                'type' => 'input',
+                'readOnly' => true,
+            ],
+        ],
         'scheduled_distribution_time' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
@@ -135,7 +130,6 @@ return [
             ],
         ],
         'message_template' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
             'config' => [
                 'type' => 'select',
@@ -147,7 +141,6 @@ return [
             ],
         ],
         'message_layout' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
             'config' => [
                 'type' => 'select',
@@ -159,7 +152,6 @@ return [
             ],
         ],
         'ip' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:ip',
             'config' => [
                 'type' => 'input',
@@ -169,7 +161,6 @@ return [
             ],
         ],
         'sent_time' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_time',
             'config' => [
                 'type' => 'input',
@@ -180,7 +171,6 @@ return [
             ],
         ],
         'was_opened' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:was_opened',
             'config' => [
                 'type' => 'input',
@@ -217,6 +207,7 @@ return [
                 'width' => '150px',
             ],
             'mailing_name' => [],
+            'uuid' => [],
             'attachment' => [
                 'visible' => false,
             ],

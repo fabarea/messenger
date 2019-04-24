@@ -58,6 +58,33 @@ page_1370537883 {
     }
 }
 
+page_1556100596 = PAGE
+page_1556100596 {
+    typeNum = 1556100596
+    config {
+        xhtml_cleaning = 0
+        admPanel = 0
+        disableAllHeaderCode = 1
+        additionalHeaders = Content-type:text/html
+
+        # Configuration if you would like to fix prepended domain.
+        # Otherwise typolink get prepended with current domain.
+        #absRefPrefix = http://domain.tld/
+    }
+	10 = USER_INT
+	10 {
+		userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+		vendorName = Fab
+		extensionName = Messenger
+		pluginName = MessageDisplay
+		switchableControllerActions {
+			MessageDisplay {
+				1 = show
+			}
+		}
+	}
+}
+
 ######################################
 # config.tx_extbase
 ######################################

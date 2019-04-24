@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Model;
 
 /*
@@ -171,6 +172,11 @@ class Message
     protected $parseToMarkdown = false;
 
     /**
+     * @var string
+     */
+    protected $uuid = '';
+
+    /**
      * Prepares the emails and queue it.
      *
      * @return void
@@ -252,8 +258,8 @@ class Message
             $this->getMailMessage()
                 ->setBody($this->getDebugInfoBody())
                 ->setTo($redirectTo)
-                ->setCc([]) // reset cc which was written as debug in the body message previously.
-                ->setBcc([]) // same remark as bcc.
+                ->setCc([])// reset cc which was written as debug in the body message previously.
+                ->setBcc([])// same remark as bcc.
                 ->setSubject($this->getDebugInfoSubject());
         }
 
@@ -739,6 +745,7 @@ class Message
             'redirect_email_from' => $this->formatAddresses($this->redirectEmailFrom),
             'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
             'mail_message' => $mailMessage,
+            'uuid' => $this->uuid,
         ];
 
         return $values;
@@ -823,6 +830,24 @@ class Message
     public function getEmailValidator()
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string $uuid
+     * @return $this
+     */
+    public function setUuid($uuid): self
+    {
+        $this->uuid = $uuid;
+        return $this;
     }
 
     /**

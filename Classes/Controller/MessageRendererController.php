@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
+ * @deprecated should not be necessary anymore.
  * Controller which take the GET / POST arguments and generates an output given a Message Template.
  */
 class MessageRendererController extends ActionController

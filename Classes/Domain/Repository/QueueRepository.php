@@ -8,6 +8,7 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Utility\Algorithms;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Mail\MailMessage;
@@ -40,6 +41,11 @@ class QueueRepository
         $values['crdate'] = time(); // default values
         $values['message_serialized'] = serialize($message['mail_message']);
 
+        // Add uuid info is not available
+        if (empty($message['uuid'])) {
+            $message['uuid'] = Algorithms::generateUUID();
+        }
+
         // Make sure fields are allowed for this table.
         $fields = Tca::table($this->tableName)->getFields();
         foreach ($message as $fieldName => $value) {
@@ -57,6 +63,48 @@ class QueueRepository
             throw new \RuntimeException('I could not queue the message.', 1389721932);
         }
         return $result;
+    }
+
+    /**
+     * @param integer $uid
+     * @return array
+     */
+    public function findByUid(int $uid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()->expr()->eq(
+                    'uuid',
+                    $this->getQueryBuilder()->expr()->literal($uid)
+                )
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    /**
+     * @param string $uuid
+     * @return array
+     */
+    public function findByUuid(string $uuid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()->expr()->eq(
+                    'uuid',
+                    $this->getQueryBuilder()->expr()->literal($uuid)
+                )
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
     }
 
     /**

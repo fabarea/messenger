@@ -69,6 +69,7 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
+	uuid varchar(36) DEFAULT '' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
 
 	sender varchar(255) DEFAULT '' NOT NULL,
@@ -89,7 +90,8 @@ CREATE TABLE tx_messenger_domain_model_sentmessage (
 	redirect_email_from varchar(255) DEFAULT '' NOT NULL,
 
 	PRIMARY KEY (uid),
-	KEY parent (pid)
+	KEY parent (pid),
+	KEY uuid (uuid)
 );
 
 #
@@ -99,6 +101,7 @@ CREATE TABLE tx_messenger_domain_model_queue (
 
 	uid int(11) NOT NULL auto_increment,
 	pid int(11) DEFAULT '0' NOT NULL,
+	uuid varchar(36) DEFAULT '' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
 
 	sender varchar(255) DEFAULT '' NOT NULL,
@@ -119,5 +122,6 @@ CREATE TABLE tx_messenger_domain_model_queue (
 	redirect_email_from varchar(255) DEFAULT '' NOT NULL,
 
 	PRIMARY KEY (uid),
-	KEY parent (pid)
+	KEY parent (pid),
+	KEY uuid (uuid)
 );

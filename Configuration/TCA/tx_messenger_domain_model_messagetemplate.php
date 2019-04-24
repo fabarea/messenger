@@ -79,7 +79,6 @@ return [
             ],
         ],
         'hidden' => [
-            'exclude' => 1,
             'l10n_mode' => 'exclude',
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
             'config' => [
@@ -87,7 +86,6 @@ return [
             ],
         ],
         'qualifier' => [
-            'exclude' => 0,
             'l10n_mode' => 'exclude',
             'l10n_display' => 'defaultAsReadonly',
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:qualifier',
@@ -99,7 +97,6 @@ return [
             ],
         ],
         'subject' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:subject',
             'config' => [
                 'type' => 'input',
@@ -145,7 +142,6 @@ return [
             ]
         ],
         'body' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:body',
             'config' => [
                 'type' => 'text',
@@ -180,7 +176,6 @@ Show detail of an item:
 			'],
         ],
         'message_layout' => [
-            'exclude' => 0,
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_layout',
             'config' => [
                 'type' => 'select',

@@ -43,6 +43,10 @@ class FrontendRenderer implements ContentRendererInterface
     {
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
         $view = $this->getObjectManager()->get(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+
+        // Handle double {{ }} to be interpreted as HTML
+        $content = preg_replace('/{{(.*)}}/', '<f:format.raw>{$1}</f:format.raw>', $content);
+
         $view->setTemplateSource($content);
 
         // If a template file was defined, set its path, so that layouts and partials can be used

@@ -13,6 +13,7 @@ use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
+use Fab\Messenger\Utility\Algorithms;
 use Fab\Vidi\Domain\Model\Content;
 use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
@@ -98,8 +99,10 @@ class BackendMessageController extends ActionController
 
                     /** @var Message $message */
                     $message = $this->objectManager->get(Message::class);
+                    $message->setUuid(Algorithms::generateUUID());
 
                     $markers = $recipient->toArray();
+                    $markers['uuid'] = $message->getUuid();
 
                     $message->setBody($body)
                         ->setSubject($subject)

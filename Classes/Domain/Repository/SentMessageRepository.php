@@ -8,6 +8,7 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Utility\Algorithms;
 use Fab\Vidi\Tca\Tca;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -35,6 +36,11 @@ class SentMessageRepository
         $values['crdate'] = time();
         $values['sent_time'] = time();
 
+        // Add uuid info is not available
+        if (empty($message['uuid'])) {
+            $message['uuid'] = Algorithms::generateUUID();
+        }
+
         // Make sure fields are allowed for this table.
         $fields = Tca::table($this->tableName)->getFields();
         foreach ($message as $fieldName => $value) {
@@ -52,6 +58,48 @@ class SentMessageRepository
             throw new \RuntimeException('I could not save the message as "sent message"', 1389721852);
         }
         return $result;
+    }
+
+    /**
+     * @param integer $uid
+     * @return array
+     */
+    public function findByUid(int $uid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()->expr()->eq(
+                    'uuid',
+                    $this->getQueryBuilder()->expr()->literal($uid)
+                )
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    /**
+     * @param string $uuid
+     * @return array
+     */
+    public function findByUuid(string $uuid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()->expr()->eq(
+                    'uuid',
+                    $this->getQueryBuilder()->expr()->literal($uuid)
+                )
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
     }
 
     /**
