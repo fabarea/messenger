@@ -62,6 +62,11 @@ class FrontendRenderer implements ContentRendererInterface
 
         $view->assignMultiple($markers);
         return trim($view->render());
+
+        // Check if tidy is required for email.
+        #$content = trim($view->render());
+        #$content = array_map('trim', explode("\n", $content));
+        #return implode("\n", $content);
     }
 
     /**
