@@ -207,7 +207,9 @@ return [
                 'width' => '150px',
             ],
             'mailing_name' => [],
-            'uuid' => [],
+            'uuid' => [
+                'renderer' => \Fab\Messenger\Grid\UuidRenderer::class,
+            ],
             'attachment' => [
                 'visible' => false,
             ],

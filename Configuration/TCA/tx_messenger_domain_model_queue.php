@@ -170,7 +170,12 @@ return [
                 'format' => \Fab\Vidi\Formatter\Datetime::class,
             ],
             'mailing_name' => [],
-            'uuid' => [],
+            'uuid' => [
+                'renderer' => \Fab\Messenger\Grid\UuidRenderer::class,
+                'rendererConfiguration' => [
+                    'source' => 'queue'
+                ]
+            ],
             'attachment' => [
                 'visible' => false,
             ],
