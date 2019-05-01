@@ -16,9 +16,9 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * View which renders a "dequeue" item to be placed in the menu.
+ * View which renders a "send again" item to be placed in the menu.
  */
-class DequeueMenuItem extends AbstractComponentView
+class SendAgainMenuItem extends AbstractComponentView
 {
 
     /**
@@ -28,7 +28,7 @@ class DequeueMenuItem extends AbstractComponentView
     public function render()
     {
         $this->loadRequireJsCode();
-        $result = sprintf('<li><a href="%s" class="btn-dequeue">%s %s</a></li>',
+        $result = sprintf('<li><a href="%s" class="btn-sendAgain">%s %s</a></li>',
             $this->getDequeueUri(),
             $this->getIconFactory()->getIcon('content-elements-mailform', Icon::SIZE_SMALL),
             $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.dequeue')
@@ -44,7 +44,7 @@ class DequeueMenuItem extends AbstractComponentView
     {
         $urlParameters = [
             MessengerModule::getParameterPrefix() => [
-                'controller' => 'MessageQueue',
+                'controller' => 'MessageSent',
                 'action' => 'confirm',
             ],
         ];
@@ -72,6 +72,6 @@ class DequeueMenuItem extends AbstractComponentView
 
         $configuration['paths']['TYPO3/CMS/Messenger'] = '../typo3conf/ext/messenger/Resources/Public/JavaScript';
         $pageRenderer->addRequireJsConfiguration($configuration);
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Messenger/DequeueMenuItem');
+        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Messenger/SendAgainMenuItem');
     }
 }

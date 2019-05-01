@@ -76,18 +76,22 @@ call_user_func(
                 \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_messagelayout');
             }
             if (!isset($configuration['load_message_sent_module']) || (bool)$configuration['load_message_sent_module']) {
-                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage');
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage')
+                    ->addMenuMassActionComponents(
+                    [
+                        \Fab\Messenger\View\MenuItem\SendAgainMenuItem::class,
+                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                    ]
+                )->register();
             }
             if (!isset($configuration['load_message_queue_module']) || (bool)$configuration['load_message_queue_module']) {
-                $moduleLoader = \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue');
-
-                $moduleLoader->addMenuMassActionComponents(
+                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue')
+                    ->addMenuMassActionComponents(
                     [
                         \Fab\Messenger\View\MenuItem\DequeueMenuItem::class,
                         \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
                     ]
                 )->register();
-
             }
 
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
@@ -98,6 +102,7 @@ call_user_func(
                 [
                     'BackendMessage' => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
                     'MessageQueue' => 'confirm, dequeue',
+                    'MessageSent' => 'confirm, sendAgain',
                 ],
                 [
                     'access' => 'user,group',
