@@ -58,6 +58,7 @@ class MessageDisplayController extends ActionController
     {
         return GeneralUtility::makeInstance(QueueRepository::class);
     }
+
     /**
      * @return SentMessageRepository|object
      */

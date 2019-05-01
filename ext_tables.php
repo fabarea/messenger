@@ -79,7 +79,15 @@ call_user_func(
                 \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage');
             }
             if (!isset($configuration['load_message_queue_module']) || (bool)$configuration['load_message_queue_module']) {
-                \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue');
+                $moduleLoader = \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue');
+
+                $moduleLoader->addMenuMassActionComponents(
+                    [
+                        \Fab\Messenger\View\MenuItem\DequeueMenuItem::class,
+                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                    ]
+                )->register();
+
             }
 
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
@@ -87,14 +95,15 @@ call_user_func(
                 'user', // Make media module a submodule of 'user'
                 'm1',
                 'bottom', // Position
-                array(
-                    'BackendMessage' => 'compose, send, sendAsTest, feedbackSent, feedbackQueued',
-                ),
-                array(
+                [
+                    'BackendMessage' => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
+                    'MessageQueue' => 'confirm, dequeue',
+                ],
+                [
                     'access' => 'user,group',
                     'icon' => 'EXT:messenger/ext_icon.svg',
                     'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
-                )
+                ]
             );
 
             // Default User TSConfig to be added in any case.

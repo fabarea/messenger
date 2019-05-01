@@ -34,7 +34,9 @@ http://twitter.com/fudriot
 Installation
 ============
 
-Extension have self-explanatory settings in the Extension Manager.
+Extension have self-explanatory settings in the Extension Manager. For a particular context you could configure
+to have all emails redirected to a configured email for testing purposes and for not "leaking" messages outside
+your dev environment.
 
 
 Message composing
@@ -46,6 +48,13 @@ Markers should be defined as follows `{first_name}` and will be processed when r
 Note, you can use a double curly bracket `{{text}}` to have the marker interpreted as HTML. This would be the equivalent to
 `<f:format.raw>{text}</f:format.raw>` in Fluid.
 
+
+You may want to add prefix to all URLs with a domain (absolute URLs) which is required to have the links clickable.
+Otherwise, links will be relative to nothing and this will simply not work correctly for the end user.
+
+```
+config.absRefPrefix = https://domain.tld/
+```
 
 Retrieve sent messages
 ======================

@@ -112,6 +112,15 @@
 			<trans-unit id="send.message">
 				<source>Send a message</source>
 			</trans-unit>
+			<trans-unit id="send.dequeue">
+				<source>Send messages</source>
+			</trans-unit>
+			<trans-unit id="send.messages.sure?">
+				<source>You are going to send %s messages. Are you sure?</source>
+			</trans-unit>
+			<trans-unit id="send.message.sure?">
+				<source>You are going to send %s message. Are you sure?</source>
+			</trans-unit>
 			<trans-unit id="send.page">
 				<source>Send a page</source>
 			</trans-unit>

@@ -18,10 +18,10 @@ class ModuleLoader
 {
 
     /**
-     * @param string $dataType
-     * @throws \InvalidArgumentException
+     * @param $dataType
+     * @return \Fab\Vidi\Module\ModuleLoader
      */
-    public static function register($dataType): void
+    public static function register($dataType): \Fab\Vidi\Module\ModuleLoader
     {
         /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
         $moduleLoader = GeneralUtility::makeInstance(
@@ -29,7 +29,7 @@ class ModuleLoader
             $dataType
         );
 
-        $moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.svg')
+        return $moduleLoader->setIcon('EXT:messenger/Resources/Public/Icons/' . $dataType . '.svg')
             ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/' . $dataType . '.xlf')
             #->addStyleSheetFiles(['EXT:messenger/Resources/Public/StyleSheet/Backend/' . $dataType .'.css'])
             ->setDefaultPid(1)

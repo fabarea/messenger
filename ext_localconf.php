@@ -60,7 +60,6 @@ call_user_func(
             }
         });
 
-
         // Add caching framework garbage collection task
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Fab\Messenger\Task\MessengerDequeueTask::class] = [
             'extension' => 'messenger',

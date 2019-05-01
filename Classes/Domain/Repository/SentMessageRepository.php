@@ -71,7 +71,7 @@ class SentMessageRepository
             ->from($this->tableName)
             ->where(
                 $this->getQueryBuilder()->expr()->eq(
-                    'uuid',
+                    'uid',
                     $this->getQueryBuilder()->expr()->literal($uid)
                 )
             );

@@ -53,6 +53,33 @@ class QueueManager
     }
 
     /**
+     * @param int $queuedMessageIdentifier
+     * @return bool
+     */
+    public function dequeueOne(int $queuedMessageIdentifier): bool
+    {
+        $isSent = false;
+
+        $messengerMessage = $this->getQueueRepository()->findByUid($queuedMessageIdentifier);
+
+        if ($messengerMessage) {
+            /** @var MailMessage $message */
+            $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
+            $isSent = (bool)$message->send();
+
+            if ($isSent) {
+                $this->getQueueRepository()->remove($messengerMessage);
+                $this->getSentMessageRepository()->add($messengerMessage);
+            } else {
+                ++$messengerMessage['error_count'];
+                $this->getQueueRepository()->update($messengerMessage);
+            }
+
+        }
+        return $isSent;
+    }
+
+    /**
      * @return object|QueueRepository
      */
     protected function getQueueRepository(): QueueRepository

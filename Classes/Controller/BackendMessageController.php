@@ -9,7 +9,6 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
@@ -21,7 +20,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
- * Class MessageController
+ * Class BackendMessageController
  */
 class BackendMessageController extends ActionController
 {
@@ -79,7 +78,7 @@ class BackendMessageController extends ActionController
      * @param bool $parseMarkdown
      * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
      */
-    public function sendAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
+    public function enqueueAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');

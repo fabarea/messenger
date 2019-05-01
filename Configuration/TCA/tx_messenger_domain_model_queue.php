@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:qeue',
+        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf:qeue',
         'label' => 'sender',
         'default_sortby' => 'ORDER BY scheduled_distribution_time ASC',
         'crdate' => 'crdate',
