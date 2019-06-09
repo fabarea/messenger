@@ -78,20 +78,20 @@ call_user_func(
             if (!isset($configuration['load_message_sent_module']) || (bool)$configuration['load_message_sent_module']) {
                 \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage')
                     ->addMenuMassActionComponents(
-                    [
-                        \Fab\Messenger\View\MenuItem\SendAgainMenuItem::class,
-                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                    ]
-                )->register();
+                        [
+                            \Fab\Messenger\View\MenuItem\SendAgainMenuItem::class,
+                            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                        ]
+                    )->register();
             }
             if (!isset($configuration['load_message_queue_module']) || (bool)$configuration['load_message_queue_module']) {
                 \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue')
                     ->addMenuMassActionComponents(
-                    [
-                        \Fab\Messenger\View\MenuItem\DequeueMenuItem::class,
-                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                    ]
-                )->register();
+                        [
+                            \Fab\Messenger\View\MenuItem\DequeueMenuItem::class,
+                            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                        ]
+                    )->register();
             }
 
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
@@ -119,31 +119,19 @@ call_user_func(
 
                 ');
 
-            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+            $loadNewsletterModule = (bool)\Fab\Messenger\Utility\ConfigurationUtility::getInstance()->get('load_newsletter_module');
 
-            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-            if ($moduleLoader->isRegistered('fe_users')) {
+            if ($loadNewsletterModule) {
 
-                $moduleLoader
-                    ->setDataType('fe_users')
-                    ->setModuleLanguageFile('LLL:EXT:vidi/Resources/Private/Language/fe_users.xlf')
-                    ->setIcon('EXT:vidi/Resources/Public/Images/fe_users.svg')
-                    ->addMenuMassActionComponents(
-                        [
-                            \Fab\Messenger\View\MenuItem\SendMenuItem::class,
-                            \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                        ]
-                    )
-                    ->register();
-            }
+                $recipientDataType = \Fab\Messenger\Utility\ConfigurationUtility::getInstance()->get('recipient_data_type');
 
-            if (!isset($configuration['load_newsletter_module']) || (bool)$configuration['load_newsletter_module']) {
                 // Register a new BE Module to send newsletter
                 /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
                 $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
-                $moduleLoader->setMainModule('web')
-                    ->setDataType('fe_users')
+                $moduleLoader
+                    ->ignorePid(true)
+                    ->setMainModule('web')
+                    ->setDataType($recipientDataType)
                     ->setIcon('EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg')
                     ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/module_newsletter.xlf')
                     ->removeComponentFromDocHeader(\Fab\Vidi\View\Button\NewButton::class)
@@ -155,7 +143,27 @@ call_user_func(
                     )
                     ->ignorePid(true)
                     ->register();
+
+                // Special case for fe_users to add a special menu
+                if ($recipientDataType === 'fe_users') {
+
+                    /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+                    $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+
+                    /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+                    $moduleLoader->setDataType('fe_users')
+                        ->setModuleLanguageFile('LLL:EXT:vidi/Resources/Private/Language/fe_users.xlf')
+                        ->setIcon('EXT:vidi/Resources/Public/Images/fe_users.svg')
+                        ->addMenuMassActionComponents(
+                            [
+                                \Fab\Messenger\View\MenuItem\SendMenuItem::class,
+                                \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
+                            ]
+                        )
+                        ->register();
+                }
             }
+
         }
 
     }

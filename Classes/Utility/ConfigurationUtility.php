@@ -46,6 +46,11 @@ class ConfigurationUtility implements SingletonInterface
         foreach ($configuration as $key => $value) {
             $this->configuration[$key] = $value;
         }
+
+        // Special case for "recipient_data_type"
+        if (empty($this->configuration['recipient_data_type'])) {
+            $this->configuration['recipient_data_type'] = 'fe_users';
+        }
     }
 
     /**
@@ -56,7 +61,7 @@ class ConfigurationUtility implements SingletonInterface
      */
     public function get($key)
     {
-        return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : NULL;
+        return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : null;
     }
 
     /**

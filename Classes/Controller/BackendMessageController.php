@@ -13,6 +13,7 @@ use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
 use Fab\Messenger\Utility\Algorithms;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Vidi\Domain\Model\Content;
 use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
@@ -47,8 +48,10 @@ class BackendMessageController extends ActionController
      */
     public function composeAction(array $matches = array(), $pageId = 0): void
     {
+        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
+
         // Instantiate the Matcher object according different rules.
-        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');
+        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $recipientDataType);
 
         // Fetch objects via the Content Service.
         $contentService = $this->getContentService()->findBy($matcher);
@@ -80,8 +83,10 @@ class BackendMessageController extends ActionController
      */
     public function enqueueAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
     {
+        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
+
         // Instantiate the Matcher object according different rules.
-        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, 'fe_users');
+        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $recipientDataType);
 
         // Fetch objects via the Content Service.
         $contentService = $this->getContentService()->findBy($matcher);
@@ -221,6 +226,7 @@ class BackendMessageController extends ActionController
      */
     protected function getContentService()
     {
-        return GeneralUtility::makeInstance(ContentService::class, 'fe_users');
+        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
+        return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);
     }
 }
