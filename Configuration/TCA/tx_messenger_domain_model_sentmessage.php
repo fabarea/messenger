@@ -9,7 +9,7 @@ return [
         'label' => 'sender',
         'default_sortby' => 'ORDER BY sent_time DESC',
         'crdate' => 'crdate',
-        'searchFields' => 'subject, body, mailing_name, uid',
+        'searchFields' => 'subject, recipient, body, mailing_name, uid',
         'typeicon_classes' => [
             'default' => 'extensions-messenger-sentmessage',
         ],
@@ -184,6 +184,7 @@ return [
         'facets' => [
             'uid',
             'subject',
+            'recipient',
         ],
         'columns' => [
             '__checkbox' => [
