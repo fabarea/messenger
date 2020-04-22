@@ -22,7 +22,6 @@
 		}
 	},
 	"replace": {
-		"messenger": "self.version",
 		"typo3-ter/messenger": "self.version"
 	}
 }
