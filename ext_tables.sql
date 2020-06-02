@@ -118,7 +118,7 @@ CREATE TABLE tx_messenger_domain_model_queue (
 	scheduled_distribution_time int(11) unsigned DEFAULT '0' NOT NULL,
 	ip varchar(255) DEFAULT '' NOT NULL,
 	error_count int(11) unsigned DEFAULT '0' NOT NULL,
-	message_serialized text,
+	message_serialized mediumtext,
 	redirect_email_from varchar(255) DEFAULT '' NOT NULL,
 
 	PRIMARY KEY (uid),
