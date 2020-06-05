@@ -6,15 +6,15 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'plugin',
     'author' => 'Fabien Udriot',
     'author_email' => 'fabien@ecodev.ch',
-    'state' => 'beta',
-    'version' => '2.2.0-dev',
+    'state' => 'stable',
+    'version' => '2.2.0',
     'autoload' => [
         'psr-4' => ['Fab\\Messenger\\' => 'Classes']
     ],
     'constraints' => [
         'depends' => [
             'typo3' => '9.5.0-9.5.99',
-            'vidi' => '3.0.0-0.0.0',
+            'vidi' => '4.0.0-0.0.0',
         ],
         'conflicts' => [
         ],
