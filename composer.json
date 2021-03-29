@@ -23,5 +23,10 @@
 	},
 	"replace": {
 		"typo3-ter/messenger": "self.version"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "messenger"
+		}
 	}
 }
