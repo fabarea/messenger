@@ -14,6 +14,8 @@
  */
 
 
+use TYPO3\CMS\Core\Core\Environment;
+
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Unit/BaseTest.php');
 
 /**
@@ -63,7 +65,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		$this->attachment = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger') . 'Tests/Resources/Sample.pdf';
 
 		// Compute temporary directory.
-		$temporaryDirectory = PATH_site . 'typo3temp'; // ini_get('upload_tmp_dir');
+		$temporaryDirectory = Environment::getPublicPath() . '/typo3temp'; // ini_get('upload_tmp_dir');
 		if (!is_dir($temporaryDirectory)) {
 			$temporaryDirectory = sys_get_temp_dir();
 		}
