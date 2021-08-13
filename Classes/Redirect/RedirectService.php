@@ -8,8 +8,8 @@ namespace Fab\Messenger\Redirect;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Validator\EmailValidator;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Messenger\Utility\ConfigurationUtility;
@@ -50,9 +50,9 @@ class RedirectService implements SingletonInterface
     public function getRedirectionList(): string
     {
         // Fetch email from PHP configuration array at first.
-        $applicationContext = (string)GeneralUtility::getApplicationContext()->getParent();
+        $applicationContext = (string)Environment::getContext()->getParent();
         if (!$applicationContext) {
-            $applicationContext = (string)GeneralUtility::getApplicationContext();
+            $applicationContext = (string)Environment::getContext();
         }
 
         $key = strtolower($applicationContext) . '_redirect_to';

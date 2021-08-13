@@ -10,6 +10,7 @@ namespace Fab\Messenger\ViewHelpers\Message;
 
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Service\SenderProvider;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -38,7 +39,7 @@ class DevelopmentViewHelper extends AbstractViewHelper
 
             $output = sprintf(
                 "<pre style='clear: both'>%s CONTEXT<br /> %s %s</pre>",
-                strtoupper((string)GeneralUtility::getApplicationContext()),
+                strtoupper((string)Environment::getContext()),
                 '<br />- All emails will be redirected to ' . implode(', ', array_keys($redirectTo)) . '.',
                 SenderProvider::getInstance()->getPossibleSenders() ? '' : '<br/>- ATTENTION! No sender could be found. This will be a problem when sending emails.'
             );

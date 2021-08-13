@@ -13,6 +13,7 @@ use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Validator\EmailValidator;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -270,7 +271,7 @@ class Message
      */
     protected function getDebugInfoSubject(): string
     {
-        $applicationContext = (string)GeneralUtility::getApplicationContext();
+        $applicationContext = (string)Environment::getContext();
         return strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
     }
 
@@ -287,7 +288,7 @@ class Message
 
         return sprintf(
             "%s CONTEXT: this message is for testing purposes. In Production, it will be sent as follows. \nto: %s\n%s%s\n%s",
-            strtoupper((string)GeneralUtility::getApplicationContext()),
+            strtoupper((string)Environment::getContext()),
             implode(',', array_keys($to)),
             empty($cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($cc))),
             empty($bcc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($bcc))),
@@ -736,7 +737,7 @@ class Message
             'subject' => $mailMessage->getSubject(),
             'body' => $mailMessage->getBody(),
             'attachment' => count($this->attachments),
-            'context' => (string)GeneralUtility::getApplicationContext(),
+            'context' => (string)Environment::getContext(),
             'was_opened' => 0,
             'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
