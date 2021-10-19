@@ -133,6 +133,7 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
             'config' => [
                 'type' => 'select',
+                'renderType' => 'selectSingle',
                 'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
                 'size' => 1,
                 'minitems' => 0,
@@ -144,6 +145,7 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
             'config' => [
                 'type' => 'select',
+                'renderType' => 'selectSingle',
                 'table_foreign' => 'tx_messenger_domain_model_messagelayout',
                 'size' => 1,
                 'minitems' => 0,
