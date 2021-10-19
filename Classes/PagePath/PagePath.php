@@ -104,13 +104,13 @@ class PagePath
                     $siteRootPage = $page;
                 }
             }
-            if (!empty($siteRootPage)) {
-                $domain = self::guessFistDomain($siteRootPage['uid']);
-                if (!empty($domain)) {
-                    $domainName = $domain['domainName'];
-
-                }
-            }
+            #if (!empty($siteRootPage)) {
+            #    $domain = self::guessFistDomain($siteRootPage['uid']);
+            #    if (!empty($domain)) {
+            #        $domainName = $domain['domainName'];
+            #    }
+            #}
+            $domainName = null;
             $baseUrl = $domainName
                 ? self::getScheme($siteRootPage['uid']) . '://' . $domainName . '/'
                 : GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
@@ -135,24 +135,24 @@ class PagePath
      * @param int $pageId
      * @return array
      */
-    protected static function guessFistDomain(int $pageId): array
-    {
-        /** @var QueryBuilder $query */
-        $queryBuilder = self::getQueryBuilder('sys_domain');
-        $queryBuilder->select('*')
-            ->from('sys_domain')
-            ->andWhere(
-                'pid = ' . $pageId
-            )
-            ->addOrderBy('sorting', 'ASC');
-
-        $record = $queryBuilder
-            ->execute()
-            ->fetch();
-        return is_array($record)
-            ? $record
-            : [];
-    }
+    #protected static function guessFistDomain(int $pageId): array
+    #{
+    #    /** @var QueryBuilder $query */
+    #    $queryBuilder = self::getQueryBuilder('sys_domain');
+    #    $queryBuilder->select('*')
+    #        ->from('sys_domain')
+    #        ->andWhere(
+    #            'pid = ' . $pageId
+    #        )
+    #        ->addOrderBy('sorting', 'ASC');
+    #
+    #    $record = $queryBuilder
+    #        ->execute()
+    #        ->fetch();
+    #    return is_array($record)
+    #        ? $record
+    #        : [];
+    #}
 
     /**
      * @param string $tableName

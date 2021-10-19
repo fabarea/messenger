@@ -44,7 +44,7 @@ class SentMessageRepository
         // Make sure fields are allowed for this table.
         $fields = Tca::table($this->tableName)->getFields();
         foreach ($message as $fieldName => $value) {
-            if (in_array($fieldName, $fields, true)) {
+            if (in_array($fieldName, $fields, true) && is_string($value)) {
                 $values[$fieldName] = $value;
             }
         }

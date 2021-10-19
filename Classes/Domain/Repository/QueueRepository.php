@@ -39,7 +39,15 @@ class QueueRepository
 
         $values = [];
         $values['crdate'] = time(); // default values
-        $values['message_serialized'] = serialize($message['mail_message']);
+        /** @var \TYPO3\CMS\Core\Mail\MailMessage $mailMessage */
+        $mailMessage = $message['mail_message'];
+        $values['message_serialized'] = serialize([
+            'to' => $mailMessage->getTo(),
+            'subject' => $mailMessage->getSubject(),
+            'bodyText' => $mailMessage->getTextBody(),
+            'bodyHtml' => $mailMessage->getHtmlBody(),
+            'from' => $mailMessage->getFrom(),
+        ]);
 
         // Add uuid info is not available
         if (empty($message['uuid'])) {
@@ -49,7 +57,7 @@ class QueueRepository
         // Make sure fields are allowed for this table.
         $fields = Tca::table($this->tableName)->getFields();
         foreach ($message as $fieldName => $value) {
-            if (in_array($fieldName, $fields, true)) {
+            if (in_array($fieldName, $fields, true) && is_string($value)) {
                 $values[$fieldName] = $value;
             }
         }

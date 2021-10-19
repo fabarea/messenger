@@ -88,7 +88,8 @@ class SenderProvider implements SingletonInterface
     protected function getFromTSConfig()
     {
         $senders = [];
-        $tsSenders = $this->getBackendUser()->getTSConfigProp('options.messenger.senders');
+        $tsConfig = $this->getBackendUser()->getTSConfig();
+        $tsSenders = $tsConfig['options.messenger.senders'];
         if (is_array($tsSenders)) {
 
             foreach ($tsSenders as $key => $sender) {

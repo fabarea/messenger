@@ -25,6 +25,7 @@ use Fab\Messenger\Service\MessageStorage;
 use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
+use TYPO3\CMS\Extbase\Annotation\Inject;
 
 /**
  * Message representation
@@ -42,7 +43,7 @@ class Message
 
     /**
      * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-     * @inject
+     * @Inject
      */
     protected $objectManager;
 
@@ -115,25 +116,25 @@ class Message
 
     /**
      * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
-     * @inject
+     * @Inject
      */
     protected $messageTemplateRepository;
 
     /**
      * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
-     * @inject
+     * @Inject
      */
     protected $messageLayoutRepository;
 
     /**
      * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
-     * @inject
+     * @Inject
      */
     protected $sentMessageRepository;
 
     /**
      * @var \Fab\Messenger\Domain\Repository\QueueRepository
-     * @inject
+     * @Inject
      */
     protected $queueRepository;
 
@@ -237,16 +238,16 @@ class Message
 
         // Attach plain text version if HTML tags are found in body
         if ($this->hasHtml($this->getProcessedBody())) {
-            $message->setBody($this->getProcessedBody(), 'text/html');
+            $message->setBody()->html($this->getProcessedBody());
             $text = Html2Text::getInstance()->convert($this->getProcessedBody());
-            $this->getMailMessage()->addPart($text, 'text/plain');
+            $message->setBody()->text($text);
         } else {
-            $message->setBody($this->getProcessedBody(), 'text/plain');
+            $message->setBody()->text($this->getProcessedBody());
         }
 
         // Handle attachment
         foreach ($this->attachments as $attachment) {
-            $this->getMailMessage()->attach($attachment);
+            $this->getMailMessage()->attachFromPath($attachment);
         }
 
         // Handle email "redirection"
@@ -257,13 +258,12 @@ class Message
             $this->redirectEmailFrom = $this->getMailMessage()->getTo();
 
             $this->getMailMessage()
-                ->setBody($this->getDebugInfoBody())
+                ->setBody()->html($this->getDebugInfoBody())
                 ->setTo($redirectTo)
                 ->setCc([])// reset cc which was written as debug in the body message previously.
                 ->setBcc([])// same remark as bcc.
                 ->setSubject($this->getDebugInfoSubject());
         }
-
     }
 
     /**
@@ -339,9 +339,9 @@ class Message
 
         // Makes sure the file exist
         if (is_file($attachment)) {
-            $parts = explode('/', $attachment);
-            $fileName = array_pop($parts);
-            $this->attachments[] = \Swift_Attachment::fromPath($attachment)->setFilename($fileName);
+            #$parts = explode('/', $attachment);
+            #$fileName = array_pop($parts);
+            $this->attachments[] = $attachment;
         } else {
             $message = sprintf('File not found "%s"', $attachment);
             throw new MissingFileException($message, 1389779394);
@@ -677,7 +677,6 @@ class Message
      */
     public function setMessageTemplate($messageTemplate): Message
     {
-
         if ($messageTemplate instanceof MessageTemplate) {
             $this->messageTemplate = $messageTemplate;
         } else {
@@ -771,8 +770,9 @@ class Message
     protected function formatAddresses(array $addresses): string
     {
         $formattedAddresses = [];
-        foreach ($addresses as $email => $name) {
-            $formattedAddresses[] = sprintf('%s <%s>', $name, $email);
+        /** @var \Symfony\Component\Mime\Address $addresses */
+        foreach ($addresses as $address) {
+            $formattedAddresses[] = sprintf('%s <%s>', $address->getName(), $address->getAddress());
         }
         return implode(', ', $formattedAddresses);
 

@@ -9,6 +9,7 @@ namespace Fab\Messenger\ViewHelpers\Widget;
  */
 
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
+use TYPO3\CMS\Extbase\Annotation\Inject;
 
 /**
  * View helper which render a generic item from the array of markers.
@@ -18,7 +19,7 @@ class ShowViewHelper extends AbstractWidgetViewHelper
 
     /**
      * @var \Fab\Messenger\ViewHelpers\Widget\Controller\ShowController
-     * @inject
+     * @Inject
      */
     protected $controller;
 

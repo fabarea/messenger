@@ -19,6 +19,7 @@ use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Annotation\Validate;
 
 /**
  * Class BackendMessageController
@@ -79,7 +80,7 @@ class BackendMessageController extends ActionController
      * @param string $sender
      * @param array $matches
      * @param bool $parseMarkdown
-     * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
+     * @Validate("Fab\Messenger\Domain\Validator\NotEmptyValidator", param="subject")
      */
     public function enqueueAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
     {
@@ -160,7 +161,7 @@ class BackendMessageController extends ActionController
      * @param string $body
      * @param string $sender
      * @param string $recipientList
-     * @validate $subject \Fab\Messenger\Domain\Validator\NotEmptyValidator
+     * @Validate("Fab\Messenger\Domain\Validator\NotEmptyValidator", param="subject")
      */
     public function sendAsTestAction(string $subject, string $body, string $sender, string $recipientList): void
     {
