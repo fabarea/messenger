@@ -16,7 +16,7 @@ use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Lang\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageService;
 
 /**
  * Class MessageSentController
