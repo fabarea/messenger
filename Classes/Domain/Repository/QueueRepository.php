@@ -41,13 +41,8 @@ class QueueRepository
         $values['crdate'] = time(); // default values
         /** @var \TYPO3\CMS\Core\Mail\MailMessage $mailMessage */
         $mailMessage = $message['mail_message'];
-        $values['message_serialized'] = serialize([
-            'to' => $mailMessage->getTo(),
-            'subject' => $mailMessage->getSubject(),
-            'bodyText' => $mailMessage->getTextBody(),
-            'bodyHtml' => $mailMessage->getHtmlBody(),
-            'from' => $mailMessage->getFrom(),
-        ]);
+        $values['message_serialized'] = serialize($mailMessage);
+        $values['body'] = $mailMessage->getHtmlBody() ?? $mailMessage->getTextBody();
 
         // Add uuid info is not available
         if (empty($message['uuid'])) {

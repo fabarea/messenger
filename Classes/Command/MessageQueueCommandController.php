@@ -48,7 +48,7 @@ class MessageQueueCommandController extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $itemsPerRun = $input->getOption('items-per-run');
         $result = $this->getQueueManager()->dequeue($itemsPerRun);
@@ -64,6 +64,7 @@ class MessageQueueCommandController extends Command
                 'I encountered %s problem(s) while processing the message queue.', $result['errorCount']
             ));
         }
+        return 1;
     }
 
     /**
