@@ -21,12 +21,14 @@
 			"Fab\\Messenger\\": "Classes/"
 		}
 	},
-	"replace": {
-		"typo3-ter/messenger": "self.version"
-	},
 	"extra": {
 		"typo3/cms": {
 			"extension-key": "messenger"
 		}
+	},
+	"require": {
+		"typo3/cms-core": "^11.0",
+		"fab/vidi": "*",
+		"fab/messenger": "*"
 	}
 }
