@@ -4,7 +4,7 @@
 	"description": "Send emails to a bunch of people. A message is wrapped in a template / layout that a BE user can freely edit in a BE module.",
 	"homepage": "https://github.com/fabarea/messenger",
 	"license": [
-		"GPL-2.0+"
+		"GPL-2.0-or-later"
 	],
 	"keywords": [
 		"TYPO3 CMS",
@@ -28,7 +28,6 @@
 	},
 	"require": {
 		"typo3/cms-core": "^11.0",
-		"fab/vidi": "*",
-		"fab/messenger": "*"
+		"fab/vidi": "*"
 	}
 }
