@@ -50,16 +50,6 @@ call_user_func(
         // eID for resolving Frontend URL in the context of the Backend.
         $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = \Fab\Messenger\PagePath\Resolver::class . '::resolveUrl';
 
-        # Install PSR-0-compatible class autoloader for Markdown Library in Resources/PHP/Michelf
-        spl_autoload_register(function ($class) {
-            if (strpos($class, 'Michelf\Markdown') !== FALSE) {
-                require sprintf('%sResources/Private/PHP/Markdown/%s',
-                    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('messenger'),
-                    preg_replace('{\\\\|_(?!.*\\\\)}', DIRECTORY_SEPARATOR, ltrim($class, '\\')) . '.php'
-                );
-            }
-        });
-
         // Add caching framework garbage collection task
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Fab\Messenger\Task\MessengerDequeueTask::class] = [
             'extension' => 'messenger',

@@ -28,6 +28,7 @@
 	},
 	"require": {
 		"typo3/cms-core": "^11.0",
-		"fab/vidi": "*"
+		"fab/vidi": "*",
+		"michelf/php-markdown": "^1.9"
 	}
 }
