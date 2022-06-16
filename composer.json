@@ -27,7 +27,14 @@
 		}
 	},
 	"require": {
+		"php": "^7.4 || ^8.0",
 		"typo3/cms-core": "^11.0",
 		"fab/vidi": "*"
+	},
+	"config": {
+		"allow-plugins": {
+			"typo3/cms-composer-installers": true,
+			"typo3/class-alias-loader": true
+		}
 	}
 }
