@@ -1,4 +1,7 @@
 <?php
+
+use Fab\Messenger\Controller\MessageDisplayController;
+
 defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(
@@ -39,11 +42,11 @@ call_user_func(
             'messenger',
             'MessageDisplay',
             [
-                'MessageDisplay' => 'show',
+                MessageDisplayController::class => 'show',
             ],
             // non-cacheable actions
             [
-                'MessageDisplay' => 'show',
+                MessageDisplayController::class => 'show',
             ]
         );
 

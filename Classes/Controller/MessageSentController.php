@@ -11,7 +11,6 @@ namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
-use Fab\Messenger\Queue\QueueManager;
 use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -66,7 +65,7 @@ class MessageSentController extends ActionController
         foreach ($contentObjects as $contentObject) {
 
             /** @var Message $message */
-            $message = $this->objectManager->get(Message::class);
+            $message = GeneralUtility::makeInstance(Message::class);
 
             $isSent = $message->setBody($contentObject['body'])
                 ->setSubject($contentObject['subject'])

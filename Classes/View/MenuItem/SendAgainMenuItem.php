@@ -28,7 +28,7 @@ class SendAgainMenuItem extends AbstractComponentView
     public function render()
     {
         $this->loadRequireJsCode();
-        $result = sprintf('<li><a href="%s" class="btn-sendAgain">%s %s</a></li>',
+        $result = sprintf('<li><a href="%s" class="dropdown-item btn-sendAgain">%s %s</a></li>',
             $this->getDequeueUri(),
             $this->getIconFactory()->getIcon('content-elements-mailform', Icon::SIZE_SMALL),
             $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.dequeue')

@@ -42,7 +42,7 @@ class FrontendRenderer implements ContentRendererInterface
     public function render($content, array $markers): string
     {
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
-        $view = $this->getObjectManager()->get(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+        $view = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
 
         // Handle double {{ }} to be interpreted as HTML
         $content = preg_replace('/{{(.*)}}/', '<f:format.raw>{$1}</f:format.raw>', $content);
@@ -69,11 +69,4 @@ class FrontendRenderer implements ContentRendererInterface
         #return implode("\n", $content);
     }
 
-    /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager|object
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
-    }
 }

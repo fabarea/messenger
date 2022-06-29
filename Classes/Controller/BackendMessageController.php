@@ -36,7 +36,7 @@ class BackendMessageController extends ActionController
         if ($this->arguments->hasArgument('body')) {
 
             /** @var BodyConverter $typeConverter */
-            $typeConverter = $this->objectManager->get(BodyConverter::class);
+            $typeConverter = GeneralUtility::makeInstance(BodyConverter::class);
 
             $propertyMappingConfiguration = $this->arguments->getArgument('body')->getPropertyMappingConfiguration();
             $propertyMappingConfiguration->setTypeConverter($typeConverter);
@@ -104,7 +104,7 @@ class BackendMessageController extends ActionController
                     $numberOfSentEmails++; // increment counter.
 
                     /** @var Message $message */
-                    $message = $this->objectManager->get(Message::class);
+                    $message = GeneralUtility::makeInstance(Message::class);
                     $message->setUuid(Algorithms::generateUUID());
 
                     $markers = $recipient->toArray();
@@ -178,7 +178,7 @@ class BackendMessageController extends ActionController
                     $numberOfSentEmails++; // increment counter.
 
                     /** @var Message $message */
-                    $message = $this->objectManager->get(Message::class);
+                    $message = GeneralUtility::makeInstance(Message::class);
 
                     # Minimum required to be set
                     $message->setBody($body)

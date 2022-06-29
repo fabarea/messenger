@@ -9,8 +9,11 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
+use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
+use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
+use Fab\Messenger\Domain\Repository\QueueRepository;
+use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Validator\EmailValidator;
 use TYPO3\CMS\Core\Core\Environment;
@@ -26,6 +29,7 @@ use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use \Michelf\Markdown;
 use TYPO3\CMS\Extbase\Annotation\Inject;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Message representation
@@ -40,12 +44,6 @@ class Message
      * @var int
      */
     protected $uid;
-
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManager
-     * @Inject
-     */
-    protected $objectManager;
 
     /**
      * @var array
@@ -116,27 +114,18 @@ class Message
 
     /**
      * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
-     * @Inject
      */
     protected $messageTemplateRepository;
 
     /**
-     * @var \Fab\Messenger\Domain\Repository\MessageLayoutRepository
-     * @Inject
+     * @var MessageLayoutRepository
      */
     protected $messageLayoutRepository;
 
     /**
      * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
-     * @Inject
      */
     protected $sentMessageRepository;
-
-    /**
-     * @var \Fab\Messenger\Domain\Repository\QueueRepository
-     * @Inject
-     */
-    protected $queueRepository;
 
     /**
      * @var \Fab\Messenger\Domain\Model\MessageTemplate
@@ -178,6 +167,15 @@ class Message
      */
     protected $uuid = '';
 
+    public function __construct()
+    {
+        // todo legacy, migrate me!
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $this->messageTemplateRepository = $objectManager->get(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = $objectManager->get(MessageLayoutRepository::class);
+        $this->sentMessageRepository = $objectManager->get(SentMessageRepository::class);
+    }
+
     /**
      * Prepares the emails and queue it.
      *
@@ -186,7 +184,8 @@ class Message
     public function enqueue(): void
     {
         $this->prepareMessage();
-        $this->queueRepository->add($this->toArray());
+        $queueRepository = GeneralUtility::makeInstance(QueueRepository::class);
+        $queueRepository->add($this->toArray());
     }
 
     /**
@@ -784,7 +783,7 @@ class Message
     public function getMailMessage(): MailMessage
     {
         if ($this->mailMessage === null) {
-            $this->mailMessage = $this->objectManager->get(MailMessage::class);
+            $this->mailMessage = GeneralUtility::makeInstance(MailMessage::class);
         }
         return $this->mailMessage;
     }
@@ -865,16 +864,6 @@ class Message
         #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
         #}
         #return $contentRenderer;
-    }
-
-    /**
-     * Returns whether the current mode is Frontend
-     *
-     * @return bool
-     */
-    protected function isFrontendMode(): bool
-    {
-        return TYPO3_MODE === 'FE';
     }
 
     /**

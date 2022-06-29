@@ -12,7 +12,6 @@ use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class QueueManager
@@ -95,11 +94,4 @@ class QueueManager
         return GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
-    /**
-     * @return object|ObjectManager
-     */
-    protected function getObjectManager(): ObjectManager
-    {
-        return GeneralUtility::makeInstance(ObjectManager::class);
-    }
 }

@@ -31,7 +31,7 @@ class MessageRendererController extends ActionController
         }
 
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $emailView */
-        $emailView = $this->objectManager->get(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+        $emailView = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
         $emailView->setTemplateSource($registryEntry['content']);
         $emailView->assignMultiple($registryEntry['markers']);
         return $emailView->render();

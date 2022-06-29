@@ -1,4 +1,9 @@
 <?php
+
+use Fab\Messenger\Controller\BackendMessageController;
+use Fab\Messenger\Controller\MessageQueueController;
+use Fab\Messenger\Controller\MessageSentController;
+
 defined('TYPO3_MODE') || die('Access denied.');
 
 call_user_func(
@@ -100,9 +105,9 @@ call_user_func(
                 'm1',
                 'bottom', // Position
                 [
-                    'BackendMessage' => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
-                    'MessageQueue' => 'confirm, dequeue',
-                    'MessageSent' => 'confirm, sendAgain',
+                    BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
+                    MessageQueueController::class => 'confirm, dequeue',
+                    MessageSentController::class => 'confirm, sendAgain',
                 ],
                 [
                     'access' => 'user,group',

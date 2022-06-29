@@ -28,7 +28,7 @@ class SendMenuItem extends AbstractComponentView
     public function render()
     {
         $this->loadRequireJsCode();
-        $result = sprintf('<li><a href="%s" class="btn-bulk-send">%s %s</a></li>',
+        $result = sprintf('<li><a href="%s" class="dropdown-item btn-bulk-send">%s %s</a></li>',
             $this->getBulkSendUri(),
             $this->getIconFactory()->getIcon('mimetypes-open-document-drawing', Icon::SIZE_SMALL),
             $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message')

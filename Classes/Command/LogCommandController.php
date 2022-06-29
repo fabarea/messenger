@@ -15,7 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class LogCommandController
@@ -69,14 +68,6 @@ class LogCommandController extends Command
     protected function getSentMessageRepository(): SentMessageRepository
     {
         return GeneralUtility::makeInstance(SentMessageRepository::class);
-    }
-
-    /**
-     * @return object|ObjectManager
-     */
-    protected function getObjectManager(): ObjectManager
-    {
-        return GeneralUtility::makeInstance(ObjectManager::class);
     }
 
 }

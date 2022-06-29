@@ -93,11 +93,8 @@ Usage::
 	$languageIdentifier = 0; // sys_language_uid
 	$pathToFile = 'some-path-to-file'; // @todo replace me with FAL identifier
 
-	/** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
-	$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::messenger);
-
 	/** @var \Fab\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get(Fab\Messenger\Domain\Model\Message:class);
+	$message = GeneralUtility::makeInstance(Fab\Messenger\Domain\Model\Message:class);
 
 	# Minimum required to be set
 	$message->setMessageTemplate($templateIdentifier)
@@ -121,7 +118,7 @@ Messenger has the feature to queue up emails. This is advised as soon as sending
 ::
 
 	/** @var \Fab\Messenger\Domain\Model\Message $message */
-	$message = $objectManager->get('Fab\Messenger\Domain\Model\Message');
+	$message = GeneralUtility::makeInstance('Fab\Messenger\Domain\Model\Message');
 	$message->
 		... // same as in the example above
 		->enqueue();
