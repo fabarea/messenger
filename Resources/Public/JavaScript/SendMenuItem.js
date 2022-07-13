@@ -146,9 +146,9 @@ define([
                             $('#btn-send-test', Vidi.modal).attr('disabled', 'disabled');
 
                             // If body contains a numerical corresponding to a page id, the page will be rendered.
-                            if (!$('#has-body-text', Vidi.modal).is(':checked') && $('#messenger-page-id', Vidi.modal).val()) {
-                                $('#messenger-body', Vidi.modal).val($('#messenger-page-id', Vidi.modal).val());
-                            }
+                            //if (!$('#has-body-text', Vidi.modal).is(':checked') && $('#messenger-page-id', Vidi.modal).val()) {
+                            //    $('#messenger-body', Vidi.modal).val($('#messenger-page-id', Vidi.modal).val());
+                            //}
 
                             $('#messenger-sender-test', Vidi.modal).val($('#messenger-sender', Vidi.modal).val());
                             $('#messenger-subject-test', Vidi.modal).val($('#messenger-subject', Vidi.modal).val());
