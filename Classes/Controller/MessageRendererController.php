@@ -51,9 +51,9 @@ class MessageRendererController extends ActionController
     /**
      * Returns an instance of the Frontend object.
      *
-     * @return \TYPO3\CMS\Core\Registry|object
+     * @return \TYPO3\CMS\Core\Registry
      */
-    protected function getRegistry(): \TYPO3\CMS\Core\Registry|object
+    protected function getRegistry(): \TYPO3\CMS\Core\Registry
     {
         return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
     }

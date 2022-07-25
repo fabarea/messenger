@@ -27,6 +27,10 @@ class MessageQueueController extends ActionController
      */
     protected $tableName = 'tx_messenger_domain_model_queue';
 
+    /**
+     * @param array $matches
+     * @return string
+     */
     public function confirmAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
@@ -42,6 +46,10 @@ class MessageQueueController extends ActionController
         return sprintf($label, $numberOfRecipients);
     }
 
+    /**
+     * @param array $matches
+     * @return string
+     */
     public function dequeueAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
@@ -85,9 +93,9 @@ class MessageQueueController extends ActionController
     }
 
     /**
-     * @return ContentService|object
+     * @return ContentService
      */
-    protected function getContentService(): \Fab\Vidi\Service\ContentService|object
+    protected function getContentService(): \Fab\Vidi\Service\ContentService
     {
         return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
     }

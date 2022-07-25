@@ -48,7 +48,7 @@ class MessageDisplayController extends ActionController
     }
 
     /**
-     * @return QueueRepository|object
+     * @return QueueRepository
      */
     public function getQueueRepository(): QueueRepository
     {
@@ -56,7 +56,7 @@ class MessageDisplayController extends ActionController
     }
 
     /**
-     * @return SentMessageRepository|object
+     * @return SentMessageRepository
      */
     public function getSentMessageRepository(): SentMessageRepository
     {

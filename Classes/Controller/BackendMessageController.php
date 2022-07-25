@@ -199,9 +199,9 @@ class BackendMessageController extends ActionController
     }
 
     /**
-     * @return ContentService|object
+     * @return ContentService
      */
-    protected function getContentService(): \Fab\Vidi\Service\ContentService|object
+    protected function getContentService(): \Fab\Vidi\Service\ContentService
     {
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
         return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);
