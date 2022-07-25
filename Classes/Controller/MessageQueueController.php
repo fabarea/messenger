@@ -95,7 +95,7 @@ class MessageQueueController extends ActionController
     /**
      * @return ContentService
      */
-    protected function getContentService(): \Fab\Vidi\Service\ContentService
+    protected function getContentService(): ContentService
     {
         return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
     }

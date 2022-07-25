@@ -103,7 +103,7 @@ class MessengerDequeueFieldProvider extends AbstractAdditionalFieldProvider
      * Save additional field in task
      *
      * @param array $submittedData Contains data submitted by the user
-     * @param \TYPO3\CMS\Scheduler\Task\AbstractTask $task Reference to the current task object
+     * @param AbstractTask $task Reference to the current task object
      */
     public function saveAdditionalFields(array $submittedData, AbstractTask $task)
     {

@@ -10,6 +10,7 @@ namespace Fab\Messenger\ContentRenderer;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Messenger\Domain\Model\MessageTemplate;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * This class is for rendering content in the context of the Frontend.
@@ -22,7 +23,7 @@ class FrontendRenderer implements ContentRendererInterface
      *
      * @param MessageTemplate $messageTemplate
      */
-    public function __construct(protected MessageTemplate $messageTemplate = null)
+    public function __construct(protected ?MessageTemplate $messageTemplate = null)
     {
     }
 
@@ -33,8 +34,8 @@ class FrontendRenderer implements ContentRendererInterface
      */
     public function render($content, array $markers): string
     {
-        /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
-        $view = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+        /** @var StandaloneView $view */
+        $view = GeneralUtility::makeInstance(StandaloneView::class);
 
         // Handle double {{ }} to be interpreted as HTML
         $content = preg_replace('/{{(.*)}}/', '<f:format.raw>{$1}</f:format.raw>', $content);

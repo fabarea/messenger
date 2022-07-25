@@ -8,10 +8,12 @@ namespace Fab\Messenger\Exception;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Exception;
+
 /**
  *
  */
-class InvalidEmailFormatException extends \Exception
+class InvalidEmailFormatException extends Exception
 {
 
 }

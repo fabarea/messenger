@@ -8,8 +8,10 @@ namespace Fab\Messenger\Service;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
  * A class dealing with MessageStorage.
@@ -25,8 +27,8 @@ class MessageStorage implements SingletonInterface
     /**
      * Returns a class instance
      *
-     * @return \Fab\Messenger\Service\MessageStorage
-     * @throws \InvalidArgumentException
+     * @return MessageStorage
+     * @throws InvalidArgumentException
      */
     static public function getInstance()
     {
@@ -67,7 +69,7 @@ class MessageStorage implements SingletonInterface
     /**
      * Returns an instance of the current Frontend User.
      *
-     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     * @return FrontendUserAuthentication
      */
     protected function getFrontendUser()
     {

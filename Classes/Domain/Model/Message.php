@@ -9,6 +9,7 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\ContentRenderer\ContentRendererInterface;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
@@ -16,6 +17,8 @@ use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Validator\EmailValidator;
+use RuntimeException;
+use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
@@ -27,7 +30,7 @@ use Fab\Messenger\Html2Text\TemplateEngine;
 use Fab\Messenger\Service\MessageStorage;
 use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
-use \Michelf\Markdown;
+use Michelf\Markdown;
 use TYPO3\CMS\Extbase\Annotation\Inject;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
@@ -93,7 +96,7 @@ class Message
     protected $markers = [];
 
     /**
-     * @var \Fab\Messenger\Domain\Model\MessageLayout
+     * @var MessageLayout
      */
     protected $messageLayout;
 
@@ -113,7 +116,7 @@ class Message
     protected $attachments = [];
 
     /**
-     * @var \Fab\Messenger\Domain\Repository\MessageTemplateRepository
+     * @var MessageTemplateRepository
      */
     protected $messageTemplateRepository;
 
@@ -123,12 +126,12 @@ class Message
     protected $messageLayoutRepository;
 
     /**
-     * @var \Fab\Messenger\Domain\Repository\SentMessageRepository
+     * @var SentMessageRepository
      */
     protected $sentMessageRepository;
 
     /**
-     * @var \Fab\Messenger\Domain\Model\MessageTemplate
+     * @var MessageTemplate
      */
     protected $messageTemplate;
 
@@ -220,7 +223,7 @@ class Message
     protected function prepareMessage(): void
     {
         if (!$this->to) {
-            throw new \RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
+            throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
 
         $message = $this->getMailMessage()
@@ -470,7 +473,7 @@ class Message
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
+                throw new RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -636,7 +639,7 @@ class Message
             }
             $methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
 
-            /** @var \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate */
+            /** @var MessageTemplate $messageTemplate */
             $messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
 
             if ($messageTemplate === null) {
@@ -712,7 +715,7 @@ class Message
     protected function formatAddresses(array $addresses): string
     {
         $formattedAddresses = [];
-        /** @var \Symfony\Component\Mime\Address $addresses */
+        /** @var Address $addresses */
         foreach ($addresses as $address) {
             $formattedAddresses[] = sprintf('%s <%s>', $address->getName(), $address->getAddress());
         }
@@ -761,7 +764,7 @@ class Message
     /**
      * @return EmailValidator
      */
-    public function getEmailValidator(): \Fab\Messenger\Validator\EmailValidator
+    public function getEmailValidator(): EmailValidator
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
     }
@@ -782,9 +785,9 @@ class Message
     }
 
     /**
-     * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
+     * @return ContentRendererInterface
      */
-    protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\ContentRendererInterface
+    protected function getContentRenderer(): ContentRendererInterface
     {
         return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
         #if ($this->isFrontendMode()) {
@@ -800,7 +803,7 @@ class Message
     /**
      * @return RedirectService
      */
-    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService
+    public function getRedirectService(): RedirectService
     {
         return GeneralUtility::makeInstance(RedirectService::class);
     }

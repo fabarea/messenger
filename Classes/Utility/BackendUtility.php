@@ -8,6 +8,7 @@ namespace Fab\Messenger\Utility;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -29,7 +30,7 @@ class BackendUtility
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         try {
             $uri = $uriBuilder->buildUriFromRoute($moduleName, $urlParameters);
-        } catch (\TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException) {
+        } catch (RouteNotFoundException) {
             $uri = $uriBuilder->buildUriFromRoutePath($moduleName, $urlParameters);
         }
         return (string)$uri;

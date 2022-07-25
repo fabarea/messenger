@@ -8,6 +8,8 @@ namespace Fab\Messenger\Service;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use InvalidArgumentException;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -21,7 +23,7 @@ class SenderProvider implements SingletonInterface
      * Returns a class instance
      *
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     static public function getInstance()
     {
@@ -121,7 +123,7 @@ class SenderProvider implements SingletonInterface
     /**
      * Returns an instance of the current Backend User.
      *
-     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     * @return BackendUserAuthentication
      */
     protected function getBackendUser()
     {

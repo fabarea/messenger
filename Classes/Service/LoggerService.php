@@ -8,6 +8,8 @@ namespace Fab\Messenger\Service;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use InvalidArgumentException;
+use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -19,8 +21,8 @@ class LoggerService
 
     /**
      * @param object $object
-     * @return \TYPO3\CMS\Core\Log\Logger
-     * @throws \InvalidArgumentException
+     * @return Logger
+     * @throws InvalidArgumentException
      */
     static public function getLogger($object)
     {
@@ -28,7 +30,7 @@ class LoggerService
         /** @var $loggerManager LogManager */
         $loggerManager = GeneralUtility::makeInstance(LogManager::class);
 
-        /** @var $logger \TYPO3\CMS\Core\Log\Logger */
+        /** @var $logger Logger */
         return $loggerManager->getLogger($object::class);
     }
 

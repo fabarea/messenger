@@ -9,6 +9,7 @@ namespace Fab\Messenger\View\Button;
  */
 
 use Fab\Vidi\View\Uri\EditUri;
+use InvalidArgumentException;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Vidi\View\AbstractComponentView;
@@ -24,7 +25,7 @@ class SendButton extends AbstractComponentView
      * Renders a "edit" button to be placed in the grid.
      *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function render(Content $object = NULL)
     {
@@ -43,8 +44,8 @@ class SendButton extends AbstractComponentView
     }
 
     /**
-     * @return \Fab\Vidi\View\Uri\EditUri
-     * @throws \InvalidArgumentException
+     * @return EditUri
+     * @throws InvalidArgumentException
      */
     protected function getUriRenderer()
     {

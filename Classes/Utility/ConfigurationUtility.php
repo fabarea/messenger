@@ -8,6 +8,7 @@ namespace Fab\Messenger\Utility;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -25,9 +26,9 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * Returns a class instance.
      *
-     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     * @return ConfigurationUtility
      */
-    public static function getInstance(): \Fab\Messenger\Utility\ConfigurationUtility
+    public static function getInstance(): ConfigurationUtility
     {
         return GeneralUtility::makeInstance(self::class);
     }
@@ -37,8 +38,8 @@ class ConfigurationUtility implements SingletonInterface
      */
     public function __construct()
     {
-        $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
+        $configuration = GeneralUtility::makeInstance(
+            ExtensionConfiguration::class
         )->get('messenger');
 
         // Fill up configuration array with relevant values.

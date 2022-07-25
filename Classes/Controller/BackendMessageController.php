@@ -17,6 +17,7 @@ use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Vidi\Domain\Model\Content;
 use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Annotation\Validate;
@@ -55,7 +56,7 @@ class BackendMessageController extends ActionController
 
         $emailSubject = '';
         if ($pageId > 0) {
-            $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
+            $page = BackendUtility::getRecord('pages', $pageId);
             if (is_array($page) && isset($page['title'])) {
                 $emailSubject = $page['title'];
             }
@@ -201,7 +202,7 @@ class BackendMessageController extends ActionController
     /**
      * @return ContentService
      */
-    protected function getContentService(): \Fab\Vidi\Service\ContentService
+    protected function getContentService(): ContentService
     {
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
         return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);

@@ -8,6 +8,7 @@ namespace Fab\Messenger\ViewHelpers\Show;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Countable;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use Fab\Vidi\Tca\Tca;
 
@@ -43,7 +44,7 @@ class IsVisibleViewHelper extends AbstractViewHelper
         }
 
         // Early return if the value is countable and contains nothing
-        if ($value instanceof \Countable && $value->count() === 0) {
+        if ($value instanceof Countable && $value->count() === 0) {
             return FALSE;
         }
 
