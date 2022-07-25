@@ -20,14 +20,14 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
      * Returns a class instance.
      *
      * @return \Fab\Messenger\Utility\ConfigurationUtility|object
      */
-    public static function getInstance()
+    public static function getInstance(): \Fab\Messenger\Utility\ConfigurationUtility|object
     {
         return GeneralUtility::makeInstance(self::class);
     }
@@ -60,7 +60,7 @@ class ConfigurationUtility implements SingletonInterface
      */
     public function get($key)
     {
-        return isset($this->configuration[$key]) ? trim($this->configuration[$key]) : null;
+        return isset($this->configuration[$key]) ? trim((string) $this->configuration[$key]) : null;
     }
 
     /**
@@ -68,16 +68,12 @@ class ConfigurationUtility implements SingletonInterface
      *
      * @param string $key
      * @param mixed $value
-     * @return void
      */
     public function set($key, $value): void
     {
         $this->configuration[$key] = $value;
     }
 
-    /**
-     * @return array
-     */
     public function getConfiguration(): array
     {
         return $this->configuration;

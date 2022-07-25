@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Type\Enumeration;
 class TemplateEngine extends Enumeration
 {
 
-    const FLUID_ONLY = 'fluid';
+    final const FLUID_ONLY = 'fluid';
 
-    const FLUID_AND_MARKDOWN = 'both';
+    final const FLUID_AND_MARKDOWN = 'both';
 }

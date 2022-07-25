@@ -29,7 +29,7 @@ class MessageLayout extends AbstractEntity
     /**
      * Constructor
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         $this->identifier = !empty($data['identifier']) ? $data['identifier'] : '';
         $this->content = !empty($data['content']) ? $data['content'] : '';

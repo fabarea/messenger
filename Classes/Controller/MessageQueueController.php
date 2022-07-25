@@ -27,11 +27,7 @@ class MessageQueueController extends ActionController
      */
     protected $tableName = 'tx_messenger_domain_model_queue';
 
-    /**
-     * @param array $matches
-     * @return string
-     */
-    public function confirmAction(array $matches = array()): string
+    public function confirmAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
@@ -46,11 +42,7 @@ class MessageQueueController extends ActionController
         return sprintf($label, $numberOfRecipients);
     }
 
-    /**
-     * @param array $matches
-     * @return string
-     */
-    public function dequeueAction(array $matches = array()): string
+    public function dequeueAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
@@ -59,7 +51,7 @@ class MessageQueueController extends ActionController
         $contentObjects = $this->getContentService()->findBy($matcher)->getObjects();
 
         $numberOfSentEmails = 0;
-        $numberOfRecipients = count($contentObjects);
+        $numberOfRecipients = is_countable($contentObjects) ? count($contentObjects) : 0;
 
         foreach ($contentObjects as $contentObject) {
             $isSent = $this->getQueueManager()->dequeueOne($contentObject['uid']);
@@ -79,9 +71,6 @@ class MessageQueueController extends ActionController
         );
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
@@ -98,7 +87,7 @@ class MessageQueueController extends ActionController
     /**
      * @return ContentService|object
      */
-    protected function getContentService()
+    protected function getContentService(): \Fab\Vidi\Service\ContentService|object
     {
         return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
     }

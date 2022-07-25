@@ -14,14 +14,7 @@ namespace Fab\Messenger\Html2Text;
 class RegexpStrategy implements StrategyInterface
 {
 
-    const ENCODING = 'UTF-8';
-
-    /**
-     * Contains the HTML content to convert.
-     *
-     * @var string
-     */
-    protected $html;
+    final const ENCODING = 'UTF-8';
 
     /**
      * List of preg* regular expression patterns to search for,
@@ -30,30 +23,51 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $replace
      */
-    protected $search = array(
-        "/\r/",                                           // Non-legal carriage return
-        "/[\n\t]+/",                                      // Newlines and tabs
-        '/<head[^>]*>.*?<\/head>/i',                      // <head>
-        '/<script[^>]*>.*?<\/script>/i',                  // <script>s -- which strip_tags supposedly has problems with
-        '/<style[^>]*>.*?<\/style>/i',                    // <style>s -- which strip_tags supposedly has problems with
-        '/<p[^>]*>/i',                                    // <P>
-        '/<br[^>]*>/i',                                   // <br>
-        '/<i[^>]*>(.*?)<\/i>/i',                          // <i>
-        '/<em[^>]*>(.*?)<\/em>/i',                        // <em>
-        '/(<ul[^>]*>|<\/ul>)/i',                          // <ul> and </ul>
-        '/(<ol[^>]*>|<\/ol>)/i',                          // <ol> and </ol>
-        '/(<dl[^>]*>|<\/dl>)/i',                          // <dl> and </dl>
-        '/<li[^>]*>(.*?)<\/li>/i',                        // <li> and </li>
-        '/<dd[^>]*>(.*?)<\/dd>/i',                        // <dd> and </dd>
-        '/<dt[^>]*>(.*?)<\/dt>/i',                        // <dt> and </dt>
-        '/<li[^>]*>/i',                                   // <li>
-        '/<hr[^>]*>/i',                                   // <hr>
-        '/<div[^>]*>/i',                                  // <div>
-        '/(<table[^>]*>|<\/table>)/i',                    // <table> and </table>
-        '/(<tr[^>]*>|<\/tr>)/i',                          // <tr> and </tr>
-        '/<td[^>]*>(.*?)<\/td>/i',                        // <td> and </td>
-        '/<span class="_html2text_ignore">.+?<\/span>/i', // <span class="_html2text_ignore">...</span>
-    );
+    protected $search = [
+        "/\r/",
+        // Non-legal carriage return
+        "/[\n\t]+/",
+        // Newlines and tabs
+        '/<head[^>]*>.*?<\/head>/i',
+        // <head>
+        '/<script[^>]*>.*?<\/script>/i',
+        // <script>s -- which strip_tags supposedly has problems with
+        '/<style[^>]*>.*?<\/style>/i',
+        // <style>s -- which strip_tags supposedly has problems with
+        '/<p[^>]*>/i',
+        // <P>
+        '/<br[^>]*>/i',
+        // <br>
+        '/<i[^>]*>(.*?)<\/i>/i',
+        // <i>
+        '/<em[^>]*>(.*?)<\/em>/i',
+        // <em>
+        '/(<ul[^>]*>|<\/ul>)/i',
+        // <ul> and </ul>
+        '/(<ol[^>]*>|<\/ol>)/i',
+        // <ol> and </ol>
+        '/(<dl[^>]*>|<\/dl>)/i',
+        // <dl> and </dl>
+        '/<li[^>]*>(.*?)<\/li>/i',
+        // <li> and </li>
+        '/<dd[^>]*>(.*?)<\/dd>/i',
+        // <dd> and </dd>
+        '/<dt[^>]*>(.*?)<\/dt>/i',
+        // <dt> and </dt>
+        '/<li[^>]*>/i',
+        // <li>
+        '/<hr[^>]*>/i',
+        // <hr>
+        '/<div[^>]*>/i',
+        // <div>
+        '/(<table[^>]*>|<\/table>)/i',
+        // <table> and </table>
+        '/(<tr[^>]*>|<\/tr>)/i',
+        // <tr> and </tr>
+        '/<td[^>]*>(.*?)<\/td>/i',
+        // <td> and </td>
+        '/<span class="_html2text_ignore">.+?<\/span>/i',
+    ];
 
     /**
      * List of pattern replacements corresponding to patterns searched.
@@ -61,30 +75,51 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $search
      */
-    protected $replace = array(
-        '',                              // Non-legal carriage return
-        ' ',                             // Newlines and tabs
-        '',                              // <head>
-        '',                              // <script>s -- which strip_tags supposedly has problems with
-        '',                              // <style>s -- which strip_tags supposedly has problems with
-        "\n\n",                          // <P>
-        "\n",                            // <br>
-        '_\\1_',                         // <i>
-        '_\\1_',                         // <em>
-        "\n\n",                          // <ul> and </ul>
-        "\n\n",                          // <ol> and </ol>
-        "\n\n",                          // <dl> and </dl>
-        "\t* \\1\n",                     // <li> and </li>
-        " \\1\n",                        // <dd> and </dd>
-        "\t* \\1",                       // <dt> and </dt>
-        "\n\t* ",                        // <li>
-        "\n-------------------------\n", // <hr>
-        "<div>\n",                       // <div>
-        "\n\n",                          // <table> and </table>
-        "\n",                            // <tr> and </tr>
-        "\t\t\\1\n",                     // <td> and </td>
-        ""                               // <span class="_html2text_ignore">...</span>
-    );
+    protected $replace = [
+        '',
+        // Non-legal carriage return
+        ' ',
+        // Newlines and tabs
+        '',
+        // <head>
+        '',
+        // <script>s -- which strip_tags supposedly has problems with
+        '',
+        // <style>s -- which strip_tags supposedly has problems with
+        "\n\n",
+        // <P>
+        "\n",
+        // <br>
+        '_\\1_',
+        // <i>
+        '_\\1_',
+        // <em>
+        "\n\n",
+        // <ul> and </ul>
+        "\n\n",
+        // <ol> and </ol>
+        "\n\n",
+        // <dl> and </dl>
+        "\t* \\1\n",
+        // <li> and </li>
+        " \\1\n",
+        // <dd> and </dd>
+        "\t* \\1",
+        // <dt> and </dt>
+        "\n\t* ",
+        // <li>
+        "\n-------------------------\n",
+        // <hr>
+        "<div>\n",
+        // <div>
+        "\n\n",
+        // <table> and </table>
+        "\n",
+        // <tr> and </tr>
+        "\t\t\\1\n",
+        // <td> and </td>
+        "",
+    ];
 
     /**
      * List of preg* regular expression patterns to search for,
@@ -93,12 +128,15 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $entReplace
      */
-    protected $entSearch = array(
-        '/&#153;/i',                                     // TM symbol in win-1252
-        '/&#151;/i',                                     // m-dash in win-1252
-        '/&(amp|#38);/i',                                // Ampersand: see converter()
-        '/[ ]{2,}/',                                     // Runs of spaces, post-handling
-    );
+    protected $entSearch = [
+        '/&#153;/i',
+        // TM symbol in win-1252
+        '/&#151;/i',
+        // m-dash in win-1252
+        '/&(amp|#38);/i',
+        // Ampersand: see converter()
+        '/[ ]{2,}/',
+    ];
 
     /**
      * List of pattern replacements corresponding to patterns searched.
@@ -106,12 +144,15 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $entSearch
      */
-    protected $entReplace = array(
-        '™',         // TM symbol
-        '—',         // m-dash
-        '|+|amp|+|', // Ampersand: see converter()
-        ' ',         // Runs of spaces, post-handling
-    );
+    protected $entReplace = [
+        '™',
+        // TM symbol
+        '—',
+        // m-dash
+        '|+|amp|+|',
+        // Ampersand: see converter()
+        ' ',
+    ];
 
     /**
      * List of preg* regular expression patterns to search for
@@ -119,13 +160,17 @@ class RegexpStrategy implements StrategyInterface
      *
      * @var array
      */
-    protected $callbackSearch = array(
-        '/<(h)[123456]( [^>]*)?>(.*?)<\/h[123456]>/i',           // h1 - h6
-        '/<(b)( [^>]*)?>(.*?)<\/b>/i',                           // <b>
-        '/<(strong)( [^>]*)?>(.*?)<\/strong>/i',                 // <strong>
-        '/<(th)( [^>]*)?>(.*?)<\/th>/i',                         // <th> and </th>
-        '/<(a) [^>]*href=("|\')([^"\']+)\2([^>]*)>(.*?)<\/a>/i'  // <a href="">
-    );
+    protected $callbackSearch = [
+        '/<(h)[123456]( [^>]*)?>(.*?)<\/h[123456]>/i',
+        // h1 - h6
+        '/<(b)( [^>]*)?>(.*?)<\/b>/i',
+        // <b>
+        '/<(strong)( [^>]*)?>(.*?)<\/strong>/i',
+        // <strong>
+        '/<(th)( [^>]*)?>(.*?)<\/th>/i',
+        // <th> and </th>
+        '/<(a) [^>]*href=("|\')([^"\']+)\2([^>]*)>(.*?)<\/a>/i',
+    ];
 
     /**
      * List of preg* regular expression patterns to search for in PRE body,
@@ -134,13 +179,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $preReplace
      */
-    protected $preSearch = array(
-        "/\n/",
-        "/\t/",
-        '/ /',
-        '/<pre[^>]*>/',
-        '/<\/pre>/'
-    );
+    protected $preSearch = ["/\n/", "/\t/", '/ /', '/<pre[^>]*>/', '/<\/pre>/'];
 
     /**
      * List of pattern replacements corresponding to patterns searched for PRE body.
@@ -148,13 +187,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $preSearch
      */
-    protected $preReplace = array(
-        '<br>',
-        '&nbsp;&nbsp;&nbsp;&nbsp;',
-        '&nbsp;',
-        '',
-        '',
-    );
+    protected $preReplace = ['<br>', '&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;', '', ''];
 
     /**
      * Temporary workspace used during PRE processing.
@@ -184,31 +217,28 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see buildlinkList()
      */
-    protected $linkList = array();
+    protected $linkList = [];
 
     /**
      * Various configuration options (able to be set in the constructor)
      *
      * @var array
      */
-    protected $options = array(
-        'do_links' => 'inline', // 'none'
+    protected $options = [
+        'do_links' => 'inline',
+        // 'none'
         // 'inline' (show links inline)
         // 'nextline' (show links on the next line)
         // 'table' (if a table of link URLs should be listed after the text.
-
-        'width' => 70,          //  Maximum width of the formatted text, in columns.
-        //  Set this value to 0 (or less) to ignore word wrapping
-        //  and not constrain text to a fixed-width column.
-    );
+        'width' => 70,
+    ];
 
     /**
      * @param string $html Source HTML
      * @param array $options Set configuration options
      */
-    public function __construct($html = '', $options = array())
+    public function __construct(protected $html = '', $options = [])
     {
-        $this->html = $html;
         $this->options = array_merge($this->options, $options);
     }
 
@@ -243,7 +273,7 @@ class RegexpStrategy implements StrategyInterface
     {
         $this->setHtml($input);
 
-        $this->linkList = array();
+        $this->linkList = [];
 
         $text = trim(stripslashes($this->html));
 
@@ -268,7 +298,7 @@ class RegexpStrategy implements StrategyInterface
         $this->convertBlockquotes($text);
         $this->convertPre($text);
         $text = preg_replace($this->search, $this->replace, $text);
-        $text = preg_replace_callback($this->callbackSearch, array($this, 'pregCallback'), $text);
+        $text = preg_replace_callback($this->callbackSearch, $this->pregCallback(...), $text);
         $text = strip_tags($text);
         $text = preg_replace($this->entSearch, $this->entReplace, $text);
         $text = html_entity_decode($text, ENT_QUOTES, self::ENCODING);
@@ -307,7 +337,7 @@ class RegexpStrategy implements StrategyInterface
      */
     protected function buildlinkList($link, $display, $linkOverride = null)
     {
-        $linkMethod = ($linkOverride) ? $linkOverride : $this->options['do_links'];
+        $linkMethod = $linkOverride ?: $this->options['do_links'];
         if ($linkMethod == 'none') {
             return $display;
         }
@@ -344,13 +374,13 @@ class RegexpStrategy implements StrategyInterface
     protected function convertPre(&$text)
     {
         // get the content of PRE element
-        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', $text, $matches)) {
+        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', (string) $text, $matches)) {
             $this->preContent = $matches[1];
 
             // Run our defined tags search-and-replace with callback
             $this->preContent = preg_replace_callback(
                 $this->callbackSearch,
-                array($this, 'pregCallback'),
+                $this->pregCallback(...),
                 $this->preContent
             );
 
@@ -363,7 +393,7 @@ class RegexpStrategy implements StrategyInterface
             // replace the content (use callback because content can contain $0 variable)
             $text = preg_replace_callback(
                 '/<pre[^>]*>.*<\/pre>/ismU',
-                array($this, 'pregPreCallback'),
+                $this->pregPreCallback(...),
                 $text,
                 1
             );
@@ -405,21 +435,21 @@ class RegexpStrategy implements StrategyInterface
                         $body = trim($body);
                         $this->converter($body);
                         // Add citation markers and create PRE block
-                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim($body));
+                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim((string) $body));
                         $body = '<pre>' . htmlspecialchars($body) . '</pre>';
                         // Re-set text width
                         $this->options['width'] = $pWidth;
                         // Replace content
                         $text = substr($text, 0, $start - $diff)
-                            . $body . substr($text, $end + strlen($m[0]) - $diff);
+                            . $body . substr($text, $end + strlen((string) $m[0]) - $diff);
 
-                        $diff = $len + $taglen + strlen($m[0]) - strlen($body);
+                        $diff = $len + $taglen + strlen((string) $m[0]) - strlen($body);
                         unset($body);
                     }
                 } else {
                     if ($level == 0) {
                         $start = $m[1];
-                        $taglen = strlen($m[0]);
+                        $taglen = strlen((string) $m[0]);
                     }
                     $level++;
                 }
@@ -435,7 +465,7 @@ class RegexpStrategy implements StrategyInterface
      */
     protected function pregCallback($matches)
     {
-        switch (strtolower($matches[1])) {
+        switch (strtolower((string) $matches[1])) {
             case 'b':
             case 'strong':
                 return $this->toupper($matches[3]);
@@ -446,11 +476,11 @@ class RegexpStrategy implements StrategyInterface
             case 'a':
                 // override the link method
                 $linkOverride = null;
-                if (preg_match('/_html2text_link_(\w+)/', $matches[4], $linkOverrideMatch)) {
+                if (preg_match('/_html2text_link_(\w+)/', (string) $matches[4], $linkOverrideMatch)) {
                     $linkOverride = $linkOverrideMatch[1];
                 }
                 // Remove spaces in URL (#1487805)
-                $url = str_replace(' ', '', $matches[3]);
+                $url = str_replace(' ', '', (string) $matches[3]);
 
                 return $this->buildlinkList($url, $matches[5], $linkOverride);
         }

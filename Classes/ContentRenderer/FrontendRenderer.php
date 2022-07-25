@@ -18,26 +18,18 @@ class FrontendRenderer implements ContentRendererInterface
 {
 
     /**
-     * @var MessageTemplate
-     */
-    protected $messageTemplate;
-
-    /**
      * Constructor
      *
      * @param MessageTemplate $messageTemplate
      */
-    public function __construct(MessageTemplate $messageTemplate = null)
+    public function __construct(protected MessageTemplate $messageTemplate = null)
     {
-        $this->messageTemplate = $messageTemplate;
     }
 
     /**
      * Render content in the context of the Frontend.
      *
      * @param string $content
-     * @param array $markers
-     * @return string
      */
     public function render($content, array $markers): string
     {
@@ -61,7 +53,7 @@ class FrontendRenderer implements ContentRendererInterface
         }
 
         $view->assignMultiple($markers);
-        return trim($view->render());
+        return trim((string) $view->render());
 
         // Check if tidy is required for email.
         #$content = trim($view->render());

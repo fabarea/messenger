@@ -19,9 +19,9 @@ use Fab\Messenger\Html2Text\TemplateEngine;
 class MessageTemplate extends AbstractEntity
 {
 
-    const TYPE_TEXT = 1;
-    const TYPE_PAGE = 2;
-    const TYPE_FILE = 3;
+    final const TYPE_TEXT = 1;
+    final const TYPE_PAGE = 2;
+    final const TYPE_FILE = 3;
 
     /**
      * @var string
@@ -62,7 +62,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * Constructor
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         $this->qualifier = empty($data['qualifier']) ? '' : $data['qualifier'];
         $this->type = empty($data['type']) ? 0 : (int)$data['type'];
@@ -104,13 +104,13 @@ class MessageTemplate extends AbstractEntity
 
         if ($this->type === self::TYPE_PAGE) {
             // @todo use $crawler to fetch body content of page
-            throw new \RuntimeException('Messenger: not implemented', 1400517075);
+            throw new \RuntimeException('Messenger: not implemented', 1_400_517_075);
 
         } elseif ($this->type === self::TYPE_FILE) {
             $file = GeneralUtility::getFileAbsFileName($this->sourceFile);
             if (!is_file($file)) {
                 $message = sprintf('Messenger: I could not found file "%s"', $file);
-                throw new \RuntimeException($message, 1400517074);
+                throw new \RuntimeException($message, 1_400_517_074);
             }
             $this->body = file_get_contents($file);
         }

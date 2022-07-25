@@ -24,23 +24,19 @@ class BackendRenderer implements ContentRendererInterface
      * This is required in order to correctly resolve the View Helpers for Fluid in the context of the Backend.
      *
      * @param string $content
-     * @param array $markers
-     * @return string
      */
     public function render($content, array $markers): string
     {
+        $parameters = [];
         $registryIdentifier = Algorithms::generateUUID();
-        $registryEntry = array(
-            'content' => $content,
-            'markers' => $markers,
-        );
+        $registryEntry = ['content' => $content, 'markers' => $markers];
 
         // Register data to be fetch in the Frontend Context
         $this->getRegistry()->set('Fab\Messenger', $registryIdentifier, $registryEntry);
 
         // Prepare the URL for the Crawler.
         $rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
-        $parameters['type'] = 1370537883;
+        $parameters['type'] = 1_370_537_883;
         $parameters['tx_messenger_pi1[registryIdentifier]'] = $registryIdentifier;
         $url = PagePath::getUrl($rootPageUid, $parameters);
 
@@ -55,19 +51,17 @@ class BackendRenderer implements ContentRendererInterface
         }
 
         // Send TYPO3 cookies as this may affect path generation
-        $headers = array(
-            'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
-        );
+        $headers = ['Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']];
 
         // Fetch content
-        $formattedContent = GeneralUtility::getURL($url, false, $headers);
+        $formattedContent = GeneralUtility::getURL($url);
         return trim($formattedContent);
     }
 
     /**
      * @return \Fab\Messenger\Utility\ConfigurationUtility|object
      */
-    public function getConfigurationUtility()
+    public function getConfigurationUtility(): \Fab\Messenger\Utility\ConfigurationUtility|object
     {
         return GeneralUtility::makeInstance(\Fab\Messenger\Utility\ConfigurationUtility::class);
     }
@@ -75,7 +69,7 @@ class BackendRenderer implements ContentRendererInterface
     /**
      * @return \TYPO3\CMS\Core\Registry|object
      */
-    protected function getRegistry()
+    protected function getRegistry(): \TYPO3\CMS\Core\Registry|object
     {
         return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
     }

@@ -27,14 +27,12 @@ class QueueRepository
     protected $tableName = 'tx_messenger_domain_model_queue';
 
     /**
-     * @param array $message
-     * @return int
      * @throws \RuntimeException
      */
     public function add(array $message): int
     {
         if (!$message['mail_message'] instanceof MailMessage) {
-            throw new \RuntimeException('Please, make sure key "mail_message" is a valid mail message object', 1469694987);
+            throw new \RuntimeException('Please, make sure key "mail_message" is a valid mail message object', 1_469_694_987);
         }
 
         $values = [];
@@ -63,15 +61,11 @@ class QueueRepository
 
         $result = $query->execute();
         if (!$result) {
-            throw new \RuntimeException('I could not queue the message.', 1389721932);
+            throw new \RuntimeException('I could not queue the message.', 1_389_721_932);
         }
         return $result;
     }
 
-    /**
-     * @param integer $uid
-     * @return array
-     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -89,10 +83,6 @@ class QueueRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param string $uuid
-     * @return array
-     */
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -110,10 +100,6 @@ class QueueRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param integer $limit
-     * @return array
-     */
     public function findPendingMessages(int $limit): array
     {
         $query = $this->getQueryBuilder();
@@ -129,10 +115,6 @@ class QueueRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param array $message
-     * @return int
-     */
     public function remove(array $message): int
     {
         $query = $this->getQueryBuilder();
@@ -142,10 +124,6 @@ class QueueRepository
         return $query->execute();
     }
 
-    /**
-     * @param array $message
-     * @return int
-     */
     public function update(array $message): int
     {
         $query = $this->getQueryBuilder();

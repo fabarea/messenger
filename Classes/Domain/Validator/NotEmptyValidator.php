@@ -22,7 +22,7 @@ class NotEmptyValidator extends AbstractValidator
     public function isValid($value)
     {
         if (!trim($value)) {
-            $this->addError('Empty field', 1468509656);
+            $this->addError('Empty field', 1_468_509_656);
         }
     }
 

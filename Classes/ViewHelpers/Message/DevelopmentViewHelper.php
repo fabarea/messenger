@@ -26,9 +26,6 @@ class DevelopmentViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $redirectTo = $this->getRedirectService()->getRedirections();
@@ -51,7 +48,7 @@ class DevelopmentViewHelper extends AbstractViewHelper
     /**
      * @return RedirectService|object
      */
-    public function getRedirectService() {
+    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService|object {
         return GeneralUtility::makeInstance(RedirectService::class);
     }
 

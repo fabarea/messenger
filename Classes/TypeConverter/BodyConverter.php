@@ -23,7 +23,7 @@ class BodyConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = array('int', 'string');
+    protected $sourceTypes = ['int', 'string'];
 
     /**
      * @var string
@@ -40,9 +40,7 @@ class BodyConverter extends AbstractTypeConverter
      *
      * @param string $source
      * @param string $targetType
-     * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
@@ -54,12 +52,10 @@ class BodyConverter extends AbstractTypeConverter
             $baseUrl = PagePath::getSiteBaseUrl($source);
 
             // Send TYPO3 cookies as this may affect path generation
-            $headers = array(
-                'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
-            );
+            $headers = ['Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']];
 
             $url = $baseUrl . 'index.php?id=' . $source;
-            $content = GeneralUtility::getUrl($url, false, $headers);
+            $content = GeneralUtility::getUrl($url);
 
             $body = preg_match("/<body[^>]*>(.*?)<\/body>/is", $content, $matches);
 
@@ -74,7 +70,7 @@ class BodyConverter extends AbstractTypeConverter
     /**
      * @return \Fab\Messenger\ContentRenderer\BackendRenderer|object
      */
-    protected function getContentRenderer()
+    protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\BackendRenderer|object
     {
         /** @var BackendRenderer $contentRenderer */
         return GeneralUtility::makeInstance(BackendRenderer::class);

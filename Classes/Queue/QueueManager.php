@@ -19,10 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class QueueManager
 {
 
-    /**
-     * @param int $itemsPerRun
-     * @return array
-     */
     public function dequeue(int $itemsPerRun): array
     {
         $messengerMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
@@ -51,10 +47,6 @@ class QueueManager
         ];
     }
 
-    /**
-     * @param int $queuedMessageIdentifier
-     * @return bool
-     */
     public function dequeueOne(int $queuedMessageIdentifier): bool
     {
         $isSent = false;

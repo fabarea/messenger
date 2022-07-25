@@ -37,7 +37,6 @@ class DequeueMenuItem extends AbstractComponentView
     }
 
     /**
-     * @return string
      * @throws \InvalidArgumentException
      */
     protected function getDequeueUri(): string
@@ -62,11 +61,11 @@ class DequeueMenuItem extends AbstractComponentView
     }
 
     /**
-     * @return void
      * @throws \InvalidArgumentException
      */
     protected function loadRequireJsCode(): void
     {
+        $configuration = [];
         /** @var PageRenderer $pageRenderer */
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 

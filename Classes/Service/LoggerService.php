@@ -29,7 +29,7 @@ class LoggerService
         $loggerManager = GeneralUtility::makeInstance(LogManager::class);
 
         /** @var $logger \TYPO3\CMS\Core\Log\Logger */
-        return $loggerManager->getLogger(get_class($object));
+        return $loggerManager->getLogger($object::class);
     }
 
 }

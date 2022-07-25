@@ -26,9 +26,7 @@ class SentMessageRepository
     protected $tableName = 'tx_messenger_domain_model_sentmessage';
 
     /**
-     * @param array $message
      * @throws \RuntimeException
-     * @return int
      */
     public function add(array $message): int
     {
@@ -55,15 +53,11 @@ class SentMessageRepository
 
         $result = $query->execute();
         if (!$result) {
-            throw new \RuntimeException('I could not save the message as "sent message"', 1389721852);
+            throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
         return $result;
     }
 
-    /**
-     * @param integer $uid
-     * @return array
-     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -81,10 +75,6 @@ class SentMessageRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param string $uuid
-     * @return array
-     */
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -102,10 +92,6 @@ class SentMessageRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param int $days
-     * @return array
-     */
     public function findOlderThanDays(int $days): array
     {
         $time = time() - ($days * 86400);
@@ -120,10 +106,6 @@ class SentMessageRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @param int $days
-     * @return int
-     */
     public function removeOlderThanDays(int $days): int
     {
         $time = time() - ($days * 86400);

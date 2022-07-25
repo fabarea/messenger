@@ -20,14 +20,13 @@ class MessageRendererController extends ActionController
 
     /**
      * @param string $registryIdentifier
-     * @return string
      */
     public function renderAction($registryIdentifier): string
     {
         $registryEntry = $this->fetchRegistryEntry($registryIdentifier);
 
         if ($registryEntry === null) {
-            throw new \RuntimeException('Messenger: I could not find any valid entry from the registry.', 1400405307);
+            throw new \RuntimeException('Messenger: I could not find any valid entry from the registry.', 1_400_405_307);
         }
 
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $emailView */
@@ -41,7 +40,6 @@ class MessageRendererController extends ActionController
      * Fetch the entry of the registry Entry and clean up the registry afterwards.
      *
      * @param string $registryIdentifier
-     * @return array
      */
     protected function fetchRegistryEntry($registryIdentifier): array
     {
@@ -55,7 +53,7 @@ class MessageRendererController extends ActionController
      *
      * @return \TYPO3\CMS\Core\Registry|object
      */
-    protected function getRegistry()
+    protected function getRegistry(): \TYPO3\CMS\Core\Registry|object
     {
         return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
     }

@@ -19,9 +19,6 @@ class MessengerDequeueTask extends AbstractTask
      */
     public $itemsPerRun = 300;
 
-    /**
-     * @return bool
-     */
     public function execute(): bool
     {
         $result = $this->getQueueManager()->dequeue($this->itemsPerRun);

@@ -74,6 +74,7 @@ class Html2Text implements SingletonInterface
     public function findBestConverter()
     {
 
+        $converter = null;
         if ($this->converter) {
             return $this->converter;
         }
@@ -94,7 +95,6 @@ class Html2Text implements SingletonInterface
     /**
      * Set strategy
      *
-     * @param \Fab\Messenger\Html2Text\StrategyInterface $converter
      * @return void
      */
     public function setConverter(\Fab\Messenger\Html2Text\StrategyInterface $converter)
@@ -118,9 +118,6 @@ class Html2Text implements SingletonInterface
         return $this->possibleConverters;
     }
 
-    /**
-     * @param array $possibleConverters
-     */
     public function setPossibleConverters(array $possibleConverters)
     {
         $this->possibleConverters = $possibleConverters;

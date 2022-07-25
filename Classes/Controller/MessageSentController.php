@@ -28,11 +28,7 @@ class MessageSentController extends ActionController
      */
     protected $tableName = 'tx_messenger_domain_model_sentmessage';
 
-    /**
-     * @param array $matches
-     * @return string
-     */
-    public function confirmAction(array $matches = array()): string
+    public function confirmAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
@@ -47,11 +43,7 @@ class MessageSentController extends ActionController
         return sprintf($label, $numberOfRecipients);
     }
 
-    /**
-     * @param array $matches
-     * @return string
-     */
-    public function sendAgainAction(array $matches = array()): string
+    public function sendAgainAction(array $matches = []): string
     {
         // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
@@ -60,7 +52,7 @@ class MessageSentController extends ActionController
         $contentObjects = $this->getContentService()->findBy($matcher)->getObjects();
 
         $numberOfSentEmails = 0;
-        $numberOfRecipients = count($contentObjects);
+        $numberOfRecipients = is_countable($contentObjects) ? count($contentObjects) : 0;
 
         foreach ($contentObjects as $contentObject) {
 
@@ -89,10 +81,6 @@ class MessageSentController extends ActionController
         );
     }
 
-    /**
-     * @param string $listOfFormattedEmails
-     * @return array
-     */
     protected function normalizeEmails(string $listOfFormattedEmails): array
     {
         $normalizedEmails = [];
@@ -107,9 +95,6 @@ class MessageSentController extends ActionController
         return $normalizedEmails;
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
@@ -126,7 +111,7 @@ class MessageSentController extends ActionController
     /**
      * @return ContentService|object
      */
-    protected function getContentService()
+    protected function getContentService(): \Fab\Vidi\Service\ContentService|object
     {
         return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
     }

@@ -28,17 +28,14 @@ class PagePath
      *
      * @param int $pageId
      * @param mixed $parameters
-     * @return  string
      */
     public static function getUrl($pageId, $parameters): string
     {
         if (is_array($parameters)) {
             $parameters = GeneralUtility::implodeArrayForUrl('', $parameters);
         }
-        $data = array(
-            'id' => (int)$pageId,
-        );
-        if ($parameters !== '' && $parameters{0} === '&') {
+        $data = ['id' => (int)$pageId];
+        if ($parameters !== '' && $parameters[0] === '&') {
             $data['parameters'] = $parameters;
         }
         $siteUrl = self::getSiteBaseUrl($pageId);
@@ -47,10 +44,8 @@ class PagePath
             $url = $siteUrl . 'index.php?eID=messenger&data=' . base64_encode(serialize($data));
 
             // Send TYPO3 cookies as this may affect path generation
-            $headers = array(
-                'Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']
-            );
-            $result = GeneralUtility::getUrl($url, false, $headers);
+            $headers = ['Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']];
+            $result = GeneralUtility::getUrl($url);
 
             $urlParts = parse_url($result);
             if (!is_array($urlParts)) {
@@ -76,11 +71,12 @@ class PagePath
      *
      * @static
      * @param int $pageId
-     * @return string
      * @throws \UnexpectedValueException
      */
     public static function getSiteBaseUrl($pageId): string
     {
+        $environmentBaseUrl = null;
+        $baseUrl = null;
         // CLI must define its own environment variable.
         if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI) { // TODO remove this condition
 

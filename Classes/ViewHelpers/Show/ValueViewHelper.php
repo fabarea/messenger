@@ -33,7 +33,7 @@ class ValueViewHelper extends AbstractViewHelper
 
         if ($value instanceof ObjectStorage) {
             // Special case for file reference which is ok to be hardcoded.
-            $names = array();
+            $names = [];
             foreach ($value as $object) {
                 if ($object instanceof FileReference) {
                     $names[] = $object->getOriginalResource()->getName();
@@ -47,11 +47,11 @@ class ValueViewHelper extends AbstractViewHelper
             if ($fieldType === FieldType::RADIO || $fieldType === FieldType::SELECT) {
                 $value = Tca::table($dataType)->field($fieldName)->getLabelForItem($value);
             } elseif ($fieldType === FieldType::TEXTAREA) {
-                $value = nl2br($value);
+                $value = nl2br((string) $value);
             } elseif ($fieldType === FieldType::MULTISELECT) {
                 $explodedValues = GeneralUtility::trimExplode(',', $value, TRUE);
 
-                $labels = array();
+                $labels = [];
                 foreach ($explodedValues as $_value) {
                     $label = Tca::table($dataType)->field($fieldName)->getLabelForItem($_value);
                     if ($label) {
