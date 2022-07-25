@@ -59,17 +59,17 @@ class BackendRenderer implements ContentRendererInterface
     }
 
     /**
-     * @return \Fab\Messenger\Utility\ConfigurationUtility|object
+     * @return \Fab\Messenger\Utility\ConfigurationUtility
      */
-    public function getConfigurationUtility(): \Fab\Messenger\Utility\ConfigurationUtility|object
+    public function getConfigurationUtility(): \Fab\Messenger\Utility\ConfigurationUtility
     {
         return GeneralUtility::makeInstance(\Fab\Messenger\Utility\ConfigurationUtility::class);
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Registry|object
+     * @return \TYPO3\CMS\Core\Registry
      */
-    protected function getRegistry(): \TYPO3\CMS\Core\Registry|object
+    protected function getRegistry(): \TYPO3\CMS\Core\Registry
     {
         return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
     }

@@ -25,9 +25,9 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * Returns a class instance.
      *
-     * @return \Fab\Messenger\Utility\ConfigurationUtility|object
+     * @return \Fab\Messenger\Utility\ConfigurationUtility
      */
-    public static function getInstance(): \Fab\Messenger\Utility\ConfigurationUtility|object
+    public static function getInstance(): \Fab\Messenger\Utility\ConfigurationUtility
     {
         return GeneralUtility::makeInstance(self::class);
     }

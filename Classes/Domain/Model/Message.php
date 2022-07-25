@@ -759,9 +759,9 @@ class Message
     }
 
     /**
-     * @return EmailValidator|object
+     * @return EmailValidator
      */
-    public function getEmailValidator(): \Fab\Messenger\Validator\EmailValidator|object
+    public function getEmailValidator(): \Fab\Messenger\Validator\EmailValidator
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
     }
@@ -782,7 +782,7 @@ class Message
     }
 
     /**
-     * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface|object
+     * @return \Fab\Messenger\ContentRenderer\ContentRendererInterface
      */
     protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\ContentRendererInterface
     {
@@ -798,9 +798,9 @@ class Message
     }
 
     /**
-     * @return RedirectService|object
+     * @return RedirectService
      */
-    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService|object
+    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService
     {
         return GeneralUtility::makeInstance(RedirectService::class);
     }

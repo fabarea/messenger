@@ -61,7 +61,7 @@ class RedirectService implements SingletonInterface
     }
 
     /**
-     * @return EmailValidator|object
+     * @return EmailValidator
      */
     public function getEmailValidator(): EmailValidator
     {
