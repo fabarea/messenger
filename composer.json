@@ -29,7 +29,8 @@
 	"require": {
 		"typo3/cms-core": "^11.0",
 		"fab/vidi": "*",
-		"michelf/php-markdown": "^1.9"
+		"michelf/php-markdown": "^1.9",
+		"php": "^8.0"
 	},
 	"require-dev": {
 		"rector/rector": "^0.13.9"
