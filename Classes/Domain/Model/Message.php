@@ -37,8 +37,8 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class Message
 {
 
-    const SUBJECT = 'subject';
-    const BODY = 'body';
+    final const SUBJECT = 'subject';
+    final const BODY = 'body';
 
     /**
      * @var int
@@ -178,8 +178,6 @@ class Message
 
     /**
      * Prepares the emails and queue it.
-     *
-     * @return void
      */
     public function enqueue(): void
     {
@@ -210,7 +208,7 @@ class Message
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
             LoggerService::getLogger($this)->error($message);
-            throw new WrongPluginConfigurationException($message, 1350124220);
+            throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
         return $isSent;
@@ -218,13 +216,11 @@ class Message
 
     /**
      * Prepares the emails by fetching an email template and formats its body.
-     *
-     * @return void
      */
     protected function prepareMessage(): void
     {
         if (!$this->to) {
-            throw new \RuntimeException('Messenger: no recipient was defined', 1354536585);
+            throw new \RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
 
         $message = $this->getMailMessage()
@@ -265,9 +261,6 @@ class Message
         }
     }
 
-    /**
-     * @return string
-     */
     protected function getDebugInfoSubject(): string
     {
         $applicationContext = (string)Environment::getContext();
@@ -276,8 +269,6 @@ class Message
 
     /**
      * Get a body message when email is not in production.
-     *
-     * @return string
      */
     protected function getDebugInfoBody(): string
     {
@@ -297,8 +288,6 @@ class Message
 
     /**
      * Retrieves the message template object
-     *
-     * @return \Fab\Messenger\Domain\Model\MessageTemplate
      */
     public function getMessageTemplate(): MessageTemplate
     {
@@ -310,7 +299,6 @@ class Message
      *
      * @see http://preprocess.me/how-to-check-if-a-string-contains-html-tags-in-php
      * @param string $content the content to be analyzed
-     * @return boolean
      */
     public function hasHtml($content): bool
     {
@@ -326,7 +314,6 @@ class Message
      * Attach a file to the message.
      *
      * @param string $attachment an absolute path to a file
-     * @return Message
      */
     public function addAttachment($attachment): Message
     {
@@ -343,7 +330,7 @@ class Message
             $this->attachments[] = $attachment;
         } else {
             $message = sprintf('File not found "%s"', $attachment);
-            throw new MissingFileException($message, 1389779394);
+            throw new MissingFileException($message, 1_389_779_394);
         }
         return $this;
     }
@@ -352,7 +339,6 @@ class Message
      * Set multiple markers at once.
      *
      * @param array $values
-     * @return Message
      */
     public function setMarkers($values): Message
     {
@@ -367,7 +353,6 @@ class Message
      *
      * @param string $markerName
      * @param mixed $value
-     * @return Message
      */
     public function addMarker($markerName, $value): Message
     {
@@ -379,7 +364,6 @@ class Message
      * Set Markers
      *
      * @param mixed $values
-     * @return Message
      */
     public function assignMultiple(array $values): Message
     {
@@ -394,7 +378,6 @@ class Message
      *
      * @param string $markerName
      * @param mixed $value
-     * @return Message
      */
     public function assign($markerName, $value): Message
     {
@@ -404,8 +387,6 @@ class Message
     /**
      * Return "to" addresses.
      * Special case: override "to" if a redirection has been set for a Context.
-     *
-     * @return array
      */
     public function getTo(): array
     {
@@ -417,7 +398,6 @@ class Message
      * Set "to" addresses. Should be an array('email' => 'name').
      *
      * @param mixed $addresses
-     * @return Message
      */
     public function setTo($addresses): Message
     {
@@ -429,8 +409,6 @@ class Message
     /**
      * Return "cc" addresses.
      * Special case: there is no "cc" if a redirection has been set for a Context.
-     *
-     * @return array
      */
     public function getCc(): array
     {
@@ -441,7 +419,6 @@ class Message
      * Set "cc" addresses. Should be an array('email' => 'name').
      *
      * @param mixed $addresses
-     * @return Message
      */
     public function setCc($addresses): Message
     {
@@ -453,8 +430,6 @@ class Message
     /**
      * Return "bcc" addresses.
      * Special case: there is no "bcc" if a redirection has been set for a Context.
-     *
-     * @return array
      */
     public function getBcc(): array
     {
@@ -465,7 +440,6 @@ class Message
      * Set "cc" addresses. Should be an array('email' => 'name').
      *
      * @param mixed $addresses
-     * @return Message
      */
     public function setBcc($addresses): Message
     {
@@ -474,9 +448,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getReplyTo(): array
     {
         return $this->replyTo;
@@ -486,7 +457,6 @@ class Message
      * Set "reply-to" addresses. Should be an array('email' => 'name').
      *
      * @param mixed $addresses
-     * @return Message
      */
     public function setReplyTo($addresses): Message
     {
@@ -495,15 +465,12 @@ class Message
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSender(): array
     {
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1402032685);
+                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -513,7 +480,7 @@ class Message
                 $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
             }
 
-            $this->sender = array($email => $name);
+            $this->sender = [$email => $name];
             $this->getEmailValidator()->validate($this->sender);
         }
 
@@ -522,9 +489,6 @@ class Message
 
     /**
      * Re-set default sender
-     *
-     * @param array $sender
-     * @return Message
      */
     public function setSender(array $sender): Message
     {
@@ -533,9 +497,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return string
-     */
     protected function getProcessedSubject(): string
     {
         if ($this->processedSubject === '') {
@@ -572,9 +533,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return string
-     */
     protected function getProcessedBody(): string
     {
         if ($this->processedBody === '') {
@@ -608,9 +566,6 @@ class Message
         return $this->processedBody;
     }
 
-    /**
-     * @return string
-     */
     public function getBody(): string
     {
         return $this->body;
@@ -626,9 +581,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return \Fab\Messenger\Domain\Model\MessageLayout
-     */
     public function getMessageLayout(): MessageLayout
     {
         return $this->messageLayout;
@@ -641,7 +593,6 @@ class Message
      *      + string $messageLayout which corresponds to a value for property "identifier".
      *
      * @param mixed $messageLayout
-     * @return Message
      */
     public function setMessageLayout($messageLayout): Message
     {
@@ -658,7 +609,7 @@ class Message
 
             if ($this->messageLayout === null) {
                 $message = sprintf('I could not find message layout "%s"', $messageLayout);
-                throw new RecordNotFoundException($message, 1389769449);
+                throw new RecordNotFoundException($message, 1_389_769_449);
             }
         }
 
@@ -672,7 +623,6 @@ class Message
      *      + string $messageTemplate which corresponds to a value for property "identifier".
      *
      * @param mixed $messageTemplate
-     * @return Message
      */
     public function setMessageTemplate($messageTemplate): Message
     {
@@ -691,7 +641,7 @@ class Message
 
             if ($messageTemplate === null) {
                 $message = sprintf('I could not find message template "%s"', $messageTemplate);
-                throw new RecordNotFoundException($message, 1350124207);
+                throw new RecordNotFoundException($message, 1_350_124_207);
             }
 
             $this->messageTemplate = $messageTemplate;
@@ -702,8 +652,6 @@ class Message
 
     /**
      * Tell whether the message has been prepared.
-     *
-     * @return boolean
      */
     protected function isMessagePrepared(): bool
     {
@@ -712,8 +660,6 @@ class Message
 
     /**
      * Convert this object to an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -762,9 +708,6 @@ class Message
 
     /**
      * Format an array of addresses
-     *
-     * @param array $addresses
-     * @return string
      */
     protected function formatAddresses(array $addresses): string
     {
@@ -777,9 +720,6 @@ class Message
 
     }
 
-    /**
-     * @return MailMessage
-     */
     public function getMailMessage(): MailMessage
     {
         if ($this->mailMessage === null) {
@@ -788,9 +728,6 @@ class Message
         return $this->mailMessage;
     }
 
-    /**
-     * @return string
-     */
     public function getMailingName(): string
     {
         return $this->mailingName;
@@ -806,9 +743,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getScheduleDistributionTime(): int
     {
         return $this->scheduleDistributionTime;
@@ -827,14 +761,11 @@ class Message
     /**
      * @return EmailValidator|object
      */
-    public function getEmailValidator()
+    public function getEmailValidator(): \Fab\Messenger\Validator\EmailValidator|object
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
     }
 
-    /**
-     * @return string
-     */
     public function getUuid(): string
     {
         return $this->uuid;
@@ -869,7 +800,7 @@ class Message
     /**
      * @return RedirectService|object
      */
-    public function getRedirectService()
+    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService|object
     {
         return GeneralUtility::makeInstance(RedirectService::class);
     }

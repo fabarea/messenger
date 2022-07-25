@@ -27,14 +27,14 @@ class Resolver
     /**
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * Initializes the instance of this class.
      */
     public function __construct()
     {
-        $params = unserialize(base64_decode(GeneralUtility::_GP('data')));
+        $params = unserialize(base64_decode((string) GeneralUtility::_GP('data')));
         if (is_array($params)) {
             $this->pageId = (int)$params['id'];
             $this->parameters = $params['parameters'];
@@ -43,13 +43,11 @@ class Resolver
 
     /**
      * Handles incoming trackback requests
-     *
-     * @return void
      */
     public function resolveUrl(): void
     {
         $myIp = GeneralUtility::getIndpEnv('REMOTE_ADDR');
-        $devIPMask = trim($GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
+        $devIPMask = trim((string) $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
 
         if ($myIp === $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
             header('Content-type: text/plain; charset=iso-8859-1');
@@ -58,10 +56,7 @@ class Resolver
                 $cObj = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
 
                 /* @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
-                $typoLinkConfiguration = array(
-                    'parameter' => $this->pageId,
-                    'useCacheHash' => $this->parameters !== '',
-                );
+                $typoLinkConfiguration = ['parameter' => $this->pageId, 'useCacheHash' => $this->parameters !== ''];
                 if ($this->parameters) {
                     $typoLinkConfiguration['additionalParams'] = $this->parameters;
                 }
@@ -69,7 +64,7 @@ class Resolver
                 if ($url === '') {
                     $url = '/';
                 }
-                $parts = parse_url($url);
+                $parts = parse_url((string) $url);
                 if ($parts['host'] === '') {
                     $url = GeneralUtility::locationHeaderUrl($url);
                 }

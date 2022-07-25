@@ -44,10 +44,6 @@ class MessageQueueCommandController extends Command
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $itemsPerRun = $input->getOption('items-per-run');

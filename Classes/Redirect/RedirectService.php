@@ -22,8 +22,6 @@ class RedirectService implements SingletonInterface
 
     /**
      * Get possible redirect recipients.
-     *
-     * @return array
      */
     public function getRedirections(): array
     {
@@ -44,8 +42,6 @@ class RedirectService implements SingletonInterface
 
     /**
      * Get possible redirect recipients.
-     *
-     * @return string
      */
     public function getRedirectionList(): string
     {

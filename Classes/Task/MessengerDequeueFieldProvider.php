@@ -112,8 +112,6 @@ class MessengerDequeueFieldProvider extends AbstractAdditionalFieldProvider
 
     /**
      * Returns an instance of LanguageService
-     *
-     * @return LanguageService
      */
     protected function getLanguageService(): LanguageService
     {

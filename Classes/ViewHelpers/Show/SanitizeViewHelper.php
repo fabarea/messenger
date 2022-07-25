@@ -37,7 +37,7 @@ class SanitizeViewHelper extends AbstractViewHelper
      */
     protected function convertPropertiesToFields($item)
     {
-        $convertedItem = array();
+        $convertedItem = [];
         foreach ($item as $propertyName => $value) {
             $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
             $convertedItem[$fieldName] = $value;

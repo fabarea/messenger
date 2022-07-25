@@ -23,7 +23,6 @@ class SendButton extends AbstractComponentView
     /**
      * Renders a "edit" button to be placed in the grid.
      *
-     * @param Content $object
      * @return string
      * @throws \InvalidArgumentException
      */

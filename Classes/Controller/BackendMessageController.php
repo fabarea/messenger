@@ -27,9 +27,6 @@ use TYPO3\CMS\Extbase\Annotation\Validate;
 class BackendMessageController extends ActionController
 {
 
-    /**
-     * @return void
-     */
     public function initializeAction(): void
     {
         // Configure property mapping to retrieve the file object.
@@ -44,10 +41,9 @@ class BackendMessageController extends ActionController
     }
 
     /**
-     * @param array $matches
      * @param int $pageId
      */
-    public function composeAction(array $matches = array(), $pageId = 0): void
+    public function composeAction(array $matches = [], $pageId = 0): void
     {
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
@@ -75,14 +71,10 @@ class BackendMessageController extends ActionController
     }
 
     /**
-     * @param string $subject
-     * @param string $body
-     * @param string $sender
-     * @param array $matches
      * @param bool $parseMarkdown
      * @Validate("Fab\Messenger\Domain\Validator\NotEmptyValidator", param="subject")
      */
-    public function enqueueAction(string $subject, string $body, string $sender, array $matches = array(), $parseMarkdown = false): void
+    public function enqueueAction(string $subject, string $body, string $sender, array $matches = [], $parseMarkdown = false): void
     {
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
@@ -130,10 +122,6 @@ class BackendMessageController extends ActionController
         ]);
     }
 
-    /**
-     * @param Content $recipient
-     * @return array
-     */
     protected function getTo(Content $recipient): array
     {
         $email = $recipient['email'];
@@ -157,10 +145,6 @@ class BackendMessageController extends ActionController
     }
 
     /**
-     * @param string $subject
-     * @param string $body
-     * @param string $sender
-     * @param string $recipientList
      * @Validate("Fab\Messenger\Domain\Validator\NotEmptyValidator", param="subject")
      */
     public function sendAsTestAction(string $subject, string $body, string $sender, string $recipientList): void
@@ -202,20 +186,12 @@ class BackendMessageController extends ActionController
         ]);
     }
 
-    /**
-     * @param int $numberOfSentEmails
-     * @param int $numberOfRecipients
-     */
     public function feedbackSentAction(int $numberOfSentEmails, int $numberOfRecipients): void
     {
         $this->view->assign('numberOfSentEmails', $numberOfSentEmails);
         $this->view->assign('numberOfRecipients', $numberOfRecipients);
     }
 
-    /**
-     * @param int $numberOfSentEmails
-     * @param int $numberOfRecipients
-     */
     public function feedbackQueuedAction(int $numberOfSentEmails, int $numberOfRecipients): void
     {
         $this->view->assign('numberOfSentEmails', $numberOfSentEmails);
@@ -225,7 +201,7 @@ class BackendMessageController extends ActionController
     /**
      * @return ContentService|object
      */
-    protected function getContentService()
+    protected function getContentService(): \Fab\Vidi\Service\ContentService|object
     {
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
         return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);

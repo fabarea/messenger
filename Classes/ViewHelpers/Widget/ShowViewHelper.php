@@ -32,7 +32,7 @@ class ShowViewHelper extends AbstractWidgetViewHelper
      * @param bool $displaySystemFields
      * @return string
      */
-    public function render($item, $dataType = '', $exclude = array(), $displaySystemFields = FALSE)
+    public function render($item, $dataType = '', $exclude = [], $displaySystemFields = FALSE)
     {
         return $this->initiateSubRequest();
     }

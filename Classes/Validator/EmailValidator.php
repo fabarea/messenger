@@ -29,11 +29,11 @@ class EmailValidator implements SingletonInterface
         foreach ($emails as $email => $name) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $message = sprintf('Email provided is not valid, given value "%s"', $email);
-                throw new InvalidEmailFormatException($message, 1350297165);
+                throw new InvalidEmailFormatException($message, 1_350_297_165);
             }
-            if (strlen($name) <= 0) {
+            if (strlen((string) $name) <= 0) {
                 $message = sprintf('Name should not be empty, given value "%s"', $name);
-                throw new InvalidEmailFormatException($message, 1350297170);
+                throw new InvalidEmailFormatException($message, 1_350_297_170);
             }
         }
         return TRUE;

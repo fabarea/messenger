@@ -19,7 +19,6 @@ class ModuleLoader
 
     /**
      * @param $dataType
-     * @return \Fab\Vidi\Module\ModuleLoader
      */
     public static function register($dataType): \Fab\Vidi\Module\ModuleLoader
     {
