@@ -10,6 +10,7 @@ namespace Fab\Messenger\PagePath;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * This class create frontend page address from the page id value and parameters.
@@ -53,9 +54,9 @@ class Resolver
             header('Content-type: text/plain; charset=iso-8859-1');
             if ($this->pageId > 0) {
 
-                $cObj = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class);
+                $cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
-                /* @var $cObj \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer */
+                /* @var $cObj ContentObjectRenderer */
                 $typoLinkConfiguration = ['parameter' => $this->pageId, 'useCacheHash' => $this->parameters !== ''];
                 if ($this->parameters) {
                     $typoLinkConfiguration['additionalParams'] = $this->parameters;

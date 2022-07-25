@@ -10,6 +10,7 @@ namespace Fab\Messenger\View\MenuItem;
 
 use Fab\Messenger\Module\MessengerModule;
 use Fab\Messenger\Utility\BackendUtility;
+use InvalidArgumentException;
 use TYPO3\CMS\Core\Imaging\Icon;
 use Fab\Vidi\View\AbstractComponentView;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -23,7 +24,7 @@ class DequeueMenuItem extends AbstractComponentView
 
     /**
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function render()
     {
@@ -37,7 +38,7 @@ class DequeueMenuItem extends AbstractComponentView
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getDequeueUri(): string
     {
@@ -61,7 +62,7 @@ class DequeueMenuItem extends AbstractComponentView
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function loadRequireJsCode(): void
     {

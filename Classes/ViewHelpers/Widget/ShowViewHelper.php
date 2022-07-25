@@ -8,6 +8,7 @@ namespace Fab\Messenger\ViewHelpers\Widget;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\ViewHelpers\Widget\Controller\ShowController;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 use TYPO3\CMS\Extbase\Annotation\Inject;
 
@@ -18,7 +19,7 @@ class ShowViewHelper extends AbstractWidgetViewHelper
 {
 
     /**
-     * @var \Fab\Messenger\ViewHelpers\Widget\Controller\ShowController
+     * @var ShowController
      * @Inject
      */
     protected $controller;

@@ -10,6 +10,8 @@ namespace Fab\Messenger\ContentRenderer;
 
 use Fab\Messenger\PagePath\PagePath;
 use Fab\Messenger\Utility\Algorithms;
+use Fab\Messenger\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -59,19 +61,19 @@ class BackendRenderer implements ContentRendererInterface
     }
 
     /**
-     * @return \Fab\Messenger\Utility\ConfigurationUtility
+     * @return ConfigurationUtility
      */
-    public function getConfigurationUtility(): \Fab\Messenger\Utility\ConfigurationUtility
+    public function getConfigurationUtility(): ConfigurationUtility
     {
-        return GeneralUtility::makeInstance(\Fab\Messenger\Utility\ConfigurationUtility::class);
+        return GeneralUtility::makeInstance(ConfigurationUtility::class);
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Registry
+     * @return Registry
      */
-    protected function getRegistry(): \TYPO3\CMS\Core\Registry
+    protected function getRegistry(): Registry
     {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
+        return GeneralUtility::makeInstance(Registry::class);
     }
 
 }

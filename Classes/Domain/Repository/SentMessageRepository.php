@@ -10,6 +10,7 @@ namespace Fab\Messenger\Domain\Repository;
 
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Vidi\Tca\Tca;
+use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -26,7 +27,7 @@ class SentMessageRepository
     protected $tableName = 'tx_messenger_domain_model_sentmessage';
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function add(array $message): int
     {
@@ -53,7 +54,7 @@ class SentMessageRepository
 
         $result = $query->execute();
         if (!$result) {
-            throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
+            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
         return $result;
     }

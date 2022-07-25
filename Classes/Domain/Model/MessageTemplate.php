@@ -8,6 +8,7 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use RuntimeException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use Fab\Messenger\Exception\RecordNotFoundException;
@@ -96,7 +97,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * Returns the body according to the type of the message template.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @return string $body
      */
     public function getBody()
@@ -104,13 +105,13 @@ class MessageTemplate extends AbstractEntity
 
         if ($this->type === self::TYPE_PAGE) {
             // @todo use $crawler to fetch body content of page
-            throw new \RuntimeException('Messenger: not implemented', 1_400_517_075);
+            throw new RuntimeException('Messenger: not implemented', 1_400_517_075);
 
         } elseif ($this->type === self::TYPE_FILE) {
             $file = GeneralUtility::getFileAbsFileName($this->sourceFile);
             if (!is_file($file)) {
                 $message = sprintf('Messenger: I could not found file "%s"', $file);
-                throw new \RuntimeException($message, 1_400_517_074);
+                throw new RuntimeException($message, 1_400_517_074);
             }
             $this->body = file_get_contents($file);
         }

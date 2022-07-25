@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use UnexpectedValueException;
 
 /**
  * This class create frontend page address from the page id value and parameters.
@@ -71,7 +72,7 @@ class PagePath
      *
      * @static
      * @param int $pageId
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public static function getSiteBaseUrl($pageId): string
     {

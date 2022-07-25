@@ -22,7 +22,7 @@ class LynxStrategy implements StrategyInterface
     /**
      * Constructor
      *
-     * @return \Fab\Messenger\Html2Text\LynxStrategy
+     * @return LynxStrategy
      */
     public function __construct()
     {

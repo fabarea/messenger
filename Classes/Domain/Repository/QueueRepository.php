@@ -9,6 +9,7 @@ namespace Fab\Messenger\Domain\Repository;
  */
 
 use Fab\Messenger\Utility\Algorithms;
+use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Mail\MailMessage;
@@ -27,17 +28,17 @@ class QueueRepository
     protected $tableName = 'tx_messenger_domain_model_queue';
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function add(array $message): int
     {
         if (!$message['mail_message'] instanceof MailMessage) {
-            throw new \RuntimeException('Please, make sure key "mail_message" is a valid mail message object', 1_469_694_987);
+            throw new RuntimeException('Please, make sure key "mail_message" is a valid mail message object', 1_469_694_987);
         }
 
         $values = [];
         $values['crdate'] = time(); // default values
-        /** @var \TYPO3\CMS\Core\Mail\MailMessage $mailMessage */
+        /** @var MailMessage $mailMessage */
         $mailMessage = $message['mail_message'];
         $values['message_serialized'] = serialize($mailMessage);
         $values['body'] = $mailMessage->getHtmlBody() ?? $mailMessage->getTextBody();
@@ -61,7 +62,7 @@ class QueueRepository
 
         $result = $query->execute();
         if (!$result) {
-            throw new \RuntimeException('I could not queue the message.', 1_389_721_932);
+            throw new RuntimeException('I could not queue the message.', 1_389_721_932);
         }
         return $result;
     }

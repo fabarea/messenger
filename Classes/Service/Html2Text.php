@@ -10,6 +10,8 @@ namespace Fab\Messenger\Service;
 
 use Fab\Messenger\Html2Text\LynxStrategy;
 use Fab\Messenger\Html2Text\RegexpStrategy;
+use Fab\Messenger\Html2Text\StrategyInterface;
+use InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,7 +22,7 @@ class Html2Text implements SingletonInterface
 {
 
     /**
-     * @var \Fab\Messenger\Html2Text\StrategyInterface
+     * @var StrategyInterface
      */
     protected $converter;
 
@@ -32,8 +34,8 @@ class Html2Text implements SingletonInterface
     /**
      * Returns a class instance
      *
-     * @return \Fab\Messenger\Service\Html2Text
-     * @throws \InvalidArgumentException
+     * @return Html2Text
+     * @throws InvalidArgumentException
      */
     static public function getInstance()
     {
@@ -43,8 +45,8 @@ class Html2Text implements SingletonInterface
     /**
      * Constructor
      *
-     * @return \Fab\Messenger\Service\Html2Text
-     * @throws \InvalidArgumentException
+     * @return Html2Text
+     * @throws InvalidArgumentException
      */
     public function __construct()
     {
@@ -69,7 +71,7 @@ class Html2Text implements SingletonInterface
     /**
      * Find the best suitable converter
      *
-     * @return \Fab\Messenger\Html2Text\StrategyInterface
+     * @return StrategyInterface
      */
     public function findBestConverter()
     {
@@ -82,7 +84,7 @@ class Html2Text implements SingletonInterface
         // Else find the best suitable converter
         $converter = end($this->possibleConverters);
         foreach ($this->possibleConverters as $possibleConverter) {
-            /** @var \Fab\Messenger\Html2Text\StrategyInterface $possibleConverter */
+            /** @var StrategyInterface $possibleConverter */
             if ($possibleConverter->available()) {
                 $converter = $possibleConverter;
                 break;
@@ -97,13 +99,13 @@ class Html2Text implements SingletonInterface
      *
      * @return void
      */
-    public function setConverter(\Fab\Messenger\Html2Text\StrategyInterface $converter)
+    public function setConverter(StrategyInterface $converter)
     {
         $this->converter = $converter;
     }
 
     /**
-     * @return \Fab\Messenger\Html2Text\StrategyInterface
+     * @return StrategyInterface
      */
     public function getConverter()
     {
@@ -124,7 +126,7 @@ class Html2Text implements SingletonInterface
     }
 
     /**
-     * @param \Fab\Messenger\Html2Text\StrategyInterface $possibleConverter
+     * @param StrategyInterface $possibleConverter
      */
     public function addPossibleConverter($possibleConverter)
     {

@@ -68,9 +68,9 @@ class BodyConverter extends AbstractTypeConverter
     }
 
     /**
-     * @return \Fab\Messenger\ContentRenderer\BackendRenderer
+     * @return BackendRenderer
      */
-    protected function getContentRenderer(): \Fab\Messenger\ContentRenderer\BackendRenderer
+    protected function getContentRenderer(): BackendRenderer
     {
         /** @var BackendRenderer $contentRenderer */
         return GeneralUtility::makeInstance(BackendRenderer::class);

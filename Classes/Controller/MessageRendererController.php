@@ -8,8 +8,11 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use RuntimeException;
+use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * @deprecated should not be necessary anymore.
@@ -26,11 +29,11 @@ class MessageRendererController extends ActionController
         $registryEntry = $this->fetchRegistryEntry($registryIdentifier);
 
         if ($registryEntry === null) {
-            throw new \RuntimeException('Messenger: I could not find any valid entry from the registry.', 1_400_405_307);
+            throw new RuntimeException('Messenger: I could not find any valid entry from the registry.', 1_400_405_307);
         }
 
-        /** @var \TYPO3\CMS\Fluid\View\StandaloneView $emailView */
-        $emailView = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+        /** @var StandaloneView $emailView */
+        $emailView = GeneralUtility::makeInstance(StandaloneView::class);
         $emailView->setTemplateSource($registryEntry['content']);
         $emailView->assignMultiple($registryEntry['markers']);
         return $emailView->render();
@@ -51,11 +54,11 @@ class MessageRendererController extends ActionController
     /**
      * Returns an instance of the Frontend object.
      *
-     * @return \TYPO3\CMS\Core\Registry
+     * @return Registry
      */
-    protected function getRegistry(): \TYPO3\CMS\Core\Registry
+    protected function getRegistry(): Registry
     {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Registry::class);
+        return GeneralUtility::makeInstance(Registry::class);
     }
 
 }

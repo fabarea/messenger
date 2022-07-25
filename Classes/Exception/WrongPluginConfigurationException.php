@@ -8,10 +8,12 @@ namespace Fab\Messenger\Exception;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Exception;
+
 /**
  *
  */
-class WrongPluginConfigurationException extends \Exception
+class WrongPluginConfigurationException extends Exception
 {
 
 }
