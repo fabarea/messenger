@@ -46,9 +46,9 @@ class DevelopmentViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return RedirectService|object
+     * @return RedirectService
      */
-    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService|object {
+    public function getRedirectService(): \Fab\Messenger\Redirect\RedirectService {
         return GeneralUtility::makeInstance(RedirectService::class);
     }
 
