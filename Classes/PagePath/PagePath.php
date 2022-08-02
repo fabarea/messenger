@@ -10,8 +10,10 @@ namespace Fab\Messenger\PagePath;
  */
 
 use Fab\Messenger\Utility\BackendUtility;
+use Psr\Http\Message\RequestFactoryInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use UnexpectedValueException;
@@ -23,6 +25,9 @@ use UnexpectedValueException;
  */
 class PagePath
 {
+    public function __construct(RequestFactoryInterface $requestFactory) {
+        $this->requestFactory = $requestFactory;
+    }
 
     /**
      * Creates URL to page using page id and parameters
@@ -44,9 +49,16 @@ class PagePath
         if ($siteUrl) {
             $url = $siteUrl . 'index.php?eID=messenger&data=' . base64_encode(serialize($data));
 
+            $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
             // Send TYPO3 cookies as this may affect path generation
-            $headers = ['Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']];
-            $result = GeneralUtility::getUrl($url);
+            $additionalOptions = [
+                'headers' => [
+                    'Cookie' => 'fe_typo_user=' . $_COOKIE['fe_typo_user'],
+                ],
+                'cookies' => true,
+            ];
+            $response = $requestFactory->request($url, 'GET', $additionalOptions);
+            $result = $response->getBody()->getContents();
 
             $urlParts = parse_url($result);
             if (!is_array($urlParts)) {

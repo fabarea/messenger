@@ -10,6 +10,7 @@ namespace Fab\Messenger\TypeConverter;
 
 use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\PagePath\PagePath;
+use Psr\Http\Message\RequestFactoryInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
@@ -36,6 +37,15 @@ class BodyConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
+     * @var RequestFactoryInterface
+     */
+    protected $requestFactory;
+
+    public function __construct(RequestFactoryInterface $requestFactory) {
+        $this->requestFactory = $requestFactory;
+    }
+
+    /**
      * Actually convert from $source to $targetType
      *
      * @param string $source
@@ -52,15 +62,21 @@ class BodyConverter extends AbstractTypeConverter
             $baseUrl = PagePath::getSiteBaseUrl($source);
 
             // Send TYPO3 cookies as this may affect path generation
-            $headers = ['Cookie: fe_typo_user=' . $_COOKIE['fe_typo_user']];
-
+            $additionalOptions = [
+                'headers' => [
+                    'Cookie' => 'fe_typo_user=' . $_COOKIE['fe_typo_user'],
+                ],
+                'cookies' => true,
+            ];
             $url = $baseUrl . 'index.php?id=' . $source;
-            $content = GeneralUtility::getUrl($url);
+            $response = $this->requestFactory->request($url, 'GET', $additionalOptions);
+            if ($response->getStatusCode() === 200) {
+                $content = $response->getBody()->getContents();
+                $body = preg_match("/<body[^>]*>(.*?)<\/body>/is", $content, $matches);
 
-            $body = preg_match("/<body[^>]*>(.*?)<\/body>/is", $content, $matches);
-
-            if (is_array($matches) && $matches[0]) {
-                $body = $matches[0];
+                if (is_array($matches) && $matches[0]) {
+                    $body = $matches[0];
+                }
             }
         }
 
