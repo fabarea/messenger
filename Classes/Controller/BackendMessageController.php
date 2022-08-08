@@ -27,25 +27,24 @@ use TYPO3\CMS\Extbase\Annotation\Validate;
  */
 class BackendMessageController extends ActionController
 {
+    protected BodyConverter $typeConverter;
+
+    public function __construct(BodyConverter $bodyConverter) {
+        $this->typeConverter = $bodyConverter;
+    }
 
     public function initializeAction(): void
     {
         // Configure property mapping to retrieve the file object.
         if ($this->arguments->hasArgument('body')) {
-
-            /** @var BodyConverter $typeConverter */
-            $typeConverter = GeneralUtility::makeInstance(BodyConverter::class);
-
             $propertyMappingConfiguration = $this->arguments->getArgument('body')->getPropertyMappingConfiguration();
-            $propertyMappingConfiguration->setTypeConverter($typeConverter);
+            $propertyMappingConfiguration->setTypeConverter($this->typeConverter);
         }
     }
 
-    /**
-     * @param int $pageId
-     */
-    public function composeAction(array $matches = [], $pageId = 0): void
+    public function composeAction(array $matches = []): void
     {
+        $pageId = $this->request->hasArgument('pageId') ? $this->request->getArgument('pageId') : 0;
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
         // Instantiate the Matcher object according different rules.
@@ -72,11 +71,11 @@ class BackendMessageController extends ActionController
     }
 
     /**
-     * @param bool $parseMarkdown
      * @Validate("Fab\Messenger\Domain\Validator\NotEmptyValidator", param="subject")
      */
-    public function enqueueAction(string $subject, string $body, string $sender, array $matches = [], $parseMarkdown = false): void
+    public function enqueueAction(string $subject, string $body, string $sender, array $matches = []): void
     {
+        $parseMarkdown = $this->request->hasArgument('parseMarkdown') ? (bool) $this->request->getArgument('parseMarkdown') : false;
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
         // Instantiate the Matcher object according different rules.

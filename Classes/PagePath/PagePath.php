@@ -51,13 +51,10 @@ class PagePath
 
             $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
             // Send TYPO3 cookies as this may affect path generation
-            $additionalOptions = [
-                'headers' => [
-                    'Cookie' => 'fe_typo_user=' . $_COOKIE['fe_typo_user'],
-                ],
-                'cookies' => true,
-            ];
-            $response = $requestFactory->request($url, 'GET', $additionalOptions);
+            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray([
+                'fe_typo_user' => $_COOKIE['fe_typo_user'],
+            ], $_SERVER['HTTP_HOST']);
+            $response = $requestFactory->request($url, 'GET', ['cookies' => $jar]);
             $result = $response->getBody()->getContents();
 
             $urlParts = parse_url($result);
