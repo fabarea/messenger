@@ -37,11 +37,13 @@ class BodyConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @var RequestFactoryInterface
+     * @var RequestFactory
      */
     protected $requestFactory;
 
-    public function __construct(RequestFactoryInterface $requestFactory) {
+    public function __construct(
+        RequestFactoryInterface $requestFactory
+    ) {
         $this->requestFactory = $requestFactory;
     }
 
@@ -62,14 +64,11 @@ class BodyConverter extends AbstractTypeConverter
             $baseUrl = PagePath::getSiteBaseUrl($source);
 
             // Send TYPO3 cookies as this may affect path generation
-            $additionalOptions = [
-                'headers' => [
-                    'Cookie' => 'fe_typo_user=' . $_COOKIE['fe_typo_user'],
-                ],
-                'cookies' => true,
-            ];
+            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray([
+                'fe_typo_user' => $_COOKIE['fe_typo_user'],
+            ], $_SERVER['HTTP_HOST']);
             $url = $baseUrl . 'index.php?id=' . $source;
-            $response = $this->requestFactory->request($url, 'GET', $additionalOptions);
+            $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();
                 $body = preg_match("/<body[^>]*>(.*?)<\/body>/is", $content, $matches);

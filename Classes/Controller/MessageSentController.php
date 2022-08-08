@@ -66,7 +66,6 @@ class MessageSentController extends ActionController
 
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
-
             $isSent = $message->setBody($contentObject['body'])
                 ->setSubject($contentObject['subject'])
                 ->setSender($this->normalizeEmails($contentObject['sender']))
