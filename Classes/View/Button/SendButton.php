@@ -11,6 +11,8 @@ namespace Fab\Messenger\View\Button;
 use Fab\Vidi\View\Uri\EditUri;
 use InvalidArgumentException;
 use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Vidi\View\AbstractComponentView;
 use Fab\Vidi\Domain\Model\Content;
@@ -20,7 +22,16 @@ use Fab\Vidi\Domain\Model\Content;
  */
 class SendButton extends AbstractComponentView
 {
+    protected IconFactory $iconFactory;
+    protected PageRenderer $pageRenderer;
 
+    public function __construct(
+        IconFactory $iconFactory,
+        PageRenderer $pageRenderer
+    ) {
+        $this->iconFactory = $iconFactory;
+        $this->pageRenderer = $pageRenderer;
+    }
     /**
      * Renders a "edit" button to be placed in the grid.
      *
@@ -39,7 +50,7 @@ class SendButton extends AbstractComponentView
             ])
             ->setClasses('btn-edit')
             ->setTitle($this->getLanguageService()->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:edit'))
-            ->setIcon($this->getIconFactory()->getIcon('actions-document-open', Icon::SIZE_SMALL))
+            ->setIcon($this->iconFactory->getIcon('actions-document-open', Icon::SIZE_SMALL))
             ->render();
     }
 

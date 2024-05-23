@@ -17,9 +17,11 @@ use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Validator\EmailValidator;
+use Psr\Log\LogLevel;
 use RuntimeException;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -173,10 +175,10 @@ class Message
     public function __construct()
     {
         // todo legacy, migrate me!
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->messageTemplateRepository = $objectManager->get(MessageTemplateRepository::class);
-        $this->messageLayoutRepository = $objectManager->get(MessageLayoutRepository::class);
-        $this->sentMessageRepository = $objectManager->get(SentMessageRepository::class);
+        $this->messageTemplateRepository =GeneralUtility::makeInstance((MessageTemplateRepository::class));
+        $this->messageLayoutRepository = GeneralUtility::makeInstance((MessageLayoutRepository::class));
+        $this->sentMessageRepository = GeneralUtility::makeInstance((SentMessageRepository::class));
+
     }
 
     /**
@@ -210,8 +212,8 @@ class Message
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-            LoggerService::getLogger($this)->error($message);
-            throw new WrongPluginConfigurationException($message, 1_350_124_220);
+           GeneralUtility::makeInstance(LogManager::class)($this)->getLogger(__CLASS__)->log(LogLevel::ERROR, $message);
+           throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
         return $isSent;

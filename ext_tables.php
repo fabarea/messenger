@@ -4,11 +4,10 @@ use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
 
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 call_user_func(
     function () {
-
         // Add static TypoScript template
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('messenger', 'Configuration/TypoScript', 'Send a message to a group of people');
 
@@ -39,7 +38,7 @@ call_user_func(
         unset($iconRegistry);
 
         // Add Messenger main module before 'user'
-        if (TYPO3_MODE === 'BE') {
+        if (TYPO3 == 'BE') {
             if (!isset($GLOBALS['TBE_MODULES']['messenger'])) {
                 $beModules = [];
                 foreach ($GLOBALS['TBE_MODULES'] as $key => $val) {
@@ -67,7 +66,7 @@ call_user_func(
         }
 
         // Load some vidi BE modules
-        if (TYPO3_MODE === 'BE' && class_exists(\Fab\Vidi\Module\ModuleLoader::class)) {
+        if (TYPO3 == 'BE' && class_exists(\Fab\Vidi\Module\ModuleLoader::class)) {
 
             // Register newsletter BE module
             $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(

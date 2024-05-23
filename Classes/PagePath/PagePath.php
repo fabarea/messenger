@@ -11,6 +11,7 @@ namespace Fab\Messenger\PagePath;
 
 use Fab\Messenger\Utility\BackendUtility;
 use Psr\Http\Message\RequestFactoryInterface;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Http\RequestFactory;
@@ -88,7 +89,7 @@ class PagePath
         $environmentBaseUrl = null;
         $baseUrl = null;
         // CLI must define its own environment variable.
-        if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI) { // TODO remove this condition
+        if (Environment::isCli()) { // TODO remove this condition
 
             die('You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case');
 

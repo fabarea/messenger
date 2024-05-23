@@ -90,11 +90,11 @@ class MessengerDequeueFieldProvider extends AbstractAdditionalFieldProvider
         } elseif ((int)$submittedData['scheduler_messenger_itemsPerRun'] >= 0) {
             $validData = true;
         } else {
-            // Issue error message
-            $this->addMessage(
+            AbstractAdditionalFieldProvider::addMessage(
                 $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidNumberOfItemsPerRun'),
                 FlashMessage::ERROR
             );
+
         }
         return $validData;
     }

@@ -46,7 +46,7 @@ class MessageTemplate extends AbstractEntity
 
     /**
      * @var string
-     * @validate TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator
+     * @TYPO3\CMS\Extbase\Annotation\Validate TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator
      */
     protected $subject;
 

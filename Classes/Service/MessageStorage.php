@@ -9,6 +9,7 @@ namespace Fab\Messenger\Service;
  */
 
 use InvalidArgumentException;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
@@ -83,6 +84,6 @@ class MessageStorage implements SingletonInterface
      */
     protected function isFrontendMode()
     {
-        return TYPO3_MODE === 'FE';
+        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
     }
 }
