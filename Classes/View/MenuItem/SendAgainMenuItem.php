@@ -13,6 +13,7 @@ use Fab\Messenger\Utility\BackendUtility;
 use InvalidArgumentException;
 use TYPO3\CMS\Core\Imaging\Icon;
 use Fab\Vidi\View\AbstractComponentView;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -21,7 +22,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class SendAgainMenuItem extends AbstractComponentView
 {
+    protected IconFactory $iconFactory;
+    protected PageRenderer $pageRenderer;
 
+    public function __construct(
+        IconFactory $iconFactory,
+        PageRenderer $pageRenderer
+    ) {
+        $this->iconFactory = $iconFactory;
+        $this->pageRenderer = $pageRenderer;
+    }
     /**
      * @return string
      * @throws InvalidArgumentException
@@ -31,7 +41,7 @@ class SendAgainMenuItem extends AbstractComponentView
         $this->loadRequireJsCode();
         $result = sprintf('<li><a href="%s" class="dropdown-item btn-sendAgain">%s %s</a></li>',
             $this->getDequeueUri(),
-            $this->getIconFactory()->getIcon('content-elements-mailform', Icon::SIZE_SMALL),
+            $this->iconFactory->getIcon('content-elements-mailform', Icon::SIZE_SMALL),
             $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.dequeue')
         );
         return $result;
