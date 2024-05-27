@@ -8,6 +8,57 @@
 
   <f:section name="main">
     <h1><f:translate key="backendUserListing" /></h1>
-    voilà
+
+    <div class="panel panel-default">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Tree & Table Header</th>
+            <th>Table Header <a href="#">link</a> inline</th>
+            <th align="right" width="150">Table Header</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="nowrap">Record title on root row</td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">1.900,50</td>
+          </tr>
+          <tr class="active">
+            <td class="nowrap">First row entry record</td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">540,99</td>
+          </tr>
+          <tr class="success">
+            <td class="nowrap">
+              <b>Second row</b>
+              <small>not second class</small>
+            </td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">9.300,20</td>
+          </tr>
+          <tr class="info">
+            <td class="nowrap">Magic third row</td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">9.300,20</td>
+          </tr>
+          <tr class="warning">
+            <td class="nowrap">Record title always bold</td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">0,00</td>
+          </tr>
+          <tr class="danger">
+            <td>Record title always bold</td>
+            <td><a href="#">Donec id elit</a></td>
+            <td align="right">0,00</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">X.XXX,XX Entries</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </f:section>
 </html>
