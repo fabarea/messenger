@@ -109,6 +109,21 @@ call_user_func(function () {
         }
 
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'Fab.Messenger',
+            'messenger',
+            'tx_messenger_m1',
+            'top',
+            [
+                \Fab\Messenger\Controller\AdminModuleController::class => 'index',
+            ],
+            [
+                'access' => 'admin',
+                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
+                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_mod.xlf',
+            ],
+        );
+
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
             'Fab.messenger',
             'user', // Make media module a submodule of 'user'
             'm1',
