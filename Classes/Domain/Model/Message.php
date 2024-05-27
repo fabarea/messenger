@@ -41,7 +41,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  */
 class Message
 {
-
     final const SUBJECT = 'subject';
     final const BODY = 'body';
 
@@ -175,10 +174,9 @@ class Message
     public function __construct()
     {
         // todo legacy, migrate me!
-        $this->messageTemplateRepository =GeneralUtility::makeInstance((MessageTemplateRepository::class));
-        $this->messageLayoutRepository = GeneralUtility::makeInstance((MessageLayoutRepository::class));
-        $this->sentMessageRepository = GeneralUtility::makeInstance((SentMessageRepository::class));
-
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
     /**
@@ -208,12 +206,17 @@ class Message
 
             // Store body of the message for possible later use.
             if ($this->messageTemplate) {
-                MessageStorage::getInstance()->set($this->messageTemplate->getUid(), $this->getMailMessage()->getBody());
+                MessageStorage::getInstance()->set(
+                    $this->messageTemplate->getUid(),
+                    $this->getMailMessage()->getBody(),
+                );
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-           GeneralUtility::makeInstance(LogManager::class)($this)->getLogger(__CLASS__)->log(LogLevel::ERROR, $message);
-           throw new WrongPluginConfigurationException($message, 1_350_124_220);
+            GeneralUtility::makeInstance(LogManager::class)($this)
+                ->getLogger(__CLASS__)
+                ->log(LogLevel::ERROR, $message);
+            throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
         return $isSent;
@@ -258,17 +261,18 @@ class Message
             $this->redirectEmailFrom = $this->getMailMessage()->getTo();
 
             $this->getMailMessage()
-                ->setBody()->html($this->getDebugInfoBody())
+                ->setBody()
+                ->html($this->getDebugInfoBody())
                 ->setTo($redirectTo)
-                ->setCc([])// reset cc which was written as debug in the body message previously.
-                ->setBcc([])// same remark as bcc.
+                ->setCc([]) // reset cc which was written as debug in the body message previously.
+                ->setBcc([]) // same remark as bcc.
                 ->setSubject($this->getDebugInfoSubject());
         }
     }
 
     protected function getDebugInfoSubject(): string
     {
-        $applicationContext = (string)Environment::getContext();
+        $applicationContext = (string) Environment::getContext();
         return strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
     }
 
@@ -283,11 +287,11 @@ class Message
 
         return sprintf(
             "%s CONTEXT: this message is for testing purposes. In Production, it will be sent as follows. \nto: %s\n%s%s\n%s",
-            strtoupper((string)Environment::getContext()),
+            strtoupper((string) Environment::getContext()),
             implode(',', array_keys($to)),
             empty($cc) ? '' : sprintf('cc: %s <br/>', implode(',', array_keys($cc))),
             empty($bcc) ? '' : sprintf('bcc: %s <br/>', implode(',', array_keys($bcc))),
-            $this->getMailMessage()->getBody()
+            $this->getMailMessage()->getBody(),
         );
     }
 
@@ -307,10 +311,10 @@ class Message
      */
     public function hasHtml($content): bool
     {
-        $result = FALSE;
+        $result = false;
         //we compare the length of the string with html tags and without html tags
         if (strlen($content) !== strlen(strip_tags($content))) {
-            $result = TRUE;
+            $result = true;
         }
         return $result;
     }
@@ -322,10 +326,9 @@ class Message
      */
     public function addAttachment($attachment): Message
     {
-
         // Convert $file to absolute path.
         if ($attachment instanceof File) {
-            $attachment = $attachment->getForLocalProcessing(FALSE);
+            $attachment = $attachment->getForLocalProcessing(false);
         }
 
         // Makes sure the file exist
@@ -397,7 +400,6 @@ class Message
     {
         return $this->to;
     }
-
 
     /**
      * Set "to" addresses. Should be an array('email' => 'name').
@@ -475,7 +477,10 @@ class Message
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
+                throw new RuntimeException(
+                    'I could not find a sender email address. Missing value for "defaultMailFromAddress"',
+                    1_402_032_685,
+                );
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -505,7 +510,6 @@ class Message
     protected function getProcessedSubject(): string
     {
         if ($this->processedSubject === '') {
-
             $processedSubject = $this->subject;
             if ($this->messageTemplate) {
                 $processedSubject = $this->messageTemplate->getSubject();
@@ -541,7 +545,6 @@ class Message
     protected function getProcessedBody(): string
     {
         if ($this->processedBody === '') {
-
             $processedBody = $this->body;
 
             if ($this->messageTemplate) {
@@ -554,8 +557,10 @@ class Message
             }
 
             // Parse Markdown only if necessary.
-            if ($this->parseToMarkdown
-                || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
+            if (
+                $this->parseToMarkdown ||
+                ($this->messageTemplate &&
+                    $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
             ) {
                 $processedBody = Markdown::defaultTransform($processedBody);
             }
@@ -604,10 +609,9 @@ class Message
         if ($messageLayout instanceof MessageLayout) {
             $this->messageLayout = $messageLayout;
         } else {
-
             // try to convert message layout to a possible uid.
-            if ((int)$messageLayout > 0) {
-                $messageLayout = (int)$messageLayout;
+            if ((int) $messageLayout > 0) {
+                $messageLayout = (int) $messageLayout;
             }
             $methodName = is_int($messageLayout) ? 'findByUid' : 'findByQualifier';
             $this->messageLayout = $this->messageLayoutRepository->$methodName($messageLayout);
@@ -634,10 +638,9 @@ class Message
         if ($messageTemplate instanceof MessageTemplate) {
             $this->messageTemplate = $messageTemplate;
         } else {
-
             // try to convert message template to a possible uid.
-            if ((int)$messageTemplate > 0) {
-                $messageTemplate = (int)$messageTemplate;
+            if ((int) $messageTemplate > 0) {
+                $messageTemplate = (int) $messageTemplate;
             }
             $methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
 
@@ -668,7 +671,6 @@ class Message
      */
     public function toArray(): array
     {
-
         if (!$this->isMessagePrepared()) {
             $this->prepareMessage();
         }
@@ -686,7 +688,7 @@ class Message
             'subject' => $mailMessage->getSubject(),
             'body' => $mailMessage->getBody(),
             'attachment' => count($this->attachments),
-            'context' => (string)Environment::getContext(),
+            'context' => (string) Environment::getContext(),
             'was_opened' => 0,
             'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
             'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
@@ -707,7 +709,7 @@ class Message
      */
     public function parseToMarkdown($parseToMarkdown): self
     {
-        $this->parseToMarkdown = (bool)$parseToMarkdown;
+        $this->parseToMarkdown = (bool) $parseToMarkdown;
         return $this;
     }
 
@@ -722,7 +724,6 @@ class Message
             $formattedAddresses[] = sprintf('%s <%s>', $address->getName(), $address->getAddress());
         }
         return implode(', ', $formattedAddresses);
-
     }
 
     public function getMailMessage(): MailMessage
@@ -809,5 +810,4 @@ class Message
     {
         return GeneralUtility::makeInstance(RedirectService::class);
     }
-
 }
