@@ -5,4 +5,6 @@ services:
     public: true
 
   Fab\Messenger\Controller\AdminModuleController:
-    tags: ['backend.controller']
+    tags: [ 'backend.controller' ]
+
+
