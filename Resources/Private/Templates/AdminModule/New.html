@@ -1,0 +1,94 @@
+<html data-namespace-typo3-fluid="true"
+      xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+>
+<f:layout name="Default"/>
+
+<f:section name="main">
+    <f:form.validationResults>
+        <div>
+            <div class="row mx-2 my-3">
+                <div class="col ">
+                    <h1 class="text-left text-uppercase">
+                        Edit {message.sender}
+                    </h1>
+                </div>
+                <div class="col text-right m-0 p-0">
+                    <f:link.action
+                            action="index"
+                            arguments="{searchTerm: ''}"
+                            class="btn btn-primary"
+                            controller="AdminModule"
+                    >
+                        Back
+                    </f:link.action>
+                </div>
+            </div>
+        </div>
+        <f:if condition="{validationResults.flattenedErrors}">
+            <ul class="errors">
+                <f:for as="errors" each="{validationResults.flattenedErrors}" key="propertyPath">
+                    <li>
+                        {propertyPath}
+                        <ul>
+                            <f:for as="error" each="{errors}">
+                                <li>{error.code}: {error}</li>
+                            </f:for>
+                        </ul>
+                    </li>
+                </f:for>
+            </ul>
+        </f:if>
+    </f:form.validationResults>
+
+    <f:form
+            action="store"
+            arguments="{message: message}"
+            class="m-2 p-4"
+            controller="AdminModule"
+            name="message"
+            object="{message}"
+            objectName="message"
+    >
+
+        <div class="d-flex gap-3 my-3">
+            <label for="sender">
+                Sender
+            </label>
+            <f:form.textfield
+                    class="form-control"
+                    id="sender"
+                    name="sender"
+                    value=""
+            />
+        </div>
+
+        <div class="d-flex gap 3 my-3">
+            <label for="recipient">
+                Recipient
+            </label>
+            <f:form.textfield
+                    class="form-control"
+                    id="recipient"
+                    name="recipient"
+                    value=""
+            />
+        </div>
+
+        <div class="d-flex gap-3 my-3">
+            <label for="subject">
+                Subject
+            </label>
+            <f:form.textfield
+                    class="form-control"
+                    id="subject"
+                    name="subject"
+                    value=""
+            />
+        </div>
+
+    </f:form>
+
+
+</f:section>
+</html>

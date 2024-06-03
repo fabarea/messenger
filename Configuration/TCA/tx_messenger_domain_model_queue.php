@@ -1,6 +1,11 @@
 <?php
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
+
+use Fab\Messenger\Grid\UuidRenderer;
+use Fab\Vidi\Grid\ButtonGroupRenderer;
+use Fab\Vidi\Grid\CheckBoxRenderer;
+
+if (!defined('TYPO3')) {
+    die('Access denied.');
 }
 
 return [
@@ -15,7 +20,10 @@ return [
         ],
     ],
     'types' => [
-        '1' => ['showitem' => 'sender, recipient, subject, body, attachment, context, mailing_name, uuid, scheduled_distribution_time, message_template, message_layout, redirect_email_from'],
+        '1' => [
+            'showitem' =>
+                'sender, recipient, subject, body, attachment, context, mailing_name, uuid, scheduled_distribution_time, message_template, message_layout, redirect_email_from',
+        ],
     ],
     'palettes' => [
         '1' => ['showitem' => ''],
@@ -29,28 +37,32 @@ return [
             ],
         ],
         'recipient' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
             ],
         ],
         'recipient_cc' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
             ],
         ],
         'recipient_bcc' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
             ],
         ],
         'message_serialized' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.message_serialized',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf.message_serialized',
             'config' => [
                 'type' => 'text',
                 'rows' => 4,
@@ -59,7 +71,8 @@ return [
             ],
         ],
         'redirect_email_from' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email_from',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email_from',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
@@ -87,14 +100,16 @@ return [
             ],
         ],
         'attachment' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
             ],
         ],
         'mailing_name' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
@@ -108,7 +123,8 @@ return [
             ],
         ],
         'scheduled_distribution_time' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
@@ -116,7 +132,8 @@ return [
             ],
         ],
         'message_template' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:message_template',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -127,7 +144,8 @@ return [
             ],
         ],
         'message_layout' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -147,17 +165,15 @@ return [
         ],
     ],
     'grid' => [
-        'facets' => [
-            'uid',
-            'subject',
-        ],
+        'facets' => ['uid', 'subject'],
         'columns' => [
             '__checkbox' => [
-                'renderer' => \Fab\Vidi\Grid\CheckBoxRenderer::class,
+                'renderer' => CheckBoxRenderer::class,
             ],
             'uid' => [
                 'visible' => false,
-                'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
+                'label' =>
+                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
             'sender' => [],
@@ -173,10 +189,10 @@ return [
             ],
             'mailing_name' => [],
             'uuid' => [
-                'renderer' => \Fab\Messenger\Grid\UuidRenderer::class,
+                'renderer' => UuidRenderer::class,
                 'rendererConfiguration' => [
-                    'source' => 'queue'
-                ]
+                    'source' => 'queue',
+                ],
             ],
             'attachment' => [
                 'visible' => false,
@@ -186,7 +202,7 @@ return [
                 'visible' => false,
             ],
             '__buttons' => [
-                'renderer' => \Fab\Vidi\Grid\ButtonGroupRenderer::class,
+                'renderer' => ButtonGroupRenderer::class,
             ],
         ],
     ],

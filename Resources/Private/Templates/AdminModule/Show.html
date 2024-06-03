@@ -1,0 +1,154 @@
+<html
+        data-namespace-typo3-fluid="true"
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+>
+<f:layout name="Default"/>
+<f:section name="main">
+    <div class="panel panel-default">
+        <f:form.validationResults>
+            <div>
+                <div class="row mx-2 my-3">
+                    <div class="col ">
+                        <h1 class="text-left text-uppercase">
+                            Edit {message.sender}
+                        </h1>
+                    </div>
+                    <div class="col text-right m-0 p-0">
+                        <f:link.action
+                                action="index"
+                                arguments="{searchTerm: ''}"
+                                class="btn btn-primary"
+                                controller="AdminModule"
+                        >
+                            Back
+                        </f:link.action>
+                    </div>
+                </div>
+            </div>
+            <f:if condition="{validationResults.flattenedErrors}">
+                <ul class="errors">
+                    <f:for as="errors" each="{validationResults.flattenedErrors}" key="propertyPath">
+                        <li>
+                            {propertyPath}
+                            <ul>
+                                <f:for as="error" each="{errors}">
+                                    <li>{error.code}: {error}</li>
+                                </f:for>
+                            </ul>
+                        </li>
+                    </f:for>
+                </ul>
+            </f:if>
+        </f:form.validationResults>
+        <f:form
+                action="update"
+                arguments="{message: message, uid: message.uid}"
+                class="m-2 p-4"
+                controller="AdminModule"
+                name="message"
+                object="{message}"
+                objectName="message"
+        >
+
+            <div class="d-flex gap-3 my-3">
+                <label for="sender">
+                    Sender
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="sender"
+                        property="sender"
+                        value="{message.sender}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="recipient">
+                    Recipient
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="recipient"
+                        property="recipient"
+                        value="{message.recipient}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="subject">
+                    Subject
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="subject"
+                        property="subject"
+                        value="{message.subject}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="body">
+                    Body
+                </label>
+                <f:form.textarea
+                        class="form-control"
+                        cols="14"
+                        property="body"
+                        rows="5"
+                        value="{message.body}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="attachment">
+                    Attachment
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="attachment"
+                        property="attachment"
+                        value="{message.attachment}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="context">
+                    Context
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="context"
+                        property="context"
+                        value="{message.context}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="mailing_name">
+                    Mailing Name
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="mailing_name"
+                        property="mailing_name"
+                        value="{message.mailing_name}"
+                />
+            </div>
+            <div class="d-flex gap-3 my-3">
+                <label for="sent_time">
+                    Sent Time
+                </label>
+                <f:form.textfield
+                        class="form-control"
+                        id="sent_time"
+                        property="sent_time"
+                        value="{message.sent_time}"
+                />
+            </div>
+
+
+            <div class="text-right my-3">
+                <button class="btn btn-primary" type="submit">
+                    Update
+                </button>
+            </div>
+        </f:form>
+    </div>
+
+</f:section>
+</html>

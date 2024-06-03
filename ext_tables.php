@@ -1,30 +1,38 @@
 <?php
 
+use Fab\Messenger\Controller\AdminModuleController;
 use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
+use Fab\Messenger\Utility\ConfigurationUtility;
+use Fab\Messenger\View\MenuItem\DequeueMenuItem;
+use Fab\Messenger\View\MenuItem\SendAgainMenuItem;
+use Fab\Messenger\View\MenuItem\SendMenuItem;
+use Fab\Vidi\Module\ModuleLoader;
+use Fab\Vidi\View\Button\NewButton;
+use Fab\Vidi\View\MenuItem\DividerMenuItem;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
+use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 defined('TYPO3') || die('Access denied.');
 
 call_user_func(function () {
     // Add static TypoScript template
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+    ExtensionManagementUtility::addStaticFile(
         'messenger',
         'Configuration/TypoScript',
         'Send a message to a group of people',
     );
 
     // Allow domain model to be on standard pages.
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages(
-        'tx_messenger_domain_model_sentmessage',
-    );
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages(
-        'tx_messenger_domain_model_messagetemplate',
-    );
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages(
-        'tx_messenger_domain_model_messagelayout',
-    );
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_queue');
+    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
+    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
+    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
+    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_queue');
 
     $icons = [
         'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',
@@ -33,16 +41,12 @@ call_user_func(function () {
         'queue' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.png',
     ];
 
-    /** @var \TYPO3\CMS\Core\Imaging\IconRegistry $iconRegistry */
-    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
+    /** @var IconRegistry $iconRegistry */
+    $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
     foreach ($icons as $key => $icon) {
-        $iconRegistry->registerIcon(
-            'extensions-messenger-' . $key,
-            \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
-            [
-                'source' => $icon,
-            ],
-        );
+        $iconRegistry->registerIcon('extensions-messenger-' . $key, BitmapIconProvider::class, [
+            'source' => $icon,
+        ]);
     }
     unset($iconRegistry);
 
@@ -58,7 +62,7 @@ call_user_func(function () {
         $GLOBALS['TBE_MODULES'] = $beModules;
 
         // Module Dms
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule(
+        ExtensionManagementUtility::addModule(
             'messenger',
             '',
             '', // does not work for a main module before:tools
@@ -73,11 +77,9 @@ call_user_func(function () {
     }
 
     // Load some vidi BE modules
-    if (class_exists(\Fab\Vidi\Module\ModuleLoader::class)) {
+    if (class_exists(ModuleLoader::class)) {
         // Register newsletter BE module
-        $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class,
-        )->get('messenger');
+        $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('messenger');
 
         if (
             !isset($configuration['load_message_template_module']) ||
@@ -93,28 +95,25 @@ call_user_func(function () {
         }
         if (!isset($configuration['load_message_sent_module']) || (bool) $configuration['load_message_sent_module']) {
             \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage')
-                ->addMenuMassActionComponents([
-                    \Fab\Messenger\View\MenuItem\SendAgainMenuItem::class,
-                    \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                ])
+                ->addMenuMassActionComponents([SendAgainMenuItem::class, DividerMenuItem::class])
                 ->register();
         }
         if (!isset($configuration['load_message_queue_module']) || (bool) $configuration['load_message_queue_module']) {
             \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue')
-                ->addMenuMassActionComponents([
-                    \Fab\Messenger\View\MenuItem\DequeueMenuItem::class,
-                    \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                ])
+                ->addMenuMassActionComponents([DequeueMenuItem::class, DividerMenuItem::class])
                 ->register();
         }
 
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+        ExtensionUtility::registerModule(
             'Fab.Messenger',
             'messenger',
             'tx_messenger_m1',
             'top',
             [
-                \Fab\Messenger\Controller\AdminModuleController::class => 'index',
+                AdminModuleController::class => 'index,
+                show,
+                delete,
+                update,new',
             ],
             [
                 'access' => 'admin',
@@ -123,7 +122,7 @@ call_user_func(function () {
             ],
         );
 
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+        ExtensionUtility::registerModule(
             'Fab.messenger',
             'user', // Make media module a submodule of 'user'
             'm1',
@@ -148,46 +147,36 @@ call_user_func(function () {
 
                 ');
 
-        $loadNewsletterModule = (bool) \Fab\Messenger\Utility\ConfigurationUtility::getInstance()->get(
-            'load_newsletter_module',
-        );
+        $loadNewsletterModule = (bool) ConfigurationUtility::getInstance()->get('load_newsletter_module');
 
         if ($loadNewsletterModule) {
-            $recipientDataType = \Fab\Messenger\Utility\ConfigurationUtility::getInstance()->get('recipient_data_type');
+            $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
             // Register a new BE Module to send newsletter
-            /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-            $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Fab\Vidi\Module\ModuleLoader::class);
+            /** @var ModuleLoader $moduleLoader */
+            $moduleLoader = GeneralUtility::makeInstance(ModuleLoader::class);
             $moduleLoader
                 ->ignorePid(true)
                 ->setMainModule('web')
                 ->setDataType($recipientDataType)
                 ->setIcon('EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg')
                 ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/module_newsletter.xlf')
-                ->removeComponentFromDocHeader(\Fab\Vidi\View\Button\NewButton::class)
-                ->addMenuMassActionComponents([
-                    \Fab\Messenger\View\MenuItem\SendMenuItem::class,
-                    \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                ])
+                ->removeComponentFromDocHeader(NewButton::class)
+                ->addMenuMassActionComponents([SendMenuItem::class, DividerMenuItem::class])
                 ->ignorePid(true)
                 ->register();
 
             // Special case for fe_users to add a special menu
             if ($recipientDataType === 'fe_users') {
-                /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
-                $moduleLoader = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    \Fab\Vidi\Module\ModuleLoader::class,
-                );
+                /** @var ModuleLoader $moduleLoader */
+                $moduleLoader = GeneralUtility::makeInstance(ModuleLoader::class);
 
-                /** @var \Fab\Vidi\Module\ModuleLoader $moduleLoader */
+                /** @var ModuleLoader $moduleLoader */
                 $moduleLoader
                     ->setDataType('fe_users')
                     ->setModuleLanguageFile('LLL:EXT:vidi/Resources/Private/Language/fe_users.xlf')
                     ->setIcon('EXT:vidi/Resources/Public/Images/fe_users.svg')
-                    ->addMenuMassActionComponents([
-                        \Fab\Messenger\View\MenuItem\SendMenuItem::class,
-                        \Fab\Vidi\View\MenuItem\DividerMenuItem::class,
-                    ])
+                    ->addMenuMassActionComponents([SendMenuItem::class, DividerMenuItem::class])
                     ->register();
             }
         }

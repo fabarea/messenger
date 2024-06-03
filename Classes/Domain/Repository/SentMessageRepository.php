@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Repository;
 
 /*
@@ -8,45 +9,16 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Vidi\Tca\Tca;
 use RuntimeException;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class SentMessageRepository extends AbstractContentRepository
 {
     protected string $tableName = 'tx_messenger_domain_model_sentmessage';
 
-    public function add(array $message): int
-    {
-        $values = [];
-        $values['crdate'] = time();
-        $values['sent_time'] = time();
-
-        // Add uuid info is not available
-        if (empty($message['uuid'])) {
-            $message['uuid'] = Algorithms::generateUUID();
-        }
-
-        // Make sure fields are allowed for this table.
-        $fields = Tca::table($this->tableName)->getFields();
-        foreach ($message as $fieldName => $value) {
-            if (in_array($fieldName, $fields, true) && is_string($value)) {
-                $values[$fieldName] = $value;
-            }
-        }
-
-        $query = $this->getQueryBuilder();
-        $query->insert($this->tableName)->values($values);
-
-        $result = $query->execute();
-        if (!$result) {
-            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
-        }
-        return $result;
-    }
+    protected QueryInterface $constraints;
 
     public function findByUid(int $uid): array
     {
@@ -105,19 +77,67 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute();
     }
 
-    public function findByDemand(array $demand = [], $orderings = []): array
+    public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder
-            ->select('*')
-            ->from($this->tableName)
-            ->orderBy('uid', 'ASC');
+        $queryBuilder->select('*')->from($this->tableName);
 
-        // get inspiration from the other project to better handle the order and directions
+        $constraints = [];
+        foreach ($demand as $field => $value) {
+            $constraints[] = $queryBuilder
+                ->expr()
+                ->like(
+                    $field,
+                    $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                );
+        }
+        if ($constraints) {
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+        }
 
-        $queryBuilder->getRestrictions()->removeAll()->add($this->getDeletedRestriction());
+        # We handle the sorting
+        $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
-        $this->addDemandConstraints($demand, $queryBuilder);
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
         return $queryBuilder->execute()->fetchAllAssociative();
+    }
+
+    public function add(array $message): int
+    {
+        $values = [];
+        $values['crdate'] = time();
+        $values['sent_time'] = time();
+
+        // Add uuid info is not available
+        if (empty($message['uuid'])) {
+            $message['uuid'] = Algorithms::generateUUID();
+        }
+
+        // Make sure fields are allowed for this table.
+        $fields = Tca::table($this->tableName)->getFields();
+        foreach ($message as $fieldName => $value) {
+            if (in_array($fieldName, $fields, true) && is_string($value)) {
+                $values[$fieldName] = $value;
+            }
+        }
+
+        $query = $this->getQueryBuilder();
+        $query->insert($this->tableName)->values($values);
+
+        $result = $query->execute();
+        if (!$result) {
+            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
+        }
+        return $result;
+    }
+
+    public function removeByUid(int $uid): int
+    {
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where('uid = ' . $uid);
+        return $query->execute();
     }
 }

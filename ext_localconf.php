@@ -13,9 +13,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 defined('TYPO3') || die('Access denied.');
 
 call_user_func(function () {
-    $configuration = GeneralUtility::makeInstance(
-        ExtensionConfiguration::class,
-    )->get('messenger');
+    $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('messenger');
 
     if (!isset($configuration['autoload_typoscript']) || (bool) $configuration['autoload_typoscript']) {
         ExtensionManagementUtility::addTypoScript(
@@ -48,18 +46,23 @@ call_user_func(function () {
         'MessageDisplay',
         [
             MessageDisplayController::class => 'show',
-            AdminModuleController::class => 'index',
+            AdminModuleController::class => 'index,
+            show,
+            delete,
+            update,new',
         ],
         // non-cacheable actions
         [
             MessageDisplayController::class => 'show',
-            AdminModuleController::class => 'index',
+            AdminModuleController::class => 'index,
+            show,
+            delete,
+            update,new',
         ],
     );
 
     // eID for resolving Frontend URL in the context of the Backend.
-    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] =
-        Resolver::class . '::resolveUrl';
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = Resolver::class . '::resolveUrl';
 
     // Add caching framework garbage collection task
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][MessengerDequeueTask::class] = [
