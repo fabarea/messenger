@@ -7,9 +7,9 @@ use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
+use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Pagination\SlidingWindowPagination;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class AdminModuleController extends ActionController
@@ -36,11 +36,12 @@ class AdminModuleController extends ActionController
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
 
-        $pagination = new SlidingWindowPagination($paginator, $this->maximumLinks);
+        $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
             'paginator' => $paginator,
             'pagination' => $pagination,
+            'currentPage' => $currentPage,
             'sortBy' => key($orderings),
             'searchTerm' => $searchTerm,
             'itemsPerPages' => $items,
