@@ -2,7 +2,6 @@
 
 namespace Fab\Messenger\Controller;
 
-use Fab\Messenger\Domain\Model\SentMessage;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -93,29 +92,5 @@ class AdminModuleController extends ActionController
     {
         $this->sentMessageRepository->removeByUid($uid);
         $this->redirect('index');
-    }
-
-    public function showAction(int $uid): ResponseInterface
-    {
-        $message = $this->sentMessageRepository->findByUid($uid);
-        $this->view->assign('message', $message);
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
-    }
-
-    public function updateAction(int $uid, SentMessage $message): void
-    {
-        $editedMessage = $this->sentMessageRepository->findByUid($uid);
-
-        $this->sentMessageRepository->update($message);
-        $this->redirect('index');
-    }
-
-    public function newAction(): ResponseInterface
-    {
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 }
