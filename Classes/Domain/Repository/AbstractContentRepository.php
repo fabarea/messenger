@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractContentRepository implements SingletonInterface
 {
-    public function addDemandConstraints(array $demand, QueryBuilder $queryBuilder): void
+    protected function addDemandConstraints(array $demand, QueryBuilder $queryBuilder): void
     {
         $expressions = [];
         foreach ($demand as $fieldName => $value) {
@@ -35,12 +35,12 @@ abstract class AbstractContentRepository implements SingletonInterface
         }
     }
 
-    public function getDeletedRestriction(): DeletedRestriction
+    protected function getDeletedRestriction(): DeletedRestriction
     {
         return GeneralUtility::makeInstance(DeletedRestriction::class);
     }
 
-    public function getHiddenRestriction(): HiddenRestriction
+    protected function getHiddenRestriction(): HiddenRestriction
     {
         return GeneralUtility::makeInstance(HiddenRestriction::class);
     }
