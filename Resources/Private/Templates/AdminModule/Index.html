@@ -3,6 +3,8 @@
         xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
         xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
         xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+        xmlns:s="http://typo3.org/ns/StandApp/SitePackage/ViewHelpers"
+
 >
 <f:layout name="Default"/>
 <f:section name="main">
@@ -23,6 +25,7 @@
             </f:if>
 
             <div class="w-100">
+
                 <f:form
                         action="index"
                         arguments="{searchTerm: searchTerm, items: items}"
@@ -46,6 +49,7 @@
                                     name="items"
                                     prependOptionLabel="Please select number"
                                     value="{itemsPerPages}"
+                                    onclick="this.form.submit()"
                             >
                                 <f:form.select.option value="20">20</f:form.select.option>
 
@@ -57,9 +61,10 @@
                                 <f:form.select.option value="2000">2000</f:form.select.option>
                             </f:form.select>
                         </div>
+
                     </div>
-                    <button class="btn btn-secondary" type="submit">Search</button>
-                    <f:link.action action="index" class="btn btn-primary" controller="AdminModule"> Reset
+                    <button class="btn btn-primary" type="submit"><core:icon identifier="actions-search" size="small" /></button>
+                    <f:link.action action="index" class="btn btn-primary" controller="AdminModule"> <core:icon identifier="actions-refresh" size="small" />
                     </f:link.action>
                 </f:form>
             </div>
@@ -235,7 +240,7 @@
                                 <core:icon identifier="actions-document-open"/>
                             </a>
 
-                            <button class="btn btn-default" onclick="return top.TYPO3.Modal.confirm('Delete', 'Are you sure you want to delete {message.sender} ', top.TYPO3.Severity.warning)
+                            <button class="btn btn-default" onclick="return top.TYPO3.Modal.confirm('Delete', 'Are you sure to delete {message.sender} ?', top.TYPO3.Severity.warning)
 		.on('confirm.button.ok', function() {
 			window.location.href = '<f:uri.action action='delete' arguments='{uid: message.uid}'  controller='AdminModule'/>';
 			top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
@@ -256,48 +261,7 @@
     </div>
     <div class="m-4 container">
         <f:if condition="{pagination}">
-            <ul class="list-unstyled d-flex justify-content-center align-items-center">
-                <f:if condition="{pagination.previousPageNumber}">
-                    <li>
-                        <f:link.action
-                                arguments="{page: pagination.previousPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm}"
-                        >
-                            <core:icon identifier="actions-chevron-left" size="small"/>
-                        </f:link.action>
-                    </li>
-                </f:if>
-
-                <f:for as="page" each="{pagination.allPageNumbers}" iteration="iterator">
-                    <f:if condition="{iterator.isFirst} && {currentPage} > 1">
-                        <li>... &nbsp;</li>
-                    </f:if>
-
-                    <f:if condition="{iterator.index} >= {currentPage - 1} && {iterator.index} < {10 + currentPage - 1}">
-                        <li>
-                            <f:link.action
-                                    arguments="{page: page, sortBy: sortBy, direction: direction, searchTerm: searchTerm}"
-                                    class="{f:if(condition: '{currentPage} == {page}', then: 'active', else: '')}"
-                            >
-                                {page}
-                            </f:link.action
-                            >
-                            &nbsp;
-                        </li>
-                    </f:if>
-                    <f:if condition="{iterator.index} == {10 + currentPage - 1}">
-                        <li>...</li>
-                    </f:if>
-                </f:for>
-                <f:if condition="{pagination.nextPageNumber}">
-                    <li>
-                        <f:link.action
-                                arguments="{page: pagination.nextPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm}"
-                        >
-                            <core:icon identifier="actions-chevron-right" size="small"/>
-                        </f:link.action>
-                    </li>
-                </f:if>
-            </ul>
+            <f:render arguments="{_all}" partial="Navigation/Navigation" />
         </f:if>
     </div>
 </f:section>

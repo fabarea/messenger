@@ -41,6 +41,7 @@ class AdminModuleController extends ActionController
             'paginator' => $paginator,
             'pagination' => $pagination,
             'currentPage' => $currentPage,
+            'count' => count($messages),
             'sortBy' => key($orderings),
             'searchTerm' => $searchTerm,
             'itemsPerPages' => $items,
