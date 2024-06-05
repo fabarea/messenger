@@ -1,290 +1,320 @@
 <html
-  data-namespace-typo3-fluid="true"
-  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-  xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
-  xmlns:s="http://typo3.org/ns/StandApp/SitePackage/ViewHelpers"
+        data-namespace-typo3-fluid="true"
+        xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+        xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+
 >
-  <f:layout name="Default" />
-  <f:section name="main">
+<f:layout name="Default"/>
+<f:section name="main">
     <h1>
-      <f:translate key="backendUserListing" />
+        <f:translate key="backendUserListing"/>
     </h1>
-    <div class="panel panel-default">
-      <div class="my-4 w-100 d-flex">
-        <f:if condition="{sortBy} && {direction}">
-          <f:then>
-            <f:variable name="sortBy" value="{sortBy}" />
-            <f:variable name="direction" value="{direction}" />
-          </f:then>
-          <f:else>
-            <f:variable name="sortBy" value="crdate" />
-            <f:variable name="direction" value="asc" />
-          </f:else>
-        </f:if>
+    <div class="">
+        <div class="my-4 w-100 d-flex">
+            <f:if condition="{sortBy} && {direction}">
+                <f:then>
+                    <f:variable name="sortBy" value="{sortBy}"/>
+                    <f:variable name="direction" value="{direction}"/>
+                </f:then>
+                <f:else>
+                    <f:variable name="sortBy" value="crdate"/>
+                    <f:variable name="direction" value="asc"/>
+                </f:else>
+            </f:if>
 
-        <div class="w-100">
-          <f:form
-            action="index"
-            arguments="{searchTerm: searchTerm, items: items}"
-            class="d-flex gap-2 mx-2 my-3"
-            controller="AdminModule"
-            method="post"
-          >
-            <div class="w-100 d-flex gap-3">
-              <div class="w-75">
-                <f:form.textfield
-                  class="form-control text-black"
-                  name="searchTerm"
-                  placeholder="Search..."
-                  value="{searchTerm}"
-                />
-              </div>
-              <div class="w-25">
-                <f:form.select
-                  class="form-control"
-                  id="itemsPerPage"
-                  name="items"
-                  prependOptionLabel="Please select number"
-                  value="{itemsPerPages}"
-                  onclick="this.form.submit()"
+            <div class="w-100">
+                <f:form
+                        action="index"
+                        arguments="{searchTerm: searchTerm, items: items}"
+                        class="d-flex gap-2 mx-2 my-3"
+                        controller="AdminModule"
+                        method="post"
                 >
-                  <f:form.select.option value="20">20</f:form.select.option>
+                    <div class="w-100 d-flex gap-3">
 
-                  <f:form.select.option value="50">50</f:form.select.option>
-                  <f:form.select.option value="100">100</f:form.select.option>
-                  <f:form.select.option value="200">200</f:form.select.option>
-                  <f:form.select.option value="500">500</f:form.select.option>
-                  <f:form.select.option value="1000">1000</f:form.select.option>
-                  <f:form.select.option value="2000">2000</f:form.select.option>
-                </f:form.select>
-              </div>
+                        <div class="w-75">
+                            <f:form.textfield
+                                    class="form-control text-black"
+                                    name="searchTerm"
+                                    placeholder="Search..."
+                                    value="{searchTerm}"
+                            />
+                        </div>
+                        <button class="btn btn-primary mb-2" type="submit">
+                            <core:icon identifier="actions-search" size="small"/>
+                        </button>
+                    </div>
+
+                    <div class="w-25 text-right">
+                        <f:form.select
+                                class=" w-25 h-100 mt-10"
+                                id="itemsPerPage"
+                                name="items"
+                                onclick="this.form.submit()"
+                                prependOptionLabel="Please select number"
+                                value="{itemsPerPages}"
+                        >
+                            <f:form.select.option value="20">20</f:form.select.option>
+
+                            <f:form.select.option value="50">50</f:form.select.option>
+                            <f:form.select.option value="100">100</f:form.select.option>
+                            <f:form.select.option value="200">200</f:form.select.option>
+                            <f:form.select.option value="500">500</f:form.select.option>
+                            <f:form.select.option value="1000">1000</f:form.select.option>
+                            <f:form.select.option value="2000">2000</f:form.select.option>
+                        </f:form.select>
+                        <f:link.action action="index" class="btn btn-primary mb-2" controller="AdminModule">
+                            <core:icon identifier="actions-refresh" size="small"/>
+                        </f:link.action>
+                    </div>
+
+                </f:form>
             </div>
-            <button class="btn btn-primary" type="submit">
-              <core:icon identifier="actions-search" size="small" />
-            </button>
-            <f:link.action action="index" class="btn btn-primary" controller="AdminModule">
-              <core:icon identifier="actions-refresh" size="small" />
-            </f:link.action>
-          </f:form>
         </div>
-      </div>
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Sender</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'sender', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'sender\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'sender', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'sender\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Recipients</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'recipient', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'recipient\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'recipient', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'recipient\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Subject</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'subject', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'subject\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'subject', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'subject\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Sent time</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'sent_time', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'sent_time\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'sent_time', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'sent_time\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Mailing name</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'mailing_name', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'mailing_name\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'mailing_name', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'mailing_name\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th scope="col">
-              <div class="d-flex">
-                <div class="my-2">Uid</div>
-                <div class="d-flex flex-column">
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'uid', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'uid\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-up" size="small" />
-                  </f:link.action>
-                  <f:link.action
-                    action="index"
-                    arguments="{sortBy: 'uid', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
-                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'uid\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
-                    controller="AdminModule"
-                    id="sortByDesc"
-                  >
-                    <core:icon identifier="actions-caret-down" size="small" />
-                  </f:link.action>
-                </div>
-              </div>
-            </th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
+        <table class="table table-striped table-hover">
+            <thead>
             <tr>
-              <td>{message.sender}</td>
-              <td>{message.recipient}</td>
-              <td>{message.subject}</td>
-              <td>{message.sent_time}</td>
-              <td>{message.mailing_name}</td>
-              <td>{message.uid}</td>
-              <td>
-                <div class="d-flex gap-3">
-                  <a
-                    class="btn btn-default"
-                    href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_sentmessage')}"
-                  >
-                    <core:icon identifier="actions-document-open" />
-                  </a>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'sender', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'sender\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'sender', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'sender\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender"/>
+                        </div>
 
-                  <f:variable
-                    name="deleteUrl"
-                    value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_sentmessage][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
-                  />
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'recipient', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'recipient\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'recipient', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'recipient\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
 
-                  <button
-                    class="btn btn-default"
-                    data-delete-url="{deleteUrl}"
-                    data-name="{message.sender}"
-                    onclick="return deleteItem(this)"
-                  >
-                    <core:icon identifier="actions-delete" size="small" />
-                  </button>
-                </div>
-              </td>
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient"/>
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'subject', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'subject\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'subject', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'subject\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject"/>
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'sent_time', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'sent_time\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'sent_time', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'sent_time\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
+
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sent_time"/>
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'mailing_name', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'mailing_name\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'mailing_name', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'mailing_name\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
+
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name"/>
+                        </div>
+                    </div>
+                </th>
+                <th scope="col">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column">
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'uid', direction: 'DESC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == \'uid\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-up" size="small"/>
+                            </f:link.action>
+                            <f:link.action
+                                    action="index"
+                                    arguments="{sortBy: 'uid', direction: 'ASC', searchTerm: searchTerm,page: currentPage}"
+                                    class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == \'uid\'', then: 'text-black', else: 'text-black-50')} text-decoration-none rounded"
+                                    controller="AdminModule"
+                                    id="sortByDesc"
+                            >
+                                <core:icon identifier="actions-caret-down" size="small"/>
+                            </f:link.action>
+                        </div>
+
+                        <div class="my-2">
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:uid"/>
+                        </div>
+                    </div>
+                </th>
+                <th>
+                    <f:translate
+                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:action"/>
+                </th>
             </tr>
-          </f:for>
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+            <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
+                <tr>
+                    <td>{message.sender}</td>
+                    <td>{message.recipient}</td>
+                    <td>{message.subject}</td>
+                    <td>{message.sent_time}</td>
+                    <td>{message.mailing_name}</td>
+                    <td>{message.uid}</td>
+                    <td>
+                        <div class="d-flex gap-3">
+                            <a
+                                    class="btn btn-default"
+                                    href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_sentmessage')}"
+                            >
+                                <core:icon identifier="actions-document-open"/>
+                            </a>
+
+                            <f:variable
+                                    name="deleteUrl"
+                                    value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_sentmessage][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
+                            />
+
+                            <button
+                                    class="btn btn-default"
+                                    data-delete-url="{deleteUrl}"
+                                    data-name="{message.sender}"
+                                    onclick="return deleteItem(this)"
+                            >
+                                <core:icon identifier="actions-delete" size="small"/>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </f:for>
+            </tbody>
+        </table>
     </div>
     <div class="m-4 container">
-      <f:if condition="{pagination}">
-        <f:render arguments="{_all}" partial="Navigation/Navigation" />
-      </f:if>
+        <f:if condition="{pagination}">
+            <f:render arguments="{_all}" partial="Navigation/Navigation"/>
+        </f:if>
     </div>
 
     <script>
-      function deleteItem(element) {
-        console.log(element.dataset.name);
-        return top.TYPO3.Modal.confirm(
-          'Delete',
-          'Are you sure to delete this message from ' + element.dataset.name + ' ?',
-          top.TYPO3.Severity.warning,
-        )
-          .on('confirm.button.ok', function () {
-            window.location.href = element.dataset.deleteUrl;
-            top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-          })
-          .on('confirm.button.cancel', function () {
-            top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-          });
-      }
+        function deleteItem(element) {
+            console.log(element.dataset.name);
+            return top.TYPO3.Modal.confirm(
+                'Delete',
+                'Are you sure to delete this message from ' + element.dataset.name + ' ?',
+                top.TYPO3.Severity.warning,
+            )
+                .on('confirm.button.ok', function () {
+                    window.location.href = element.dataset.deleteUrl;
+                    top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+                })
+                .on('confirm.button.cancel', function () {
+                    top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+                });
+        }
     </script>
-  </f:section>
+</f:section>
 </html>
