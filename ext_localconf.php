@@ -46,18 +46,12 @@ call_user_func(function () {
         'MessageDisplay',
         [
             MessageDisplayController::class => 'show',
-            AdminModuleController::class => 'index,
-            show,
-            delete,
-            update,new',
+            AdminModuleController::class => 'index',
         ],
         // non-cacheable actions
         [
             MessageDisplayController::class => 'show',
-            AdminModuleController::class => 'index,
-            show,
-            delete,
-            update,new',
+            AdminModuleController::class => 'index',
         ],
     );
 

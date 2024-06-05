@@ -118,7 +118,7 @@ call_user_func(function () {
             [
                 'access' => 'admin',
                 'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
-                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/locallang_mod.xlf',
+                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
             ],
         );
 

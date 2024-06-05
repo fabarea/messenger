@@ -17,7 +17,16 @@ class AdminModuleController extends ActionController
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
-    private $allowedSortBy = ['uid', 'crdate', 'tstamp', 'sender', 'subject', 'mailing_name', 'recipient', 'sent_time'];
+    private array $allowedSortBy = [
+        'uid',
+        'crdate',
+        'tstamp',
+        'sender',
+        'subject',
+        'mailing_name',
+        'recipient',
+        'sent_time',
+    ];
 
     public function __construct()
     {
@@ -87,11 +96,5 @@ class AdminModuleController extends ActionController
             ];
         }
         return $demand;
-    }
-
-    public function deleteAction(int $uid): void
-    {
-        $this->sentMessageRepository->removeByUid($uid);
-        $this->redirect('index');
     }
 }
