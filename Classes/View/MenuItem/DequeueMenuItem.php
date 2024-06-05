@@ -27,11 +27,10 @@ class DequeueMenuItem extends AbstractComponentView
     protected PageRenderer $pageRenderer;
 
     public function __construct(
-        IconFactory $iconFactory,
-        PageRenderer $pageRenderer
+
     ) {
-        $this->iconFactory = $iconFactory;
-        $this->pageRenderer = $pageRenderer;
+        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
     }
 
     /**

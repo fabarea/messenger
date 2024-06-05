@@ -3,3 +3,8 @@ services:
     autowire: true
     autoconfigure: true
     public: true
+
+  Fab\Messenger\Controller\AdminModuleController:
+    tags: [ 'backend.controller' ]
+
+

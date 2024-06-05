@@ -1,11 +1,16 @@
 <?php
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
+
+use Fab\Vidi\Grid\ButtonGroupRenderer;
+use Fab\Vidi\Grid\CheckBoxRenderer;
+
+if (!defined('TYPO3')) {
+    die('Access denied.');
 }
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
+        'title' =>
+            'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:message_layout',
         'label' => 'qualifier',
         'default_sortby' => 'ORDER BY qualifier ASC',
         'tstamp' => 'tstamp',
@@ -16,7 +21,7 @@ return [
         'transOrigDiffSourceField' => 'l10n_diffsource',
         'delete' => 'deleted',
         'enablecolumns' => [
-            'disabled' => 'hidden'
+            'disabled' => 'hidden',
         ],
         'searchFields' => 'qualifier, content,',
         'typeicon_classes' => [
@@ -36,11 +41,10 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [
-                    ['', 0],
-                ],
+                'items' => [['', 0]],
                 'foreign_table' => 'tx_messenger_domain_model_messagelayout',
-                'foreign_table_where' => 'AND tx_messenger_domain_model_messagelayout.pid=###CURRENT_PID### AND tx_messenger_domain_model_messagelayout.sys_language_uid IN (-1,0)',
+                'foreign_table_where' =>
+                    'AND tx_messenger_domain_model_messagelayout.pid=###CURRENT_PID### AND tx_messenger_domain_model_messagelayout.sys_language_uid IN (-1,0)',
             ],
         ],
         'l10n_diffsource' => [
@@ -58,15 +62,17 @@ return [
         'qualifier' => [
             'l10n_mode' => 'exclude',
             'l10n_display' => 'defaultAsReadonly',
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:qualifier',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:qualifier',
             'config' => [
                 'type' => 'input',
                 'size' => 100,
-                'eval' => 'trim,unique'
+                'eval' => 'trim,unique',
             ],
         ],
         'content' => [
-            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:content',
+            'label' =>
+                'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf:content',
             'config' => [
                 'type' => 'text',
                 'eval' => 'trim',
@@ -75,30 +81,28 @@ return [
 {BODY}
 
 Footer to be replaced...
-'
+',
             ],
         ],
     ],
     'grid' => [
-        'facets' => [
-            'uid',
-            'qualifier',
-        ],
+        'facets' => ['uid', 'qualifier'],
         'columns' => [
             '__checkbox' => [
-                'renderer' => \Fab\Vidi\Grid\CheckBoxRenderer::class,
+                'renderer' => CheckBoxRenderer::class,
             ],
             'uid' => [
-                'visible' => FALSE,
-                'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
+                'visible' => false,
+                'label' =>
+                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
                 'width' => '5px',
             ],
             'qualifier' => [
-                'editable' => TRUE,
+                'editable' => true,
             ],
             'content' => [],
             '__buttons' => [
-                'renderer' => \Fab\Vidi\Grid\ButtonGroupRenderer::class,
+                'renderer' => ButtonGroupRenderer::class,
             ],
         ],
     ],
