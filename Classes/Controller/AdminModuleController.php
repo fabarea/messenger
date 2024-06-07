@@ -3,6 +3,8 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Utility\TcaFieldsUtility;
+use Fab\Vidi\Tca\Tca;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
@@ -10,7 +12,9 @@ use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
+// todo SendMessageModuleController to be renamed
 class AdminModuleController extends ActionController
 {
     protected SentMessageRepository $sentMessageRepository;
@@ -43,10 +47,11 @@ class AdminModuleController extends ActionController
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
-
+        $fields = TcaFieldsUtility::getFields();
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
+            'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
             'currentPage' => $currentPage,
