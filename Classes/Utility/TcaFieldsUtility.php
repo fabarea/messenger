@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Utility;
 
 /*
@@ -9,8 +10,6 @@ namespace Fab\Messenger\Utility;
  */
 
 use Fab\Vidi\Tca\Tca;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -19,16 +18,22 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TcaFieldsUtility
 {
-    public static function getFields(): array
+    public static function getFields($displayFields = []): array
     {
         // Fetch all available fields first.
+        $arrayFiels = [];
         $fields = array_keys($GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['columns']);
+        // each column must be array with 'label' ,'name','selected','desabled' and 'pseudo' keys
+        $fields = self::filterByBackendUser($fields);
+        foreach ($fields as $field) {
+            $arrayFiels[$field] = [
+                'label' => $GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['columns'][$field]['label'],
+                'name' => $field,
+                'selected' => in_array($field, $displayFields, true),
+            ];
+        }
 
-        // Then remove the not allowed.
-        //        $fields = self::filterByBackendUser($fields);
-        //        $fields = self::filterByExcludedFields($fields);
-
-        return $fields;
+        return $arrayFiels;
     }
 
     protected static function filterByBackendUser($fields): array
@@ -43,26 +48,31 @@ class TcaFieldsUtility
         return $fields;
     }
 
+    protected static function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
     protected static function hasAccess(string $fieldName): bool
     {
         $hasAccess = true;
         if (
-            $this->isBackendMode() &&
-            Tca::table($this->tableName)->hasAccess() &&
-            isset($this->tca['exclude']) &&
-            $this->tca['exclude']
+            self::isBackendMode() &&
+            Tca::table('tx_messenger_domain_model_sentmessage')->hasAccess() &&
+            isset($GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['columns'][$fieldName]['exclude']) &&
+            $GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['columns'][$fieldName]['exclude']
         ) {
-            $hasAccess = $this->getBackendUser()->check(
+            $hasAccess = self::getBackendUser()->check(
                 'non_exclude_fields',
-                $this->tableName . ':' . $this->fieldName,
+                'tx_messenger_domain_model_sentmessage' . ':' . $fieldName,
             );
         }
         return $hasAccess;
     }
 
-    protected static function getBackendUser(): BackendUserAuthentication
+    private static function isBackendMode(): bool
     {
-        return $GLOBALS['BE_USER'];
+        return TYPO3_MODE === 'BE';
     }
 
     /**
@@ -74,7 +84,7 @@ class TcaFieldsUtility
     protected static function filterByExcludedFields($fields): array
     {
         // Unset excluded fields.
-        foreach ($this->getExcludedFields() as $excludedField) {
+        foreach (self::getExcludedFields() as $excludedField) {
             if (isset($fields[$excludedField])) {
                 unset($fields[$excludedField]);
             }
@@ -82,8 +92,26 @@ class TcaFieldsUtility
 
         return $fields;
     }
-    //    protected static function getIncludedFields(): array
-    //    {
-    //        return empty($this->tca['included_fields']) ? [] : GeneralUtility::trimExplode(',', $this->tca['included_fields'], true);
-    //    }
+
+    private static function getExcludedFields()
+    {
+        return empty($GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['excluded_fields'])
+            ? []
+            : GeneralUtility::trimExplode(
+                ',',
+                $GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['excluded_fields'],
+                true,
+            );
+    }
+
+    protected static function getIncludedFields(): array
+    {
+        return empty($GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['included_fields'])
+            ? []
+            : GeneralUtility::trimExplode(
+                ',',
+                $GLOBALS['TCA']['tx_messenger_domain_model_sentmessage']['included_fields'],
+                true,
+            );
+    }
 }

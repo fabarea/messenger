@@ -110,10 +110,7 @@ call_user_func(function () {
             'tx_messenger_m1',
             'top',
             [
-                AdminModuleController::class => 'index,
-                show,
-                delete,
-                update,new',
+                AdminModuleController::class => 'index',
             ],
             [
                 'access' => 'admin',

@@ -4,7 +4,6 @@ namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Utility\TcaFieldsUtility;
-use Fab\Vidi\Tca\Tca;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
@@ -40,14 +39,18 @@ class AdminModuleController extends ActionController
 
     public function indexAction(): ResponseInterface
     {
+        if ($this->request->hasArgument('SentMessage')) {
+            DebuggerUtility::var_dump($this->request->hasArgument('SentMessage'));
+        }
+
         $orderings = $this->getOrderings();
         $messages = $this->sentMessageRepository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
-
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields();
+
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,

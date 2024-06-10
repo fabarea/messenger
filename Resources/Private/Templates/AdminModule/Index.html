@@ -25,6 +25,11 @@
             </f:if>
 
             <div class="w-100">
+
+                <div>
+                    <f:render arguments="{_all}" partial="Columns"/>
+                </div>
+
                 <f:form
                         action="index"
                         arguments="{searchTerm: searchTerm, items: items}"
