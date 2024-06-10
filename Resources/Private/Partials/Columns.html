@@ -1,33 +1,36 @@
+{namespace m=Fab\Messenger\ViewHelpers}
 <div class="module-docheader-bar-column-right">
-
-    <div aria-label="" class="btn-toolbar " role="toolbar">
-        <div class="dropdown dropdown-fields pull-right">
-            <a class="btn btn-default btn-sm dropdown-toggle" data-bs-toggle="dropdown" href="#"
-               style="position: relative; bottom: 1px"></a>
-            <ul class="dropdown-menu " style="max-height: 800px; overflow-y: scroll;">
-                <f:for as="field" each="{fields}">
-                    <li class="checkbox">
-                        <f:if condition="{field.name}}">
-                            <label>
-                                <f:if condition="{field.selected}">
-                                    <f:then>
-                                        <input checked="checked" class="check-visible-toggle" name="selectedFields[] "
-                                               type="checkbox"
-                                               value="{field.name}"/>
-                                    </f:then>
-                                    <f:else>
-                                        <input class="check-visible-toggle" name="selectedFields[]" type="checkbox"
-                                               value="{field.name}"/>
-                                    </f:else>
-                                </f:if>
-                                <f:format.raw>
-                                    {field.name}
-                                </f:format.raw>
-                            </label>
-                        </f:if>
-                    </li>
-                </f:for>
-            </ul>
-        </div>
+  <f:form action="index" controller="AdminModule" method="post">
+    <div aria-label="" class="btn-toolbar" role="toolbar">
+      <div class="dropdown dropdown-fields pull-right">
+        <a
+          class="btn btn-default btn-sm dropdown-toggle"
+          data-bs-toggle="dropdown"
+          href="#"
+          style="position: relative; bottom: 1px"
+        ></a>
+        <ul class="dropdown-menu" style="max-height: 800px; overflow-y: scroll">
+          <f:for each="{fields}" as="field">
+            <li class="checkbox">
+              <label>
+                <f:variable
+                  name="isChecked"
+                  value="{m:inArray(haystack:'{selectedFields}', needle:'{field.name}', then:'1', else:'0')}"
+                />
+                {isChecked}
+                <f:form.checkbox
+                  checked="{f:if(condition:'{isChecked}' , then:'true' , else:'false')}"
+                  additionalAttributes="{onchange: 'this.form.submit()'}"
+                  class="check-visible-toggle"
+                  name="selectedFields[] "
+                  value="{field.name}"
+                />
+                <m:sentMessage.label field="{field.name}"></m:sentMessage.label>
+              </label>
+            </li>
+          </f:for>
+        </ul>
+      </div>
     </div>
+  </f:form>
 </div>

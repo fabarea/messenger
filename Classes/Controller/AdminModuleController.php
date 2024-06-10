@@ -39,10 +39,6 @@ class AdminModuleController extends ActionController
 
     public function indexAction(): ResponseInterface
     {
-        if ($this->request->hasArgument('SentMessage')) {
-            DebuggerUtility::var_dump($this->request->hasArgument('SentMessage'));
-        }
-
         $orderings = $this->getOrderings();
         $messages = $this->sentMessageRepository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
@@ -54,6 +50,9 @@ class AdminModuleController extends ActionController
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
+            'selectedFields' => $this->request->hasArgument('selectedFields')
+                ? $this->request->getArgument('selectedFields')
+                : [],
             'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
