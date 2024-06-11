@@ -12,8 +12,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-// todo SendMessageModuleController to be renamed
-class AdminModuleController extends ActionController
+class SendMessageModuleController extends ActionController
 {
     protected SentMessageRepository $sentMessageRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
@@ -51,7 +50,7 @@ class AdminModuleController extends ActionController
             'messages' => $messages,
             'selectedFields' => $this->request->hasArgument('selectedFields')
                 ? $this->request->getArgument('selectedFields')
-                : ['sender', 'subject', 'mailing_name', 'recipient', 'sent_time'],
+                : ['sender', 'subject', 'context', 'recipient', 'sent_time'],
             'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,

@@ -3,7 +3,7 @@
         xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
         xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
         xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-
+        
 
 >
 <f:layout name="Default"/>
@@ -24,13 +24,13 @@
                 </f:else>
             </f:if>
             <div class="w-100">
-                <div class="pull-right mt-4 mx-2 my-3">
+                <div class="pull-right  mx-2 my-4">
                     <f:render arguments="{_all}" partial="Columns"/>
                 </div>
                 <f:form action="index"
                         arguments="{searchTerm: searchTerm, items: items}"
                         class="d-flex gap-2 mx-2 my-3"
-                        controller="AdminModule"
+                        controller="SendMessageModule"
                         method="post">
                     <div class="w-100 d-flex gap-3">
                         <div class="w-75">
@@ -63,7 +63,7 @@
                             <f:form.select.option value="1000">1000</f:form.select.option>
                             <f:form.select.option value="2000">2000</f:form.select.option>
                         </f:form.select>
-                        <f:link.action action="index" class="btn btn-primary mb-2" controller="AdminModule">
+                        <f:link.action action="index" class="btn btn-primary mb-2" controller="SendMessageModule">
                             <core:icon identifier="actions-refresh" size="small"/>
                         </f:link.action>
                     </div>
@@ -84,7 +84,7 @@
                                             action="index"
                                             arguments="{sortBy: '{selectedField}', direction: 'DESC', searchTerm: searchTerm,page: currentPage,items: itemsPerPages,selectedFields: selectedFields}"
                                             class="{f:if(condition: '{direction} == \'ASC\' && {sortBy} == {selectedField}', then: 'text-default', else: 'text-black-50')} text-decoration-none rounded"
-                                            controller="AdminModule"
+                                            controller="SendMessageModule"
                                             id="sortByDesc"
 
                                     >
@@ -94,7 +94,7 @@
                                             action="index"
                                             arguments="{sortBy: '{selectedField}', direction: 'ASC', searchTerm: searchTerm,page: currentPage,items: itemsPerPages,selectedFields: selectedFields}"
                                             class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == {selectedField}', then: 'text-default', else: 'text-black-50')} text-decoration-none rounded"
-                                            controller="AdminModule"
+                                            controller="SendMessageModule"
                                             id="sortByAsc"
                                     >
                                         <core:icon identifier="actions-caret-down" size="small"/>
