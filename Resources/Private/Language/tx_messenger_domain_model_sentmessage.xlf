@@ -15,6 +15,9 @@
             <trans-unit id="uid">
                 <source>Uid</source>
             </trans-unit>
+            <trans-unit id="uuid">
+                <source>Uuid</source>
+            </trans-unit>
             <trans-unit id="sent_message">
                 <source>Sent Message</source>
             </trans-unit>

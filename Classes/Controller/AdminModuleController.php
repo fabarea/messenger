@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 // todo SendMessageModuleController to be renamed
 class AdminModuleController extends ActionController
@@ -52,7 +51,7 @@ class AdminModuleController extends ActionController
             'messages' => $messages,
             'selectedFields' => $this->request->hasArgument('selectedFields')
                 ? $this->request->getArgument('selectedFields')
-                : [],
+                : ['sender', 'subject', 'mailing_name', 'recipient', 'sent_time'],
             'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
