@@ -37,12 +37,4 @@ class SentMessage extends AbstractEntity
     {
         $this->sentTime = $sentTime;
     }
-
-    public function toArray(): array
-    {
-        return [
-            'sentTime' => $this->sentTime,
-            'uid' => $this->uid,
-        ];
-    }
 }

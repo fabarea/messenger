@@ -23,18 +23,8 @@ class TcaFieldsUtility
     public static function getFields(): array
     {
         // Fetch all available fields first.
-        $arrayFields = [];
         $fields = array_keys($GLOBALS['TCA'][self::$tableName]['columns']);
-        // each column must be array with 'label' ,'name','selected','desabled' and 'pseudo' keys
-        $fields = self::filterByBackendUser($fields);
-        foreach ($fields as $field) {
-            $arrayFields[$field] = [
-                'label' => $GLOBALS['TCA'][self::$tableName]['columns'][$field]['label'],
-                'name' => $field,
-            ];
-        }
-
-        return $arrayFields;
+        return self::filterByBackendUser($fields);
     }
 
     protected static function filterByBackendUser($fields): array

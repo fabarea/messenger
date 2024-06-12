@@ -3,6 +3,7 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -18,6 +19,9 @@ class SendMessageModuleController extends ActionController
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
+
+    protected array $defaultFields = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
+
     private array $allowedSortBy = [
         'uid',
         'crdate',
@@ -48,9 +52,7 @@ class SendMessageModuleController extends ActionController
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
-            'selectedFields' => $this->request->hasArgument('selectedFields')
-                ? $this->request->getArgument('selectedFields')
-                : ['sender', 'subject', 'context', 'recipient', 'sent_time'],
+            'selectedFields' => $this->computeVisibleColumns(),
             'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
@@ -85,6 +87,18 @@ class SendMessageModuleController extends ActionController
         return [
             $sortBy => $defaultDirection,
         ];
+    }
+
+    protected function computeVisibleColumns(): array
+    {
+        $selectedFields = BackendUserPreferenceService::getInstance()->get('selectedFields') ?? $this->defaultFields;
+
+        if ($this->request->hasArgument('selectedFields')) {
+            $selectedFields = $this->request->getArgument('selectedFields');
+            BackendUserPreferenceService::getInstance()->set('selectedFields', $selectedFields);
+        }
+
+        return $selectedFields;
     }
 
     protected function getDemand(): array
