@@ -12,7 +12,7 @@ return [
         //        'labels' => 'LLL:EXT:messenger/Resources/Private/Language/Module/locallang_mod.xlf',
         //        'extensionName' => 'Messenger',
         //        'controllerActions' => [
-        //            AdminModuleController::class => ['index'],
+        //            SendMessageModuleController::class => ['index'],
         //        ],
         //    ],
     ];

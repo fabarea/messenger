@@ -129,7 +129,7 @@ return [
             ],
         ],
         'uuid' => [
-            'label' => 'UUID',
+            'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:uuid',
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,

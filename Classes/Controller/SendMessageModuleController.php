@@ -3,6 +3,8 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Service\BackendUserPreferenceService;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
@@ -11,12 +13,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-class AdminModuleController extends ActionController
+class SendMessageModuleController extends ActionController
 {
     protected SentMessageRepository $sentMessageRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
+
+    protected array $defaultFields = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
+
     private array $allowedSortBy = [
         'uid',
         'crdate',
@@ -39,14 +44,16 @@ class AdminModuleController extends ActionController
         $orderings = $this->getOrderings();
         $messages = $this->sentMessageRepository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
-
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
+        $fields = TcaFieldsUtility::getFields();
 
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
+            'selectedFields' => $this->computeVisibleColumns(),
+            'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
             'currentPage' => $currentPage,
@@ -80,6 +87,18 @@ class AdminModuleController extends ActionController
         return [
             $sortBy => $defaultDirection,
         ];
+    }
+
+    protected function computeVisibleColumns(): array
+    {
+        $selectedFields = BackendUserPreferenceService::getInstance()->get('selectedFields') ?? $this->defaultFields;
+
+        if ($this->request->hasArgument('selectedFields')) {
+            $selectedFields = $this->request->getArgument('selectedFields');
+            BackendUserPreferenceService::getInstance()->set('selectedFields', $selectedFields);
+        }
+
+        return $selectedFields;
     }
 
     protected function getDemand(): array

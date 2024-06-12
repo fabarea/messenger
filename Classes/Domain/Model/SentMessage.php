@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Model;
 
 /*
@@ -15,7 +16,6 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
  */
 class SentMessage extends AbstractEntity
 {
-
     /**
      * @var int
      */
@@ -37,5 +37,4 @@ class SentMessage extends AbstractEntity
     {
         $this->sentTime = $sentTime;
     }
-
 }

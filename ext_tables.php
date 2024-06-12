@@ -1,6 +1,6 @@
 <?php
 
-use Fab\Messenger\Controller\AdminModuleController;
+use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
@@ -110,10 +110,7 @@ call_user_func(function () {
             'tx_messenger_m1',
             'top',
             [
-                AdminModuleController::class => 'index,
-                show,
-                delete,
-                update,new',
+                SendMessageModuleController::class => 'index',
             ],
             [
                 'access' => 'admin',
