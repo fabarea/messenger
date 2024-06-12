@@ -1,5 +1,5 @@
-<div class="row">
-    <div class="col text-left">
+<div class="w-100">
+    <div class="pull-left">
         <f:variable name="index" value="{currentPage - 1}"></f:variable>
         <f:variable name="startIndex" value="{index*itemsPerPages + 1}"></f:variable>
         <f:variable name="endIndex" value="{currentPage * itemsPerPages}"/>
@@ -11,12 +11,12 @@
         {endIndex}
         <f:translate
                 key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:of"/>
-        <f:format.number decimalSeparator="," decimals="1" thousandsSeparator="."> {count}</f:format.number>
+        <f:format.number decimals="0"> {count}</f:format.number>
         <f:translate
                 key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:items"/>
     </div>
-    <div class="col text-right">
-        <ul class="list-unstyled d-flex justify-content-center align-items-center">
+    <div class="pull-right">
+        <ul class="list-unstyled d-flex ">
             <f:if condition="{pagination.previousPageNumber}">
                 <li>
                     <f:link.action

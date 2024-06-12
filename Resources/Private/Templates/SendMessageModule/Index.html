@@ -11,66 +11,61 @@
     <h1>
         <f:translate key="backendUserListing"/>
     </h1>
-    <div class="">
-        <div class="my-4 w-100 d-flex">
-            <f:if condition="{sortBy} && {direction}">
-                <f:then>
-                    <f:variable name="sortBy" value="{sortBy}"/>
-                    <f:variable name="direction" value="{direction}"/>
-                </f:then>
-                <f:else>
-                    <f:variable name="sortBy" value="crdate"/>
-                    <f:variable name="direction" value="asc"/>
-                </f:else>
-            </f:if>
-            <div class="w-100">
-                <div class="pull-right  mx-2 my-4">
-                    <f:render arguments="{_all}" partial="Columns"/>
-                </div>
-                <f:form action="index"
-                        arguments="{searchTerm: searchTerm, items: items}"
-                        class="d-flex gap-2 mx-2 my-3"
-                        controller="SendMessageModule"
-                        method="post">
-                    <div class="w-100 d-flex gap-3">
-                        <div class="w-75">
-                            <f:form.textfield
-                                    class="form-control text-black"
-                                    name="searchTerm"
-                                    placeholder="Search..."
-                                    value="{searchTerm}"
-                            />
-                        </div>
-                        <button class="btn btn-primary mb-2" type="submit">
-                            <core:icon identifier="actions-search" size="small"/>
-                        </button>
-                    </div>
 
-                    <div class="w-25 text-right">
-                        <f:form.select
-                                class=" w-25 h-100 mt-10"
-                                id="itemsPerPage"
-                                name="items"
-                                onclick="this.form.submit()"
-                                prependOptionLabel="Please select number"
-                                value="{itemsPerPages}"
-                        >
-                            <f:form.select.option value="20">20</f:form.select.option>
-                            <f:form.select.option value="50">50</f:form.select.option>
-                            <f:form.select.option value="100">100</f:form.select.option>
-                            <f:form.select.option value="200">200</f:form.select.option>
-                            <f:form.select.option value="500">500</f:form.select.option>
-                            <f:form.select.option value="1000">1000</f:form.select.option>
-                            <f:form.select.option value="2000">2000</f:form.select.option>
-                        </f:form.select>
-                        <f:link.action action="index" class="btn btn-primary mb-2" controller="SendMessageModule">
-                            <core:icon identifier="actions-refresh" size="small"/>
-                        </f:link.action>
-                    </div>
+    <div class="w-100">
+        <f:if condition="{sortBy} && {direction}">
+            <f:then>
+                <f:variable name="sortBy" value="{sortBy}"/>
+                <f:variable name="direction" value="{direction}"/>
+            </f:then>
+            <f:else>
+                <f:variable name="sortBy" value="crdate"/>
+                <f:variable name="direction" value="asc"/>
+            </f:else>
+        </f:if>
 
-                </f:form>
-            </div>
+        <div class="pull-right">
+            <f:render arguments="{_all}" partial="Columns"/>
         </div>
+        <f:form action="index"
+                arguments="{searchTerm: searchTerm, items: items}"
+                class="w-100 row row-top"
+                controller="SendMessageModule"
+                method="post">
+
+            <div class=" d-flex gap-3 col-sm-10">
+                <div class="w-75">
+                    <f:form.textfield
+                            class="form-control text-black"
+                            name="searchTerm"
+                            placeholder="Search..."
+                            value="{searchTerm}"
+                    />
+                </div>
+                <button class="btn btn-primary mb-2" type="submit">
+                    <core:icon identifier="actions-search" size="small"/>
+                </button>
+            </div>
+            <div class="col-sm-2  pull-right ">
+                <f:form.select
+                        class="w-25 h-75 mt-10"
+                        id="itemsPerPage"
+                        name="items"
+                        onclick="this.form.submit()"
+                        prependOptionLabel="Please select number"
+                        value="{itemsPerPages}"
+                >
+                    <f:form.select.option value="20">20</f:form.select.option>
+                    <f:form.select.option value="50">50</f:form.select.option>
+                    <f:form.select.option value="100">100</f:form.select.option>
+                    <f:form.select.option value="200">200</f:form.select.option>
+                    <f:form.select.option value="500">500</f:form.select.option>
+                    <f:form.select.option value="1000">1000</f:form.select.option>
+                    <f:form.select.option value="2000">2000</f:form.select.option>
+                </f:form.select>
+            </div>
+        </f:form>
+
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -143,12 +138,12 @@
             </f:for>
             </tbody>
         </table>
-    </div>
-    <div class="m-4 container">
         <f:if condition="{pagination}">
             <f:render arguments="{_all}" partial="Navigation/Navigation"/>
         </f:if>
+
     </div>
+
 
     <script>
         function deleteItem(element) {
