@@ -24,17 +24,17 @@
             </f:else>
         </f:if>
 
-        <div class="pull-right">
+        <div class="pull-right mb-5 ">
             <f:render arguments="{_all}" partial="Columns"/>
         </div>
         <f:form action="index"
                 arguments="{searchTerm: searchTerm, items: items}"
-                class="w-100 row row-top"
+                class="w-100 row "
                 controller="SendMessageModule"
                 method="post">
 
-            <div class=" d-flex gap-3 col-sm-10">
-                <div class="w-75">
+            <div class=" d-flex gap-3 col-sm-10 visual-search-container w-[96%]">
+                <div class="w-100 ">
                     <f:form.textfield
                             class="form-control text-black"
                             name="searchTerm"
@@ -46,9 +46,10 @@
                     <core:icon identifier="actions-search" size="small"/>
                 </button>
             </div>
-            <div class="col-sm-2  pull-right ">
+            <div class="col-sm-2 col-menu-length w-[4%] d-flex gap-5">
+                <div class="w-75"></div>
                 <f:form.select
-                        class="w-25 h-75 mt-10"
+                        class="h-75 w-25 mt-10 text-black"
                         id="itemsPerPage"
                         name="items"
                         onclick="this.form.submit()"
@@ -65,7 +66,6 @@
                 </f:form.select>
             </div>
         </f:form>
-
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -88,7 +88,7 @@
                                     <f:link.action
                                             action="index"
                                             arguments="{sortBy: '{selectedField}', direction: 'ASC', searchTerm: searchTerm,page: currentPage,items: itemsPerPages,selectedFields: selectedFields}"
-                                            class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == {selectedField}', then: 'text-default', else: 'text-black-50')} text-decoration-none rounded"
+                                            class="{f:if(condition: '{direction} == \'DESC\' && {sortBy} == {selectedField}', then: 'text-default', else: 'text-black-50')} text-decoration-none rounded "
                                             controller="SendMessageModule"
                                             id="sortByAsc"
                                     >
