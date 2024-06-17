@@ -4,10 +4,10 @@
         <div aria-label="" class="btn-toolbar bg-white" role="toolbar">
             <div class="dropdown dropdown-fields pull-right">
                 <a
-                        class="btn btn-default btn-sm dropdown-toggle"
-                        data-bs-toggle="dropdown"
-                        href="#"
-                        style="position: relative; bottom: 1px"
+                    class="btn btn-default btn-sm dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    href="#"
+                    style="position: relative; bottom: 1px"
                 ></a>
                 <ul class="dropdown-menu bg-white p-2" style="max-height: 800px; overflow-y: scroll">
                     <f:for as="fieldName" each="{fields}">
@@ -15,15 +15,15 @@
                             <li class="checkbox text-black">
                                 <label>
                                     <f:variable
-                                            name="isChecked"
-                                            value="{m:inArray(haystack:'{selectedFields}', needle:'{fieldName}', then:'1', else:'0')}"
+                                        name="isChecked"
+                                        value="{m:inArray(haystack:'{selectedColumns}', needle:'{fieldName}', then:'1', else:'0')}"
                                     />
                                     <f:form.checkbox
-                                            additionalAttributes="{onchange: 'this.form.submit()'}"
-                                            checked="{f:if(condition:'{isChecked}' , then:'true' , else:'false')}"
-                                            class="check-visible-toggle"
-                                            name="selectedFields[] "
-                                            value="{fieldName}"
+                                        additionalAttributes="{onchange: 'this.form.submit()'}"
+                                        checked="{f:if(condition:'{isChecked}' , then:'true' , else:'false')}"
+                                        class="check-visible-toggle"
+                                        name="selectedColumns[] "
+                                        value="{fieldName}"
                                     />
                                     <m:sentMessage.label field="{fieldName}"></m:sentMessage.label>
                                 </label>

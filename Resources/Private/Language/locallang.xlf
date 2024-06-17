@@ -3,9 +3,8 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2013-01-08T17:34:08Z" product-name="messenger">
 		<header/>
 		<body>
-
 			<trans-unit id="tx_messenger_domain_model_sentmessage">
-				<source>SentMessage</source>
+				<source>Sent messages</source>
 			</trans-unit>
 			<trans-unit id="tx_messenger_domain_model_sentmessage.user">
 				<source>user</source>
