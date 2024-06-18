@@ -27,7 +27,7 @@ class SendMessageModuleController extends ActionController
     protected int $maximumLinks = 10;
 
     protected array $defaultSelectedColumns = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
-
+    protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
         'crdate',
@@ -38,8 +38,6 @@ class SendMessageModuleController extends ActionController
         'recipient',
         'sent_time',
     ];
-
-    protected ModuleTemplate $moduleTemplate;
 
     public function __construct()
     {
@@ -102,18 +100,6 @@ class SendMessageModuleController extends ActionController
         ];
     }
 
-    protected function computeSelectedColumns(): array
-    {
-        $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
-
-        if ($this->request->hasArgument('selectedColumns')) {
-            $selectedColumns = $this->request->getArgument('selectedColumns');
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
-        }
-        return $selectedColumns;
-    }
-
     protected function getDemand(): array
     {
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
@@ -129,6 +115,19 @@ class SendMessageModuleController extends ActionController
         }
         return $demand;
     }
+
+    protected function computeSelectedColumns(): array
+    {
+        $selectedColumns =
+            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
+
+        if ($this->request->hasArgument('selectedColumns')) {
+            $selectedColumns = $this->request->getArgument('selectedColumns');
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+        }
+        return $selectedColumns;
+    }
+
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
