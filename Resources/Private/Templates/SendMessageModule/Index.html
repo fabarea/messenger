@@ -3,7 +3,7 @@
     xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
     xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-    
+
 
 >
 <f:layout name="Default"/>
@@ -81,6 +81,12 @@
                     <f:if condition="{selectedField} != ''">
                         <th scope="col">
                             <div class="d-flex">
+
+                                <div class="my-2">
+                                    <f:translate
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:{selectedField}"
+                                    />
+                                </div>
                                 <div class="d-flex flex-column">
                                     <f:link.action
                                         action="index"
@@ -100,11 +106,6 @@
                                     >
                                         <core:icon identifier="actions-caret-down" size="small"/>
                                     </f:link.action>
-                                </div>
-                                <div class="my-2">
-                                    <f:translate
-                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:{selectedField}"
-                                    />
                                 </div>
                             </div>
                         </th>
