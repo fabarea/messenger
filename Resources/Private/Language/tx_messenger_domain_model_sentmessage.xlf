@@ -70,16 +70,16 @@
                 <source>Sent Time</source>
             </trans-unit>
             <trans-unit id="items">
-                <source>Items</source>
+                <source>items</source>
             </trans-unit>
             <trans-unit id="action">
                 <source>Action</source>
             </trans-unit>
             <trans-unit id="of">
-                <source>Of</source>
+                <source>of</source>
             </trans-unit>
             <trans-unit id="to">
-                <source>To</source>
+                <source>to</source>
             </trans-unit>
             <trans-unit id="showing">
                 <source>Showing</source>

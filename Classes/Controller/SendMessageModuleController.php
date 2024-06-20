@@ -2,11 +2,16 @@
 
 namespace Fab\Messenger\Controller;
 
+use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -17,11 +22,12 @@ class SendMessageModuleController extends ActionController
 {
     protected SentMessageRepository $sentMessageRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
+    protected IconFactory $iconFactory;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
 
-    protected array $defaultFields = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
-
+    protected array $defaultSelectedColumns = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
+    protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
         'crdate',
@@ -37,6 +43,7 @@ class SendMessageModuleController extends ActionController
     {
         $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
+        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
     }
 
     public function indexAction(): ResponseInterface
@@ -48,11 +55,12 @@ class SendMessageModuleController extends ActionController
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields();
+        $selectedColumns = $this->computeSelectedColumns();
 
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
-            'selectedFields' => $this->computeVisibleColumns(),
+            'selectedColumns' => $selectedColumns,
             'fields' => $fields,
             'paginator' => $paginator,
             'pagination' => $pagination,
@@ -63,9 +71,12 @@ class SendMessageModuleController extends ActionController
             'itemsPerPages' => $items,
             'direction' => $orderings[key($orderings)],
         ]);
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
+
+        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $this->moduleTemplate->setContent($this->view->render());
+        $this->computeDocHeader($fields, $selectedColumns);
+
+        return $this->htmlResponse($this->moduleTemplate->renderContent());
     }
 
     protected function getOrderings(): array
@@ -89,18 +100,6 @@ class SendMessageModuleController extends ActionController
         ];
     }
 
-    protected function computeVisibleColumns(): array
-    {
-        $selectedFields = BackendUserPreferenceService::getInstance()->get('selectedFields') ?? $this->defaultFields;
-
-        if ($this->request->hasArgument('selectedFields')) {
-            $selectedFields = $this->request->getArgument('selectedFields');
-            BackendUserPreferenceService::getInstance()->set('selectedFields', $selectedFields);
-        }
-
-        return $selectedFields;
-    }
-
     protected function getDemand(): array
     {
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
@@ -115,5 +114,27 @@ class SendMessageModuleController extends ActionController
             ];
         }
         return $demand;
+    }
+
+    protected function computeSelectedColumns(): array
+    {
+        $selectedColumns =
+            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
+
+        if ($this->request->hasArgument('selectedColumns')) {
+            $selectedColumns = $this->request->getArgument('selectedColumns');
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+        }
+        return $selectedColumns;
+    }
+
+    private function computeDocHeader(array $fields, array $selectedColumns): void
+    {
+        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+
+        /** @var ColumnSelectorButton $columnSelectorButton */
+        $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+        $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
+        $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }
 }
