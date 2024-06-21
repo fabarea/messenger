@@ -2,6 +2,10 @@ table.table thead .sorting {
     background: url('sort_both.png') no-repeat center right;
 }
 
+table.table thead .action {
+    background: no-repeat center right;
+}
+
 table.table thead .sorting_desc {
     background: url('sort_desc.png') no-repeat center right;
 }

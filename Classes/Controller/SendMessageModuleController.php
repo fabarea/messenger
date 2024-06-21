@@ -37,6 +37,18 @@ class SendMessageModuleController extends ActionController
         'mailing_name',
         'recipient',
         'sent_time',
+        'context',
+        'body',
+        'recipient_cc',
+        'recipient_bcc',
+        'redirect_email_from',
+        'attachment',
+        'message_template',
+        'message_layout',
+        'ip',
+        'was_opened',
+        'scheduled_distribution_time',
+        'uuid',
     ];
 
     public function __construct()
@@ -55,6 +67,7 @@ class SendMessageModuleController extends ActionController
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields();
+
         $selectedColumns = $this->computeSelectedColumns();
 
         $pagination = new SimplePagination($paginator);
