@@ -104,7 +104,7 @@
             </thead>
             <tbody>
             <f:form action="index"
-                    arguments="{searchTerm: searchTerm, items: items, selectedRecords: selectedRecords, downloadFormat: downloadFormat, btnAction: btnAction}"
+                    arguments="{searchTerm: searchTerm, items: items, selectedRecords: selectedRecords, formatAction: formatAction, btnAction: btnAction}"
                     method="post">
                 <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
                     <tr>
@@ -142,47 +142,80 @@
                     </tr>
                 </f:for>
                 <tr>
-                    <td class="actions" colspan="{selectedColumns -> f:count()}">
-                        <div class="d-flex gap
-                        -1 align-items-center pull-left">
-                            <f:form.hidden id="btn-action" name="btnAction" value=""/>
 
-                            <f:form.select
-                                class="form-select"
-                                id="downloadFormat"
-                                name="downloadFormat"
-                                value="{downloadFormat}"
-                            >
-                                <f:form.select.option value="csv">CSV</f:form.select.option>
-                                <f:form.select.option value="xml">XML</f:form.select.option>
-                                <f:form.select.option value="xsl">XSL</f:form.select.option>
-                            </f:form.select>
-                            <button
-                                class="btn btn-default"
-                                onclick="setAction('export')"
-                            >
+                    <td colspan="{selectedColumns -> f:count()}">
+                        <div aria-label="" class="btn-toolbar " role="toolbar">
+                            <div class="dropdown dropdown-fields pull-left ">
+                                <a
+                                    class="btn btn-default btn-sm dropdown-toggle"
+                                    data-bs-toggle="dropdown"
+                                    href="#"
+                                    style="position: relative; bottom: 1px"
+                                ></a>
+                                <ul class="dropdown-menu bg-white  "
+                                    style="max-height: 800px; overflow-y: scroll">
+                                    <li class="checkbox text-black p-2">
+                                        <f:form.hidden id="format-action" name="formatAction" value=""/>
+                                        <div class="w-100">
+                                            <button
+                                                class="btn btn-default bg-white "
+                                                onclick="return setFormat('csv')"
+                                            >
+                                                <core:icon identifier="actions-file-csv-download" size="small"/>
+                                                Download csv
+                                            </button>
+                                            <button
+                                                class="btn btn-default bg-white"
+                                                onclick="return setFormat('xls')"
+                                            >
+                                                <core:icon identifier="actions-database-export" size="small"/>
+                                                Download xls
+                                            </button>
+                                            <button
+                                                class="btn btn-default bg-white"
+                                                onclick="return setFormat('xml')"
+                                            >
+                                                <core:icon identifier="actions-database-export" size="small"/>
+                                                Download xml
+                                            </button>
+                                        </div>
+                                    </li>
 
-                                <core:icon identifier="actions-database-export" size="small"/>
-                            </button>
+                                    <li class="checkbox text-black p-2">
+                                        <f:form.hidden id="btn-action" name="btnAction" value=""/>
+                                        <div>
+                                            <button
+                                                class="btn btn-default bg-white"
+                                                onclick="return setAction('delete')"
+                                            >
+
+                                                <core:icon identifier="actions-delete" size="small"/>
+                                                Delete
+                                            </button>
+                                        </div>
+
+                                    </li>
+                                    <li class="checkbox text-black p-2">
+                                        <div>
+                                            <button
+                                                class="btn btn-default bg-white"
+                                                onclick="return setAction('send_message')"
+                                            >
+
+                                                <core:icon identifier="content-messages" size="small"/>
+                                                Send Message
+                                            </button>
+                                        </div>
+                                    </li>
+
+
+                                </ul>
+
+
+                            </div>
                         </div>
-                        <div class="d-flex gap -1 align-items-center pull-left">
-                            <button
-                                class="btn btn-default"
-                                onclick="setAction('delete')"
-                            >
 
-                                <core:icon identifier="actions-delete" size="small"/>
-                            </button>
-                        </div>
 
-                        <div class="d-flex gap -1 align-items-center pull-left">
-                            <button
-                                class="btn btn-default"
-                                onclick="setAction('send_message')"
-                            >
-                                <core:icon identifier="content-message-dots" size="small"/>
-                            </button>
-                        </div>
                     </td>
                 </tr>
 
@@ -210,6 +243,8 @@
                 .on('confirm.button.cancel', function () {
                     top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
                 });
+
+
         }
 
         function allSelected() {
@@ -231,6 +266,12 @@
             document.getElementById('btn-action').value = action;
             document.getElementById('btn-action').form.submit();
         }
+
+        function setFormat(action) {
+            document.getElementById('format-action').value = action;
+            document.getElementById('format-action').form.submit();
+        }
+
 
     </script>
 </f:section>
