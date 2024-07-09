@@ -5,6 +5,7 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
+use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -23,6 +24,7 @@ class SendMessageModuleController extends ActionController
     protected SentMessageRepository $sentMessageRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
+    protected DataExportService $dataExportService;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
 
@@ -56,6 +58,7 @@ class SendMessageModuleController extends ActionController
         $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
     }
 
     public function indexAction(): ResponseInterface
@@ -84,6 +87,34 @@ class SendMessageModuleController extends ActionController
             'itemsPerPages' => $items,
             'direction' => $orderings[key($orderings)],
         ]);
+
+        if (
+            $this->request->hasArgument('selectedRecords') &&
+            $this->request->hasArgument('btnAction') &&
+            $this->request->getArgument('btnAction') !== null
+        ) {
+            $uids = $this->request->getArgument('selectedRecords');
+            if (!is_array($uids)) {
+                return $this->htmlResponse(
+                    '<div class="container text-center align-items-center tex"><h1>No records selected</h1></div>',
+                );
+            }
+            $format = $this->request->getArgument('btnAction');
+            switch ($format) {
+                case 'csv':
+                    $this->dataExportService->exportCsv($uids, 'export.csv');
+                    break;
+                case 'xls':
+                    $this->dataExportService->exportXls($uids, 'export.xls');
+                    break;
+                case 'xml':
+                    $this->dataExportService->exportXml($uids, 'export.xml');
+                    break;
+                case 'delete':
+                    $this->deleteAction($uids);
+                    break;
+            }
+        }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $this->moduleTemplate->setContent($this->view->render());
@@ -139,6 +170,14 @@ class SendMessageModuleController extends ActionController
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
         return $selectedColumns;
+    }
+
+    protected function deleteAction(array $uids): void
+    {
+        foreach ($uids as $uid) {
+            $this->sentMessageRepository->removeByUid($uid);
+        }
+        $this->redirect('index');
     }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void
