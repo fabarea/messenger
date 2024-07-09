@@ -31,28 +31,18 @@ class DataExportService implements SingletonInterface
         return GeneralUtility::makeInstance(self::class);
     }
 
-    /**
-     * @param array $data
-     * @param string $filename
-     * @param string $delimiter
-     * @param string $enclosure
-     * @param string $escape
-     * @return string
-     */
     public function exportCsv(
-        array $DataUids,
+        array $uids,
         string $filename,
         string $delimiter = ',',
         string $enclosure = '"',
         string $escape = '\\',
-    ): string {
-        foreach ($DataUids as $uid) {
-            $data[] = $this->sentMessageRepository->findByUid($uid);
-        }
+    ): void {
+        $dataSets = $this->sentMessageRepository->findByUids($uids);
         $csv = fopen('php://temp', 'r+');
-        fputcsv($csv, array_keys($data[0]), $delimiter, $enclosure, $escape);
-        foreach ($data as $row) {
-            fputcsv($csv, $row, $delimiter, $enclosure, $escape);
+        fputcsv($csv, array_keys($dataSets[0]), $delimiter, $enclosure, $escape);
+        foreach ($dataSets as $data) {
+            fputcsv($csv, $data, $delimiter, $enclosure, $escape);
         }
         rewind($csv);
         $csvContent = stream_get_contents($csv);
@@ -64,9 +54,10 @@ class DataExportService implements SingletonInterface
         exit();
     }
 
-    public function exportXls(array $DataUids, string $filename): string
+    public function exportXls(array $dataUids, string $filename): void
     {
-        foreach ($DataUids as $uid) {
+        // todo fix me!
+        foreach ($dataUids as $uid) {
             $data[] = $this->sentMessageRepository->findByUid($uid);
         }
         $xls = fopen('php://temp', 'r+');
@@ -84,9 +75,9 @@ class DataExportService implements SingletonInterface
         exit();
     }
 
-    public function exportXml(array $DataUids, string $filename): string
+    public function exportXml(array $dataUids, string $filename): void
     {
-        foreach ($DataUids as $uid) {
+        foreach ($dataUids as $uid) {
             $data[] = $this->sentMessageRepository->findByUid($uid);
         }
         $xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');

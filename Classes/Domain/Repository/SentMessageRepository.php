@@ -32,9 +32,19 @@ class SentMessageRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetch();
+        $messages = $query->execute()->fetchOne();
 
         return is_array($messages) ? $messages : [];
+    }
+    public function findByUids(array $uids): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
+
+        return $query->execute()->fetchAllAssociative();
     }
 
     public function findByUuid(string $uuid): array
