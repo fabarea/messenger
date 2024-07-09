@@ -1,90 +1,109 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.0">
-    <file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="local lang module">
-        <header />
-        <body>
-            <trans-unit id="mlang_labels_tablabel">
-                <source>Sent Messages</source>
-            </trans-unit>
-            <trans-unit id="mlang_tabs_tab" xml:space="preserve">
-                <source>Sent Messages</source>
-            </trans-unit>
-            <trans-unit id="mlang_labels_tabdescr" xml:space="preserve">
-                <source>Module for managing Sent Message</source>
-            </trans-unit>
-            <trans-unit id="uid">
-                <source>Uid</source>
-            </trans-unit>
-            <trans-unit id="uuid">
-                <source>Uuid</source>
-            </trans-unit>
-            <trans-unit id="sent_message">
-                <source>Sent Message</source>
-            </trans-unit>
-            <trans-unit id="sender">
-                <source>Sender</source>
-            </trans-unit>
-            <trans-unit id="recipient">
-                <source>Recipient</source>
-            </trans-unit>
-            <trans-unit id="recipient_cc">
-                <source>Recipient CC</source>
-            </trans-unit>
-            <trans-unit id="recipient_bcc">
-                <source>Recipient BCC</source>
-            </trans-unit>
-            <trans-unit id="redirect_email_from">
-                <source>Redirect email from</source>
-            </trans-unit>
-            <trans-unit id="subject">
-                <source>Subject</source>
-            </trans-unit>
-            <trans-unit id="body">
-                <source>Body</source>
-            </trans-unit>
-            <trans-unit id="attachment">
-                <source>Attachment</source>
-            </trans-unit>
-            <trans-unit id="context">
-                <source>context</source>
-            </trans-unit>
-            <trans-unit id="was_opened">
-                <source>Was opened</source>
-            </trans-unit>
-            <trans-unit id="message_template">
-                <source>Message Template</source>
-            </trans-unit>
-            <trans-unit id="message_layout">
-                <source>Layout Template</source>
-            </trans-unit>
-            <trans-unit id="ip">
-                <source>IP Address</source>
-            </trans-unit>
-            <trans-unit id="mailing_name">
-                <source>Mailing name</source>
-            </trans-unit>
-            <trans-unit id="scheduled_distribution_time">
-                <source>Schedule sending time</source>
-            </trans-unit>
-            <trans-unit id="sent_time">
-                <source>Sent Time</source>
-            </trans-unit>
-            <trans-unit id="items">
-                <source>items</source>
-            </trans-unit>
-            <trans-unit id="action">
-                <source>Action</source>
-            </trans-unit>
-            <trans-unit id="of">
-                <source>of</source>
-            </trans-unit>
-            <trans-unit id="to">
-                <source>to</source>
-            </trans-unit>
-            <trans-unit id="showing">
-                <source>Showing</source>
-            </trans-unit>
+	<file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="local lang module">
+		<header />
+		<body>
+			<trans-unit id="mlang_labels_tablabel">
+				<source>Sent Messages</source>
+			</trans-unit>
+			<trans-unit id="mlang_tabs_tab" xml:space="preserve">
+				<source>Sent Messages</source>
+			</trans-unit>
+			<trans-unit id="mlang_labels_tabdescr" xml:space="preserve">
+				<source>Module for managing Sent Message</source>
+			</trans-unit>
+			<trans-unit id="uid">
+				<source>Uid</source>
+			</trans-unit>
+			<trans-unit id="uuid">
+				<source>Uuid</source>
+			</trans-unit>
+			<trans-unit id="sent_message">
+				<source>Sent Message</source>
+			</trans-unit>
+			<trans-unit id="sender">
+				<source>Sender</source>
+			</trans-unit>
+			<trans-unit id="recipient">
+				<source>Recipient</source>
+			</trans-unit>
+			<trans-unit id="recipient_cc">
+				<source>Recipient CC</source>
+			</trans-unit>
+			<trans-unit id="recipient_bcc">
+				<source>Recipient BCC</source>
+			</trans-unit>
+			<trans-unit id="redirect_email_from">
+				<source>Redirect email from</source>
+			</trans-unit>
+			<trans-unit id="subject">
+				<source>Subject</source>
+			</trans-unit>
+			<trans-unit id="body">
+				<source>Body</source>
+			</trans-unit>
+			<trans-unit id="attachment">
+				<source>Attachment</source>
+			</trans-unit>
+			<trans-unit id="context">
+				<source>context</source>
+			</trans-unit>
+			<trans-unit id="was_opened">
+				<source>Was opened</source>
+			</trans-unit>
+			<trans-unit id="message_template">
+				<source>Message Template</source>
+			</trans-unit>
+			<trans-unit id="message_layout">
+				<source>Layout Template</source>
+			</trans-unit>
+			<trans-unit id="ip">
+				<source>IP Address</source>
+			</trans-unit>
+			<trans-unit id="mailing_name">
+				<source>Mailing name</source>
+			</trans-unit>
+			<trans-unit id="scheduled_distribution_time">
+				<source>Schedule sending time</source>
+			</trans-unit>
+			<trans-unit id="sent_time">
+				<source>Sent Time</source>
+			</trans-unit>
+			<trans-unit id="items">
+				<source>items</source>
+			</trans-unit>
+			<trans-unit id="action">
+				<source>Action</source>
+			</trans-unit>
+			<trans-unit id="of">
+				<source>of</source>
+			</trans-unit>
+			<trans-unit id="to">
+				<source>to</source>
+			</trans-unit>
+			<trans-unit id="showing">
+				<source>Showing</source>
+			</trans-unit>
+			<trans-unit id="csv">
+				<source> Download csv
+				</source>
+			</trans-unit>
 
-        </body>
-    </file>
+			<trans-unit id="xls">
+				<source>Download xls</source>
+			</trans-unit>
+			<trans-unit id="xml">
+				<source>Download xml</source>
+			</trans-unit>
+			<trans-unit id="delete">
+				<source>Delete</source>
+			</trans-unit>
+			<trans-unit id="send_message">
+				<source>Send Message</source>
+			</trans-unit>
+
+
+
+		</body>
+	</file>
 </xliff>
