@@ -60,13 +60,13 @@ class DataExportService implements SingletonInterface
 
     public function exportXls(array $dataUids, string $filename, array $header): void
     {
-        $data = $this->sentMessageRepository->findByUids($dataUids);
+        $dataSets = $this->sentMessageRepository->findByUids($dataUids);
         $xls = fopen('php://temp', 'r+');
         fputcsv($xls, $header, "\t");
-        foreach ($data as $row) {
+        foreach ($dataSets as $dataSet) {
             $computedRow = [];
             foreach ($header as $key) {
-                $computedRow[] = $row[$key];
+                $computedRow[] = $dataSet[$key];
             }
             fputcsv($xls, $computedRow, "\t");
         }
@@ -81,12 +81,12 @@ class DataExportService implements SingletonInterface
 
     public function exportXml(array $dataUids, string $filename, array $header): void
     {
-        $data = $this->sentMessageRepository->findByUids($dataUids);
+        $dataSets = $this->sentMessageRepository->findByUids($dataUids);
         $xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
         $xml->addChild('header', implode(',', $header));
-        foreach ($data as $row) {
+        foreach ($dataSets as $dataSet) {
             $xmlRow = $xml->addChild('row');
-            foreach ($row as $key => $value) {
+            foreach ($dataSet as $key => $value) {
                 if (in_array($key, $header, true)) {
                     $xmlRow->addChild($key, $value);
                 }
