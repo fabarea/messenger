@@ -92,12 +92,9 @@ class SendMessageModuleController extends ActionController
             $this->request->hasArgument('btnAction') &&
             $this->request->getArgument('btnAction') !== null
         ) {
-            $uids = $this->request->hasArgument('selectedRecords') ?? $this->request->getArgument('selectedRecords');
-            if ($this->request->getArgument('selectedRecords') !== '' && !is_array($uids)) {
-                return $this->htmlResponse(
-                    '<div class="container text-center align-items-center tex"><h1>No records selected</h1></div>',
-                );
-            }
+            $uids = $this->request->hasArgument('selectedRecords')
+                ? $this->request->getArgument('selectedRecords')
+                : [];
             $format = $this->request->getArgument('btnAction');
             $columns = $this->computeSelectedColumns();
             array_unshift($columns, 'uid');
