@@ -159,7 +159,7 @@
                                             class="dropdown-menu bg-white"
                                             style="max-height: 800px; overflow-y: scroll"
                                         >
-                                            <f:form.hidden id="btn-action" name="btnAction" value="" />
+                                            <f:form.hidden id="btn-onclick-action" name="btnAction" value="" />
 
                                             <li class="checkbox text-black p-2">
                                                 <div class="w-100">
@@ -191,20 +191,6 @@
                                                         <core:icon identifier="actions-database-export" size="small" />
                                                         <f:translate
                                                             key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:xml"
-                                                        />
-                                                    </button>
-                                                </div>
-                                            </li>
-
-                                            <li class="checkbox text-black p-2">
-                                                <div>
-                                                    <button
-                                                        class="btn btn-default bg-white"
-                                                        onclick="return setAction('delete')"
-                                                    >
-                                                        <core:icon identifier="actions-delete" size="small" />
-                                                        <f:translate
-                                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:delete"
                                                         />
                                                     </button>
                                                 </div>
@@ -267,8 +253,8 @@
             }
 
             function setAction(action) {
-                document.getElementById('btn-action').value = action;
-                document.getElementById('btn-action').form.submit();
+                document.getElementById('btn-onclick-action').value = action;
+                document.getElementById('btn-onclick-action').form.submit();
             }
         </script>
     </f:section>
