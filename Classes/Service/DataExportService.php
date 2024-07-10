@@ -37,58 +37,62 @@ class DataExportService implements SingletonInterface
         string $delimiter = ',',
         string $enclosure = '"',
         string $escape = '\\',
+        array $header = [],
     ): void {
         $dataSets = $this->sentMessageRepository->findByUids($uids);
         $csv = fopen('php://temp', 'r+');
-        fputcsv($csv, array_keys($dataSets[0]), $delimiter, $enclosure, $escape);
-        foreach ($dataSets as $data) {
-            fputcsv($csv, $data, $delimiter, $enclosure, $escape);
+        fputcsv($csv, $header, $delimiter, $enclosure, $escape);
+        foreach ($dataSets as $dataSet) {
+            $row = [];
+            foreach ($header as $key) {
+                $row[] = $dataSet[$key];
+            }
+            fputcsv($csv, $row, $delimiter, $enclosure, $escape);
         }
         rewind($csv);
         $csvContent = stream_get_contents($csv);
         fclose($csv);
-
         header('Content-Type: application/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         echo $csvContent;
         exit();
     }
 
-    public function exportXls(array $dataUids, string $filename): void
+    public function exportXls(array $dataUids, string $filename, array $header): void
     {
-        // todo fix me!
-        foreach ($dataUids as $uid) {
-            $data[] = $this->sentMessageRepository->findByUid($uid);
-        }
+        $data = $this->sentMessageRepository->findByUids($dataUids);
         $xls = fopen('php://temp', 'r+');
-        fputcsv($xls, array_keys($data[0]), "\t");
+        fputcsv($xls, $header, "\t");
         foreach ($data as $row) {
-            fputcsv($xls, $row, "\t");
+            $computedRow = [];
+            foreach ($header as $key) {
+                $computedRow[] = $row[$key];
+            }
+            fputcsv($xls, $computedRow, "\t");
         }
         rewind($xls);
         $xlsContent = stream_get_contents($xls);
         fclose($xls);
-
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         echo $xlsContent;
         exit();
     }
 
-    public function exportXml(array $dataUids, string $filename): void
+    public function exportXml(array $dataUids, string $filename, array $header): void
     {
-        foreach ($dataUids as $uid) {
-            $data[] = $this->sentMessageRepository->findByUid($uid);
-        }
+        $data = $this->sentMessageRepository->findByUids($dataUids);
         $xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+        $xml->addChild('header', implode(',', $header));
         foreach ($data as $row) {
-            $item = $xml->addChild('item');
+            $xmlRow = $xml->addChild('row');
             foreach ($row as $key => $value) {
-                $item->addChild($key, $value);
+                if (in_array($key, $header, true)) {
+                    $xmlRow->addChild($key, $value);
+                }
             }
         }
         $xmlContent = $xml->asXML();
-
         header('Content-Type: application/xml');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         echo $xmlContent;

@@ -70,9 +70,7 @@ class SendMessageModuleController extends ActionController
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields();
-
         $selectedColumns = $this->computeSelectedColumns();
-
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
@@ -90,30 +88,22 @@ class SendMessageModuleController extends ActionController
 
         if (
             $this->request->hasArgument('selectedRecords') &&
+            $this->request->getArgument('selectedRecords') !== '' &&
             $this->request->hasArgument('btnAction') &&
             $this->request->getArgument('btnAction') !== null
         ) {
-            $uids = $this->request->getArgument('selectedRecords');
-            if (!is_array($uids)) {
+            $uids = $this->request->hasArgument('selectedRecords') ?? $this->request->getArgument('selectedRecords');
+            if ($this->request->getArgument('selectedRecords') !== '' && !is_array($uids)) {
                 return $this->htmlResponse(
                     '<div class="container text-center align-items-center tex"><h1>No records selected</h1></div>',
                 );
             }
             $format = $this->request->getArgument('btnAction');
-            switch ($format) {
-                case 'csv':
-                    $this->dataExportService->exportCsv($uids, 'export.csv');
-                    break;
-                case 'xls':
-                    $this->dataExportService->exportXls($uids, 'export.xls');
-                    break;
-                case 'xml':
-                    $this->dataExportService->exportXml($uids, 'export.xml');
-                    break;
-                case 'delete':
-                    $this->deleteAction($uids);
-                    break;
-            }
+            $columns = $this->computeSelectedColumns();
+            array_unshift($columns, 'uid');
+            $columns = array_filter($columns);
+            $columns = array_unique($columns);
+            $this->exportAction($uids, $format, $columns);
         }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -126,12 +116,9 @@ class SendMessageModuleController extends ActionController
     protected function getOrderings(): array
     {
         $sortBy = $this->request->hasArgument('sortBy') ? $this->request->getArgument('sortBy') : 'crdate';
-
-        // default sorting values
         if (!in_array($sortBy, $this->allowedSortBy)) {
             $sortBy = 'crdate';
         }
-
         $defaultDirection = QueryInterface::ORDER_DESCENDING;
         $direction = $this->request->hasArgument('direction')
             ? $this->request->getArgument('direction')
@@ -172,12 +159,19 @@ class SendMessageModuleController extends ActionController
         return $selectedColumns;
     }
 
-    protected function deleteAction(array $uids): void
+    public function exportAction(array $uids, string $format, array $columns): void
     {
-        foreach ($uids as $uid) {
-            $this->sentMessageRepository->removeByUid($uid);
+        switch ($format) {
+            case 'csv':
+                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
+                break;
+            case 'xls':
+                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
+                break;
+            case 'xml':
+                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
+                break;
         }
-        $this->redirect('index');
     }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void
