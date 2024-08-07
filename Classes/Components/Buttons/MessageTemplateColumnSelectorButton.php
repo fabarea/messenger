@@ -14,7 +14,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class ColumnSelectorButton implements ButtonInterface
+class MessageTemplateColumnSelectorButton implements ButtonInterface
 {
     protected array $fields = [];
 
@@ -52,7 +52,7 @@ class ColumnSelectorButton implements ButtonInterface
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('messenger') .
-                'Resources/Private/Templates/Components/Buttons/ColumnSelectorButton.html',
+                'Resources/Private/Templates/Components/Buttons/MessageTemplateColumnSelectorButton.html',
         );
         $view->assignMultiple([
             'selectedColumns' => $this->selectedColumns,

@@ -2,14 +2,13 @@
 
 namespace Fab\Messenger\Controller;
 
-use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
-use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Components\Buttons\MessageTemplateColumnSelectorButton;
+use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -19,43 +18,36 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-class SendMessageModuleController extends ActionController
+class MessageTemplateController extends ActionController
 {
-    protected SentMessageRepository $sentMessageRepository;
+    protected MessageTemplateRepository $sentMessageRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected DataExportService $dataExportService;
     protected int $itemsPerPage = 20;
     protected int $maximumLinks = 10;
 
-    protected array $defaultSelectedColumns = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
+    protected array $defaultSelectedColumns = ['uid', 'subject', 'body'];
     protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
-        'crdate',
-        'tstamp',
-        'sender',
+        'l10n_parent',
+        'l10n_diffsource',
+        'type',
+        'hidden',
+        'qualifier',
         'subject',
-        'mailing_name',
-        'recipient',
-        'sent_time',
-        'context',
+        'source_file',
+        'source_page',
+        'template_engine',
         'body',
-        'recipient_cc',
-        'recipient_bcc',
-        'redirect_email_from',
-        'attachment',
-        'message_template',
         'message_layout',
-        'ip',
-        'was_opened',
-        'scheduled_distribution_time',
-        'uuid',
+        'sys_language_uid',
     ];
 
     public function __construct()
     {
-        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
@@ -69,8 +61,9 @@ class SendMessageModuleController extends ActionController
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
-        $fields = TcaFieldsUtility::getFields('tx_messenger_domain_model_sentmessage');
+        $fields = TcaFieldsUtility::getFields('tx_messenger_domain_model_messagetemplate');
         $selectedColumns = $this->computeSelectedColumns();
+
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
             'messages' => $messages,
@@ -100,7 +93,6 @@ class SendMessageModuleController extends ActionController
             array_unshift($columns, 'uid');
             $columns = array_filter($columns);
             $columns = array_unique($columns);
-            $this->exportAction($uids, $format, $columns);
         }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -134,11 +126,10 @@ class SendMessageModuleController extends ActionController
         $demand = [];
         if (strlen($searchTerm) > 0) {
             $demand = [
-                'sender' => $searchTerm,
+                'type' => $searchTerm,
                 'subject' => $searchTerm,
-                'mailing_name' => $searchTerm,
-                'recipient' => $searchTerm,
-                'sent_time' => $searchTerm,
+                'qualifier' => $searchTerm,
+                'message_layout' => $searchTerm,
             ];
         }
         return $demand;
@@ -156,27 +147,12 @@ class SendMessageModuleController extends ActionController
         return $selectedColumns;
     }
 
-    public function exportAction(array $uids, string $format, array $columns): void
-    {
-        switch ($format) {
-            case 'csv':
-                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
-                break;
-            case 'xls':
-                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
-                break;
-            case 'xml':
-                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
-                break;
-        }
-    }
-
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
-        /** @var ColumnSelectorButton $columnSelectorButton */
-        $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+        /** @var MessageTemplateColumnSelectorButton $columnSelectorButton */
+        $columnSelectorButton = $buttonBar->makeButton(MessageTemplateColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }

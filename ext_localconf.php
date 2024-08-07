@@ -1,7 +1,8 @@
 <?php
 
-use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\Controller\MessageDisplayController;
+use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\PagePath\Resolver;
 use Fab\Messenger\Task\MessengerDequeueFieldProvider;
 use Fab\Messenger\Task\MessengerDequeueTask;
@@ -47,11 +48,13 @@ call_user_func(function () {
         [
             MessageDisplayController::class => 'show',
             SendMessageModuleController::class => 'index',
+            MessageTemplateController::class => 'index',
         ],
         // non-cacheable actions
         [
             MessageDisplayController::class => 'show',
             SendMessageModuleController::class => 'index',
+            MessageTemplateController::class => 'index',
         ],
     );
 

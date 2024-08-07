@@ -1,9 +1,10 @@
 <?php
 
-use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
+use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\View\MenuItem\DequeueMenuItem;
 use Fab\Messenger\View\MenuItem\SendAgainMenuItem;
@@ -116,6 +117,22 @@ call_user_func(function () {
                 'access' => 'admin',
                 'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
                 'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
+            ],
+        );
+
+        ExtensionUtility::registerModule(
+            'Fab.Messenger',
+            'messenger',
+            'tx_messenger_m2',
+            'bottom',
+            [
+                MessageTemplateController::class => 'index',
+            ],
+            [
+                'access' => 'admin',
+                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',
+                'labels' =>
+                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf',
             ],
         );
 
