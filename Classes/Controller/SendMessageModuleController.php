@@ -84,6 +84,9 @@ class SendMessageModuleController extends ActionController
             'searchTerm' => $searchTerm,
             'itemsPerPages' => $items,
             'direction' => $orderings[key($orderings)],
+            'controller ' => 'SendMessageModule',
+            'action' => 'index',
+            'languageModel' => 'sentmessage',
         ]);
 
         if (

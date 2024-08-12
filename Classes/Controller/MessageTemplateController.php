@@ -77,6 +77,9 @@ class MessageTemplateController extends ActionController
             'searchTerm' => $searchTerm,
             'itemsPerPages' => $items,
             'direction' => $orderings[key($orderings)],
+            'controller ' => 'MessageTemplate',
+            'action' => 'index',
+            'languageModel' => 'messagetemplate',
         ]);
 
         if (
