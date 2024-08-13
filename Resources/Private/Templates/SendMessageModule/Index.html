@@ -7,6 +7,10 @@
     <f:layout name="Default" />
 
     <f:section name="main">
-        <f:render arguments="{_all}" partial="Template/listTemplate" />
+        <f:be.pageRenderer
+            includeJsFiles="{0: 'EXT:messenger/Resources/Public/JavaScript/Uri/Uri.js'}"
+            includeRequireJsModules="{   0:'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
+        />
+        <f:render arguments="{_all}" partial="Template/ListTemplate" />
     </f:section>
 </html>

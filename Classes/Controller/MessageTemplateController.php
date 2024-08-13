@@ -6,6 +6,7 @@ use Fab\Messenger\Components\Buttons\MessageTemplateColumnSelectorButton;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -79,7 +80,7 @@ class MessageTemplateController extends ActionController
             'direction' => $orderings[key($orderings)],
             'controller ' => 'MessageTemplate',
             'action' => 'index',
-            'languageModel' => 'messagetemplate',
+            'domainModel' => 'messagetemplate',
         ]);
 
         if (
@@ -158,5 +159,13 @@ class MessageTemplateController extends ActionController
         $columnSelectorButton = $buttonBar->makeButton(MessageTemplateColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+
+        $rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
+        // todo generate another button based on htdocs/typo3conf/ext/vidi/Classes/View/Button/NewButton.php
+    }
+
+    public function getConfigurationUtility(): ConfigurationUtility
+    {
+        return GeneralUtility::makeInstance(ConfigurationUtility::class);
     }
 }

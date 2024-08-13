@@ -86,7 +86,7 @@ class SendMessageModuleController extends ActionController
             'direction' => $orderings[key($orderings)],
             'controller ' => 'SendMessageModule',
             'action' => 'index',
-            'languageModel' => 'sentmessage',
+            'domainModel' => 'sentmessage',
         ]);
 
         if (

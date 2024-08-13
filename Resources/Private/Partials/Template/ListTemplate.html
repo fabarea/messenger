@@ -2,7 +2,7 @@
     <f:be.pageRenderer includeCssFiles="{0: '{f:uri.resource(path:\'Css/styles.css\')}'}" />
     <h1>
         <f:translate
-            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:mlang_labels_tablabel"
+            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:mlang_labels_tablabel"
         />
     </h1>
     <div class="w-100">
@@ -82,7 +82,7 @@
                                     controller="{controller}"
                                 >
                                     <f:translate
-                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:{selectedField}"
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:{selectedField}"
                                     />
                                 </f:link.action>
                             </th>
@@ -112,19 +112,19 @@
                                 <div class="d-flex gap-1 align-items-center pull-right">
                                     <a
                                         class="btn btn-default"
-                                        href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{languageModel}')}"
+                                        href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
                                     >
                                         <core:icon identifier="actions-document-open" />
                                     </a>
                                     <f:variable
                                         name="deleteUrl"
-                                        value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_{languageModel}][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
+                                        value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_{domainModel}][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
                                     />
                                     <button
                                         class="btn btn-default"
                                         data-delete-url="{deleteUrl}"
                                         data-name="{message.sender}"
-                                        onclick="return deleteItem(this)"
+                                        onclick="deleteItem(this); return false"
                                     >
                                         <core:icon identifier="actions-delete" size="small" />
                                     </button>
@@ -153,7 +153,7 @@
                                                 >
                                                     <core:icon identifier="actions-file-csv-download" size="small" />
                                                     <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:csv"
+                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
                                                     />
                                                 </button>
                                                 <button
@@ -162,7 +162,7 @@
                                                 >
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:xls"
+                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
                                                     />
                                                 </button>
                                                 <button
@@ -171,20 +171,17 @@
                                                 >
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:xml"
+                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
                                                     />
                                                 </button>
                                             </div>
                                         </li>
                                         <li class="checkbox text-black p-2">
                                             <div>
-                                                <button
-                                                    class="btn btn-default bg-white"
-                                                    onclick="return setAction('send_message')"
-                                                >
+                                                <button class="btn btn-default bg-white btn-sendAgain">
                                                     <core:icon identifier="content-messages" size="small" />
                                                     <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{languageModel}.xlf:send_message"
+                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
                                                     />
                                                 </button>
                                             </div>
@@ -204,7 +201,6 @@
 
     <script>
         function deleteItem(element) {
-            console.log(element.dataset.name);
             return top.TYPO3.Modal.confirm(
                 'Delete',
                 'Are you sure to delete this message from ' + element.dataset.name + ' ?',
@@ -231,11 +227,6 @@
                     checkboxes[i].checked = false;
                 }
             }
-        }
-
-        function setAction(action) {
-            document.getElementById('btn-onclick-action').value = action;
-            document.getElementById('btn-onclick-action').form.submit();
         }
     </script>
 </html>
