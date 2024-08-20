@@ -5,10 +5,10 @@
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 >
     <f:layout name="Default" />
-
     <f:section name="main">
         <f:be.pageRenderer
-            includeJsFiles="{0: 'EXT:messenger/Resources/Public/JavaScript/Uri/Uri.js'}"
+            includeJsFiles="{0: 'EXT:messenger/Resources/Public/JavaScript/Uri/Uri.js'
+            , 1: 'EXT:messenger/Resources/Public/JavaScript/RowsSelection.js'}"
             includeRequireJsModules="{   0:'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
         />
         <f:render arguments="{_all}" partial="Template/ListTemplate" />

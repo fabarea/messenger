@@ -27,29 +27,16 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @return string
      * @private
      */
+
     getEditStorageUrl: function (url) {
       var uri = new Uri(url);
 
-      if (Vidi.Grid.hasSelectedRows()) {
-        // Case 1: mass editing for selected rows.
+      // get element by columnsToSend value and assign to the uri object
+      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
-        // Add parameters to the Uri object.
-        uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', Vidi.Grid.getSelectedIdentifiers().join(','));
-      } else {
-        var storedParameters = Vidi.Grid.getStoredParameters();
-
-        if (typeof storedParameters === 'object') {
-          if (storedParameters.search) {
-            uri.addQueryParam('search[value]', storedParameters.search.value);
-          }
-
-          if (storedParameters.order) {
-            uri.addQueryParam('order[0][column]', storedParameters.order[0].column);
-            uri.addQueryParam('order[0][dir]', storedParameters.order[0].dir);
-          }
-        }
+      if (columnsToSend !== '') {
+        uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', columnsToSend.join(','));
       }
-
       return decodeURIComponent(uri.toString());
     },
 
@@ -57,55 +44,28 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @return void
      */
     initialize: function () {
+      var columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+
       // Add listener on bulk send button
       $(document).on('click', '.btn-sendAgain', function (e) {
         e.preventDefault();
 
-        var me = this;
+        let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+        let dataCount = columnsToSend.length;
         var url = Messenger.getEditStorageUrl($(this).attr('href'));
 
-        Vidi.modal = Modal.advanced({
-          type: Modal.types.ajax,
-          title: TYPO3.l10n.localize('message.send'),
-          severity: top.TYPO3.Severity.notice,
-          content: url,
-          buttons: [
-            {
-              text: TYPO3.l10n.localize('active.1'),
-              btnClass: 'btn btn-default',
-              trigger: function () {
-                Modal.dismiss();
-              },
-            },
-            {
-              text: TYPO3.l10n.localize('active.0'),
-              btnClass: 'btn btn-primary',
-              trigger: function () {
-                // Disable button
-                $('.btn', Vidi.modal).attr('disabled', 'disabled');
-
-                // Generate the dequeue URL
-                var sendAgainUrl = url.replace('confirm&', 'sendAgain&');
-
-                // Ajax request
-                $.ajax({
-                  url: sendAgainUrl,
-
-                  /**
-                   * On success call back
-                   *
-                   * @param response
-                   */
-                  success: function (response) {
-                    Vidi.grid.fnDraw(false); // false = for keeping the pagination.
-                    Notification.success('', response);
-                    Modal.dismiss();
-                  },
-                });
-              },
-            },
-          ],
-        });
+        top.TYPO3.Modal.confirm(
+          'Send',
+          'Are you sure to send  ' + dataCount + ' messages  ?',
+          top.TYPO3.Severity.warning,
+        )
+          .on('confirm.button.ok', function () {
+            window.location.href = url;
+            top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+          })
+          .on('confirm.button.cancel', function () {
+            top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+          });
       });
     },
   };

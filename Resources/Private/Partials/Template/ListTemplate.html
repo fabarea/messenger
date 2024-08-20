@@ -1,4 +1,3 @@
-
 <html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
     <f:be.pageRenderer includeCssFiles="{0: '{f:uri.resource(path:\'Css/styles.css\')}'}" />
     <h1>
@@ -40,6 +39,7 @@
                 </f:form.select>
             </f:form>
         </div>
+
         <div class="w-100">
             <f:form
                 action="{action}"
@@ -92,7 +92,7 @@
                     <th class="action" scope="col"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="checkboxes">
                 <f:form
                     action="{action}"
                     arguments="{searchTerm: searchTerm, items: items, selectedRecords: selectedRecords, btnAction: btnAction}"
@@ -102,7 +102,12 @@
                     <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
                         <tr>
                             <td>
-                                <f:form.checkbox class="select" name="selectedRecords[]" value="{message.uid}" />
+                                <f:form.checkbox
+                                    class="select"
+                                    name="selectedRecords[]"
+                                    onclick="selectedItems()"
+                                    value="{message.uid}"
+                                />
                             </td>
                             <f:for as="selectedField" each="{selectedColumns}" iteration="selectedFieldIterator">
                                 <f:if condition="{selectedField} != ''">
@@ -148,28 +153,19 @@
 
                                         <li class="checkbox text-black p-2">
                                             <div class="w-100">
-                                                <button
-                                                    class="btn btn-default bg-white"
-                                                    onclick="return setAction('csv')"
-                                                >
+                                                <button class="btn btn-default bg-white" onclick="exportFormat('csv')">
                                                     <core:icon identifier="actions-file-csv-download" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
                                                     />
                                                 </button>
-                                                <button
-                                                    class="btn btn-default bg-white"
-                                                    onclick="return setAction('xls')"
-                                                >
+                                                <button class="btn btn-default bg-white" onclick="exportFormat('xls')">
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
                                                     />
                                                 </button>
-                                                <button
-                                                    class="btn btn-default bg-white"
-                                                    onclick="return setAction('xml')"
-                                                >
+                                                <button class="btn btn-default bg-white" onclick="exportFormat('xml')">
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
@@ -199,35 +195,4 @@
             <f:render arguments="{_all}" partial="Navigation/Navigation" />
         </f:if>
     </div>
-
-    <script>
-        function deleteItem(element) {
-            return top.TYPO3.Modal.confirm(
-                'Delete',
-                'Are you sure to delete this message from ' + element.dataset.name + ' ?',
-                top.TYPO3.Severity.warning,
-            )
-                .on('confirm.button.ok', function () {
-                    window.location.href = element.dataset.deleteUrl;
-                    top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-                })
-                .on('confirm.button.cancel', function () {
-                    top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-                });
-        }
-
-        function allSelected() {
-            if (document.getElementById('record-all').checked) {
-                const checkboxes = document.getElementsByClassName('select');
-                for (let i = 0; i < checkboxes.length; i++) {
-                    checkboxes[i].checked = true;
-                }
-            } else {
-                const checkboxes = document.getElementsByClassName('select');
-                for (let i = 0; i < checkboxes.length; i++) {
-                    checkboxes[i].checked = false;
-                }
-            }
-        }
-    </script>
 </html>

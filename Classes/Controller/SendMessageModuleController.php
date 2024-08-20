@@ -87,8 +87,10 @@ class SendMessageModuleController extends ActionController
             'controller ' => 'SendMessageModule',
             'action' => 'index',
             'domainModel' => 'sentmessage',
+            'selectedRecords' => $this->request->hasArgument('selectedRecords')
+                ? $this->request->getArgument('selectedRecords')
+                : [],
         ]);
-
         if (
             $this->request->hasArgument('selectedRecords') &&
             $this->request->getArgument('selectedRecords') !== '' &&
