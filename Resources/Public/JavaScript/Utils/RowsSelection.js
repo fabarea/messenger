@@ -1,23 +1,27 @@
-// Description: Get selected values from checkboxes
-function deleteItem(element) {
-  return top.TYPO3.Modal.confirm(
-    'Delete',
-    'Are you sure to delete this message from ' + element.dataset.name + ' ?',
-    top.TYPO3.Severity.warning,
-  )
-    .on('confirm.button.ok', function () {
-      window.location.href = element.dataset.deleteUrl;
-      top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-    })
-    .on('confirm.button.cancel', function () {
-      top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
-    });
-}
+window.Messenger = {
+  // Description: Get selected values from checkboxes
+  deleteItem: function (element) {
+    console.log(element);
+    return top.TYPO3.Modal.confirm(
+      'Delete',
+      'Are you sure to delete this message from ' + element.dataset.name + ' ?',
+      top.TYPO3.Severity.warning,
+    )
+      .on('confirm.button.ok', function () {
+        window.location.href = element.dataset.deleteUrl;
+        top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+      })
+      .on('confirm.button.cancel', function () {
+        top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
+      });
+  },
+};
 
-function allSelected() {
+// todo refactor me!
+
+function selectAll() {
   $('#record-all').click(function () {
-    var checkboxes;
-    checkboxes = $('.checkboxes').find('.select');
+    const checkboxes = $('.checkboxes').find('.select');
     if ($(this).is(':checked')) {
       checkboxes.filter(':not(:checked)').click();
     } else {
@@ -39,7 +43,7 @@ function allSelected() {
 //   }
 // }
 
-function selectedItems() {
+function getSelectedItems() {
   const checkboxes = document.getElementsByClassName('select');
   const selected = [];
   for (let i = 0; i < checkboxes.length; i++) {
@@ -51,7 +55,7 @@ function selectedItems() {
 }
 
 function exportFormat(format) {
-  const selected = selectedItems();
+  const selected = getSelectedItems();
   if (selected.length === 0) {
     alert('Please select at least one item');
     return;

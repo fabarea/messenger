@@ -67,7 +67,7 @@
                 <tr class="t3-row-header">
                     <f:variable name="color" value="text-black" />
                     <th class="action" scope="col">
-                        <f:form.checkbox id="record-all" name="selectedRecords[]" onclick="allSelected()" value="all" />
+                        <f:form.checkbox id="record-all" name="selectedRecords[]" onclick="selectAll()" value="all" />
                     </th>
 
                     <f:for as="selectedField" each="{selectedColumns}" iteration="iterator">
@@ -105,7 +105,7 @@
                                 <f:form.checkbox
                                     class="select"
                                     name="selectedRecords[]"
-                                    onclick="selectedItems()"
+                                    onclick="getSelectedItems()"
                                     value="{message.uid}"
                                 />
                             </td>
@@ -130,7 +130,7 @@
                                         class="btn btn-default"
                                         data-delete-url="{deleteUrl}"
                                         data-name="{message.sender}"
-                                        onclick="deleteItem(this); return false"
+                                        onclick="Messenger.deleteItem(this); return false"
                                     >
                                         <core:icon identifier="actions-delete" size="small" />
                                     </button>

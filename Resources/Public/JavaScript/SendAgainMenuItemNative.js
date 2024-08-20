@@ -54,6 +54,11 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         let dataCount = columnsToSend.length;
         var url = Messenger.getEditStorageUrl($(this).attr('href'));
 
+        //TYPO3.l10n.localize('message.send')
+        console.log(TYPO3.l10n.localize);
+        console.log(TYPO3.l10n.localize('message.send'));
+
+        return;
         top.TYPO3.Modal.confirm(
           'Send',
           'Are you sure to send  ' + dataCount + ' messages  ?',
