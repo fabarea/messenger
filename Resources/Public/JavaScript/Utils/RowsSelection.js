@@ -1,7 +1,5 @@
 window.Messenger = {
-  // Description: Get selected values from checkboxes
   deleteItem: function (element) {
-    console.log(element);
     return top.TYPO3.Modal.confirm(
       'Delete',
       'Are you sure to delete this message from ' + element.dataset.name + ' ?',
@@ -15,51 +13,27 @@ window.Messenger = {
         top.TYPO3.Modal.currentModal.trigger('modal-dismiss');
       });
   },
+
+  selectAll: function () {
+    $('#record-all').click(function () {
+      const checkboxes = $('.checkboxes').find('.select');
+      if ($(this).is(':checked')) {
+        checkboxes.filter(':not(:checked)').click();
+      } else {
+        checkboxes.filter(':checked').click();
+      }
+    });
+  },
+  getSelectedItems: function () {
+    return [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+  },
+  exportFormat: function (format) {
+    const selected = this.getSelectedItems();
+    if (selected.length === 0) {
+      alert('Please select at least one item');
+      return;
+    }
+    document.getElementById('btn-onclick-action').value = format;
+    document.getElementById('btn-onclick-action').form.submit();
+  },
 };
-
-// todo refactor me!
-
-function selectAll() {
-  $('#record-all').click(function () {
-    const checkboxes = $('.checkboxes').find('.select');
-    if ($(this).is(':checked')) {
-      checkboxes.filter(':not(:checked)').click();
-    } else {
-      checkboxes.filter(':checked').click();
-    }
-  });
-}
-
-//   if (document.getElementById('record-all').checked) {
-//     const checkboxes = document.getElementsByClassName('select');
-//     for (let i = 0; i < checkboxes.length; i++) {
-//       checkboxes[i].checked = true;
-//     }
-//   } else {
-//     const checkboxes = document.getElementsByClassName('select');
-//     for (let i = 0; i < checkboxes.length; i++) {
-//       checkboxes[i].checked = false;
-//     }
-//   }
-// }
-
-function getSelectedItems() {
-  const checkboxes = document.getElementsByClassName('select');
-  const selected = [];
-  for (let i = 0; i < checkboxes.length; i++) {
-    if (checkboxes[i].checked) {
-      selected.push(checkboxes[i].value);
-    }
-  }
-  return selected;
-}
-
-function exportFormat(format) {
-  const selected = getSelectedItems();
-  if (selected.length === 0) {
-    alert('Please select at least one item');
-    return;
-  }
-  document.getElementById('btn-onclick-action').value = format;
-  document.getElementById('btn-onclick-action').form.submit();
-}

@@ -67,7 +67,12 @@
                 <tr class="t3-row-header">
                     <f:variable name="color" value="text-black" />
                     <th class="action" scope="col">
-                        <f:form.checkbox id="record-all" name="selectedRecords[]" onclick="selectAll()" value="all" />
+                        <f:form.checkbox
+                            id="record-all"
+                            name="selectedRecords[]"
+                            onclick="Messenger.selectAll()"
+                            value="all"
+                        />
                     </th>
 
                     <f:for as="selectedField" each="{selectedColumns}" iteration="iterator">
@@ -105,7 +110,7 @@
                                 <f:form.checkbox
                                     class="select"
                                     name="selectedRecords[]"
-                                    onclick="getSelectedItems()"
+                                    onclick="Messenger.getSelectedItems()"
                                     value="{message.uid}"
                                 />
                             </td>
@@ -153,19 +158,28 @@
 
                                         <li class="checkbox text-black p-2">
                                             <div class="w-100">
-                                                <button class="btn btn-default bg-white" onclick="exportFormat('csv')">
+                                                <button
+                                                    class="btn btn-default bg-white"
+                                                    onclick="Messenger.exportFormat('csv')"
+                                                >
                                                     <core:icon identifier="actions-file-csv-download" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
                                                     />
                                                 </button>
-                                                <button class="btn btn-default bg-white" onclick="exportFormat('xls')">
+                                                <button
+                                                    class="btn btn-default bg-white"
+                                                    onclick="Messenger.exportFormat('xls')"
+                                                >
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
                                                     />
                                                 </button>
-                                                <button class="btn btn-default bg-white" onclick="exportFormat('xml')">
+                                                <button
+                                                    class="btn btn-default bg-white"
+                                                    onclick="Messenger.exportFormat('xml')"
+                                                >
                                                     <core:icon identifier="actions-database-export" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
@@ -175,12 +189,12 @@
                                         </li>
                                         <li class="checkbox text-black p-2">
                                             <div>
-                                                <button class="btn btn-default bg-white btn-sendAgain">
+                                                <a href="" class="btn btn-default bg-white btn-sendAgain">
                                                     <core:icon identifier="content-messages" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
                                                     />
-                                                </button>
+                                                </a>
                                             </div>
                                         </li>
                                     </ul>
