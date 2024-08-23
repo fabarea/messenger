@@ -34,7 +34,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
 
         let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
         let dataCount = columnsToSend.length;
-        const url = Messenger.getEditStorageUrl($(this).attr('href'));
+        const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again_confirmation);
 
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
