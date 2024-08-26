@@ -1,7 +1,10 @@
 <?php
+
+use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
+
 return [
     'send_again_confirmation' => [
         'path' => '/messenger/send-again/confirmation',
-        'target' => \Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController::class . '::confirmAction',
+        'target' => SendAgainConfirmationAjaxController::class . '::confirmAction',
     ],
 ];

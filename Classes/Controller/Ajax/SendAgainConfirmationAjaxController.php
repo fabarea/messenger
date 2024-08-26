@@ -7,23 +7,16 @@ namespace Fab\Messenger\Controller\Ajax;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class SendAgainConfirmationAjaxController
 {
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
-        // Instantiate the Matcher object according different rules.
-        //        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
-        //
-        //        // Fetch objects via the Content Service.
-        //        $numberOfRecipients = $this->getContentService()->findBy($matcher)->getNumberOfObjects();
-
-        #$sentMessageRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
-
-        $numberOfRecipients = 1;
+        $dataCount = (int) $request->getQueryParams()['dataCount'];
         $label =
-            $numberOfRecipients > 1
+            $dataCount > 1
                 ? $this->getLanguageService()->sL(
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
                 )
@@ -31,9 +24,15 @@ final class SendAgainConfirmationAjaxController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
                 );
 
+        $label = sprintf($label, $dataCount);
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse(); // ->withHeader('Content-Type', 'application/json; charset=utf-8');
-        $response->getBody()->write('<div>asd123f</div>');
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write($label);
         return $response;
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 }

@@ -36,6 +36,7 @@ class SentMessageRepository extends AbstractContentRepository
 
         return is_array($messages) ? $messages : [];
     }
+
     public function findByUids(array $uids): array
     {
         $query = $this->getQueryBuilder();
@@ -148,6 +149,13 @@ class SentMessageRepository extends AbstractContentRepository
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('uid = ' . $uid);
+        return $query->execute();
+    }
+
+    public function removeByUids(array $uids): int
+    {
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
         return $query->execute();
     }
 }

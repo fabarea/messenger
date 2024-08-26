@@ -18,8 +18,21 @@
 			<trans-unit id="qualifier">
 				<source>Key</source>
 			</trans-unit>
+			<trans-unit id="send_message">
+				<source> Send again</source>
+			</trans-unit>
 
+			<trans-unit id="csv">
+				<source> Download csv
+				</source>
+			</trans-unit>
 
+			<trans-unit id="xls">
+				<source>Download xls</source>
+			</trans-unit>
+			<trans-unit id="xml">
+				<source>Download xml</source>
+			</trans-unit>
 			<trans-unit id="message_template">
 				<source>Message template</source>
 			</trans-unit>

@@ -122,8 +122,9 @@
                             <td>
                                 <div class="d-flex gap-1 align-items-center pull-right">
                                     <a
-                                        class="btn btn-default"
+                                        clas
                                         href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
+                                        s="btn btn-default"
                                     >
                                         <core:icon identifier="actions-document-open" />
                                     </a>
@@ -187,16 +188,18 @@
                                                 </button>
                                             </div>
                                         </li>
-                                        <li class="checkbox text-black p-2">
-                                            <div>
-                                                <a href="" class="btn btn-default bg-white btn-sendAgain">
-                                                    <core:icon identifier="content-messages" size="small" />
-                                                    <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
-                                                    />
-                                                </a>
-                                            </div>
-                                        </li>
+                                        <f:if condition="{domainModel} != 'messagetemplate'">
+                                            <li class="checkbox text-black p-2">
+                                                <div>
+                                                    <a class="btn btn-default bg-white btn-sendAgain" href="">
+                                                        <core:icon identifier="content-messages" size="small" />
+                                                        <f:translate
+                                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
+                                                        />
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </f:if>
                                     </ul>
                                 </div>
                             </div>

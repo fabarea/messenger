@@ -3,6 +3,7 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Components\Buttons\MessageTemplateColumnSelectorButton;
+use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
@@ -158,10 +159,13 @@ class MessageTemplateController extends ActionController
         /** @var MessageTemplateColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(MessageTemplateColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
+        $newButton = $buttonBar->makeButton(NewButton::class);
+        $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
+        $newButton->setLink(
+            '/typo3/record/edit?edit[tx_messenger_domain_model_messagetemplate][new]=new&returnUrl=' . $pagePid,
+        );
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
-
-        $rootPageUid = $this->getConfigurationUtility()->get('rootPageUid');
-        // todo generate another button based on htdocs/typo3conf/ext/vidi/Classes/View/Button/NewButton.php
+        $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
     }
 
     public function getConfigurationUtility(): ConfigurationUtility

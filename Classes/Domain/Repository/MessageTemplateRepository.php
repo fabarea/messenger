@@ -73,6 +73,17 @@ class MessageTemplateRepository extends AbstractContentRepository
         return $queryBuilder->execute()->fetchAllAssociative();
     }
 
+    public function findByUids(array $matches = []): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $matches));
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
     //	/** @todo resolve overlays of record
     //	 * Finds a template record by its identifier.
     //	 *

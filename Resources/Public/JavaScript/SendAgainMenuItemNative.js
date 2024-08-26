@@ -34,23 +34,24 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
 
         let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
         let dataCount = columnsToSend.length;
-        const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again_confirmation);
+        const url =
+          Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again_confirmation) + '&dataCount=' + dataCount;
 
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Send Again',
           severity: top.TYPO3.Severity.notice,
           content: url,
-          button: [
+          buttons: [
             {
-              text: 'Annuler',
+              text: 'Cancel',
               btnClass: 'btn btn-default',
               trigger: function () {
                 Modal.dismiss();
               },
             },
             {
-              text: 'Confirmer',
+              text: 'Send Again',
               btnClass: 'btn btn-primary',
               trigger: function () {
                 // Disable button
@@ -62,25 +63,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                 // Ajax request
                 $.ajax({
                   url: sendAgainUrl,
-                  type: 'POST',
 
-                  data: {
-                    tx_messenger_user_messengerm1: {
-                      matches: {
-                        uid: columnsToSend.join(','),
-                      },
-                    },
-                  },
-
-                  controller: 'MessageSent',
-                  action: 'sendAgain',
-
-                  success: function () {
-                    Notification.success('Message(s) sent successfully');
-                    Modal.dismiss();
-                  },
-                  error: function () {
-                    Notification.error('An error occurred while sending message(s)');
+                  /**
+                   * On success call back
+                   *
+                   * @param response
+                   */
+                  success: function (response) {
+                    Notification.success('', response);
                     Modal.dismiss();
                   },
                 });
