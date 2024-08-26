@@ -14,35 +14,27 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class ColumnSelectorButton implements ButtonInterface
+class NewButton implements ButtonInterface
 {
-    protected array $fields = [];
+    protected string $link = '';
 
-    protected array $selectedColumns = [];
-
-    public function setFields(array $fields): self
+    public function setLink(string $link): self
     {
-        $this->fields = $fields;
+        $this->link = $link;
         return $this;
     }
 
-    public function setSelectedColumns(array $columns): self
-    {
-        $this->selectedColumns = $columns;
-        return $this;
-    }
-
-    public function getType(): string
-    {
-        return static::class;
-    }
-
-    public function isValid(): bool
+    public function isValid()
     {
         return true;
     }
 
-    public function __toString(): string
+    public function getType()
+    {
+        return static::class;
+    }
+
+    public function __toString()
     {
         return $this->render();
     }
@@ -52,11 +44,10 @@ class ColumnSelectorButton implements ButtonInterface
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('messenger') .
-                'Resources/Private/Templates/Components/Buttons/ColumnSelectorButton.html',
+                'Resources/Private/Templates/Components/Buttons/NewButton.html',
         );
         $view->assignMultiple([
-            'selectedColumns' => $this->selectedColumns,
-            'fields' => $this->fields,
+            'link' => $this->link,
         ]);
         return $view->render();
     }

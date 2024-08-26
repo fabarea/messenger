@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="local lang module">
-		<header/>
+		<header />
 		<body>
 			<trans-unit id="mlang_labels_tablabel">
 				<source>Message Template management</source>
@@ -18,8 +18,21 @@
 			<trans-unit id="qualifier">
 				<source>Key</source>
 			</trans-unit>
+			<trans-unit id="send_message">
+				<source> Send again</source>
+			</trans-unit>
 
+			<trans-unit id="csv">
+				<source> Download csv
+				</source>
+			</trans-unit>
 
+			<trans-unit id="xls">
+				<source>Download xls</source>
+			</trans-unit>
+			<trans-unit id="xml">
+				<source>Download xml</source>
+			</trans-unit>
 			<trans-unit id="message_template">
 				<source>Message template</source>
 			</trans-unit>
@@ -67,6 +80,16 @@
 			</trans-unit>
 			<trans-unit id="template_engine.fluid">
 				<source>Only Fluid</source>
+			</trans-unit>
+			<trans-unit id="l10n_diffsource">
+				<source>l10n diffsource</source>
+			</trans-unit>
+
+			<trans-unit id="sys_language_uid">
+				<source>Sys language uid</source>
+			</trans-unit>
+			<trans-unit id="l10n_parent">
+				<source>l10n parent</source>
 			</trans-unit>
 		</body>
 	</file>

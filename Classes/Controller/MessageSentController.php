@@ -13,16 +13,15 @@ use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Vidi\Persistence\MatcherObjectFactory;
 use Fab\Vidi\Service\ContentService;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Core\Localization\LanguageService;
 
 /**
  * Class MessageSentController
  */
 class MessageSentController extends ActionController
 {
-
     /**
      * @var string
      */
@@ -40,11 +39,29 @@ class MessageSentController extends ActionController
         // Fetch objects via the Content Service.
         $numberOfRecipients = $this->getContentService()->findBy($matcher)->getNumberOfObjects();
 
-        $label = $numberOfRecipients > 1
-            ? $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?')
-            : $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?');
+        $label =
+            $numberOfRecipients > 1
+                ? $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
+                )
+                : $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
+                );
 
         return sprintf($label, $numberOfRecipients);
+    }
+
+    /**
+     * @return ContentService
+     */
+    protected function getContentService(): ContentService
+    {
+        return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 
     /**
@@ -63,10 +80,10 @@ class MessageSentController extends ActionController
         $numberOfRecipients = is_countable($contentObjects) ? count($contentObjects) : 0;
 
         foreach ($contentObjects as $contentObject) {
-
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
-            $isSent = $message->setBody($contentObject['body'])
+            $isSent = $message
+                ->setBody($contentObject['body'])
                 ->setSubject($contentObject['subject'])
                 ->setSender($this->normalizeEmails($contentObject['sender']))
                 ->setTo($this->normalizeEmails($contentObject['recipient']))
@@ -79,12 +96,16 @@ class MessageSentController extends ActionController
 
         return sprintf(
             '%s %s / %s. %s',
-            $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success'),
+            $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
+            ),
             $numberOfSentEmails,
             $numberOfRecipients,
             $numberOfSentEmails !== $numberOfRecipients
-                ? $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails')
-                : ''
+                ? $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+                )
+                : '',
         );
     }
 
@@ -96,15 +117,9 @@ class MessageSentController extends ActionController
             preg_match('/(.*) <(.*)>/isU', $formattedEmail, $matches);
             if (count($matches) === 3) {
                 $normalizedEmails[$matches[2]] = $matches[1];
-
             }
         }
         return $normalizedEmails;
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 
     /**
@@ -114,13 +129,4 @@ class MessageSentController extends ActionController
     {
         return GeneralUtility::makeInstance(SentMessageRepository::class);
     }
-
-    /**
-     * @return ContentService
-     */
-    protected function getContentService(): ContentService
-    {
-        return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
-    }
-
 }

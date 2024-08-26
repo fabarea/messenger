@@ -18,11 +18,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TcaFieldsUtility
 {
-    protected static string $tableName = 'tx_messenger_domain_model_sentmessage';
+    protected static string $tableName = '';
 
-    public static function getFields(): array
+    public static function getFields(string $tableName): array
     {
-        // Fetch all available fields first.
+        self::$tableName = $tableName;
         $fields = array_keys($GLOBALS['TCA'][self::$tableName]['columns']);
         return self::filterByBackendUser($fields);
     }
@@ -39,6 +39,11 @@ class TcaFieldsUtility
         return $fields;
     }
 
+    protected static function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
     protected static function hasAccess(string $fieldName): bool
     {
         $hasAccess = true;
@@ -53,6 +58,11 @@ class TcaFieldsUtility
         return $hasAccess;
     }
 
+    private static function isBackendMode(): bool
+    {
+        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
+    }
+
     protected static function hasTableAccess(): bool
     {
         $hasAccess = true;
@@ -60,16 +70,6 @@ class TcaFieldsUtility
             $hasAccess = self::getBackendUser()->check('tables_modify', self::$tableName);
         }
         return $hasAccess;
-    }
-
-    protected static function getBackendUser(): BackendUserAuthentication
-    {
-        return $GLOBALS['BE_USER'];
-    }
-
-    private static function isBackendMode(): bool
-    {
-        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
     }
 
     /**
