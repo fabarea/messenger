@@ -7,4 +7,8 @@ return [
         'path' => '/messenger/send-again/confirmation',
         'target' => SendAgainConfirmationAjaxController::class . '::confirmAction',
     ],
+    'send_again' => [
+        'path' => '/messenger/send-again',
+        'target' => SendAgainConfirmationAjaxController::class . '::sendAgainAction',
+    ],
 ];

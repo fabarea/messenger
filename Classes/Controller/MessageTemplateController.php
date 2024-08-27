@@ -161,9 +161,8 @@ class MessageTemplateController extends ActionController
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $newButton = $buttonBar->makeButton(NewButton::class);
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
-        $newButton->setLink(
-            '/typo3/record/edit?edit[tx_messenger_domain_model_messagetemplate][new]=new&returnUrl=' . $pagePid,
-        );
+        $newButton->setLink("be:uri.newRecord(uid:-1, table:'tx_messenger_domain_model_messagetemplate', returnUrl:'{be:uri.modulePage(module: 'messenger', pageId: $pagePid)}')");
+
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
         $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
     }

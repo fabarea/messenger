@@ -19,7 +19,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
-      if (columnsToSend !== '') {
+      if (columnsToSend.length > 0) {
         uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', columnsToSend.join(','));
       }
       return decodeURIComponent(uri.toString());
@@ -31,12 +31,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     initialize: function () {
       $(document).on('click', '.btn-sendAgain', function (e) {
         e.preventDefault();
-
-        let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
-        let dataCount = columnsToSend.length;
-        const url =
-          Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again_confirmation) + '&dataCount=' + dataCount;
-
+        const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again_confirmation);
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Send Again',
@@ -54,25 +49,25 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               text: 'Send Again',
               btnClass: 'btn btn-primary',
               trigger: function () {
-                // Disable button
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
+                const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.send_again);
 
-                // Generate the dequeue URL
-                const sendAgainUrl = url.replace('confirm&', 'sendAgain&');
 
                 // Ajax request
                 $.ajax({
                   url: sendAgainUrl,
+
+
 
                   /**
                    * On success call back
                    *
                    * @param response
                    */
-                  success: function (response) {
-                    Notification.success('', response);
-                    Modal.dismiss();
-                  },
+                  success: function(response) {
+                  Notification.success('', response);
+                  Modal.dismiss();
+                }
                 });
               },
             },
