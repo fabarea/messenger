@@ -10,6 +10,7 @@ use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -161,14 +162,32 @@ class MessageTemplateController extends ActionController
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $newButton = $buttonBar->makeButton(NewButton::class);
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
-        $newButton->setLink("be:uri.newRecord(uid:-1, table:'tx_messenger_domain_model_messagetemplate', returnUrl:'{be:uri.modulePage(module: 'messenger', pageId: $pagePid)}')");
 
+        $newButton->setLink(
+            $this->renderUriNewRecord([
+                'table' => 'tx_messenger_domain_model_messagetemplate',
+                'pid' => $pagePid,
+            ]),
+        );
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
         $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
     }
 
-    public function getConfigurationUtility(): ConfigurationUtility
+    protected function getConfigurationUtility(): ConfigurationUtility
     {
         return GeneralUtility::makeInstance(ConfigurationUtility::class);
+    }
+
+    protected function renderUriNewRecord(array $arguments): string
+    {
+        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+
+        $params = [
+            'edit' => [$arguments['table'] => [$arguments['pid'] => 'new']],
+            'returnUrl' => $arguments['returnUrl'],
+        ];
+
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }
