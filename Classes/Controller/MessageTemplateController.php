@@ -20,6 +20,7 @@ use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class MessageTemplateController extends ActionController
 {
@@ -34,8 +35,6 @@ class MessageTemplateController extends ActionController
     protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
-        'l10n_parent',
-        'l10n_diffsource',
         'type',
         'hidden',
         'qualifier',
@@ -45,7 +44,6 @@ class MessageTemplateController extends ActionController
         'template_engine',
         'body',
         'message_layout',
-        'sys_language_uid',
     ];
 
     public function __construct()
@@ -99,6 +97,7 @@ class MessageTemplateController extends ActionController
             array_unshift($columns, 'uid');
             $columns = array_filter($columns);
             $columns = array_unique($columns);
+            $this->exportAction($uids, $format, $columns);
         }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -152,7 +151,20 @@ class MessageTemplateController extends ActionController
         }
         return $selectedColumns;
     }
-
+    public function exportAction(array $uids, string $format, array $columns): void
+    {
+        switch ($format) {
+            case 'csv':
+                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
+                break;
+            case 'xls':
+                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
+                break;
+            case 'xml':
+                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
+                break;
+        }
+    }
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
@@ -167,6 +179,7 @@ class MessageTemplateController extends ActionController
             $this->renderUriNewRecord([
                 'table' => 'tx_messenger_domain_model_messagetemplate',
                 'pid' => $pagePid,
+                'uid' => 0,
             ]),
         );
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
@@ -183,7 +196,7 @@ class MessageTemplateController extends ActionController
         $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
 
         $params = [
-            'edit' => [$arguments['table'] => [$arguments['pid'] => 'new']],
+            'edit' => [$arguments['table'] => [$arguments['uid'] ?? $arguments['pid'] ?? 0=> 'new']],
             'returnUrl' => $arguments['returnUrl'],
         ];
 

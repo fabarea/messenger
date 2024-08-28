@@ -6,6 +6,8 @@ namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Exception\InvalidEmailFormatException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,6 +38,10 @@ final class SendAgainConfirmationAjaxController
         return $this->getResponse($content);
     }
 
+    /**
+     * @throws InvalidEmailFormatException
+     * @throws WrongPluginConfigurationException
+     */
     public function sendAgainAction(ServerRequestInterface $request): ResponseInterface
     {
         $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm1'] ?? '';
