@@ -51,17 +51,19 @@ final class SendAgainConfirmationAjaxController
         } else {
             $matches = [];
         }
-        $contentObjects = $this->getSentMessageRepository()->findByUids($matches);
+        $sentMessages = $this->getSentMessageRepository()->findByUids($matches);
+        var_dump($sentMessages);
+        exit();
 
         $numberOfSentEmails = 0;
-        foreach ($contentObjects as $contentObject) {
+        foreach ($sentMessages as $sentMessage) {
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
             $isSent = $message
-                ->setBody($contentObject['body'])
-                ->setSubject($contentObject['subject'])
-                ->setSender($this->normalizeEmails($contentObject['sender']))
-                ->setTo($this->normalizeEmails($contentObject['recipient']))
+                ->setBody($sentMessage['body'])
+                ->setSubject($sentMessage['subject'])
+                ->setSender($this->normalizeEmails($sentMessage['sender']))
+                ->setTo($this->normalizeEmails($sentMessage['recipient']))
                 ->send();
 
             if ($isSent) {
@@ -69,7 +71,7 @@ final class SendAgainConfirmationAjaxController
             }
         }
 
-        $numberOfRecipients = is_countable($contentObjects) ? count($contentObjects) : 0;
+        $numberOfRecipients = is_countable($sentMessages) ? count($sentMessages) : 0;
         $content = sprintf(
             '%s %s / %s. %s',
             $this->getLanguageService()->sL(

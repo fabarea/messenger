@@ -229,9 +229,9 @@ class Message
      */
     protected function prepareMessage(): void
     {
-//        if (!$this->to) {
-//            throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
-//        }
+        if (!$this->to) {
+            throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
+        }
 
         $message = $this->getMailMessage()
             ->setTo($this->getTo())
