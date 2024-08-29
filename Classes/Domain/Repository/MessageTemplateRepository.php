@@ -9,41 +9,91 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-/**
- * @todo check how to handle language flag.
- */
+
 class MessageTemplateRepository extends AbstractContentRepository
 {
     protected string $tableName = 'tx_messenger_domain_model_messagetemplate';
     protected QueryInterface $constraints;
 
-    //    /**
-    //     * Initialize Repository
-    //     */
-    //    public function initializeObject()
-    //    {
-    //        $querySettings = GeneralUtility::makeInstance(Typo3QuerySettings::class);
-    //        $querySettings->setRespectStoragePage(false);
-    //        $this->setDefaultQuerySettings($querySettings);
-    //    }
-    //
-    //    /**
-    //     * Finds an object given a qualifier name.
-    //     *
-    //     * @param string $qualifier
-    //     * @return object|NULL
-    //     * @api
-    //     */
-    //    public function findByQualifier($qualifier)
-    //    {
-    //        $query = $this->createQuery();
-    //        $query->getQuerySettings()->setRespectSysLanguage(false);
-    //        $query->getQuerySettings()->setRespectStoragePage(false);
-    //        $object = $query->matching($query->equals('qualifier', $qualifier))->execute()->getFirst();
-    //        return $object;
-    //    }
+
+
+    public function getAll(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')->from($this->tableName);
+
+        return $query->execute()->fetchAllAssociative();
+    }
+    public function findByUid(int $uid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()
+                    ->expr()
+                    ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
+            );
+
+        $messages = $query->execute()->fetchOne();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findByUids(array $uids): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findByUuid(string $uuid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()
+                    ->expr()
+                    ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findOlderThanDays(int $days): array
+    {
+        $time = time() - $days * 86400;
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where('crdate < ' . $time);
+
+        $messages = $query->execute()->fetchAll();
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function removeOlderThanDays(int $days): int
+    {
+        $time = time() - $days * 86400;
+
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where('crdate < ' . $time);
+
+        return $query->execute();
+    }
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
@@ -73,39 +123,5 @@ class MessageTemplateRepository extends AbstractContentRepository
         return $queryBuilder->execute()->fetchAllAssociative();
     }
 
-    public function findByUids(array $matches = []): array
-    {
-        $query = $this->getQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->tableName)
-            ->where($this->getQueryBuilder()->expr()->in('uid', $matches));
 
-        return $query->execute()->fetchAllAssociative();
-    }
-
-    //	/** @todo resolve overlays of record
-    //	 * Finds a template record by its identifier.
-    //	 *
-    //	 * @param string $identifier
-    //	 * @return \Fab\Messenger\Domain\Model\MessageTemplate or NULL if no Template object is found
-    //	 */
-    //	public function findByIdentifier($identifier) {
-    //
-    //		// Get the main record
-    //		$tableName = 'tx_messenger_domain_model_messagetemplate';
-    //		$clause = 'sys_language_uid = 0 AND deleted = 0 AND identifier = "' . $identifier . '"';
-    //		$records = $this->databaseHandle->exec_SELECTgetRows('*', $tableName, $clause);
-    //
-    //		// Translates record and create the Template object
-    //		if (class_exists('tx_overlays')) {
-    //			$language = \Fab\Messenger\Utility\Context::getInstance()->getLanguage();
-    //			$records = tx_overlays::overlayRecordSet($tableName, $records, intval($language));
-    //		}
-    //		$templateObject = NULL;
-    //		if (! empty($records[0])) {
-    //			$templateObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Fab\Messenger\Domain\Model\MessageTemplate', $records[0]);
-    //		}
-    //		return $templateObject;
-    //	}
 }

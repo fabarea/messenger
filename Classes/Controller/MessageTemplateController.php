@@ -10,6 +10,7 @@ use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -19,10 +20,11 @@ use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class MessageTemplateController extends ActionController
 {
-    protected MessageTemplateRepository $sentMessageRepository;
+    protected MessageTemplateRepository $messageTemplateRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected DataExportService $dataExportService;
@@ -33,8 +35,6 @@ class MessageTemplateController extends ActionController
     protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
-        'l10n_parent',
-        'l10n_diffsource',
         'type',
         'hidden',
         'qualifier',
@@ -44,12 +44,11 @@ class MessageTemplateController extends ActionController
         'template_engine',
         'body',
         'message_layout',
-        'sys_language_uid',
     ];
 
     public function __construct()
     {
-        $this->sentMessageRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
@@ -58,7 +57,7 @@ class MessageTemplateController extends ActionController
     public function indexAction(): ResponseInterface
     {
         $orderings = $this->getOrderings();
-        $messages = $this->sentMessageRepository->findByDemand($this->getDemand(), $orderings);
+        $messages = $this->messageTemplateRepository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
@@ -98,6 +97,7 @@ class MessageTemplateController extends ActionController
             array_unshift($columns, 'uid');
             $columns = array_filter($columns);
             $columns = array_unique($columns);
+            $this->exportAction($uids, $format, $columns);
         }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -151,7 +151,20 @@ class MessageTemplateController extends ActionController
         }
         return $selectedColumns;
     }
-
+    public function exportAction(array $uids, string $format, array $columns): void
+    {
+        switch ($format) {
+            case 'csv':
+                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
+                break;
+            case 'xls':
+                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
+                break;
+            case 'xml':
+                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
+                break;
+        }
+    }
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
@@ -161,15 +174,33 @@ class MessageTemplateController extends ActionController
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $newButton = $buttonBar->makeButton(NewButton::class);
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
+
         $newButton->setLink(
-            '/typo3/record/edit?edit[tx_messenger_domain_model_messagetemplate][new]=new&returnUrl=' . $pagePid,
+            $this->renderUriNewRecord([
+                'table' => 'tx_messenger_domain_model_messagetemplate',
+                'pid' => $pagePid,
+                'uid' => 0,
+            ]),
         );
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
         $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
     }
 
-    public function getConfigurationUtility(): ConfigurationUtility
+    protected function getConfigurationUtility(): ConfigurationUtility
     {
         return GeneralUtility::makeInstance(ConfigurationUtility::class);
+    }
+
+    protected function renderUriNewRecord(array $arguments): string
+    {
+        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+
+        $params = [
+            'edit' => [$arguments['table'] => [$arguments['uid'] ?? $arguments['pid'] ?? 0=> 'new']],
+            'returnUrl' => $arguments['returnUrl'],
+        ];
+
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }

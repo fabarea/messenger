@@ -7,6 +7,9 @@ if (!defined('TYPO3')) {
     die('Access denied.');
 }
 
+$table = 'tx_messenger_domain_model_messagetemplate';
+
+
 return [
     'ctrl' => [
         'title' =>
@@ -31,6 +34,11 @@ return [
         'typeicon_classes' => [
             'default' => 'extensions-messenger-messagetemplate',
         ],
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
+        'rootLevel' => -1,
+
     ],
     'types' => [
         '1' => [
@@ -208,9 +216,7 @@ Show detail of an item:
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [
-                    0 => [],
-                ],
+                'items' => [],
                 'foreign_table' => 'tx_messenger_domain_model_messagelayout',
                 'size' => 1,
                 'minitems' => 0,
