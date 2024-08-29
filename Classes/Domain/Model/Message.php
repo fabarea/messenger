@@ -37,6 +37,7 @@ use Michelf\Markdown;
 use TYPO3\CMS\Extbase\Annotation\Inject;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
 
 /**
  * Message representation
@@ -106,7 +107,7 @@ class Message
     /**
      * @var string
      */
-    protected string $mailingName;
+    protected string $mailingName = '';
 
     /**
      * @var int
@@ -226,9 +227,11 @@ class Message
 
     /**
      * Prepares the emails by fetching an email template and formats its body.
+     * @throws InvalidEmailFormatException
      */
     protected function prepareMessage(): void
     {
+
         if (!$this->to) {
             throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
@@ -240,6 +243,7 @@ class Message
             ->setFrom($this->getSender())
             ->setReplyTo($this->getReplyTo())
             ->setSubject($this->getProcessedSubject());
+
 
         // Attach plain text version if HTML tags are found in body
         if ($this->hasHtml($this->getProcessedBody())) {

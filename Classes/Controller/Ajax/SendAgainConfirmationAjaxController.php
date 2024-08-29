@@ -52,11 +52,11 @@ final class SendAgainConfirmationAjaxController
             $matches = [];
         }
         $sentMessages = $this->getSentMessageRepository()->findByUids($matches);
-        var_dump($sentMessages);
-        exit();
+
 
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
+
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
             $isSent = $message
@@ -93,13 +93,21 @@ final class SendAgainConfirmationAjaxController
         $normalizedEmails = [];
         $formattedEmails = GeneralUtility::trimExplode(',', $listOfFormattedEmails);
         foreach ($formattedEmails as $formattedEmail) {
-            preg_match('/(.*) <(.*)>/isU', $formattedEmail, $matches);
-            if (count($matches) === 3) {
-                $normalizedEmails[$matches[2]] = $matches[1];
+            $formattedEmail = trim($formattedEmail);
+            if (preg_match('/^(.*) <(.*)>$/isU', $formattedEmail, $matches)) {
+                if (count($matches) === 3) {
+                    $normalizedEmails[$matches[2]] = $matches[1];
+                }
+            } else {
+                if (filter_var($formattedEmail, FILTER_VALIDATE_EMAIL)) {
+                    $normalizedEmails[$formattedEmail] = 'Unknown Name';
+                }
             }
         }
         return $normalizedEmails;
     }
+
+
 
     protected function getResponse(string $content): ResponseInterface
     {

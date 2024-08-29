@@ -9,22 +9,97 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
-/**
- * @todo check how to handle language flag.
- */
+
 class MessageTemplateRepository extends AbstractContentRepository
 {
     protected string $tableName = 'tx_messenger_domain_model_messagetemplate';
     protected QueryInterface $constraints;
 
 
+
+    public function getAll(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')->from($this->tableName);
+
+        return $query->execute()->fetchAllAssociative();
+    }
+    public function findByUid(int $uid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()
+                    ->expr()
+                    ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
+            );
+
+        $messages = $query->execute()->fetchOne();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findByUids(array $uids): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findByUuid(string $uuid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()
+                    ->expr()
+                    ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findOlderThanDays(int $days): array
+    {
+        $time = time() - $days * 86400;
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where('crdate < ' . $time);
+
+        $messages = $query->execute()->fetchAll();
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function removeOlderThanDays(int $days): int
+    {
+        $time = time() - $days * 86400;
+
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where('crdate < ' . $time);
+
+        return $query->execute();
+    }
+
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('*')->from($this->tableName);
+
         $constraints = [];
         foreach ($demand as $field => $value) {
             $constraints[] = $queryBuilder
@@ -45,19 +120,7 @@ class MessageTemplateRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-
         return $queryBuilder->execute()->fetchAllAssociative();
-    }
-
-    public function findByUids(array $matches = []): array
-    {
-        $query = $this->getQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->tableName)
-            ->where($this->getQueryBuilder()->expr()->in('uid', $matches));
-
-        return $query->execute()->fetchAllAssociative();
     }
 
 

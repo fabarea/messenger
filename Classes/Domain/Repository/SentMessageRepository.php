@@ -9,6 +9,7 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Vidi\Tca\Tca;
 use RuntimeException;
@@ -87,6 +88,7 @@ class SentMessageRepository extends AbstractContentRepository
 
         return $query->execute();
     }
+
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {

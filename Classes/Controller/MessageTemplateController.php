@@ -24,7 +24,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class MessageTemplateController extends ActionController
 {
-    protected MessageTemplateRepository $sentMessageRepository;
+    protected MessageTemplateRepository $messageTemplateRepository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected DataExportService $dataExportService;
@@ -48,7 +48,7 @@ class MessageTemplateController extends ActionController
 
     public function __construct()
     {
-        $this->sentMessageRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
@@ -57,7 +57,7 @@ class MessageTemplateController extends ActionController
     public function indexAction(): ResponseInterface
     {
         $orderings = $this->getOrderings();
-        $messages = $this->sentMessageRepository->findByDemand($this->getDemand(), $orderings);
+        $messages = $this->messageTemplateRepository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';

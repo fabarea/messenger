@@ -153,6 +153,8 @@ call_user_func(function () {
             ],
         );
 
+
+
         // Default User TSConfig to be added in any case.
         TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
 

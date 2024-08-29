@@ -11,7 +11,6 @@ namespace Fab\Messenger\Domain\Model;
 use RuntimeException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Fab\Messenger\Exception\RecordNotFoundException;
 use Fab\Messenger\Html2Text\TemplateEngine;
 
 /**
@@ -27,38 +26,38 @@ class MessageTemplate extends AbstractEntity
     /**
      * @var string
      */
-    protected $qualifier;
+    protected mixed $qualifier;
 
     /**
      * @var int
      */
-    protected $type;
+    protected int $type;
 
     /**
      * @var int
      */
-    protected $sourcePage;
+    protected mixed $sourcePage;
 
     /**
      * @var string
      */
-    protected $sourceFile;
+    protected mixed $sourceFile;
 
     /**
      * @var string
      * @TYPO3\CMS\Extbase\Annotation\Validate TYPO3\CMS\Extbase\Validation\Validator\NotEmptyValidator
      */
-    protected $subject;
+    protected mixed $subject;
 
     /**
      * @var string
      */
-    protected $body;
+    protected mixed $body;
 
     /**
      * @var string
      */
-    protected $templateEngine;
+    protected string $templateEngine;
 
     /**
      * Constructor
@@ -78,7 +77,7 @@ class MessageTemplate extends AbstractEntity
      *
      * @return string $subject
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -89,7 +88,7 @@ class MessageTemplate extends AbstractEntity
      * @param string $subject
      * @return void
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): void
     {
         $this->subject = $subject;
     }
@@ -100,7 +99,7 @@ class MessageTemplate extends AbstractEntity
      * @throws RuntimeException
      * @return string $body
      */
-    public function getBody()
+    public function getBody(): string
     {
 
         if ($this->type === self::TYPE_PAGE) {
@@ -125,7 +124,7 @@ class MessageTemplate extends AbstractEntity
      * @param string $body
      * @return void
      */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
@@ -133,7 +132,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @return string $qualifier
      */
-    public function getQualifier()
+    public function getQualifier(): string
     {
         return $this->qualifier;
     }
@@ -142,7 +141,7 @@ class MessageTemplate extends AbstractEntity
      * @param string $qualifier
      * @return void
      */
-    public function setQualifier($qualifier)
+    public function setQualifier(string $qualifier): void
     {
         $this->qualifier = $qualifier;
     }
@@ -150,7 +149,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @return int
      */
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }
@@ -159,7 +158,7 @@ class MessageTemplate extends AbstractEntity
      * @param int $type
      * @return $this
      */
-    public function setType($type)
+    public function setType(int $type): static
     {
         $this->type = $type;
         return $this;
@@ -168,7 +167,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @return int
      */
-    public function getSourcePage()
+    public function getSourcePage(): int
     {
         return $this->sourcePage;
     }
@@ -177,7 +176,7 @@ class MessageTemplate extends AbstractEntity
      * @param int $sourcePage
      * @return $this
      */
-    public function setSourcePage($sourcePage)
+    public function setSourcePage(int $sourcePage): static
     {
         $this->sourcePage = $sourcePage;
         return $this;
@@ -186,7 +185,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @return string
      */
-    public function getSourceFile()
+    public function getSourceFile(): string
     {
         return $this->sourceFile;
     }
@@ -195,7 +194,7 @@ class MessageTemplate extends AbstractEntity
      * @param string $sourceFile
      * @return $this
      */
-    public function setSourceFile($sourceFile)
+    public function setSourceFile(string $sourceFile): static
     {
         $this->sourceFile = $sourceFile;
         return $this;
@@ -204,7 +203,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @param string $templateEngine
      */
-    public function setTemplateEngine($templateEngine)
+    public function setTemplateEngine(string $templateEngine): void
     {
         $this->templateEngine = $templateEngine;
     }
@@ -212,7 +211,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * @return string
      */
-    public function getTemplateEngine()
+    public function getTemplateEngine(): string
     {
         if (!$this->templateEngine) {
             $this->templateEngine = TemplateEngine::FLUID_AND_MARKDOWN;

@@ -32,7 +32,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       $(document).on('click', '.btn-sendAgain', function (e) {
         e.preventDefault();
         const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again_confirmation);
-        console.log(url);
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Send Again',
@@ -52,8 +51,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
                 const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again);
-                console.log(sendAgainUrl);
-
                 // Ajax request
                 $.ajax({
                   url: sendAgainUrl,
