@@ -52,11 +52,8 @@ final class SendAgainConfirmationAjaxController
             $matches = [];
         }
         $sentMessages = $this->getSentMessageRepository()->findByUids($matches);
-
-
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
-
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
             $isSent = $message
