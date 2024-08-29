@@ -103,9 +103,6 @@ final class SendAgainConfirmationAjaxController
         }
         return $normalizedEmails;
     }
-
-
-
     protected function getResponse(string $content): ResponseInterface
     {
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
