@@ -27,6 +27,10 @@ return [
         'typeicon_classes' => [
             'default' => 'extensions-messenger-messagelayout',
         ],
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
+        'rootLevel' => -1,
     ],
     'types' => [
         '1' => ['showitem' => 'sys_language_uid;;;;1-1-1, l10n_diffsource, hidden;;1, qualifier, content'],

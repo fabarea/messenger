@@ -9,15 +9,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class LabelViewHelper extends AbstractViewHelper
 {
-    protected static string $tableName = 'tx_messenger_domain_model_sentmessage';
-
     public static function renderStatic(
         array $arguments,
         Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext,
     ) {
         return self::getLanguageService()->sL(
-            $GLOBALS['TCA'][self::$tableName]['columns'][$arguments['field']]['label'],
+            $GLOBALS['TCA'][$arguments['table']]['columns'][$arguments['field']]['label'],
         );
     }
 
@@ -30,5 +28,6 @@ class LabelViewHelper extends AbstractViewHelper
     {
         parent::initializeArguments();
         $this->registerArgument('field', 'string', 'field', true);
+        $this->registerArgument('table', 'string', 'table', true);
     }
 }

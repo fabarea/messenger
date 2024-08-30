@@ -30,6 +30,10 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      */
     initialize: function () {
       $(document).on('click', '.btn-sendAgain', function (e) {
+        if ($('.select:checked').length === 0) {
+          Notification.error('Error', 'Please select at least one item');
+          return;
+        }
         e.preventDefault();
         const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again_confirmation);
         Messenger.modal = Modal.advanced({

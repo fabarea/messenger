@@ -1,6 +1,7 @@
 <?php
 
 use Fab\Messenger\Controller\MessageDisplayController;
+use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageTemplateController;
 use Fab\Messenger\Controller\SendMessageModuleController;
 use Fab\Messenger\PagePath\Resolver;
@@ -49,12 +50,14 @@ call_user_func(function () {
             MessageDisplayController::class => 'show',
             SendMessageModuleController::class => 'index',
             MessageTemplateController::class => 'index',
+            MessageLayoutController::class => 'index',
         ],
         // non-cacheable actions
         [
             MessageDisplayController::class => 'show',
             SendMessageModuleController::class => 'index',
             MessageTemplateController::class => 'index',
+            MessageLayoutController::class => 'index',
         ],
     );
 

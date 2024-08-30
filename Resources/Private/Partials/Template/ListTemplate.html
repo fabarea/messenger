@@ -146,7 +146,7 @@
                     </f:for>
                     <tr>
                         <td colspan="{selectedColumns -> f:count()}">
-                            <div aria-label="" class="btn-toolbar" role="toolbar">
+                            <div aria-label="" class="btn-toolbar" onclick="Messenger.isSelected()" role="toolbar">
                                 <div class="dropdown dropdown-fields pull-left">
                                     <a
                                         class="btn btn-default btn-sm dropdown-toggle"
@@ -188,9 +188,9 @@
                                                 </button>
                                             </div>
                                         </li>
-                                        <f:if condition="{domainModel} != 'messagetemplate'">
+                                        <f:if condition="{domainModel} == 'sentmessage'">
                                             <li class="checkbox text-black p-2">
-                                                <div>
+                                                <div id="btn-action">
                                                     <a class="btn btn-default bg-white btn-sendAgain" href="">
                                                         <core:icon identifier="content-messages" size="small" />
                                                         <f:translate

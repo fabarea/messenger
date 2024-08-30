@@ -2,6 +2,7 @@
 
 namespace Fab\Messenger\Controller;
 
+use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\MessageTemplateColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
@@ -20,7 +21,6 @@ use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class MessageTemplateController extends ActionController
 {
@@ -32,6 +32,8 @@ class MessageTemplateController extends ActionController
     protected int $maximumLinks = 10;
 
     protected array $defaultSelectedColumns = ['uid', 'subject', 'body'];
+
+    protected array $excludedFIELDS = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected ModuleTemplate $moduleTemplate;
     private array $allowedSortBy = [
         'uid',
@@ -63,6 +65,9 @@ class MessageTemplateController extends ActionController
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields('tx_messenger_domain_model_messagetemplate');
+        $fields = array_filter($fields, function ($field) {
+            return !in_array($field, $this->excludedFIELDS);
+        });
         $selectedColumns = $this->computeSelectedColumns();
 
         $pagination = new SimplePagination($paginator);
@@ -151,6 +156,7 @@ class MessageTemplateController extends ActionController
         }
         return $selectedColumns;
     }
+
     public function exportAction(array $uids, string $format, array $columns): void
     {
         switch ($format) {
@@ -165,13 +171,20 @@ class MessageTemplateController extends ActionController
                 break;
         }
     }
+
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
-        /** @var MessageTemplateColumnSelectorButton $columnSelectorButton */
-        $columnSelectorButton = $buttonBar->makeButton(MessageTemplateColumnSelectorButton::class);
+        /** @var ColumnSelectorButton $columnSelectorButton */
+        $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
+        $columnSelectorButton->setModel('messagetemplate');
+        $columnSelectorButton->setTableName('tx_messenger_domain_model_messagetemplate');
+        $columnSelectorButton->setAction('index');
+        $columnSelectorButton->setModule('tx_messenger_messenger_messengertxmessengerm2');
+        $columnSelectorButton->setController('MessageTemplate');
+
         $newButton = $buttonBar->makeButton(NewButton::class);
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
 
@@ -196,7 +209,7 @@ class MessageTemplateController extends ActionController
         $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
 
         $params = [
-            'edit' => [$arguments['table'] => [$arguments['uid'] ?? $arguments['pid'] ?? 0=> 'new']],
+            'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],
         ];
 

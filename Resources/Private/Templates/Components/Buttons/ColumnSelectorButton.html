@@ -1,10 +1,13 @@
 {namespace m=Fab\Messenger\ViewHelpers}
 
-
 <div class="btn-toolbar" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
-    <f:form action="index" controller="SendMessageModule" extensionName="tx_messenger_messenger_messengertxmessengerm1"
-            fieldNamePrefix="tx_messenger_messenger_messengertxmessengerm1"
-            method="post">
+    <f:form
+        action="{action}"
+        controller="{controller}"
+        extensionName="{module}"
+        fieldNamePrefix="{module}"
+        method="post"
+    >
         <div aria-label="" class="btn-toolbar bg-white" role="toolbar">
             <div class="dropdown dropdown-fields pull-right">
                 <a
@@ -29,7 +32,9 @@
                                         name="selectedColumns[] "
                                         value="{fieldName}"
                                     />
-                                    <m:sentMessage.label field="{fieldName}"></m:sentMessage.label>
+                                    <f:translate
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{model}.xlf:{fieldName}"
+                                    />
                                 </label>
                             </li>
                         </f:if>

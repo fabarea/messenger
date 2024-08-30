@@ -183,6 +183,12 @@ class SendMessageModuleController extends ActionController
         /** @var ColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
+        $columnSelectorButton->setModule('tx_messenger_messenger_messengertxmessengerm1');
+        $columnSelectorButton->setTableName('tx_messenger_domain_model_sentmessage');
+        $columnSelectorButton->setAction('index');
+        $columnSelectorButton->setController('SendMessageModule');
+        $columnSelectorButton->setModel('sentmessage');
+
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }
 }
