@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 
 class MessageLayoutRepository extends AbstractContentRepository
 {
-    private string $tableName = 'tx_messenger_domain_model_messagelayout';
+    protected string $tableName = 'tx_messenger_domain_model_messagelayout';
 
     public function findByUid(int $uid): array
     {
@@ -86,7 +86,7 @@ class MessageLayoutRepository extends AbstractContentRepository
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('*')->from('tx_messenger_domain_model_messagelayout');
+        $queryBuilder->select('*')->from($this->tableName);
 
         $constraints = [];
         foreach ($demand as $field => $value) {
