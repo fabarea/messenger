@@ -147,53 +147,53 @@
                                     href="#"
                                     style="position: relative; bottom: 1px"
                                 ></a>
-                                <f:form
-                                    action="export"
-                                    arguments="{searchTerm: searchTerm, items: items, selectedRecords: selectedRecords, btnAction: btnAction}"
-                                    class="bg-white"
-                                    controller="{controller}"
-                                    method="post"
-                                >
-                                    <f:form.hidden id="field-format" name="btnAction" value="" />
-                                </f:form>
-
                                 <ul class="dropdown-menu bg-white" style="max-height: 800px; overflow-y: scroll">
                                     <li class="checkbox text-black p-2">
-                                        <div class="w-100">
-                                            <button
-                                                class="btn btn-default bg-white"
-                                                onclick="Messenger.exportFormat('csv')"
+                                        <div id="btn">
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="xls"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
                                             >
-                                                <core:icon identifier="actions-file-csv-download" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
-                                                />
-                                            </button>
-                                            <button
-                                                class="btn btn-default bg-white"
-                                                onclick="Messenger.exportFormat('xls')"
-                                            >
-                                                <core:icon identifier="actions-database-export" size="small" />
+                                                <core:icon identifier="content-messages" size="small" />
                                                 <f:translate
                                                     key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
                                                 />
-                                            </button>
-                                            <f:link.action
-                                                controller="{controller}"
-                                                action="exportAction"
-                                                onclick="Messenger.exportFormat('xml'); return false"
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li class="checkbox text-black p-2">
+                                        <div id="btn">
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="csv"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
                                             >
-                                                asdf
-                                            </f:link.action>
-                                            <button
-                                                class="btn btn-default bg-white"
-                                                onclick="Messenger.exportFormat('xml')"
+                                                <core:icon identifier="content-messages" size="small" />
+                                                <f:translate
+                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
+                                                />
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li class="checkbox text-black p-2">
+                                        <div id="btn">
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="xml"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
                                             >
-                                                <core:icon identifier="actions-database-export" size="small" />
+                                                <core:icon identifier="content-messages" size="small" />
                                                 <f:translate
                                                     key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
                                                 />
-                                            </button>
+                                            </a>
                                         </div>
                                     </li>
                                     <f:if condition="{domainModel} == 'sentmessage'">

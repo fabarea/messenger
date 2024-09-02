@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2013-01-08T17:34:08Z" product-name="messenger">
-		<header/>
+		<header />
 		<body>
 			<trans-unit id="tx_messenger_domain_model_sentmessage">
 				<source>Sent messages</source>
@@ -116,6 +116,14 @@
 			</trans-unit>
 			<trans-unit id="send.messages.sure?">
 				<source>You are going to send %s messages. Are you sure?</source>
+			</trans-unit>
+
+			<trans-unit id="export.sure?">
+				<source>You are going to export %s data. Are you sure?</source>
+			</trans-unit>
+
+			<trans-unit id="exports.sure?">
+				<source>You are going to export %s data. Are you sure?</source>
 			</trans-unit>
 			<trans-unit id="send.message.sure?">
 				<source>You are going to send %s message. Are you sure?</source>

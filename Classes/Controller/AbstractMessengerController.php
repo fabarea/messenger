@@ -33,7 +33,6 @@ abstract class AbstractMessengerController extends ActionController
 
     protected DataExportService $dataExportService;
     protected int $itemsPerPage = 20;
-    protected int $maximumLinks = 10;
     protected array $allowedColumns = [];
 
     protected string $table = '';
@@ -51,100 +50,13 @@ abstract class AbstractMessengerController extends ActionController
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected string $moduleName = '';
 
+    protected string $repositoryName = '';
+
     public function __construct()
     {
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
-    }
-
-    public function getRepository(): SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository
-    {
-        return $this->repository;
-    }
-
-    public function setRepository(
-        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
-    ): self {
-        $this->repository = $repository;
-        return $this;
-    }
-
-    public function getDomainModel(): string
-    {
-        return $this->domainModel;
-    }
-
-    public function setDomainModel(string $domainModel): self
-    {
-        $this->domainModel = $domainModel;
-        return $this;
-    }
-
-    public function getDefaultSelectedColumns(): array
-    {
-        return $this->defaultSelectedColumns;
-    }
-
-    public function setDefaultSelectedColumns(array $defaultSelectedColumns): self
-    {
-        $this->defaultSelectedColumns = $defaultSelectedColumns;
-        return $this;
-    }
-
-    public function getItemsPerPage(): int
-    {
-        return $this->itemsPerPage;
-    }
-
-    public function setItemsPerPage(int $itemsPerPage): self
-    {
-        $this->itemsPerPage = $itemsPerPage;
-        return $this;
-    }
-
-    public function getModuleName(): string
-    {
-        return $this->moduleName;
-    }
-
-    public function setModuleName(string $moduleName): self
-    {
-        $this->moduleName = $moduleName;
-        return $this;
-    }
-
-    public function getMaximumLinks(): int
-    {
-        return $this->maximumLinks;
-    }
-
-    public function setMaximumLinks(int $maximumLinks): self
-    {
-        $this->maximumLinks = $maximumLinks;
-        return $this;
-    }
-
-    public function getDemandFields(): array
-    {
-        return $this->demandFields;
-    }
-
-    public function setDemandFields(array $demandFields): self
-    {
-        $this->demandFields = $demandFields;
-        return $this;
-    }
-
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
-    public function setTable(string $table): self
-    {
-        $this->table = $table;
-        return $this;
     }
 
     public function indexAction(): ResponseInterface
@@ -177,6 +89,9 @@ abstract class AbstractMessengerController extends ActionController
             'controller ' => $this->controller,
             'action' => $this->action,
             'domainModel' => $this->domainModel,
+            'moduleName' => $this->moduleName,
+            'repository' => $this->repositoryName,
+
             'selectedRecords' => $this->request->hasArgument('selectedRecords')
                 ? $this->request->getArgument('selectedRecords')
                 : [],
@@ -270,6 +185,13 @@ abstract class AbstractMessengerController extends ActionController
                 $this->dataExportService->exportXml($uids, 'export.xml', $columns);
                 break;
         }
+    }
+
+    public function setRepository(
+        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
+    ): self {
+        $this->repository = $repository;
+        return $this;
     }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void

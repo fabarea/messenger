@@ -25,6 +25,21 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       return decodeURIComponent(uri.toString());
     },
 
+    getExportStorageUrl: function (url, format, module, repository) {
+      var uri = new Uri(url);
+
+      // get element by columnsToSend value and assign to the uri object
+      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+
+      if (columnsToSend.length > 0) {
+        uri.addQueryParam(
+          module + '[matches][uid]',
+          columnsToSend.join(',') + '&format=' + format + '&repository=' + repository,
+        );
+      }
+      return decodeURIComponent(uri.toString());
+    },
+
     /**
      * @return void
      */
@@ -39,6 +54,63 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Send Again',
+          severity: top.TYPO3.Severity.notice,
+          content: url,
+          buttons: [
+            {
+              text: 'Cancel',
+              btnClass: 'btn btn-default',
+              trigger: function () {
+                Modal.dismiss();
+              },
+            },
+            {
+              text: 'Send Again',
+              btnClass: 'btn btn-primary',
+              trigger: function () {
+                $('.btn', Messenger.modal).attr('disabled', 'disabled');
+                const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again);
+                // Ajax request
+                $.ajax({
+                  url: sendAgainUrl,
+
+                  /**
+                   * On success call back
+                   *
+                   * @param response
+                   */
+                  success: function (response) {
+                    Notification.success('', response);
+                    Modal.dismiss();
+                  },
+                });
+              },
+            },
+          ],
+        });
+      });
+
+      $(document).on('click', '.btn-export', function (e) {
+        if ($('.select:checked').length === 0) {
+          Notification.error('Error', 'Please select at least one item');
+          return;
+        }
+        e.preventDefault();
+
+        const format = $(this).data('format');
+        const module = $(this).data('module');
+        const repository = $(this).data('repository');
+
+        const url = Messenger.getExportStorageUrl(
+          TYPO3.settings.ajaxUrls.messenger_export_data,
+          format,
+          module,
+          repository,
+        );
+
+        Messenger.modal = Modal.advanced({
+          type: Modal.types.ajax,
+          title: 'Export as ' + format,
           severity: top.TYPO3.Severity.notice,
           content: url,
           buttons: [

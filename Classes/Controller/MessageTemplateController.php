@@ -3,6 +3,7 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class MessageTemplateController extends AbstractMessengerController
@@ -20,17 +21,21 @@ class MessageTemplateController extends AbstractMessengerController
         'message_layout',
     ];
 
+    protected array $defaultSelectedColumns = ['uid', 'subject', 'body'];
+
+    protected array $demandFields = ['type', 'subject', 'message_layout', 'qualifier'];
+    protected string $domainModel = 'messagetemplate';
+    protected string $controller = 'MessageTemplate';
+    protected string $action = 'index';
+    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm2';
+    protected string $table = 'tx_messenger_domain_model_messagetemplate';
+    protected ?MessengerRepositoryInterface $repository;
+    protected string $repositoryName = 'MessageTemplateRepository';
+    protected bool $showNewButton = true;
+
     public function __construct()
     {
         parent::__construct();
-        $this->setRepository(GeneralUtility::makeInstance(MessageTemplateRepository::class));
-        $this->setDomainModel('messagetemplate');
-        $this->setController('MessageTemplate');
-        $this->setAction('index');
-        $this->setModuleName('tx_messenger_messenger_messengertxmessengerm2');
-        $this->setTable('tx_messenger_domain_model_messagetemplate');
-        $this->setShowNewButton(true);
-        $this->setDemandFields(['type', 'subject', 'message_layout', 'qualifier']);
-        $this->setDefaultSelectedColumns(['uid', 'subject', 'body']);
+        $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
     }
 }
