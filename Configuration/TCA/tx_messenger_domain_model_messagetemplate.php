@@ -9,7 +9,6 @@ if (!defined('TYPO3')) {
 
 $table = 'tx_messenger_domain_model_messagetemplate';
 
-
 return [
     'ctrl' => [
         'title' =>
@@ -38,7 +37,6 @@ return [
             'ignorePageTypeRestriction' => true,
         ],
         'rootLevel' => -1,
-
     ],
     'types' => [
         '1' => [
@@ -179,8 +177,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:body',
             'config' => [
                 'type' => 'text',
-                'rows' => 10,
-                'cols' => 5,
+
                 'eval' => 'trim',
                 'default' => 'Hello Admin,
 
@@ -216,9 +213,11 @@ Show detail of an item:
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [],
+                'allowNonIdValues' => true,
+                'items' => [['', 0]],
                 'foreign_table' => 'tx_messenger_domain_model_messagelayout',
                 'size' => 1,
+                'default' => '',
                 'minitems' => 0,
             ],
         ],

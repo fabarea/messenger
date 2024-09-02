@@ -101,12 +101,13 @@
                 <f:form
                     action="{action}"
                     arguments="{searchTerm: searchTerm, items: items, selectedRecords: selectedRecords, btnAction: btnAction}"
+                    class="bg-white"
                     controller="{controller}"
                     method="post"
                 >
                     <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
                         <tr>
-                            <td>
+                            <td class="bg-white">
                                 <f:form.checkbox
                                     class="select"
                                     name="selectedRecords[]"
@@ -122,9 +123,8 @@
                             <td>
                                 <div class="d-flex gap-1 align-items-center pull-right">
                                     <a
-                                        clas
+                                        class="btn btn-default"
                                         href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
-                                        s="btn btn-default"
                                     >
                                         <core:icon identifier="actions-document-open" />
                                     </a>
@@ -145,8 +145,8 @@
                         </tr>
                     </f:for>
                     <tr>
-                        <td colspan="{selectedColumns -> f:count()}">
-                            <div aria-label="" class="btn-toolbar" onclick="Messenger.isSelected()" role="toolbar">
+                        <td>
+                            <div aria-label="" class="btn-toolbar" role="toolbar">
                                 <div class="dropdown dropdown-fields pull-left">
                                     <a
                                         class="btn btn-default btn-sm dropdown-toggle"
