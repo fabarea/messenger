@@ -1,10 +1,11 @@
 <?php
 
 use Fab\Messenger\Controller\BackendMessageController;
+use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
 use Fab\Messenger\Controller\MessageTemplateController;
-use Fab\Messenger\Controller\SendMessageModuleController;
+use Fab\Messenger\Controller\SentMessageModuleController;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\View\MenuItem\DequeueMenuItem;
 use Fab\Messenger\View\MenuItem\SendAgainMenuItem;
@@ -111,7 +112,7 @@ call_user_func(function () {
             'tx_messenger_m1',
             'top',
             [
-                SendMessageModuleController::class => 'index',
+                SentMessageModuleController::class => 'index',
             ],
             [
                 'access' => 'admin',
@@ -133,6 +134,21 @@ call_user_func(function () {
                 'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',
                 'labels' =>
                     'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf',
+            ],
+        );
+
+        ExtensionUtility::registerModule(
+            'Fab.Messenger',
+            'messenger',
+            'tx_messenger_m3',
+            'bottom',
+            [
+                MessageLayoutController::class => 'index',
+            ],
+            [
+                'access' => 'admin',
+                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.svg',
+                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf',
             ],
         );
 

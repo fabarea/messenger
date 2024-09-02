@@ -2,10 +2,10 @@
 
 <div class="btn-toolbar" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
     <f:form
-        action="index"
-        controller="MessageTemplate"
-        extensionName="tx_messenger_messenger_messengertxmessengerm2"
-        fieldNamePrefix="tx_messenger_messenger_messengertxmessengerm2"
+        action="{action}"
+        controller="{controller}"
+        extensionName="{module}"
+        fieldNamePrefix="{module}"
         method="post"
     >
         <div aria-label="" class="btn-toolbar bg-white" role="toolbar">
@@ -32,9 +32,8 @@
                                         name="selectedColumns[] "
                                         value="{fieldName}"
                                     />
-
                                     <f:translate
-                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:{fieldName}"
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{model}.xlf:{fieldName}"
                                     />
                                 </label>
                             </li>

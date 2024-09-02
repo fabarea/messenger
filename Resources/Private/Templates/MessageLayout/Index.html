@@ -5,6 +5,7 @@
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 >
     <f:layout name="Default" />
+
     <f:section name="main">
         <f:be.pageRenderer
             includeJsFiles="{
@@ -15,6 +16,6 @@
             }"
             includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
         />
-        <f:render arguments="{_all}" partial="Template/ListTemplate" />
+        <f:render arguments="{_all}" partial="List/ListView" />
     </f:section>
 </html>

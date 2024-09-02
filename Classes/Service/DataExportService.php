@@ -2,6 +2,8 @@
 
 namespace Fab\Messenger\Service;
 
+use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
+use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use InvalidArgumentException;
 use SimpleXMLElement;
@@ -13,12 +15,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataExportService implements SingletonInterface
 {
-    protected SentMessageRepository $sentMessageRepository;
-
-    public function __construct()
-    {
-        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
-    }
+    protected SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository;
 
     /**
      * Returns a class instance
@@ -31,6 +28,17 @@ class DataExportService implements SingletonInterface
         return GeneralUtility::makeInstance(self::class);
     }
 
+    public function getRepository(): SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository
+    {
+        return $this->repository;
+    }
+
+    public function setRepository(
+        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
+    ): void {
+        $this->repository = $repository;
+    }
+
     public function exportCsv(
         array $uids,
         string $filename,
@@ -39,7 +47,7 @@ class DataExportService implements SingletonInterface
         string $escape = '\\',
         array $header = [],
     ): void {
-        $dataSets = $this->sentMessageRepository->findByUids($uids);
+        $dataSets = $this->repository->findByUids($uids);
         $csv = fopen('php://temp', 'r+');
         fputcsv($csv, $header, $delimiter, $enclosure, $escape);
         foreach ($dataSets as $dataSet) {
@@ -60,7 +68,7 @@ class DataExportService implements SingletonInterface
 
     public function exportXls(array $dataUids, string $filename, array $header): void
     {
-        $dataSets = $this->sentMessageRepository->findByUids($dataUids);
+        $dataSets = $this->repository->findByUids($dataUids);
         $xls = fopen('php://temp', 'r+');
         fputcsv($xls, $header, "\t");
         foreach ($dataSets as $dataSet) {
@@ -81,7 +89,7 @@ class DataExportService implements SingletonInterface
 
     public function exportXml(array $dataUids, string $filename, array $header): void
     {
-        $dataSets = $this->sentMessageRepository->findByUids($dataUids);
+        $dataSets = $this->repository->findByUids($dataUids);
         $xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
         $xml->addChild('header', implode(',', $header));
         foreach ($dataSets as $dataSet) {

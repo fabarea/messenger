@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Repository;
 
 /*
@@ -8,19 +9,13 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
 use TYPO3\CMS\Core\Localization\LanguageService;
 
 class MessageLayoutRepository extends AbstractContentRepository
 {
-    private string $tableName = 'tx_messenger_domain_model_messagelayout';
+    protected string $tableName = 'tx_messenger_domain_model_messagelayout';
 
-    /**
-     * @throws DBALException
-     * @throws Exception
-     */
-    public function findByUid(int $uid): array|false
+    public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
         $query
@@ -32,7 +27,88 @@ class MessageLayoutRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        return $query->execute()->fetchOne();
+        $messages = $query->execute()->fetchOne();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findByUids(array $uids): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findByUuid(string $uuid): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->getQueryBuilder()
+                    ->expr()
+                    ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
+            );
+
+        $messages = $query->execute()->fetch();
+
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function findOlderThanDays(int $days): array
+    {
+        $time = time() - $days * 86400;
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where('crdate < ' . $time);
+
+        $messages = $query->execute()->fetchAll();
+        return is_array($messages) ? $messages : [];
+    }
+
+    public function removeOlderThanDays(int $days): int
+    {
+        $time = time() - $days * 86400;
+
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where('crdate < ' . $time);
+
+        return $query->execute();
+    }
+
+    public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select('*')->from($this->tableName);
+
+        $constraints = [];
+        foreach ($demand as $field => $value) {
+            $constraints[] = $queryBuilder
+                ->expr()
+                ->like(
+                    $field,
+                    $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                );
+        }
+        if ($constraints) {
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+        }
+
+        # We handle the sorting
+        $queryBuilder->addOrderBy(key($orderings), current($orderings));
+
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder->execute()->fetchAllAssociative();
     }
 
     protected function getLanguageService(): LanguageService
