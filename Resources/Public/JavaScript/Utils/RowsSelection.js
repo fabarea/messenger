@@ -34,7 +34,7 @@ window.Messenger = {
       alert('Please select at least one item');
       return;
     }
-    document.getElementById('btn-onclick-action').value = format;
-    document.getElementById('btn-onclick-action').form.submit();
+    document.getElementById('field-format').value = format;
+    document.getElementById('field-format').form.submit();
   },
 };

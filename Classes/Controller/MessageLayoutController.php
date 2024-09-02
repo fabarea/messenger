@@ -5,12 +5,15 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class MessageLayoutController extends MainController
+class MessageLayoutController extends AbstractMessengerController
 {
+    protected array $allowedColumns = ['uid', 'content', 'qualifier', 'hidden'];
+
     public function __construct()
     {
         parent::__construct();
-        $this->setRepository(GeneralUtility::makeInstance(MessageLayoutRepository::class));
+        $this->repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        #$this->setRepository(GeneralUtility::makeInstance(MessageLayoutRepository::class));
         $this->setDomainModel('messagelayout');
         $this->setController('MessageLayout');
         $this->setAction('index');
@@ -19,6 +22,5 @@ class MessageLayoutController extends MainController
         $this->setDemandFields(['content', 'qualifier']);
         $this->setShowNewButton(true);
         $this->setDefaultSelectedColumns(['uid', 'content', 'qualifier', 'hidden']);
-        $this->setAllowedColumns(['uid', 'content', 'qualifier', 'hidden']);
     }
 }

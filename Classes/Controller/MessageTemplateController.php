@@ -5,8 +5,21 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class MessageTemplateController extends MainController
+class MessageTemplateController extends AbstractMessengerController
 {
+    protected array $allowedColumns = [
+        'uid',
+        'type',
+        'hidden',
+        'qualifier',
+        'subject',
+        'source_file',
+        'source_page',
+        'template_engine',
+        'body',
+        'message_layout',
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -19,17 +32,5 @@ class MessageTemplateController extends MainController
         $this->setShowNewButton(true);
         $this->setDemandFields(['type', 'subject', 'message_layout', 'qualifier']);
         $this->setDefaultSelectedColumns(['uid', 'subject', 'body']);
-        $this->setAllowedColumns([
-            'uid',
-            'type',
-            'hidden',
-            'qualifier',
-            'subject',
-            'source_file',
-            'source_page',
-            'template_engine',
-            'body',
-            'message_layout',
-        ]);
     }
 }

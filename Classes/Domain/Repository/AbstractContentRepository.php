@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-abstract class AbstractContentRepository implements SingletonInterface
+abstract class AbstractContentRepository implements SingletonInterface, MessengerRepositoryInterface
 {
     protected function addDemandConstraints(array $demand, QueryBuilder $queryBuilder): void
     {

@@ -3,11 +3,33 @@
 namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
-use TYPO3\CMS\Backend\Template\Components\Buttons\DropDown\DropDownItem;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class SendMessageModuleController extends MainController
+class SentMessageModuleController extends AbstractMessengerController
 {
+    protected array $allowedColumns = [
+        'uid',
+        'crdate',
+        'tstamp',
+        'sender',
+        'subject',
+        'mailing_name',
+        'recipient',
+        'sent_time',
+        'context',
+        'body',
+        'recipient_cc',
+        'recipient_bcc',
+        'redirect_email_from',
+        'attachment',
+        'message_template',
+        'message_layout',
+        'ip',
+        'was_opened',
+        'scheduled_distribution_time',
+        'uuid',
+    ];
+
     public function __construct()
     {
         parent::__construct();
@@ -19,27 +41,5 @@ class SendMessageModuleController extends MainController
         $this->setTable('tx_messenger_domain_model_sentmessage');
         $this->setDemandFields(['sender', 'recipient', 'subject', 'mailing_name', 'sent_time']);
         $this->setDefaultSelectedColumns(['sender', 'subject', 'context', 'recipient', 'sent_time']);
-        $this->setAllowedColumns([
-            'uid',
-            'crdate',
-            'tstamp',
-            'sender',
-            'subject',
-            'mailing_name',
-            'recipient',
-            'sent_time',
-            'context',
-            'body',
-            'recipient_cc',
-            'recipient_bcc',
-            'redirect_email_from',
-            'attachment',
-            'message_template',
-            'message_layout',
-            'ip',
-            'was_opened',
-            'scheduled_distribution_time',
-            'uuid',
-        ]);
     }
 }

@@ -6,6 +6,7 @@ use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
@@ -23,9 +24,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-class MainController extends ActionController
+abstract class AbstractMessengerController extends ActionController
 {
-    protected MessageLayoutRepository|SentMessageRepository|MessageTemplateRepository|null $repository = null;
+    protected ?MessengerRepositoryInterface $repository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected ModuleTemplate $moduleTemplate;
@@ -77,17 +78,6 @@ class MainController extends ActionController
     public function setDomainModel(string $domainModel): self
     {
         $this->domainModel = $domainModel;
-        return $this;
-    }
-
-    public function getAllowedColumns(): array
-    {
-        return $this->allowedColumns;
-    }
-
-    public function setAllowedColumns(array $allowedColumns): self
-    {
-        $this->allowedColumns = $allowedColumns;
         return $this;
     }
 
@@ -314,7 +304,7 @@ class MainController extends ActionController
         return $this;
     }
 
-    public function addNewButton(): MainController
+    public function addNewButton(): AbstractMessengerController
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
 

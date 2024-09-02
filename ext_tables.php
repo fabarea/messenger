@@ -5,7 +5,7 @@ use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageSentController;
 use Fab\Messenger\Controller\MessageTemplateController;
-use Fab\Messenger\Controller\SendMessageModuleController;
+use Fab\Messenger\Controller\SentMessageModuleController;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\View\MenuItem\DequeueMenuItem;
 use Fab\Messenger\View\MenuItem\SendAgainMenuItem;
@@ -112,7 +112,7 @@ call_user_func(function () {
             'tx_messenger_m1',
             'top',
             [
-                SendMessageModuleController::class => 'index',
+                SentMessageModuleController::class => 'index',
             ],
             [
                 'access' => 'admin',

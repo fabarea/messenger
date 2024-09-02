@@ -44,7 +44,7 @@ class NewButton implements ButtonInterface
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('messenger') .
-                'Resources/Private/Templates/Components/Buttons/NewButton.html',
+                'Resources/Private/Standalone/Components/Buttons/NewButton.html',
         );
         $view->assignMultiple([
             'link' => $this->link,
