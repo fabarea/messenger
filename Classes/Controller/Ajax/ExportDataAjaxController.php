@@ -87,58 +87,57 @@ final class ExportDataAjaxController
         return $response;
     }
 
-        public function validateAction(ServerRequestInterface $request): ResponseInterface
-        {
-            $this->request = $request;
-            $matches = [];
-            $possibleKeys = [
-                'tx_messenger_messenger_messengertxmessengerm1',
-                'tx_messenger_messenger_messengertxmessengerm2',
-                'tx_messenger_messenger_messengertxmessengerm3',
-            ];
-            foreach ($possibleKeys as $key) {
-                if (isset( $this->request->getQueryParams()[$key]['matches']['uid'])) {
-                    $matches =  $this->request->getQueryParams()[$key]['matches']['uid'];
-                    break;
-                }
-            }
-            $repositoryName =  $this->request->getQueryParams()['repository'] ?? '';
-            $repository = '';
-            $tableName = '';
-            switch ($repositoryName) {
-                case 'MessageTemplateRepository':
-                    $repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
-                    $tableName = 'tx_messenger_domain_model_messagetemplate';
-                    break;
-                case 'MessageLayoutRepository':
-                    $repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
-                    $tableName = 'tx_messenger_domain_model_messagelayout';
-                    break;
-                case 'SentMessageRepository':
-                    $repository = GeneralUtility::makeInstance(SentMessageRepository::class);
-                    $tableName = 'tx_messenger_domain_model_sentmessage';
-                    break;
-            }
-            $uids = [];
-            if (!empty($matches)) {
-                $stringUids = explode(',', $matches);
-                $uids = array_map('intval', $stringUids);
-            }
-            if ( $this->request->getQueryParams()['format'] && $uids) {
-                $columns = TcaFieldsUtility::getFields($tableName);
-                $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
-                $this->dataExportService->setRepository($repository);
-                $this->exportAction($uids,  $this->request->getQueryParams()['format'], $columns);
-            }
-            $filename = 'export.csv';
-            $content = 'Error';
-            return $this->getFile($content, $filename);
-
-        }
-
+    //    public function validateAction(ServerRequestInterface $request): ResponseInterface
+    //    {
+    //        $this->request = $request;
+    //        $matches = [];
+    //        $possibleKeys = [
+    //            'tx_messenger_messenger_messengertxmessengerm1',
+    //            'tx_messenger_messenger_messengertxmessengerm2',
+    //            'tx_messenger_messenger_messengertxmessengerm3',
+    //        ];
+    //        foreach ($possibleKeys as $key) {
+    //            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
+    //                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
+    //                break;
+    //            }
+    //        }
+    //        $dataType = $this->request->getQueryParams()['repository'] ?? ''; // todo rename dataType "MessageTemplate", "message-template"
+    //        $repository = '';
+    //        $tableName = '';
+    //        switch ($dataType) {
+    //            case 'MessageTemplateRepository':
+    //                $repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+    //                $tableName = 'tx_messenger_domain_model_messagetemplate';
+    //                break;
+    //            case 'MessageLayoutRepository':
+    //                $repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+    //                $tableName = 'tx_messenger_domain_model_messagelayout';
+    //                break;
+    //            case 'SentMessageRepository':
+    //                $repository = GeneralUtility::makeInstance(SentMessageRepository::class);
+    //                $tableName = 'tx_messenger_domain_model_sentmessage';
+    //                break;
+    //        }
+    //        $uids = [];
+    //        if (!empty($matches)) {
+    //            $stringUids = explode(',', $matches);
+    //            $uids = array_map('intval', $stringUids);
+    //        }
+    //        if ($this->request->getQueryParams()['format'] && $uids) {
+    //            $columns = TcaFieldsUtility::getFields($tableName);
+    //            $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
+    //            $this->dataExportService->setRepository($repository);
+    //            $this->exportAction($uids, $this->request->getQueryParams()['format'], $columns);
+    //        }
+    //        $filename = 'export.csv';
+    //        $content = 'Error';
+    //        return $this->getFile($content, $filename);
+    //    }
 
     public function exportAction(array $uids, string $format, array $columns): void
     {
+        // todo compute the filename
         switch ($format) {
             case 'csv':
                 $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
@@ -149,21 +148,21 @@ final class ExportDataAjaxController
             case 'xml':
                 $this->dataExportService->exportXml($uids, 'export.xml', $columns);
                 break;
-                default:
-                    $this->getResponse('Error');
+            default:
+                $this->getResponse('Error');
         }
-
     }
 
     protected function getFile(
         string $content,
         string $filename,
-        string $contentType = 'application/octet-stream'
+        string $contentType = 'application/octet-stream',
     ): ResponseInterface {
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
         $streamFactory = GeneralUtility::makeInstance(StreamFactoryInterface::class);
         $stream = $streamFactory->createStream($content);
-        return $responseFactory->createResponse(200)
+        return $responseFactory
+            ->createResponse(200)
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->withBody($stream);
