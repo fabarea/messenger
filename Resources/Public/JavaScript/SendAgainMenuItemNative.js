@@ -25,6 +25,21 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       return decodeURIComponent(uri.toString());
     },
 
+    getExportStorageUrl: function (url, format, module, repository) {
+      var uri = new Uri(url);
+
+      // get element by columnsToSend value and assign to the uri object
+      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+
+      if (columnsToSend.length > 0) {
+        uri.addQueryParam(
+          module + '[matches][uid]',
+          columnsToSend.join(',') + '&format=' + format + '&repository=' + repository,
+        );
+      }
+      return decodeURIComponent(uri.toString());
+    },
+
     /**
      * @return void
      */
@@ -67,6 +82,75 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                   success: function (response) {
                     Notification.success('', response);
                     Modal.dismiss();
+                  },
+                });
+              },
+            },
+          ],
+        });
+      });
+
+      $(document).on('click', '.btn-export', function (e) {
+        if ($('.select:checked').length === 0) {
+          Notification.error('Error', 'Please select at least one item');
+          return;
+        }
+        e.preventDefault();
+
+        const format = $(this).data('format');
+        const module = $(this).data('module');
+        const repository = $(this).data('repository');
+
+        const url = Messenger.getExportStorageUrl(
+          TYPO3.settings.ajaxUrls.messenger_export_data,
+          format,
+          module,
+          repository,
+        );
+
+        Messenger.modal = Modal.advanced({
+          type: Modal.types.ajax,
+          title: 'Export as ' + format,
+          severity: top.TYPO3.Severity.notice,
+          content: url,
+          buttons: [
+            {
+              text: 'Cancel',
+              btnClass: 'btn btn-default',
+              trigger: function () {
+                Modal.dismiss();
+              },
+            },
+            {
+              text: 'Export data',
+              btnClass: 'btn btn-primary',
+              trigger: function () {
+                $('.btn', Messenger.modal).attr('disabled', 'disabled');
+                const exportUrl = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data_validation,  format,
+                  module,
+                  repository);
+                // Ajax request
+                $.ajax({
+                  url: exportUrl,
+
+                  /**
+                   * On success call back
+                   *
+                   * @param response
+                   */
+                  success: function (response) {
+                    if (response) {
+                      window.location.href = Messenger.getExportStorageUrl(
+                        TYPO3.settings.ajaxUrls.messenger_export_data_validation,
+                        format,
+                        module,
+                        repository,
+                      );
+                      Modal.dismiss();
+                    } else {
+                      Notification.error('Error', response);
+                      Modal.dismiss();
+                    }
                   },
                 });
               },

@@ -23,15 +23,11 @@ class DataExportService implements SingletonInterface
      * @return DataExportService
      * @throws InvalidArgumentException
      */
-    public static function getInstance()
+    public static function getInstance(): DataExportService
     {
         return GeneralUtility::makeInstance(self::class);
     }
 
-    public function getRepository(): SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository
-    {
-        return $this->repository;
-    }
 
     public function setRepository(
         SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
@@ -47,6 +43,8 @@ class DataExportService implements SingletonInterface
         string $escape = '\\',
         array $header = [],
     ): void {
+
+
         $dataSets = $this->repository->findByUids($uids);
         $csv = fopen('php://temp', 'r+');
         fputcsv($csv, $header, $delimiter, $enclosure, $escape);
@@ -66,7 +64,7 @@ class DataExportService implements SingletonInterface
         exit();
     }
 
-    public function exportXls(array $dataUids, string $filename, array $header): void
+    public function exportXls(array  $dataUids , string $filename, array $header): void
     {
         $dataSets = $this->repository->findByUids($dataUids);
         $xls = fopen('php://temp', 'r+');

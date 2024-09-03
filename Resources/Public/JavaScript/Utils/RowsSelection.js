@@ -28,13 +28,6 @@ window.Messenger = {
     return [...document.querySelectorAll('.select:checked')].map((element) => element.value);
   },
 
-  exportFormat: function (format) {
-    const selected = this.getSelectedItems();
-    if (selected.length === 0) {
-      alert('Please select at least one item');
-      return;
-    }
-    document.getElementById('field-format').value = format;
-    document.getElementById('field-format').form.submit();
-  },
+
 };
+

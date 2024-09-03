@@ -2,6 +2,7 @@
 
 namespace Fab\Messenger\Controller;
 
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -30,16 +31,22 @@ class SentMessageModuleController extends AbstractMessengerController
         'uuid',
     ];
 
+    protected array $defaultSelectedColumns = ['sender', 'subject', 'context', 'recipient', 'sent_time'];
+
+    protected array $demandFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+    protected string $domainModel = 'sentmessage';
+    protected string $controller = 'SendMessageModule';
+    protected string $action = 'index';
+    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm1';
+    protected string $table = 'tx_messenger_domain_model_sentmessage';
+
+    protected string $repositoryName = 'SentMessageRepository';
+
+    protected ?MessengerRepositoryInterface $repository;
+
     public function __construct()
     {
         parent::__construct();
-        $this->setRepository(GeneralUtility::makeInstance(SentMessageRepository::class));
-        $this->setDomainModel('sentmessage');
-        $this->setController('SendMessageModule');
-        $this->setAction('index');
-        $this->setModuleName('tx_messenger_messenger_messengertxmessengerm1');
-        $this->setTable('tx_messenger_domain_model_sentmessage');
-        $this->setDemandFields(['sender', 'recipient', 'subject', 'mailing_name', 'sent_time']);
-        $this->setDefaultSelectedColumns(['sender', 'subject', 'context', 'recipient', 'sent_time']);
+        $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 }
