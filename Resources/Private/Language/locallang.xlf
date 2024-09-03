@@ -81,6 +81,9 @@
 			<trans-unit id="x-messages-sent-successfully">
 				<source>Successfully sent {0} messages</source>
 			</trans-unit>
+			<trans-unit id="export.success">
+				<source>Successfully export data</source>
+			</trans-unit>
 			<trans-unit id="message-error">
 				<source>Something went wrong with message:</source>
 			</trans-unit>

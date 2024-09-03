@@ -1,6 +1,6 @@
 <?php
 
-use Fab\Messenger\Controller\Ajax\AjaxExportDataController;
+use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
 
 return [
@@ -14,6 +14,11 @@ return [
     ],
     'messenger_export_data' => [
         'path' => '/messenger/export-data',
-        'target' => AjaxExportDataController::class . '::confirmAction',
+        'target' => ExportDataAjaxController::class . '::confirmAction',
+    ],
+
+    'messenger_export_data_validation' => [
+        'path' => '/messenger/export-data/validate',
+        'target' => ExportDataAjaxController::class . '::validateAction',
     ],
 ];

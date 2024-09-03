@@ -13,6 +13,7 @@ use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
@@ -22,6 +23,7 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 abstract class AbstractMessengerController extends ActionController
@@ -59,6 +61,9 @@ abstract class AbstractMessengerController extends ActionController
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
     }
 
+    /**
+     * @throws NoSuchArgumentException
+     */
     public function indexAction(): ResponseInterface
     {
         $orderings = $this->getOrderings();
@@ -91,28 +96,10 @@ abstract class AbstractMessengerController extends ActionController
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
             'repository' => $this->repositoryName,
-
             'selectedRecords' => $this->request->hasArgument('selectedRecords')
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-
-        if (
-            $this->request->hasArgument('selectedRecords') &&
-            $this->request->getArgument('selectedRecords') !== '' &&
-            $this->request->hasArgument('btnAction') &&
-            $this->request->getArgument('btnAction') !== null
-        ) {
-            $uids = $this->request->hasArgument('selectedRecords')
-                ? $this->request->getArgument('selectedRecords')
-                : [];
-            $format = $this->request->getArgument('btnAction');
-            $columns = $this->computeSelectedColumns();
-            array_unshift($columns, 'uid');
-            $columns = array_filter($columns);
-            $columns = array_unique($columns);
-            $this->exportAction($uids, $format, $columns);
-        }
 
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $this->moduleTemplate->setContent($this->view->render());
@@ -121,6 +108,9 @@ abstract class AbstractMessengerController extends ActionController
         return $this->htmlResponse($this->moduleTemplate->renderContent());
     }
 
+    /**
+     * @throws NoSuchArgumentException
+     */
     protected function getOrderings(): array
     {
         $sortBy = $this->request->hasArgument('sortBy') ? $this->request->getArgument('sortBy') : 'crdate';
@@ -159,10 +149,8 @@ abstract class AbstractMessengerController extends ActionController
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
-
         $selectedColumns =
             BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
-
         if ($this->request->hasArgument('selectedColumns')) {
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
@@ -170,29 +158,7 @@ abstract class AbstractMessengerController extends ActionController
         return $selectedColumns;
     }
 
-    public function exportAction(array $uids, string $format, array $columns): void
-    {
-        $this->dataExportService->setRepository($this->repository);
 
-        switch ($format) {
-            case 'csv':
-                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
-                break;
-            case 'xls':
-                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
-                break;
-            case 'xml':
-                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
-                break;
-        }
-    }
-
-    public function setRepository(
-        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
-    ): self {
-        $this->repository = $repository;
-        return $this;
-    }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
@@ -214,25 +180,11 @@ abstract class AbstractMessengerController extends ActionController
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }
 
-    public function setAction(string $action): self
-    {
-        $this->action = $action;
-        return $this;
-    }
-
-    public function setController(string $controller): self
-    {
-        $this->controller = $controller;
-        return $this;
-    }
-
     public function addNewButton(): AbstractMessengerController
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-
         $newButton = $buttonBar->makeButton(NewButton::class);
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
-
         $newButton->setLink(
             $this->renderUriNewRecord([
                 'table' => 'tx_messenger_domain_model_messagetemplate',
@@ -250,21 +202,18 @@ abstract class AbstractMessengerController extends ActionController
         return GeneralUtility::makeInstance(ConfigurationUtility::class);
     }
 
+    /**
+     * @throws RouteNotFoundException
+     */
     protected function renderUriNewRecord(array $arguments): string
     {
         $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
-
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],
         ];
-
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 
-    protected function setShowNewButton(bool $showNewButton): void
-    {
-        $this->showNewButton = $showNewButton;
-    }
 }

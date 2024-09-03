@@ -100,7 +100,7 @@
             <tbody class="checkboxes">
                 <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
                     <tr>
-                        <td class="bg-white">
+                        <td>
                             <f:form.checkbox
                                 class="select"
                                 name="selectedRecords[]"
@@ -139,68 +139,21 @@
                 </f:for>
                 <tr>
                     <td>
-                        <div aria-label="" class="btn-toolbar" role="toolbar">
-                            <div class="dropdown dropdown-fields pull-left">
+                        <div class="btn-toolbar" role="toolbar"  style="background: #fafafa">
+                            <div  id="btn-toogle" class="dropdown  dropdown-fields pull-left " style="background: #fafafa">
                                 <a
-                                    class="btn btn-default btn-sm dropdown-toggle"
+
+                                    class="btn  btn-default btn-sm dropdown-toggle"
                                     data-bs-toggle="dropdown"
                                     href="#"
-                                    style="position: relative; bottom: 1px"
+                                    style="position: relative; bottom: 1px; background: #fafafa"
                                 ></a>
-                                <ul class="dropdown-menu bg-white" style="max-height: 800px; overflow-y: scroll">
-                                    <li class="checkbox text-black p-2">
-                                        <div id="btn">
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="xls"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="content-messages" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
-                                                />
-                                            </a>
-                                        </div>
-                                    </li>
-                                    <li class="checkbox text-black p-2">
-                                        <div id="btn">
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="csv"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="content-messages" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
-                                                />
-                                            </a>
-                                        </div>
-                                    </li>
-                                    <li class="checkbox text-black p-2">
-                                        <div id="btn">
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="xml"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="content-messages" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
-                                                />
-                                            </a>
-                                        </div>
-                                    </li>
+                                <ul class="dropdown-menu bg-white " style="max-height: 800px; overflow-y: scroll">
                                     <f:if condition="{domainModel} == 'sentmessage'">
-                                        <li class="checkbox text-black p-2">
+                                        <li class="checkbox text-black">
                                             <div id="btn-action">
-                                                <a class="btn btn-default bg-white btn-sendAgain" href="">
-                                                    <core:icon identifier="content-messages" size="small" />
+                                                <a class="btn btn-default bg-white btn-sendAgain"  href="">
+                                                    <core:icon identifier="content-elements-mailform" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
                                                     />
@@ -208,6 +161,55 @@
                                             </div>
                                         </li>
                                     </f:if>
+                                    <li class="checkbox text-black ">
+                                        <div>
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="xls"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
+                                            >
+                                                <core:icon identifier="mimetypes-excel" size="small" />
+                                                <f:translate
+                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
+                                                />
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li class="checkbox text-black ">
+                                        <div>
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="csv"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
+                                            >
+                                                <core:icon identifier="mimetypes-text-csv" size="small" />
+                                                <f:translate
+                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
+                                                />
+                                            </a>
+                                        </div>
+                                    </li>
+                                    <li class="checkbox text-black">
+                                        <div>
+                                            <a
+                                                class="btn btn-default bg-white btn-export"
+                                                data-format="xml"
+                                                data-module="{moduleName}"
+                                                data-repository="{repository}"
+                                                href=""
+                                            >
+                                                <core:icon identifier="mimetypes-text-html" size="small" />
+                                                <f:translate
+                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
+                                                />
+                                            </a>
+                                        </div>
+                                    </li>
+
                                 </ul>
                             </div>
                         </div>

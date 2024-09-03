@@ -122,14 +122,16 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               },
             },
             {
-              text: 'Send Again',
+              text: 'Export data',
               btnClass: 'btn btn-primary',
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
-                const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again);
+                const exportUrl = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data_validation,  format,
+                  module,
+                  repository);
                 // Ajax request
                 $.ajax({
-                  url: sendAgainUrl,
+                  url: exportUrl,
 
                   /**
                    * On success call back
@@ -137,8 +139,18 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                    * @param response
                    */
                   success: function (response) {
-                    Notification.success('', response);
-                    Modal.dismiss();
+                    if (response) {
+                      window.location.href = Messenger.getExportStorageUrl(
+                        TYPO3.settings.ajaxUrls.messenger_export_data_validation,
+                        format,
+                        module,
+                        repository,
+                      );
+                      Modal.dismiss();
+                    } else {
+                      Notification.error('Error', response);
+                      Modal.dismiss();
+                    }
                   },
                 });
               },
