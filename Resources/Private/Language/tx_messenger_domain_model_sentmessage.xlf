@@ -85,15 +85,15 @@
 				<source>Showing</source>
 			</trans-unit>
 			<trans-unit id="csv">
-				<source> Download csv
+				<source> Export csv
 				</source>
 			</trans-unit>
 
 			<trans-unit id="xls">
-				<source>Download xls</source>
+				<source>Export xls</source>
 			</trans-unit>
 			<trans-unit id="xml">
-				<source>Download xml</source>
+				<source>Export xml</source>
 			</trans-unit>
 			<trans-unit id="delete">
 				<source>Delete</source>
