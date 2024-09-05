@@ -4,10 +4,7 @@ namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
-use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
-use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
-use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
@@ -75,6 +72,7 @@ abstract class AbstractMessengerController extends ActionController
         $fields = array_filter($fields, function ($field) {
             return !in_array($field, $this->excludedFields);
         });
+        $fields = array_merge(['uid'], $fields);
         $selectedColumns = $this->computeSelectedColumns();
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple([
@@ -100,11 +98,9 @@ abstract class AbstractMessengerController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $this->moduleTemplate->setContent($this->view->render());
         $this->computeDocHeader($fields, $selectedColumns);
-
         return $this->htmlResponse($this->moduleTemplate->renderContent());
     }
 
@@ -133,7 +129,6 @@ abstract class AbstractMessengerController extends ActionController
     {
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $demand = [];
-
         if (strlen($searchTerm) > 0) {
             foreach ($this->demandFields as $field) {
                 $demand[$field] = $searchTerm;
@@ -157,8 +152,6 @@ abstract class AbstractMessengerController extends ActionController
         }
         return $selectedColumns;
     }
-
-
 
     private function computeDocHeader(array $fields, array $selectedColumns): void
     {
@@ -215,5 +208,4 @@ abstract class AbstractMessengerController extends ActionController
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
-
 }
