@@ -2,9 +2,7 @@
 
 namespace Fab\Messenger\Service;
 
-use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
-use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
-use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\NoReturn;
 use SimpleXMLElement;
@@ -16,7 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataExportService implements SingletonInterface
 {
-    protected SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository;
+    protected MessengerRepositoryInterface $repository;
 
     /**
      * Returns a class instance
@@ -29,9 +27,8 @@ class DataExportService implements SingletonInterface
         return GeneralUtility::makeInstance(self::class);
     }
 
-    public function setRepository(
-        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
-    ): void {
+    public function setRepository(MessengerRepositoryInterface $repository): void
+    {
         $this->repository = $repository;
     }
 

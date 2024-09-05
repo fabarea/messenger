@@ -32,7 +32,7 @@
 			</trans-unit>
 
 			<trans-unit id="csv">
-				<source> Export csv</source>
+				<source>Export csv</source>
 			</trans-unit>
 
 			<trans-unit id="xls">

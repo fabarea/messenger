@@ -4,6 +4,7 @@ namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
@@ -20,7 +21,7 @@ final class ExportDataAjaxController
 
     protected ?ServerRequestInterface $request = null;
 
-    protected SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository;
+    protected MessengerRepositoryInterface $repository;
 
     protected string $dataType = '';
 
