@@ -19,19 +19,18 @@
 				<source>Key</source>
 			</trans-unit>
 			<trans-unit id="send_message">
-				<source> Send again</source>
+				<source>Send again</source>
 			</trans-unit>
 
 			<trans-unit id="csv">
-				<source> Download csv
-				</source>
+				<source>Export csv</source>
 			</trans-unit>
 
 			<trans-unit id="xls">
-				<source>Download xls</source>
+				<source>Export xls</source>
 			</trans-unit>
 			<trans-unit id="xml">
-				<source>Download xml</source>
+				<source>Export xml</source>
 			</trans-unit>
 			<trans-unit id="message_template">
 				<source>Message template</source>

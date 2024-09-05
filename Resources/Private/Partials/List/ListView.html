@@ -110,7 +110,16 @@
                         </td>
                         <f:for as="selectedField" each="{selectedColumns}" iteration="selectedFieldIterator">
                             <f:if condition="{selectedField} != ''">
-                                <td>{message.{selectedField}}</td>
+                                <f:if condition="{selectedField} == 'sent_time'">
+                                    <f:then>
+                                        <td>
+                                            <f:format.date format="d.m.Y H:i">{message.{selectedField}}</f:format.date>
+                                        </td>
+                                    </f:then>
+                                    <f:else>
+                                        <td>{message.{selectedField}}</td>
+                                    </f:else>
+                                </f:if>
                             </f:if>
                         </f:for>
                         <td>
@@ -139,20 +148,19 @@
                 </f:for>
                 <tr>
                     <td>
-                        <div class="btn-toolbar" role="toolbar"  style="background: #fafafa">
-                            <div  id="btn-toogle" class="dropdown  dropdown-fields pull-left " style="background: #fafafa">
+                        <div class="btn-toolbar" role="toolbar" style="background: #fafafa">
+                            <div class="dropdown dropdown-fields pull-left" id="btn-toogle" style="background: #fafafa">
                                 <a
-
-                                    class="btn  btn-default btn-sm dropdown-toggle"
+                                    class="btn btn-default btn-sm dropdown-toggle"
                                     data-bs-toggle="dropdown"
                                     href="#"
                                     style="position: relative; bottom: 1px; background: #fafafa"
                                 ></a>
-                                <ul class="dropdown-menu bg-white " style="max-height: 800px; overflow-y: scroll">
+                                <ul class="dropdown-menu bg-white" style="max-height: 800px; overflow-y: scroll">
                                     <f:if condition="{domainModel} == 'sentmessage'">
-                                        <li class="checkbox text-black">
+                                        <li class="checkbox text-black" style="border-bottom: 1px solid black">
                                             <div id="btn-action">
-                                                <a class="btn btn-default bg-white btn-sendAgain"  href="">
+                                                <a class="btn btn-default bg-white btn-sendAgain" href="">
                                                     <core:icon identifier="content-elements-mailform" size="small" />
                                                     <f:translate
                                                         key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
@@ -161,7 +169,7 @@
                                             </div>
                                         </li>
                                     </f:if>
-                                    <li class="checkbox text-black ">
+                                    <li class="checkbox text-black">
                                         <div>
                                             <a
                                                 class="btn btn-default bg-white btn-export"
@@ -177,7 +185,7 @@
                                             </a>
                                         </div>
                                     </li>
-                                    <li class="checkbox text-black ">
+                                    <li class="checkbox text-black">
                                         <div>
                                             <a
                                                 class="btn btn-default bg-white btn-export"
@@ -193,7 +201,7 @@
                                             </a>
                                         </div>
                                     </li>
-                                    <li class="checkbox text-black">
+                                    <li class="checkbox text-black" style="border-bottom: 1px solid black">
                                         <div>
                                             <a
                                                 class="btn btn-default bg-white btn-export"
@@ -209,7 +217,6 @@
                                             </a>
                                         </div>
                                     </li>
-
                                 </ul>
                             </div>
                         </div>

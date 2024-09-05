@@ -40,7 +40,7 @@ class SentMessageModuleController extends AbstractMessengerController
     protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm1';
     protected string $table = 'tx_messenger_domain_model_sentmessage';
 
-    protected string $repositoryName = 'SentMessageRepository';
+    protected string $repositoryName = 'sent-message-repository';
 
     protected ?MessengerRepositoryInterface $repository;
 

@@ -34,7 +34,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       if (columnsToSend.length > 0) {
         uri.addQueryParam(
           module + '[matches][uid]',
-          columnsToSend.join(',') + '&format=' + format + '&repository=' + repository,
+          columnsToSend.join(',') + '&format=' + format + '&dataType=' + repository,
         );
       }
       return decodeURIComponent(uri.toString());
@@ -126,9 +126,12 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               btnClass: 'btn btn-primary',
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
-                const exportUrl = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data_validation,  format,
+                const exportUrl = Messenger.getExportStorageUrl(
+                  TYPO3.settings.ajaxUrls.messenger_export_data_validation,
+                  format,
                   module,
-                  repository);
+                  repository,
+                );
                 // Ajax request
                 $.ajax({
                   url: exportUrl,

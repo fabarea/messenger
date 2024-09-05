@@ -30,7 +30,7 @@ class MessageTemplateController extends AbstractMessengerController
     protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm2';
     protected string $table = 'tx_messenger_domain_model_messagetemplate';
     protected ?MessengerRepositoryInterface $repository;
-    protected string $repositoryName = 'MessageTemplateRepository';
+    protected string $repositoryName = 'message-template-repository'; // $dataType - message-template
     protected bool $showNewButton = true;
 
     public function __construct()

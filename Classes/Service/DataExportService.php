@@ -2,10 +2,9 @@
 
 namespace Fab\Messenger\Service;
 
-use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
-use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
-use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\NoReturn;
 use SimpleXMLElement;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -15,7 +14,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataExportService implements SingletonInterface
 {
-    protected SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository;
+    protected MessengerRepositoryInterface $repository;
 
     /**
      * Returns a class instance
@@ -28,10 +27,8 @@ class DataExportService implements SingletonInterface
         return GeneralUtility::makeInstance(self::class);
     }
 
-
-    public function setRepository(
-        SentMessageRepository|MessageLayoutRepository|MessageTemplateRepository $repository,
-    ): void {
+    public function setRepository(MessengerRepositoryInterface $repository): void
+    {
         $this->repository = $repository;
     }
 
@@ -43,8 +40,6 @@ class DataExportService implements SingletonInterface
         string $escape = '\\',
         array $header = [],
     ): void {
-
-
         $dataSets = $this->repository->findByUids($uids);
         $csv = fopen('php://temp', 'r+');
         fputcsv($csv, $header, $delimiter, $enclosure, $escape);
@@ -64,7 +59,8 @@ class DataExportService implements SingletonInterface
         exit();
     }
 
-    public function exportXls(array  $dataUids , string $filename, array $header): void
+    #[NoReturn]
+    public function exportXls(array $dataUids, string $filename, array $header): void
     {
         $dataSets = $this->repository->findByUids($dataUids);
         $xls = fopen('php://temp', 'r+');
@@ -85,6 +81,7 @@ class DataExportService implements SingletonInterface
         exit();
     }
 
+    #[NoReturn]
     public function exportXml(array $dataUids, string $filename, array $header): void
     {
         $dataSets = $this->repository->findByUids($dataUids);

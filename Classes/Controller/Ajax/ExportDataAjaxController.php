@@ -2,9 +2,9 @@
 
 namespace Fab\Messenger\Controller\Ajax;
 
-use enshrined\svgSanitize\data\AllowedAttributes;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
@@ -20,6 +20,19 @@ final class ExportDataAjaxController
     protected ?DataExportService $dataExportService = null;
 
     protected ?ServerRequestInterface $request = null;
+
+    protected MessengerRepositoryInterface $repository;
+
+    protected string $dataType = '';
+
+    protected string $tableName = '';
+
+    protected string $date = '';
+
+    public function __construct()
+    {
+        $this->date = date('Y-m-d');
+    }
 
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
@@ -39,27 +52,15 @@ final class ExportDataAjaxController
             }
         }
 
-        $repositoryName = $this->request->getQueryParams()['repository'] ?? '';
-        $repository = '';
-        switch ($repositoryName) {
-            case 'MessageTemplateRepository':
-                $repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
-                break;
-            case 'MessageLayoutRepository':
-                $repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
-                break;
+        $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
 
-            case 'SentMessageRepository':
-                $repository = GeneralUtility::makeInstance(SentMessageRepository::class);
-                break;
-        }
-        $uids = [];
+        $this->getDataType($this->dataType);
+
         if (!empty($matches)) {
             $stringUids = explode(',', $matches);
             $uids = array_map('intval', $stringUids);
-            $data = $repository->findByUids($uids);
+            $data = $this->repository->findByUids($uids);
         }
-
         $content =
             count($data) > 1
                 ? $this->getLanguageService()->sL(
@@ -71,6 +72,24 @@ final class ExportDataAjaxController
 
         $content = sprintf($content, count($data));
         return $this->getResponse($content);
+    }
+
+    protected function getDataType($type): void
+    {
+        switch ($type) {
+            case 'message-template-repository':
+                $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+                $this->tableName = 'tx_messenger_domain_model_messagetemplate';
+                break;
+            case 'message-layout-repository':
+                $this->repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+                $this->tableName = 'tx_messenger_domain_model_messagelayout';
+                break;
+            case 'sent-message-repository':
+                $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
+                $this->tableName = 'tx_messenger_domain_model_sentmessage';
+                break;
+        }
     }
 
     protected function getLanguageService(): LanguageService
@@ -87,66 +106,65 @@ final class ExportDataAjaxController
         return $response;
     }
 
-    //    public function validateAction(ServerRequestInterface $request): ResponseInterface
-    //    {
-    //        $this->request = $request;
-    //        $matches = [];
-    //        $possibleKeys = [
-    //            'tx_messenger_messenger_messengertxmessengerm1',
-    //            'tx_messenger_messenger_messengertxmessengerm2',
-    //            'tx_messenger_messenger_messengertxmessengerm3',
-    //        ];
-    //        foreach ($possibleKeys as $key) {
-    //            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
-    //                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
-    //                break;
-    //            }
-    //        }
-    //        $dataType = $this->request->getQueryParams()['repository'] ?? ''; // todo rename dataType "MessageTemplate", "message-template"
-    //        $repository = '';
-    //        $tableName = '';
-    //        switch ($dataType) {
-    //            case 'MessageTemplateRepository':
-    //                $repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
-    //                $tableName = 'tx_messenger_domain_model_messagetemplate';
-    //                break;
-    //            case 'MessageLayoutRepository':
-    //                $repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
-    //                $tableName = 'tx_messenger_domain_model_messagelayout';
-    //                break;
-    //            case 'SentMessageRepository':
-    //                $repository = GeneralUtility::makeInstance(SentMessageRepository::class);
-    //                $tableName = 'tx_messenger_domain_model_sentmessage';
-    //                break;
-    //        }
-    //        $uids = [];
-    //        if (!empty($matches)) {
-    //            $stringUids = explode(',', $matches);
-    //            $uids = array_map('intval', $stringUids);
-    //        }
-    //        if ($this->request->getQueryParams()['format'] && $uids) {
-    //            $columns = TcaFieldsUtility::getFields($tableName);
-    //            $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
-    //            $this->dataExportService->setRepository($repository);
-    //            $this->exportAction($uids, $this->request->getQueryParams()['format'], $columns);
-    //        }
-    //        $filename = 'export.csv';
-    //        $content = 'Error';
-    //        return $this->getFile($content, $filename);
-    //    }
+    public function validateAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->request = $request;
+        $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
+        $matches = [];
+        $possibleKeys = [
+            'tx_messenger_messenger_messengertxmessengerm1',
+            'tx_messenger_messenger_messengertxmessengerm2',
+            'tx_messenger_messenger_messengertxmessengerm3',
+        ];
+        foreach ($possibleKeys as $key) {
+            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
+                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
+                break;
+            }
+        }
+        $this->getDataType($this->dataType);
+
+        $uids = [];
+        if (!empty($matches)) {
+            $stringUids = explode(',', $matches);
+            $uids = array_map('intval', $stringUids);
+        }
+        if ($this->request->getQueryParams()['format'] && $uids) {
+            $columns = TcaFieldsUtility::getFields($this->tableName);
+            $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
+            $this->dataExportService->setRepository($this->repository);
+            $this->exportAction($uids, $this->request->getQueryParams()['format'], $columns);
+        }
+
+        return $this->getResponse('Error');
+    }
 
     public function exportAction(array $uids, string $format, array $columns): void
     {
-        // todo compute the filename
         switch ($format) {
             case 'csv':
-                $this->dataExportService->exportCsv($uids, 'export.csv', ',', '"', '\\', $columns);
+                $this->dataExportService->exportCsv(
+                    $uids,
+                    'export-' . $this->dataType . '-' . $this->date . '.csv',
+                    ',',
+                    '"',
+                    '\\',
+                    $columns,
+                );
                 break;
             case 'xls':
-                $this->dataExportService->exportXls($uids, 'export.xls', $columns);
+                $this->dataExportService->exportXls(
+                    $uids,
+                    'export-' . $this->dataType . '-' . $this->date . '.xls',
+                    $columns,
+                );
                 break;
             case 'xml':
-                $this->dataExportService->exportXml($uids, 'export.xml', $columns);
+                $this->dataExportService->exportXml(
+                    $uids,
+                    'export-' . $this->dataType . '-' . $this->date . '.xml',
+                    $columns,
+                );
                 break;
             default:
                 $this->getResponse('Error');
