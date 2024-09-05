@@ -77,15 +77,15 @@ final class ExportDataAjaxController
     protected function getDataType($type): void
     {
         switch ($type) {
-            case 'message-template-repository':
+            case 'message-template':
                 $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_messagetemplate';
                 break;
-            case 'message-layout-repository':
+            case 'message-layout':
                 $this->repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_messagelayout';
                 break;
-            case 'sent-message-repository':
+            case 'sent-message':
                 $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_sentmessage';
                 break;
@@ -149,13 +149,6 @@ final class ExportDataAjaxController
                     ',',
                     '"',
                     '\\',
-                    $columns,
-                );
-                break;
-            case 'xls':
-                $this->dataExportService->exportXls(
-                    $uids,
-                    'export-' . $this->dataType . '-' . $this->date . '.xls',
                     $columns,
                 );
                 break;
