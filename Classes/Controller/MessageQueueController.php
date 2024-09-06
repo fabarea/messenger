@@ -46,21 +46,7 @@ class MessageQueueController extends AbstractMessengerController
         'redirect_email_from',
     ];
 
-    protected array $defaultSelectedColumns = [
-        'uid',
-        'uuid',
-        'pid',
-        'recipient_cc',
-        'recipient',
-        'sender',
-        'subject',
-        'pid',
-        'attachment',
-        'context',
-        'mailing_name',
-        'message_template',
-        'message_layout',
-    ];
+    protected array $defaultSelectedColumns = ['uid', 'recipient_cc', 'recipient', 'sender', 'subject', 'context'];
 
     protected array $demandFields = [
         'recipient_cc',

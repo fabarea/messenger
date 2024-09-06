@@ -15,7 +15,6 @@
 			<trans-unit id="uid">
 				<source>Uid</source>
 			</trans-unit>
-
 			<trans-unit id="queue">
 				<source>Sent Message</source>
 			</trans-unit>
@@ -29,85 +28,56 @@
 				<source>Pid</source>
 			</trans-unit>
 			<trans-unit id="recipient_cc">
-				<source>Recipient Cc
-				</source>
+				<source>Recipient Cc</source>
 			</trans-unit>
-
 			<trans-unit id="recipient">
-				<source>Recipient
-				</source>
+				<source>Recipient</source>
 			</trans-unit>
-
 			<trans-unit id="sender">
-				<source>Sender
-				</source>
+				<source>Sender</source>
 			</trans-unit>
-
 			<trans-unit id="subject">
-				<source>Subject
-				</source>
+				<source>Subject</source>
 			</trans-unit>
-
 			<trans-unit id="body">
-				<source>Body
-				</source>
+				<source>Body</source>
 			</trans-unit>
-
 			<trans-unit id="attachment">
-				<source>Attachment
-				</source>
+				<source>Attachment</source>
 			</trans-unit>
-
 			<trans-unit id="context">
-				<source>Context
-				</source>
+				<source>Context</source>
 			</trans-unit>
-
 			<trans-unit id="mailing_name">
-				<source>Mailing Name
-				</source>
+				<source>Mailing Name</source>
 			</trans-unit>
-
 			<trans-unit id="message_template">
-				<source>Message Template
-				</source>
+				<source>Message Template</source>
 			</trans-unit>
-
 			<trans-unit id="message_layout">
-				<source>Message Layout
-				</source>
+				<source>Message Layout</source>
 			</trans-unit>
-
 			<trans-unit id="scheduled_distribution_time">
-				<source>Scheduled Distribution Time
-				</source>
+				<source>Scheduled Distribution Time</source>
 			</trans-unit>
-
 			<trans-unit id="ip">
-				<source>Ip
-				</source>
+				<source>Ip</source>
 			</trans-unit>
 			<trans-unit id="error_count">
-				<source>Error Count
-				</source>
+				<source>Error Count</source>
 			</trans-unit>
 			<trans-unit id="redirect_email_from">
-				<source> Redirect Email From
-				</source
-				>
+				<source> Redirect Email From</source>
 			</trans-unit>
 			<trans-unit id="crdate">
-				<source> Created Date
-				</source>
+				<source> Created Date</source>
 			</trans-unit>
 			<trans-unit id="recipient_bcc">
-				<source> Recipient Bcc
-				</source>
+				<source> Recipient Bcc</source>
 			</trans-unit>
 			<trans-unit id="csv">
 				<source>Export csv</source>
 			</trans-unit>
-
 			<trans-unit id="xls">
 				<source>Export xls</source>
 			</trans-unit>
