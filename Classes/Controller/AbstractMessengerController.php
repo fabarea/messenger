@@ -173,6 +173,9 @@ abstract class AbstractMessengerController extends ActionController
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }
 
+    /**
+     * @throws RouteNotFoundException
+     */
     public function addNewButton(): AbstractMessengerController
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
@@ -180,7 +183,7 @@ abstract class AbstractMessengerController extends ActionController
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
         $newButton->setLink(
             $this->renderUriNewRecord([
-                'table' => 'tx_messenger_domain_model_messagetemplate',
+                'table' => $this->table,
                 'pid' => $pagePid,
                 'uid' => 0,
             ]),

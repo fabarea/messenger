@@ -68,10 +68,11 @@
                     <f:variable name="color" value="text-black" />
                     <th class="action" scope="col">
                         <f:form.checkbox
+                            class="select-all"
                             id="record-all"
                             name="selectedRecords[]"
-                            onclick="Messenger.selectAll()"
-                            value="all"
+                            onclick="Messenger.selectAll(this); "
+                            value="1"
                         />
                     </th>
 
@@ -157,9 +158,9 @@
                                 type="button"
                             ></button>
                             <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
-                                <f:if condition="{domainModel} == 'sentmessage'">
+                                <f:if condition="{domainModel} == 'sentmessage' || {domainModel} == 'queue'">
                                     <li class="p-1">
-                                        <a class="dropdown-item btn-sendAgain" href="#">
+                                        <a class="dropdown-item btn-sendAgain" data-data-type="{dataType}" href="#">
                                             <core:icon identifier="content-elements-mailform" size="small" />
                                             <f:translate
                                                 key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"

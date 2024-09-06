@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2011-10-17T20:22:32Z" product-name="local lang module">
-		<header/>
+		<header />
 		<body>
 			<trans-unit id="mlang_labels_tablabel">
 				<source>Queue Manager</source>
@@ -21,6 +21,101 @@
 			</trans-unit>
 			<trans-unit id="message_serialized">
 				<source>Message serialized</source>
+			</trans-unit>
+			<trans-unit id="uuid">
+				<source>Uuid</source>
+			</trans-unit>
+			<trans-unit id="pid">
+				<source>Pid</source>
+			</trans-unit>
+			<trans-unit id="recipient_cc">
+				<source>Recipient Cc
+				</source>
+			</trans-unit>
+
+			<trans-unit id="recipient">
+				<source>Recipient
+				</source>
+			</trans-unit>
+
+			<trans-unit id="sender">
+				<source>Sender
+				</source>
+			</trans-unit>
+
+			<trans-unit id="subject">
+				<source>Subject
+				</source>
+			</trans-unit>
+
+			<trans-unit id="body">
+				<source>Body
+				</source>
+			</trans-unit>
+
+			<trans-unit id="attachment">
+				<source>Attachment
+				</source>
+			</trans-unit>
+
+			<trans-unit id="context">
+				<source>Context
+				</source>
+			</trans-unit>
+
+			<trans-unit id="mailing_name">
+				<source>Mailing Name
+				</source>
+			</trans-unit>
+
+			<trans-unit id="message_template">
+				<source>Message Template
+				</source>
+			</trans-unit>
+
+			<trans-unit id="message_layout">
+				<source>Message Layout
+				</source>
+			</trans-unit>
+
+			<trans-unit id="scheduled_distribution_time">
+				<source>Scheduled Distribution Time
+				</source>
+			</trans-unit>
+
+			<trans-unit id="ip">
+				<source>Ip
+				</source>
+			</trans-unit>
+			<trans-unit id="error_count">
+				<source>Error Count
+				</source>
+			</trans-unit>
+			<trans-unit id="redirect_email_from">
+				<source> Redirect Email From
+				</source
+				>
+			</trans-unit>
+			<trans-unit id="crdate">
+				<source> Created Date
+				</source>
+			</trans-unit>
+			<trans-unit id="recipient_bcc">
+				<source> Recipient Bcc
+				</source>
+			</trans-unit>
+			<trans-unit id="csv">
+				<source>Export csv</source>
+			</trans-unit>
+
+			<trans-unit id="xls">
+				<source>Export xls</source>
+			</trans-unit>
+			<trans-unit id="xml">
+				<source>Export xml</source>
+			</trans-unit>
+			<trans-unit id="send_message">
+				<source>Send again</source>
 			</trans-unit>
 		</body>
 	</file>

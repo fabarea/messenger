@@ -2,6 +2,7 @@
 
 use Fab\Messenger\Controller\MessageDisplayController;
 use Fab\Messenger\Controller\MessageLayoutController;
+use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageTemplateController;
 use Fab\Messenger\Controller\SentMessageModuleController;
 use Fab\Messenger\PagePath\Resolver;
@@ -51,6 +52,7 @@ call_user_func(function () {
             SentMessageModuleController::class => 'index',
             MessageTemplateController::class => 'index',
             MessageLayoutController::class => 'index',
+            MessageQueueController::class => 'index',
         ],
         // non-cacheable actions
         [
@@ -58,6 +60,7 @@ call_user_func(function () {
             SentMessageModuleController::class => 'index',
             MessageTemplateController::class => 'index',
             MessageLayoutController::class => 'index',
+            MessageQueueController::class => 'index',
         ],
     );
 

@@ -5,6 +5,7 @@ namespace Fab\Messenger\Controller\Ajax;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
@@ -21,7 +22,7 @@ final class ExportDataAjaxController
 
     protected ?ServerRequestInterface $request = null;
 
-    protected MessengerRepositoryInterface $repository;
+    protected ?MessengerRepositoryInterface $repository;
 
     protected string $dataType = '';
 
@@ -44,6 +45,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
+            'tx_messenger_messenger_messengertxmessengerm4',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
@@ -89,6 +91,10 @@ final class ExportDataAjaxController
                 $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_sentmessage';
                 break;
+            case 'message-queue':
+                $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+                $this->tableName = 'tx_messenger_domain_model_queue';
+                break;
         }
     }
 
@@ -115,6 +121,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
+            'tx_messenger_messenger_messengertxmessengerm4',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {

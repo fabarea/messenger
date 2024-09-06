@@ -27,7 +27,7 @@ window.Messenger = {
   getSelectedItems: function () {
     return [...document.querySelectorAll('.select:checked')].map((element) => element.value);
   },
-
-
 };
-
+$(document).ready(function () {
+  Messenger.selectAll();
+});
