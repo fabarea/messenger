@@ -153,6 +153,21 @@ call_user_func(function () {
         );
 
         ExtensionUtility::registerModule(
+            'Fab.Messenger',
+            'messenger',
+            'tx_messenger_m4',
+            'bottom',
+            [
+                MessageQueueController::class => 'index',
+            ],
+            [
+                'access' => 'admin',
+                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.svg',
+                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf',
+            ],
+        );
+
+        ExtensionUtility::registerModule(
             'Fab.messenger',
             'user', // Make media module a submodule of 'user'
             'm1',

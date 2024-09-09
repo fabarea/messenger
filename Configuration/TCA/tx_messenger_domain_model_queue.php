@@ -18,6 +18,11 @@ return [
         'typeicon_classes' => [
             'default' => 'extensions-messenger-queue',
         ],
+
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
+        'rootLevel' => -1,
     ],
     'types' => [
         '1' => [
@@ -138,8 +143,8 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
+                'items' => [['', 0]],
                 'minitems' => 0,
-                'maxitems' => 1,
                 'readOnly' => true,
             ],
         ],
@@ -151,7 +156,7 @@ return [
                 'renderType' => 'selectSingle',
                 'table_foreign' => 'tx_messenger_domain_model_messagelayout',
                 'minitems' => 0,
-                'maxitems' => 1,
+                'items' => [['', 0]],
                 'readOnly' => true,
             ],
         ],

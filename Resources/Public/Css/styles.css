@@ -17,3 +17,32 @@ table.table thead .sorting_asc {
 table.table thead {
     cursor: pointer;
 }
+
+.btn {
+    border: none;
+
+    :hover {
+        border: none;
+    }
+}
+
+.btn-sendAgain {
+    background-color: white;
+
+    :hover {
+        background-color: white;
+    }
+}
+
+.dropdown-menu {
+    --bs-dropdown-bg: white;
+    --bs-dropdown-border-color: var(--bs-border-color-translucent);
+    --bs-dropdown-divider-bg: white;
+    --bs-dropdown-link-hover-bg: white;
+    --bs-dropdown-link-active-bg: white;
+}
+
+.btn-secondary {
+    background-color: white;
+    border: black 1px solid;
+}

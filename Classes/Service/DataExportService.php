@@ -58,29 +58,7 @@ class DataExportService implements SingletonInterface
         echo $csvContent;
         exit();
     }
-
-    #[NoReturn]
-    public function exportXls(array $dataUids, string $filename, array $header): void
-    {
-        $dataSets = $this->repository->findByUids($dataUids);
-        $xls = fopen('php://temp', 'r+');
-        fputcsv($xls, $header, "\t");
-        foreach ($dataSets as $dataSet) {
-            $computedRow = [];
-            foreach ($header as $key) {
-                $computedRow[] = $dataSet[$key];
-            }
-            fputcsv($xls, $computedRow, "\t");
-        }
-        rewind($xls);
-        $xlsContent = stream_get_contents($xls);
-        fclose($xls);
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        echo $xlsContent;
-        exit();
-    }
-
+    
     #[NoReturn]
     public function exportXml(array $dataUids, string $filename, array $header): void
     {

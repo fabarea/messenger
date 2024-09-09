@@ -24,7 +24,7 @@ class MessageLayoutController extends AbstractMessengerController
 
     protected string $table = 'tx_messenger_domain_model_messagelayout';
 
-    protected string $repositoryName = 'message-layout-repository';
+    protected string $dataType = 'message-layout';
 
     protected ?MessengerRepositoryInterface $repository;
 

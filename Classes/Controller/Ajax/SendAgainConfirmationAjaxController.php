@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Model\Message;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
@@ -16,14 +18,22 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class SendAgainConfirmationAjaxController
 {
+    protected ?MessengerRepositoryInterface $repository;
+
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = [];
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm1'] ?? '';
+        $columnsToSendString =
+            $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
+            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ?? '');
+
+        if ($request->getQueryParams()['dataType']) {
+            $this->getDataType($request->getQueryParams()['dataType']);
+        }
         if (!empty($columnsToSendString)) {
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
             $columnsToSendArray = array_map('intval', $stringUids);
-            $data = $this->getSentMessageRepository()->findByUids($columnsToSendArray);
+            $data = $this->repository->findByUids($columnsToSendArray);
         }
         $content =
             count($data) > 1
@@ -38,20 +48,50 @@ final class SendAgainConfirmationAjaxController
         return $this->getResponse($content);
     }
 
+    protected function getDataType($type): void
+    {
+        switch ($type) {
+            case 'sent-message':
+                $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
+                break;
+            case 'message-queue':
+                $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+                break;
+        }
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
+    }
+
+    protected function getResponse(string $content): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write($content);
+        return $response;
+    }
+
     /**
      * @throws InvalidEmailFormatException
      * @throws WrongPluginConfigurationException
      */
     public function sendAgainAction(ServerRequestInterface $request): ResponseInterface
     {
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm1'] ?? '';
+        $columnsToSendString =
+            $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
+            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ?? '');
         if (!empty($columnsToSendString)) {
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
             $matches = array_map('intval', $stringUids);
         } else {
             $matches = [];
         }
-        $sentMessages = $this->getSentMessageRepository()->findByUids($matches);
+        if ($request->getQueryParams()['dataType']) {
+            $this->getDataType($request->getQueryParams()['dataType']);
+        }
+        $sentMessages = $this->repository->findByUids($matches);
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
             /** @var Message $message */
@@ -102,22 +142,5 @@ final class SendAgainConfirmationAjaxController
             }
         }
         return $normalizedEmails;
-    }
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
-    }
-
-    protected function getSentMessageRepository(): SentMessageRepository
-    {
-        return GeneralUtility::makeInstance(SentMessageRepository::class);
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 }

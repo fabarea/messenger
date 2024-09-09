@@ -49,7 +49,7 @@ abstract class AbstractMessengerController extends ActionController
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected string $moduleName = '';
 
-    protected string $repositoryName = '';
+    protected string $dataType = '';
 
     public function __construct()
     {
@@ -93,7 +93,7 @@ abstract class AbstractMessengerController extends ActionController
             'action' => $this->action,
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
-            'repository' => $this->repositoryName,
+            'dataType' => $this->dataType,
             'selectedRecords' => $this->request->hasArgument('selectedRecords')
                 ? $this->request->getArgument('selectedRecords')
                 : [],
@@ -173,6 +173,9 @@ abstract class AbstractMessengerController extends ActionController
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
     }
 
+    /**
+     * @throws RouteNotFoundException
+     */
     public function addNewButton(): AbstractMessengerController
     {
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
@@ -180,7 +183,7 @@ abstract class AbstractMessengerController extends ActionController
         $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
         $newButton->setLink(
             $this->renderUriNewRecord([
-                'table' => 'tx_messenger_domain_model_messagetemplate',
+                'table' => $this->table,
                 'pid' => $pagePid,
                 'uid' => 0,
             ]),

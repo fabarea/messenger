@@ -9,23 +9,24 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * Get edit storage URL.
      *
      * @param {string} url
+     * @param type
      * @return string
      * @private
      */
 
-    getEditStorageUrl: function (url) {
+    getEditStorageUrl: function (url, type) {
       var uri = new Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
       if (columnsToSend.length > 0) {
-        uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', columnsToSend.join(','));
+        uri.addQueryParam('tx_messenger_user_messengerm1[matches][uid]', columnsToSend.join(',') + '&dataType=' + type);
       }
       return decodeURIComponent(uri.toString());
     },
 
-    getExportStorageUrl: function (url, format, module, repository) {
+    getExportStorageUrl: function (url, format, module, type) {
       var uri = new Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
@@ -34,7 +35,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       if (columnsToSend.length > 0) {
         uri.addQueryParam(
           module + '[matches][uid]',
-          columnsToSend.join(',') + '&format=' + format + '&dataType=' + repository,
+          columnsToSend.join(',') + '&format=' + format + '&dataType=' + type,
         );
       }
       return decodeURIComponent(uri.toString());
@@ -50,7 +51,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
           return;
         }
         e.preventDefault();
-        const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again_confirmation);
+
+        const type = $(this).data('data-type');
+        const url = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again_confirmation, type);
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Send Again',
@@ -69,7 +72,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               btnClass: 'btn btn-primary',
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
-                const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again);
+                const sendAgainUrl = Messenger.getEditStorageUrl(TYPO3.settings.ajaxUrls.messenger_send_again, type);
                 // Ajax request
                 $.ajax({
                   url: sendAgainUrl,
@@ -99,14 +102,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
 
         const format = $(this).data('format');
         const module = $(this).data('module');
-        const repository = $(this).data('repository');
+        const type = $(this).data('data-type');
 
-        const url = Messenger.getExportStorageUrl(
-          TYPO3.settings.ajaxUrls.messenger_export_data,
-          format,
-          module,
-          repository,
-        );
+        const url = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data, format, module, type);
 
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
@@ -130,7 +128,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                   TYPO3.settings.ajaxUrls.messenger_export_data_validation,
                   format,
                   module,
-                  repository,
+                  type,
                 );
                 // Ajax request
                 $.ajax({
@@ -147,7 +145,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                         TYPO3.settings.ajaxUrls.messenger_export_data_validation,
                         format,
                         module,
-                        repository,
+                        type,
                       );
                       Modal.dismiss();
                     } else {

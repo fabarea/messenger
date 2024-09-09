@@ -9,23 +9,77 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Queue\QueueManager;
-use Fab\Vidi\Persistence\MatcherObjectFactory;
-use Fab\Vidi\Service\ContentService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class MessageQueueController
  */
-class MessageQueueController extends ActionController
+class MessageQueueController extends AbstractMessengerController
 {
-
     /**
      * @var string
      */
-    protected $tableName = 'tx_messenger_domain_model_queue';
+    protected string $table = 'tx_messenger_domain_model_queue';
+
+    protected array $allowedColumns = [
+        'uid',
+        'uuid',
+        'pid',
+        'recipient_cc',
+        'recipient',
+        'sender',
+        'subject',
+        'body',
+        'attachment',
+        'context',
+        'mailing_name',
+        'message_template',
+        'message_layout',
+        'scheduled_distribution_time',
+        'ip',
+        'error_count',
+        'message_serialized',
+        'redirect_email_from',
+    ];
+
+    protected array $defaultSelectedColumns = ['uid', 'recipient_cc', 'recipient', 'sender', 'subject', 'context'];
+
+    protected array $demandFields = [
+        'recipient_cc',
+        'recipient',
+        'sender',
+        'subject',
+        'body',
+        'attachment',
+        'context',
+        'mailing_name',
+        'message_template',
+        'message_layout',
+    ];
+
+    protected string $domainModel = 'queue';
+
+    protected string $controller = 'MessageQueue';
+
+    protected string $action = 'index';
+
+    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm4';
+
+    protected string $dataType = 'message-queue';
+
+    protected ?MessengerRepositoryInterface $repository;
+
+    protected bool $showNewButton = true;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+    }
 
     /**
      * @param array $matches
@@ -39,11 +93,29 @@ class MessageQueueController extends ActionController
         // Fetch objects via the Content Service.
         $numberOfRecipients = $this->getContentService()->findBy($matcher)->getNumberOfObjects();
 
-        $label = $numberOfRecipients > 1
-            ? $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?')
-            : $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?');
+        $label =
+            $numberOfRecipients > 1
+                ? $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
+                )
+                : $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
+                );
 
         return sprintf($label, $numberOfRecipients);
+    }
+
+    /**
+     * @return ContentService
+     */
+    protected function getContentService(): ContentService
+    {
+        return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 
     /**
@@ -70,18 +142,17 @@ class MessageQueueController extends ActionController
 
         return sprintf(
             '%s %s / %s. %s',
-            $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success'),
+            $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
+            ),
             $numberOfSentEmails,
             $numberOfRecipients,
             $numberOfSentEmails !== $numberOfRecipients
-                ? $this->getLanguageService()->sL('LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails')
-                : ''
+                ? $this->getLanguageService()->sL(
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+                )
+                : '',
         );
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 
     /**
@@ -91,13 +162,4 @@ class MessageQueueController extends ActionController
     {
         return GeneralUtility::makeInstance(QueueManager::class);
     }
-
-    /**
-     * @return ContentService
-     */
-    protected function getContentService(): ContentService
-    {
-        return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
-    }
-
 }

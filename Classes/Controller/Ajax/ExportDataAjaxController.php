@@ -5,6 +5,7 @@ namespace Fab\Messenger\Controller\Ajax;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\TcaFieldsUtility;
@@ -21,7 +22,7 @@ final class ExportDataAjaxController
 
     protected ?ServerRequestInterface $request = null;
 
-    protected MessengerRepositoryInterface $repository;
+    protected ?MessengerRepositoryInterface $repository;
 
     protected string $dataType = '';
 
@@ -44,6 +45,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
+            'tx_messenger_messenger_messengertxmessengerm4',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
@@ -77,17 +79,21 @@ final class ExportDataAjaxController
     protected function getDataType($type): void
     {
         switch ($type) {
-            case 'message-template-repository':
+            case 'message-template':
                 $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_messagetemplate';
                 break;
-            case 'message-layout-repository':
+            case 'message-layout':
                 $this->repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_messagelayout';
                 break;
-            case 'sent-message-repository':
+            case 'sent-message':
                 $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_sentmessage';
+                break;
+            case 'message-queue':
+                $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+                $this->tableName = 'tx_messenger_domain_model_queue';
                 break;
         }
     }
@@ -115,6 +121,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
+            'tx_messenger_messenger_messengertxmessengerm4',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
@@ -149,13 +156,6 @@ final class ExportDataAjaxController
                     ',',
                     '"',
                     '\\',
-                    $columns,
-                );
-                break;
-            case 'xls':
-                $this->dataExportService->exportXls(
-                    $uids,
-                    'export-' . $this->dataType . '-' . $this->date . '.xls',
                     $columns,
                 );
                 break;

@@ -68,10 +68,11 @@
                     <f:variable name="color" value="text-black" />
                     <th class="action" scope="col">
                         <f:form.checkbox
+                            class="select-all"
                             id="record-all"
                             name="selectedRecords[]"
-                            onclick="Messenger.selectAll()"
-                            value="all"
+                            onclick="Messenger.selectAll(this); "
+                            value="1"
                         />
                     </th>
 
@@ -148,77 +149,55 @@
                 </f:for>
                 <tr>
                     <td>
-                        <div class="btn-toolbar" role="toolbar" style="background: #fafafa">
-                            <div class="dropdown dropdown-fields pull-left" id="btn-toogle" style="background: #fafafa">
-                                <a
-                                    class="btn btn-default btn-sm dropdown-toggle"
-                                    data-bs-toggle="dropdown"
-                                    href="#"
-                                    style="position: relative; bottom: 1px; background: #fafafa"
-                                ></a>
-                                <ul class="dropdown-menu bg-white" style="max-height: 800px; overflow-y: scroll">
-                                    <f:if condition="{domainModel} == 'sentmessage'">
-                                        <li class="checkbox text-black" style="border-bottom: 1px solid black">
-                                            <div id="btn-action">
-                                                <a class="btn btn-default bg-white btn-sendAgain" href="">
-                                                    <core:icon identifier="content-elements-mailform" size="small" />
-                                                    <f:translate
-                                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
-                                                    />
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </f:if>
-                                    <li class="checkbox text-black">
-                                        <div>
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="xls"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="mimetypes-excel" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xls"
-                                                />
-                                            </a>
-                                        </div>
+                        <div class="dropdown">
+                            <button
+                                aria-expanded="false"
+                                class="btn btn-secondary dropdown-toggle border-1"
+                                data-bs-toggle="dropdown"
+                                id="dropdownMenuButton1"
+                                type="button"
+                            ></button>
+                            <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
+                                <f:if condition="{domainModel} == 'sentmessage' || {domainModel} == 'queue'">
+                                    <li class="p-1">
+                                        <a class="dropdown-item btn-sendAgain" data-data-type="{dataType}" href="#">
+                                            <core:icon identifier="content-elements-mailform" size="small" />
+                                            <f:translate
+                                                key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
+                                            />
+                                            <hr />
+                                        </a>
                                     </li>
-                                    <li class="checkbox text-black">
-                                        <div>
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="csv"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="mimetypes-text-csv" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
-                                                />
-                                            </a>
-                                        </div>
-                                    </li>
-                                    <li class="checkbox text-black" style="border-bottom: 1px solid black">
-                                        <div>
-                                            <a
-                                                class="btn btn-default bg-white btn-export"
-                                                data-format="xml"
-                                                data-module="{moduleName}"
-                                                data-repository="{repository}"
-                                                href=""
-                                            >
-                                                <core:icon identifier="mimetypes-text-html" size="small" />
-                                                <f:translate
-                                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
-                                                />
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                                </f:if>
+                                <li class="p-1">
+                                    <a
+                                        class="dropdown-item btn-export"
+                                        data-data-type="{dataType}"
+                                        data-format="csv"
+                                        data-module="{moduleName}"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="mimetypes-text-csv" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
+                                        />
+                                    </a>
+                                </li>
+                                <li class="p-1">
+                                    <a
+                                        class="dropdown-item btn-export"
+                                        data-format="xml"
+                                        data-module="{moduleName}"
+                                        data-data-type="{dataType}"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="mimetypes-text-html" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
+                                        />
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>
