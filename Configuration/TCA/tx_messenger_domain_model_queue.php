@@ -38,7 +38,7 @@ return [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:sender',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'recipient' => [
@@ -46,7 +46,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'recipient_cc' => [
@@ -54,7 +54,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_cc',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'recipient_bcc' => [
@@ -62,7 +62,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:recipient_bcc',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'message_serialized' => [
@@ -72,7 +72,7 @@ return [
                 'type' => 'text',
                 'rows' => 4,
                 'cols' => 50,
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'redirect_email_from' => [
@@ -80,28 +80,28 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:redirect_email_from',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'subject' => [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:subject',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'body' => [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:body',
             'config' => [
                 'type' => 'text',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'context' => [
             'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:context',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'attachment' => [
@@ -109,7 +109,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:attachment',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'mailing_name' => [
@@ -117,7 +117,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:mailing_name',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'uuid' => [
@@ -132,7 +132,7 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:scheduled_distribution_time',
             'config' => [
                 'type' => 'input',
-                'readOnly' => false,
+                'readOnly' => true,
                 'eval' => 'datetime',
             ],
         ],
@@ -145,7 +145,7 @@ return [
                 'table_foreign' => 'tx_messenger_domain_model_messagetemplate',
                 'items' => [['', 0]],
                 'minitems' => 0,
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'message_layout' => [
@@ -157,7 +157,7 @@ return [
                 'table_foreign' => 'tx_messenger_domain_model_messagelayout',
                 'minitems' => 0,
                 'items' => [['', 0]],
-                'readOnly' => false,
+                'readOnly' => true,
             ],
         ],
         'ip' => [
