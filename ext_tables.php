@@ -87,102 +87,75 @@ call_user_func(function () {
             !isset($configuration['load_message_template_module']) ||
             (bool) $configuration['load_message_template_module']
         ) {
-            \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_messagetemplate');
+            ExtensionUtility::registerModule(
+                'Fab.Messenger',
+                'messenger',
+                'tx_messenger_m2',
+                'bottom',
+                [
+                    MessageTemplateController::class => 'index',
+                ],
+                [
+                    'access' => 'admin',
+                    'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',
+                    'labels' =>
+                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf',
+                ],
+            );
         }
         if (
             !isset($configuration['load_message_layout_module']) ||
             (bool) $configuration['load_message_layout_module']
         ) {
-            \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_messagelayout');
+            ExtensionUtility::registerModule(
+                'Fab.Messenger',
+                'messenger',
+                'tx_messenger_m3',
+                'bottom',
+                [
+                    MessageLayoutController::class => 'index',
+                ],
+                [
+                    'access' => 'admin',
+                    'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf',
+                ],
+            );
         }
         if (!isset($configuration['load_message_sent_module']) || (bool) $configuration['load_message_sent_module']) {
-            \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_sentmessage')
-                ->addMenuMassActionComponents([SendAgainMenuItem::class, DividerMenuItem::class])
-                ->register();
+            ExtensionUtility::registerModule(
+                'Fab.Messenger',
+                'messenger',
+                'tx_messenger_m1',
+                'top',
+                [
+                    SentMessageModuleController::class => 'index',
+                ],
+                [
+                    'access' => 'admin',
+                    'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
+                ],
+            );
         }
         if (!isset($configuration['load_message_queue_module']) || (bool) $configuration['load_message_queue_module']) {
-            \Fab\Messenger\Module\ModuleLoader::register('tx_messenger_domain_model_queue')
-                ->addMenuMassActionComponents([DequeueMenuItem::class, DividerMenuItem::class])
-                ->register();
+            ExtensionUtility::registerModule(
+                'Fab.messenger',
+                'user', // Make media module a submodule of 'user'
+                'm1',
+                'bottom', // Position
+                [
+                    BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
+                    MessageQueueController::class => 'confirm, dequeue',
+                    MessageSentController::class => 'confirm, sendAgain',
+                ],
+                [
+                    'access' => 'user,group',
+                    'icon' => 'EXT:messenger/ext_icon.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
+                ],
+            );
         }
-
-        ExtensionUtility::registerModule(
-            'Fab.Messenger',
-            'messenger',
-            'tx_messenger_m1',
-            'top',
-            [
-                SentMessageModuleController::class => 'index',
-            ],
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
-                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
-            ],
-        );
-
-        ExtensionUtility::registerModule(
-            'Fab.Messenger',
-            'messenger',
-            'tx_messenger_m2',
-            'bottom',
-            [
-                MessageTemplateController::class => 'index',
-            ],
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',
-                'labels' =>
-                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf',
-            ],
-        );
-
-        ExtensionUtility::registerModule(
-            'Fab.Messenger',
-            'messenger',
-            'tx_messenger_m3',
-            'bottom',
-            [
-                MessageLayoutController::class => 'index',
-            ],
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.svg',
-                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf',
-            ],
-        );
-
-        ExtensionUtility::registerModule(
-            'Fab.Messenger',
-            'messenger',
-            'tx_messenger_m4',
-            'bottom',
-            [
-                MessageQueueController::class => 'index',
-            ],
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.svg',
-                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf',
-            ],
-        );
-
-        ExtensionUtility::registerModule(
-            'Fab.messenger',
-            'user', // Make media module a submodule of 'user'
-            'm1',
-            'bottom', // Position
-            [
-                BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
-                MessageQueueController::class => 'confirm, dequeue',
-                MessageSentController::class => 'confirm, sendAgain',
-            ],
-            [
-                'access' => 'user,group',
-                'icon' => 'EXT:messenger/ext_icon.svg',
-                'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
-            ],
-        );
 
         TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
 
