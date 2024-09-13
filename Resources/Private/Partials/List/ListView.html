@@ -126,7 +126,7 @@
                         <td>
                             <div class="d-flex gap-1 align-items-center pull-right">
                                 <a
-                                    class="btn btn-default"
+                                    class="btn btn-default btn-secondary btn-sm"
                                     href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
                                 >
                                     <core:icon identifier="actions-document-open" />
@@ -136,7 +136,7 @@
                                     value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_{domainModel}][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
                                 />
                                 <button
-                                    class="btn btn-default"
+                                    class="btn btn-default btn-secondary"
                                     data-delete-url="{deleteUrl}"
                                     data-name="{message.sender}"
                                     onclick="Messenger.deleteItem(this); return false"
@@ -152,24 +152,27 @@
                         <div class="dropdown">
                             <button
                                 aria-expanded="false"
-                                class="btn btn-default dropdown-toggle border-1"
+                                class="btn btn-secondary btn-sm dropdown-toggle border-1"
                                 data-bs-toggle="dropdown"
                                 id="dropdownMenuButton1"
                                 type="button"
                             ></button>
                             <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
                                 <f:if condition="{domainModel} == 'sentmessage' || {domainModel} == 'queue'">
-                                    <li class="p-1">
-                                        <a class="dropdown-item btn-sendAgain" data-data-type="{dataType}" href="#">
+                                    <li>
+                                        <a
+                                            class="dropdown-item btn-sendAgain border-bottom border-secondary"
+                                            data-data-type="{dataType}"
+                                            href="#"
+                                        >
                                             <core:icon identifier="content-elements-mailform" size="small" />
                                             <f:translate
                                                 key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
                                             />
-                                            <hr />
                                         </a>
                                     </li>
                                 </f:if>
-                                <li class="p-1">
+                                <li>
                                     <a
                                         class="dropdown-item btn-export"
                                         data-data-type="{dataType}"
@@ -183,7 +186,7 @@
                                         />
                                     </a>
                                 </li>
-                                <li class="p-1">
+                                <li>
                                     <a
                                         class="dropdown-item btn-export"
                                         data-format="xml"
