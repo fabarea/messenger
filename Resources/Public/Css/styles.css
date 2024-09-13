@@ -43,6 +43,6 @@ table.table thead {
 }
 
 .btn-secondary {
-    background-color: white;
-    border: black 1px solid;
+    border: 1px solid #bbbbbb;
+
 }

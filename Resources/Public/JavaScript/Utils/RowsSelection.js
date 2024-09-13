@@ -15,19 +15,17 @@ window.Messenger = {
   },
 
   selectAll: function () {
-    $('#record-all').click(function () {
-      const checkboxes = $('.checkboxes').find('.select');
-      if ($(this).is(':checked')) {
-        checkboxes.filter(':not(:checked)').click();
-      } else {
-        checkboxes.filter(':checked').click();
-      }
-    });
+    const updateSelectionState = () => {
+      const isChecked = $('#record-all').is(':checked');
+      const checkboxes = $('.checkboxes .select');
+      checkboxes.each(function () {
+        $(this).prop('checked', isChecked).trigger('change');
+      });
+    };
+    $('#record-all').on('change', updateSelectionState);
+    updateSelectionState();
   },
   getSelectedItems: function () {
     return [...document.querySelectorAll('.select:checked')].map((element) => element.value);
   },
 };
-$(document).ready(function () {
-  Messenger.selectAll();
-});
