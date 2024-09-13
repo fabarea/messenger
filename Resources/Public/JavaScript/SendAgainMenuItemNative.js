@@ -4,6 +4,19 @@
 define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
   'use strict';
 
+  $(document).ready(() => {
+    const updateButtonState = () => {
+      const selectedItems = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+      if (selectedItems.length > 0) {
+        $('#dropdownMenuButton1').removeAttr('disabled');
+      } else {
+        $('#dropdownMenuButton1').attr('disabled', 'disabled');
+      }
+    };
+    updateButtonState();
+    $('.select').on('change', updateButtonState);
+  });
+
   const Messenger = {
     /**
      * Get edit storage URL.

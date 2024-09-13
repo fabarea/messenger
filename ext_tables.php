@@ -1,18 +1,11 @@
 <?php
 
-use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
-use Fab\Messenger\Controller\MessageSentController;
 use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\NewsletterController;
 use Fab\Messenger\Controller\SentMessageModuleController;
-use Fab\Messenger\Utility\ConfigurationUtility;
-use Fab\Messenger\View\MenuItem\DequeueMenuItem;
-use Fab\Messenger\View\MenuItem\SendAgainMenuItem;
-use Fab\Messenger\View\MenuItem\SendMenuItem;
-use Fab\Vidi\Module\ModuleLoader;
-use Fab\Vidi\View\Button\NewButton;
-use Fab\Vidi\View\MenuItem\DividerMenuItem;
+use Fab\Messenger\Module\MessengerModule;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -70,7 +63,6 @@ call_user_func(function () {
             '', // does not work for a main module before:tools
             '',
             [
-                #'routeTarget' => \Hemmer\MrDmsExport\Controller\BackendModuleController::class . '::mainAction',
                 'access' => 'group,user',
                 'icon' => 'EXT:messenger/Resources/Public/Icons/module-messenger.svg',
                 'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
@@ -78,8 +70,8 @@ call_user_func(function () {
         );
     }
 
-    // Load some vidi BE modules
-    if (class_exists(ModuleLoader::class)) {
+    // Load some messenger BE modules
+    if (class_exists(MessengerModule::class)) {
         // Register newsletter BE module
         $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('messenger');
 
@@ -118,7 +110,8 @@ call_user_func(function () {
                 [
                     'access' => 'admin',
                     'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.svg',
-                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf',
+                    'labels' =>
+                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagelayout.xlf',
                 ],
             );
         }
@@ -134,68 +127,32 @@ call_user_func(function () {
                 [
                     'access' => 'admin',
                     'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
-                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
+                    'labels' =>
+                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf',
                 ],
             );
         }
         if (!isset($configuration['load_message_queue_module']) || (bool) $configuration['load_message_queue_module']) {
             ExtensionUtility::registerModule(
-                'Fab.messenger',
-                'user', // Make media module a submodule of 'user'
-                'm1',
-                'bottom', // Position
+                'Fab.Messenger',
+                'messenger',
+                'tx_messenger_m4',
+                'bottom',
                 [
-                    BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
-                    MessageQueueController::class => 'confirm, dequeue',
-                    MessageSentController::class => 'confirm, sendAgain',
+                    MessageQueueController::class => 'index',
                 ],
                 [
-                    'access' => 'user,group',
-                    'icon' => 'EXT:messenger/ext_icon.svg',
-                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
+                    'access' => 'admin',
+                    'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf',
                 ],
             );
         }
-
         TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
 
                     # Hide the module in the BE.
                     options.hideModules.user := addToList(MessengerM1)
 
                 ');
-
-        $loadNewsletterModule = (bool) ConfigurationUtility::getInstance()->get('load_newsletter_module');
-
-        if ($loadNewsletterModule) {
-            $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
-
-            // Register a new BE Module to send newsletter
-            /** @var ModuleLoader $moduleLoader */
-            $moduleLoader = GeneralUtility::makeInstance(ModuleLoader::class);
-            $moduleLoader
-                ->ignorePid(true)
-                ->setMainModule('web')
-                ->setDataType($recipientDataType)
-                ->setIcon('EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg')
-                ->setModuleLanguageFile('LLL:EXT:messenger/Resources/Private/Language/module_newsletter.xlf')
-                ->removeComponentFromDocHeader(NewButton::class)
-                ->addMenuMassActionComponents([SendMenuItem::class, DividerMenuItem::class])
-                ->ignorePid(true)
-                ->register();
-
-            // Special case for fe_users to add a special menu
-            if ($recipientDataType === 'fe_users') {
-                /** @var ModuleLoader $moduleLoader */
-                $moduleLoader = GeneralUtility::makeInstance(ModuleLoader::class);
-
-                /** @var ModuleLoader $moduleLoader */
-                $moduleLoader
-                    ->setDataType('fe_users')
-                    ->setModuleLanguageFile('LLL:EXT:vidi/Resources/Private/Language/fe_users.xlf')
-                    ->setIcon('EXT:vidi/Resources/Public/Images/fe_users.svg')
-                    ->addMenuMassActionComponents([SendMenuItem::class, DividerMenuItem::class])
-                    ->register();
-            }
-        }
     }
 });
