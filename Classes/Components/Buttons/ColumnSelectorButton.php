@@ -10,6 +10,7 @@
 namespace Fab\Messenger\Components\Buttons;
 
 use Fab\Messenger\Domain\Repository\RecipientRepository;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Template\Components\Buttons\ButtonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -133,10 +134,6 @@ class ColumnSelectorButton implements ButtonInterface
             ExtensionManagementUtility::extPath('messenger') .
                 'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
         );
-        if ($this->tableName === 'fe_users') {
-            $recipientRepository = GeneralUtility::makeInstance(RecipientRepository::class);
-            $this->fields = $recipientRepository->getFeUsersDefaultFields();
-        }
         $view->assignMultiple([
             'selectedColumns' => $this->selectedColumns,
             'fields' => $this->fields,

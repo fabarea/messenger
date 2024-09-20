@@ -144,18 +144,21 @@ class RecipientModuleController extends ActionController
 
     protected function getFields(): array
     {
-        if ($this->repository->getTableName() === 'fe_users') {
-            $fields = $this->repository->getFeUsersDefaultFields();
-            $fields = array_filter($fields, function ($field) {
-                return $field !== 'uid';
-            });
-        } else {
-            $fields = TcaFieldsUtility::getFields($this->repository->getTableName());
-            $fields = array_filter($fields, function ($field) {
-                return !in_array($field, $this->excludedFields);
-            });
-        }
-
+        //return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
+        //        if ($this->repository->getTableName() === 'fe_users') {
+        //            $fields = $this->repository->getFeUsersDefaultFields();
+        //            $fields = array_filter($fields, function ($field) {
+        //                return $field !== 'uid';
+        //            });
+        //        } else {
+        //
+        //        }
+        //
+        $tableName = ConfigurationUtility::getInstance()->get('recipient_table_name');
+        $fields = TcaFieldsUtility::getFields($tableName);
+        $fields = array_filter($fields, function ($field) {
+            return !in_array($field, $this->excludedFields);
+        });
         return array_merge(['uid'], $fields);
     }
 

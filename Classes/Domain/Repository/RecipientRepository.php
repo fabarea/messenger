@@ -11,6 +11,7 @@ namespace Fab\Messenger\Domain\Repository;
 
 use Fab\Messenger\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecipientRepository extends AbstractContentRepository
 {
@@ -33,11 +34,6 @@ class RecipientRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
-    public function getTableName(): string
-    {
-        return ConfigurationUtility::getInstance()->get('recipient_data_type');
-    }
-
     public function findByUids(array $uids): array
     {
         $query = $this->getQueryBuilder();
@@ -47,16 +43,6 @@ class RecipientRepository extends AbstractContentRepository
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
         return $query->execute()->fetchAllAssociative();
-    }
-
-    public function removeOlderThanDays(int $days): int
-    {
-        $time = time() - $days * 86400;
-
-        $query = $this->getQueryBuilder();
-        $query->delete($this->getTableName())->where('crdate < ' . $time);
-
-        return $query->execute();
     }
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
@@ -86,11 +72,6 @@ class RecipientRepository extends AbstractContentRepository
         }
 
         return $queryBuilder->execute()->fetchAllAssociative();
-    }
-
-    public function getFeUsersDefaultFields(): array
-    {
-        return explode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
     protected function getLanguageService(): LanguageService
