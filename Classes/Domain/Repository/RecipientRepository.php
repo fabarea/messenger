@@ -14,6 +14,8 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 
 class RecipientRepository extends AbstractContentRepository
 {
+    protected string $tableName = '';
+
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -31,7 +33,7 @@ class RecipientRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
-    public function getTableName()
+    public function getTableName(): string
     {
         return ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
@@ -47,23 +49,6 @@ class RecipientRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
-    public function findByUuid(string $uuid): array
-    {
-        $query = $this->getQueryBuilder();
-        $query
-            ->select('*')
-            ->from($this->getTableName())
-            ->where(
-                $this->getQueryBuilder()
-                    ->expr()
-                    ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
-            );
-
-        $messages = $query->execute()->fetchAllAssociative();
-
-        return is_array($messages) ? $messages : [];
-    }
-
     public function removeOlderThanDays(int $days): int
     {
         $time = time() - $days * 86400;
@@ -76,6 +61,7 @@ class RecipientRepository extends AbstractContentRepository
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
+        $this->tableName = $this->getTableName();
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('*')->from($this->getTableName());
 
@@ -100,6 +86,11 @@ class RecipientRepository extends AbstractContentRepository
         }
 
         return $queryBuilder->execute()->fetchAllAssociative();
+    }
+
+    public function getFeUsersDefaultFields(): array
+    {
+        return explode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
     protected function getLanguageService(): LanguageService

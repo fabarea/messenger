@@ -7,9 +7,11 @@ autoload_typoscript = 1
 # cat=basic//; type=boolean; label=Display "newsletter" module: If extension Vidi is installed, Messenger could load a module to send pages as newsletter.
 load_newsletter_module = 1
 
-# cat=basic//; type=string; label=Tell what data type should be considered for the list of recipients (newsletter).
+# cat=basic//; type=string; label=Tell what data type should be considered for the list of recipients (module newsletter).
 recipient_data_type = fe_users
 
+# cat=basic//; type=string; label=Tell what fields should be displayed by default (module newsletter).
+recipient_default_fields = uid,username,email,first_name,last_name
 # cat=basic//; type=boolean; label=Display message "template" module: If extension Vidi is installed, display a message template module in the Backend.
 load_message_template_module = 0
 

@@ -3,6 +3,7 @@
 use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\RecipientModuleController;
 use Fab\Messenger\Controller\SentMessageModuleController;
 use Fab\Messenger\Module\MessengerModule;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -148,31 +149,13 @@ call_user_func(function () {
             );
         }
         if (!isset($configuration['load_newsletter_module']) || (bool) $configuration['load_newsletter_module']) {
-            $recipientDataType = (new Fab\Messenger\Domain\Repository\RecipientRepository())->getTableName();
-            switch ($recipientDataType) {
-                case 'tx_messenger_domain_model_sentmessage':
-                    $controller = SentMessageModuleController::class;
-                    break;
-                case 'tx_messenger_domain_model_messagetemplate':
-                    $controller = MessageTemplateController::class;
-                    break;
-                case 'tx_messenger_domain_model_messagelayout':
-                    $controller = MessageLayoutController::class;
-                    break;
-                case 'tx_messenger_domain_model_queue':
-                    $controller = MessageQueueController::class;
-                    break;
-                default:
-                    $controller = MessageQueueController::class;
-                    break;
-            }
             ExtensionUtility::registerModule(
                 'Fab.Messenger',
                 'web',
                 'tx_messenger_m5',
                 'bottom',
                 [
-                    $controller => 'index',
+                    RecipientModuleController::class => 'index',
                 ],
 
                 [
