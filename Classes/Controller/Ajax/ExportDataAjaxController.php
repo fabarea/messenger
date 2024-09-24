@@ -6,8 +6,10 @@ use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\QueueRepository;
+use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Service\DataExportService;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -46,6 +48,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
             'tx_messenger_messenger_messengertxmessengerm4',
+            'tx_messenger_messenger_messengertxmessengerm5',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
@@ -95,6 +98,10 @@ final class ExportDataAjaxController
                 $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
                 $this->tableName = 'tx_messenger_domain_model_queue';
                 break;
+            case 'recipient-module':
+                $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
+                $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
+                break;
         }
     }
 
@@ -122,6 +129,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm2',
             'tx_messenger_messenger_messengertxmessengerm3',
             'tx_messenger_messenger_messengertxmessengerm4',
+            'tx_messenger_messenger_messengertxmessengerm5',
         ];
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {

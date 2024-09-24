@@ -10,17 +10,14 @@ namespace Fab\Messenger\Controller;
  */
 
 use Fab\Messenger\Domain\Model\Message;
+use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\TypeConverter\BodyConverter;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\ConfigurationUtility;
-use Fab\Vidi\Domain\Model\Content;
-use Fab\Vidi\Persistence\MatcherObjectFactory;
-use Fab\Vidi\Service\ContentService;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Annotation\Validate;
 
 /**
  * Class BackendMessageController
@@ -29,8 +26,12 @@ class BackendMessageController extends ActionController
 {
     protected BodyConverter $typeConverter;
 
-    public function __construct(BodyConverter $bodyConverter) {
+    protected RecipientRepository $recipientRepository;
+
+    public function __construct(BodyConverter $bodyConverter)
+    {
         $this->typeConverter = $bodyConverter;
+        $this->recipientRepository = GeneralUtility::makeInstance(RecipientRepository::class);
     }
 
     public function initializeAction(): void
@@ -45,13 +46,10 @@ class BackendMessageController extends ActionController
     public function composeAction(array $matches = []): void
     {
         $pageId = $this->request->hasArgument('pageId') ? $this->request->getArgument('pageId') : 0;
-        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
-        // Instantiate the Matcher object according different rules.
-        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $recipientDataType);
+        $uids = explode(',', $this->request->getQueryParams()['tx_messenger_user_messengerm5']['matches']['uid']);
 
-        // Fetch objects via the Content Service.
-        $contentService = $this->getContentService()->findBy($matcher);
+        $matches = $this->recipientRepository->findByUids($uids);
 
         $emailSubject = '';
         if ($pageId > 0) {
@@ -75,7 +73,9 @@ class BackendMessageController extends ActionController
      */
     public function enqueueAction(string $subject, string $body, string $sender, array $matches = []): void
     {
-        $parseMarkdown = $this->request->hasArgument('parseMarkdown') ? (bool) $this->request->getArgument('parseMarkdown') : false;
+        $parseMarkdown = $this->request->hasArgument('parseMarkdown')
+            ? (bool) $this->request->getArgument('parseMarkdown')
+            : false;
         $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
 
         // Instantiate the Matcher object according different rules.
@@ -91,7 +91,6 @@ class BackendMessageController extends ActionController
             $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
 
             foreach ($contentService->getObjects() as $recipient) {
-
                 if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                     $numberOfSentEmails++; // increment counter.
 
@@ -102,7 +101,8 @@ class BackendMessageController extends ActionController
                     $markers = $recipient->toArray();
                     $markers['uuid'] = $message->getUuid();
 
-                    $message->setBody($body)
+                    $message
+                        ->setBody($body)
                         ->setSubject($subject)
                         ->setSender($sender)
                         ->setMailingName($mailingName)
@@ -120,6 +120,15 @@ class BackendMessageController extends ActionController
             'numberOfSentEmails' => $numberOfSentEmails,
             'numberOfRecipients' => $contentService->getNumberOfObjects(),
         ]);
+    }
+
+    /**
+     * @return ContentService
+     */
+    protected function getContentService(): ContentService
+    {
+        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
+        return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);
     }
 
     protected function getTo(Content $recipient): array
@@ -157,7 +166,6 @@ class BackendMessageController extends ActionController
             $sender = $possibleSenders[$sender];
 
             foreach ($recipients as $recipient) {
-
                 if (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
                     $numberOfSentEmails++; // increment counter.
 
@@ -165,10 +173,11 @@ class BackendMessageController extends ActionController
                     $message = GeneralUtility::makeInstance(Message::class);
 
                     # Minimum required to be set
-                    $message->setBody($body)
+                    $message
+                        ->setBody($body)
                         ->setSubject($subject)
                         ->setSender($sender)
-                        ->parseToMarkdown(true)// (bool)$this->settings['parseToMarkdown']
+                        ->parseToMarkdown(true) // (bool)$this->settings['parseToMarkdown']
                         // ->assign('recipient', $recipient->toArray()) could be a security risk
                         ->setTo([$recipient => $recipient])
                         ->send();
@@ -196,14 +205,5 @@ class BackendMessageController extends ActionController
     {
         $this->view->assign('numberOfSentEmails', $numberOfSentEmails);
         $this->view->assign('numberOfRecipients', $numberOfRecipients);
-    }
-
-    /**
-     * @return ContentService
-     */
-    protected function getContentService(): ContentService
-    {
-        $recipientDataType = ConfigurationUtility::getInstance()->get('recipient_data_type');
-        return GeneralUtility::makeInstance(ContentService::class, $recipientDataType);
     }
 }

@@ -6,7 +6,9 @@ namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Domain\Repository\PageContentRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
+use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
@@ -25,7 +27,8 @@ final class SendAgainConfirmationAjaxController
         $data = [];
         $columnsToSendString =
             $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
-            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ?? '');
+            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ??
+                ($request->getQueryParams()['tx_messenger_user_messengerm5'] ?? ''));
 
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
@@ -57,6 +60,9 @@ final class SendAgainConfirmationAjaxController
             case 'message-queue':
                 $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
                 break;
+            case 'recipient-module':
+                $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
+                break;
         }
     }
 
@@ -81,13 +87,16 @@ final class SendAgainConfirmationAjaxController
     {
         $columnsToSendString =
             $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
-            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ?? '');
+            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ??
+                ($request->getQueryParams()['tx_messenger_user_messengerm5'] ?? ''));
+
         if (!empty($columnsToSendString)) {
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
             $matches = array_map('intval', $stringUids);
         } else {
             $matches = [];
         }
+
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
         }
@@ -142,5 +151,14 @@ final class SendAgainConfirmationAjaxController
             }
         }
         return $normalizedEmails;
+    }
+
+    public function getPageContent(ServerRequestInterface $request): int
+    {
+        $normalizedParams = $request->getAttributes()['normalizedParams'];
+        $parsedUrl = parse_url($normalizedParams->getHttpReferer());
+        parse_str($parsedUrl['query'], $queryParams);
+
+        return (int) $queryParams['id'];
     }
 }

@@ -11,18 +11,22 @@ namespace Fab\Messenger\Domain\Repository;
 
 use Fab\Messenger\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecipientRepository extends AbstractContentRepository
 {
     protected string $tableName = '';
+
+    public function __construct()
+    {
+        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
+    }
 
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
         $query
             ->select('*')
-            ->from($this->getTableName())
+            ->from($this->tableName)
             ->where(
                 $this->getQueryBuilder()
                     ->expr()
@@ -39,7 +43,7 @@ class RecipientRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query
             ->select('*')
-            ->from($this->getTableName())
+            ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
         return $query->execute()->fetchAllAssociative();
@@ -47,9 +51,8 @@ class RecipientRepository extends AbstractContentRepository
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
-        $this->tableName = $this->getTableName();
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('*')->from($this->getTableName());
+        $queryBuilder->select('*')->from($this->tableName);
 
         $constraints = [];
         foreach ($demand as $field => $value) {

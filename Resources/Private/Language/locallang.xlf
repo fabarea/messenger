@@ -158,6 +158,10 @@
 			<trans-unit id="label.messenger.itemsPerRun">
 				<source>Number of emails sent per run</source>
 			</trans-unit>
+
+			<trans-unit id="update_recipient">
+				<source>Update recipient</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

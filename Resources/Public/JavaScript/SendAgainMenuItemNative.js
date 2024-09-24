@@ -118,7 +118,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         const type = $(this).data('data-type');
 
         const url = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data, format, module, type);
-
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Export as ' + format,

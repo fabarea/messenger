@@ -5,10 +5,10 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
+use Fab\Messenger\Resolver\FieldPathResolver;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
-use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -38,11 +38,14 @@ class RecipientModuleController extends ActionController
     protected bool $showNewButton = false;
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
 
+    protected string $tableName = '';
+
     public function __construct()
     {
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
+        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
 
     /**
@@ -65,7 +68,7 @@ class RecipientModuleController extends ActionController
             'fields' => $this->getFields(),
             'paginator' => $paginator,
             'pagination' => $pagination,
-            'domainModel' => $this->repository->getTableName(),
+            'domainModel' => $this->tableName,
             'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
             'count' => count($records),
             'sortBy' => key($orderings),
@@ -144,22 +147,7 @@ class RecipientModuleController extends ActionController
 
     protected function getFields(): array
     {
-        //return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
-        //        if ($this->repository->getTableName() === 'fe_users') {
-        //            $fields = $this->repository->getFeUsersDefaultFields();
-        //            $fields = array_filter($fields, function ($field) {
-        //                return $field !== 'uid';
-        //            });
-        //        } else {
-        //
-        //        }
-        //
-        $tableName = ConfigurationUtility::getInstance()->get('recipient_table_name');
-        $fields = TcaFieldsUtility::getFields($tableName);
-        $fields = array_filter($fields, function ($field) {
-            return !in_array($field, $this->excludedFields);
-        });
-        return array_merge(['uid'], $fields);
+        return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
     /**
@@ -173,7 +161,7 @@ class RecipientModuleController extends ActionController
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
         $columnSelectorButton->setModule('tx_messenger_messenger_messengertxmessengerm5');
-        $columnSelectorButton->setTableName($this->repository->getTableName());
+        $columnSelectorButton->setTableName($this->tableName);
         $columnSelectorButton->setAction('index');
         $columnSelectorButton->setController('RecipientModule');
         $columnSelectorButton->setModel($this->getModel());
@@ -187,7 +175,7 @@ class RecipientModuleController extends ActionController
 
     protected function getModel(): string
     {
-        return match ($this->repository->getTableName()) {
+        return match ($this->tableName) {
             'tx_messenger_domain_model_messagetemplate' => 'messagetemplate',
             'tx_messenger_domain_model_messagelayout' => 'messagelayout',
             'tx_messenger_domain_model_sentmessage' => 'sentmessage',

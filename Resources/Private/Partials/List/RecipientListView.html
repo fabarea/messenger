@@ -147,6 +147,69 @@
                         </td>
                     </tr>
                 </f:for>
+                <tr>
+                    <td>
+                        <div class="dropdown">
+                            <button
+                                aria-expanded="false"
+                                class="btn btn-secondary btn-sm dropdown-toggle border-1"
+                                data-bs-toggle="dropdown"
+                                id="dropdownMenuButton1"
+                                type="button"
+                            ></button>
+                            <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
+                                <li>
+                                    <a
+                                        class="dropdown-item btn-sendAgain border-bottom border-secondary"
+                                        data-data-type="recipient-module"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="content-elements-mailform" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/{domainModel}.xlf:send_message"
+                                        />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item btn-update-recipient" href="#">
+                                        <core:icon identifier="mimetypes-open-document-database" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:update_recipient"
+                                        />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item btn-export"
+                                        data-data-type="recipient-module"
+                                        data-format="csv"
+                                        data-module="tx_messenger_messenger_messengertxmessengerm5"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="mimetypes-text-csv" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/{domainModel}.xlf:csv"
+                                        />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item btn-export"
+                                        data-format="xml"
+                                        data-module="tx_messenger_messenger_messengertxmessengerm5"
+                                        data-data-type="recipient-module"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="mimetypes-text-html" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/{domainModel}.xlf:xml"
+                                        />
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <f:if condition="{pagination}">
