@@ -27,6 +27,7 @@ final class UpdateRecipientController
             $columnsToSendArray = array_map('intval', $stringUids);
             $data = $this->repository->findByUids($columnsToSendArray);
         }
+        // todo use standalone view
         $content = '<f:form action="updateMany"
             additionalAttributes="{role: \'form\'}"
             id="update-many-recipients"
@@ -79,6 +80,7 @@ final class UpdateRecipientController
     public function saveAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = [];
+        $request->getParsedBody(); // todo test me!
         $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
         if (!empty($columnsToSendString)) {
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
