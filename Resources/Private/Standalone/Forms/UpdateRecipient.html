@@ -12,7 +12,7 @@
             }"
             includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
         />
-        <f:form action="save" additionalAttributes="{role: 'form'}" id="update-many-recipients" method="post">
+        <form action="save" role="form" id="form-update-many-recipients" method="post">
             <div class="form-group">
                 <div id="message-body-container">
                     <label for="recipient-csv-list">CSV list of recipients</label>
@@ -22,8 +22,7 @@
                         name="recipientCsvList"
                         placeholder="johne@doe.com;John;Doe"
                         style="min-height: 400px"
-                    >
-                    </textarea>
+                    ></textarea>
                 </div>
                 <div class="checkbox pt-2">
                     <label>
@@ -33,6 +32,6 @@
                 </div>
             </div>
             <br />
-        </f:form>
+        </form>
     </f:section>
 </html>

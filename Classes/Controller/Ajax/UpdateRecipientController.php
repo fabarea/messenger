@@ -35,7 +35,6 @@ final class UpdateRecipientController
         return $response;
     }
 
-    #[NoReturn]
     public function saveAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = [];
