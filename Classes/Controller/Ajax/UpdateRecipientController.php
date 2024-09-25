@@ -3,6 +3,7 @@
 namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Repository\RecipientRepository;
+use JetBrains\PhpStorm\NoReturn;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,52 +21,9 @@ final class UpdateRecipientController
 
     public function editAction(ServerRequestInterface $request): ResponseInterface
     {
-        $data = [];
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
-            $columnsToSendArray = array_map('intval', $stringUids);
-            $data = $this->repository->findByUids($columnsToSendArray);
-        }
-        // todo use standalone view
-        $content = '<f:form action="updateMany"
-            additionalAttributes="{role: \'form\'}"
-            id="update-many-recipients"
-            method="post">
-
-        <div class="form-group">
-            <div id="message-body-container" style="{f:if(condition: pageId, then: \'display: none\')}">
-                <label for="recipient-csv-list">CSV list of recipients</label>
-                <f:form.textarea class="form-control"
-                                 name="recipientCsvList"
-                                 style="min-height: 400px"
-                                 id="recipient-csv-list"
-                                 placeholder="johne@doe.com;John;Doe"/>
-            </div>
-
-            <div class="checkbox">
-                <label>
-                    <f:form.checkbox
-                            name="deleteExistingRecipients"
-                            checked="true"
-                            value="1"/>
-                    Delete existing recipients before adding new ones.</label>
-            </div>
-        </div>
-
-        <button type="submit"
-                class="btn btn-primary pull-right"
-                id="btn-update-many-recipients"
-                style="min-width: 100px">
-            Update recipients
-        </button>
-        <br/>
-        <br/>
-
-    </f:form>';
-
-        $content = sprintf($content, $data[0]['email']);
-
+        $content = file_get_contents(
+            GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/UpdateRecipient.html'),
+        );
         return $this->getResponse($content);
     }
 
@@ -77,6 +35,7 @@ final class UpdateRecipientController
         return $response;
     }
 
+    #[NoReturn]
     public function saveAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = [];
@@ -87,6 +46,14 @@ final class UpdateRecipientController
             $columnsToSendArray = array_map('intval', $stringUids);
             $data = $this->repository->findByUids($columnsToSendArray);
         }
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        $data = $request->getParsedBody();
+        var_dump([
+            'Data' => $request->getQueryParams(),
+            'ColumnsToSendString' => $data,
+        ]);
+
+        exit();
 
         $recipient = $request->getQueryParams()['recipient'] ?? '';
 
@@ -96,6 +63,14 @@ final class UpdateRecipientController
         $data = $request->getParsedBody();
         $this->repository->updateRecipient($data['recipient']);
         return $this->getResponse('Recipient updated');
+    }
+
+    public function messageFromRecipientAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $content = file_get_contents(
+            GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html'),
+        );
+        return $this->getResponse($content);
     }
 
     protected function getLanguageService(): LanguageService

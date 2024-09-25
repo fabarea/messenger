@@ -32,4 +32,9 @@ return [
         'path' => '/newsletter/update-recipient/save',
         'target' => UpdateRecipientController::class . '::saveAction',
     ],
+
+    'newsletter_send_message_from_clipboard' => [
+        'path' => '/newsletter/send-message-from-clipboard',
+        'target' => UpdateRecipientController::class . '::messageFromRecipientAction',
+    ],
 ];

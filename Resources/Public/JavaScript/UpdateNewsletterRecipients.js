@@ -16,7 +16,7 @@
 define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
   'use strict';
 
-  const Newsletter = {
+  const Messenger = {
     getEditRecipientUrl: function (url, recipient = '') {
       const uri = new Uri(url);
 
@@ -40,8 +40,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         }
         e.preventDefault();
 
-        const url = Newsletter.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_update_recipient);
-        Newsletter.modal = Modal.advanced({
+        const url = Messenger.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_update_recipient);
+        Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Update recipient',
           severity: top.TYPO3.Severity.notice,
@@ -59,7 +59,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               btnClass: 'btn btn-primary',
               trigger: function () {
                 // get modal content before submit
-                $('.btn', Newsletter.modal).attr('disabled', 'disabled');
+                $('.btn', Messenger.modal).attr('disabled', 'disabled');
                 const textarea = document.querySelector('.modal-body .recipient textarea');
                 const updateRecipient = Messenger.getEditRecipientUrl(
                   TYPO3.settings.ajaxUrls.newsletter_update_recipient_save,

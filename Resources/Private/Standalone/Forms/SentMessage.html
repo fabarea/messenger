@@ -1,0 +1,130 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+>
+<f:layout name="Default" />
+
+<f:section name="main">
+
+<f:form action="enqueue"
+        additionalAttributes="{role: 'form'}"
+        extensionName="messenger"
+        id="form-bulk-send"
+        method="post"
+        class="m-2"
+>
+
+    <input type="hidden" name="search[value]" value=""/>
+    <input type="hidden" name="order[0][column]" value=""/>
+    <input type="hidden" name="order[0][dir]" value=""/>
+    <input type="hidden" value="" id="messenger-page-id"/>
+    <f:for each="{matches}" key="key" as="value">
+        <f:form.hidden name="matches[{key}]"
+                       value="{value}"/>
+    </f:for>
+
+    <div class="form-group">
+        <label for="messenger-sender">Sender</label>
+        <select name="sender"
+                id="messenger-sender"  class="form-control">
+            <option value="">--Please choose an option--</option>
+            <f:for each="{senders}" as="sender">
+                <option value="{sender}">{sender}</option>
+            </f:for>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="messenger-subject">Subject</label>
+        <input type="text" class="form-control"
+               value="{emailSubject}"
+               name="subject"
+               required="required"
+               id="messenger-subject"/>
+
+    </div>
+
+
+    <div class="form-group">
+        <f:if condition="{pageId}">
+            <f:then>
+                <div class="checkbox p-2">
+                    <input type="hidden"
+                           name="tx_messenger_user_messengerm5[parseMarkdown]"
+                           value="0"/>
+                    <label>
+                        <input type="checkbox"
+                                  id="has-body-text"
+                                  name="tx_messenger_user_messengerm5[parseMarkdown]"
+                                  value="1"
+                               class="p-2 m-2"
+                                  onchange="
+
+                        this.checked
+                        ? document.getElementById('message-body-container').style = 'display: block'
+                        : document.getElementById('message-body-container').style = 'display: none';
+                        ">Replace message body by a free text instead of the page content.</label>
+                </div>
+            </f:then>
+        </f:if>
+        <div id="message-body-container" style="{f:if(condition: pageId, then: 'display: none')}">
+            <label for="messenger-body">Body</label>
+            <textarea
+                class="form-control"
+                name="body"
+                style="min-height: 100px"
+                id="messenger-body"
+            >
+                    </textarea>
+
+        </div>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary pull-right mb-3"
+            id="btn-bulk-send"
+            style="min-width: 100px ">
+       Send {numberOfRecipients}
+        <f:if condition="{numberOfRecipients} > 1">
+            <f:then>
+               messages
+            </f:then>
+            <f:else>
+               message
+            </f:else>
+        </f:if>
+    </button>
+
+</f:form>
+
+<f:form action="sendAsTest"
+        additionalAttributes="{role: 'form'}"
+        extensionName="messenger"
+        id="form-send-test"
+        style="margin-top: 40px; margin-bottom: 40px"
+        method="post">
+
+    <f:form.hidden id="messenger-sender-test" name="sender"/>
+    <f:form.hidden id="messenger-subject-test" name="subject"/>
+    <f:form.hidden id="messenger-body-test" name="body"/>
+
+    <div class="form-group">
+        <label for="messenger-recipient-test">Test recipient(s) - max 10 emails</label>
+        <input type="text" class="form-control"
+               name="recipientList"
+              id="messenger-recipient-test"/>
+
+    </div>
+    <button type="submit"
+            class="btn btn-default pull-right"
+            id="btn-send-test"
+            style="min-width: 100px">
+        Send test
+    </button>
+
+</f:form>
+
+</f:section>
+</html>
