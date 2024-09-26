@@ -234,8 +234,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                 const form = window.parent.document.querySelector('#form-update-many-recipients');
 
                 const url = Messenger.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_update_recipient_save);
-
-                // Ajax request
                 $.ajax({
                   url: url,
                   data: new URLSearchParams(new FormData(form)).toString(),
@@ -290,17 +288,19 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
 
                 const updateUrl = Messenger.getEditRecipientUrl(
-                  TYPO3.settings.ajaxUrls.newsletter_send_message_from_clipboard,
+                  TYPO3.settings.ajaxUrls.newsletter_send_message_from_enqueue,
                   [],
                 );
+                const form = window.parent.document.querySelector('#form-bulk-send');
 
                 $.ajax({
                   url: updateUrl,
+                  data: new URLSearchParams(new FormData(form)).toString(),
                   method: 'post',
 
                   success: function (response) {
                     if (response) {
-                      Notification.success('', 'Recipient updated successfully');
+                      Notification.success('Success', response);
                       Modal.dismiss();
                     } else {
                       Notification.error('Error', response);

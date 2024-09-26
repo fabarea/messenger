@@ -37,4 +37,8 @@ return [
         'path' => '/newsletter/send-message-from-clipboard',
         'target' => UpdateRecipientController::class . '::messageFromRecipientAction',
     ],
+    'newsletter_send_message_from_enqueue' => [
+        'path' => '/newsletter/send-message-from-enqueue',
+        'target' => UpdateRecipientController::class . '::enqueueAction',
+    ],
 ];

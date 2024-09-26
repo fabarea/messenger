@@ -9,8 +9,10 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
-use Fab\Vidi\Tca\Tca;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -29,6 +31,10 @@ class QueueRepository extends AbstractContentRepository
 
     protected QueryInterface $constraints;
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -47,7 +53,7 @@ class QueueRepository extends AbstractContentRepository
     }
 
     /**
-     * @return object|QueryBuilder
+     * @return QueryBuilder
      */
     protected function getQueryBuilder(): QueryBuilder
     {
@@ -56,6 +62,10 @@ class QueueRepository extends AbstractContentRepository
         return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findByUids(array $uids): array
     {
         $query = $this->getQueryBuilder();
@@ -67,6 +77,10 @@ class QueueRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -79,11 +93,15 @@ class QueueRepository extends AbstractContentRepository
                     ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
             );
 
-        $messages = $query->execute()->fetch();
+        $messages = $query->execute()->fetchAllAssociative();
 
         return is_array($messages) ? $messages : [];
     }
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     public function findOlderThanDays(int $days): array
     {
         $time = time() - $days * 86400;
@@ -93,10 +111,13 @@ class QueueRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where('crdate < ' . $time);
 
-        $messages = $query->execute()->fetchAll();
+        $messages = $query->execute()->fetchAllAssociative();
         return is_array($messages) ? $messages : [];
     }
 
+    /**
+     * @throws DBALException
+     */
     public function removeOlderThanDays(int $days): int
     {
         $time = time() - $days * 86400;
@@ -107,6 +128,10 @@ class QueueRepository extends AbstractContentRepository
         return $query->execute();
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -135,28 +160,24 @@ class QueueRepository extends AbstractContentRepository
         return $queryBuilder->execute()->fetchAllAssociative();
     }
 
+    /**
+     * @throws DBALException
+     */
     public function add(array $message): int
     {
         $values = [];
-        $values['crdate'] = time();
-        $values['sent_time'] = time();
-
-        // Add uuid info is not available
         if (empty($message['uuid'])) {
             $message['uuid'] = Algorithms::generateUUID();
         }
-
         // Make sure fields are allowed for this table.
-        $fields = Tca::table($this->tableName)->getFields();
+        $fields = TcaFieldsUtility::getFields($this->tableName);
         foreach ($message as $fieldName => $value) {
             if (in_array($fieldName, $fields, true) && is_string($value)) {
                 $values[$fieldName] = $value;
             }
         }
-
         $query = $this->getQueryBuilder();
         $query->insert($this->tableName)->values($values);
-
         $result = $query->execute();
         if (!$result) {
             throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
@@ -178,6 +199,9 @@ class QueueRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
+    /**
+     * @throws DBALException
+     */
     public function remove(array $message): int
     {
         $query = $this->getQueryBuilder();
@@ -186,6 +210,9 @@ class QueueRepository extends AbstractContentRepository
         return $query->execute();
     }
 
+    /**
+     * @throws DBALException
+     */
     public function update(array $message): int
     {
         $query = $this->getQueryBuilder();
