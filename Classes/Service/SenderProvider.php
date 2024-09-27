@@ -90,9 +90,9 @@ class SenderProvider implements SingletonInterface
     protected function getMe(): array
     {
         $me = [];
-        if ($GLOBALS['BE_USER']->user['email']) {
-            $email = $GLOBALS['BE_USER']->user['email'];
-            $name = $GLOBALS['BE_USER']->user['realName'] ?: $GLOBALS['BE_USER']->user['email'];
+        if ($this->getBackendUser()->user['email']) {
+            $email = $this->getBackendUser()->user['email'];
+            $name = $this->getBackendUser()->user['realName'] ?: $this->getBackendUser()->user['email'];
 
             $me = [$email => $name];
         }

@@ -25,7 +25,7 @@ final class UpdateRecipientController
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
     }
 
-    public function editAction(ServerRequestInterface $request): ResponseInterface
+    public function editAction(): ResponseInterface
     {
         $content = file_get_contents(
             GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/UpdateRecipient.html'),
@@ -45,22 +45,16 @@ final class UpdateRecipientController
      * @throws DBALException
      * @throws Exception
      */
-    public function saveAction(ServerRequestInterface $request): ResponseInterface
+    public function saveAction(): ResponseInterface
     {
-        $matches = [];
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
-            $matches = array_map('intval', $stringUids);
-        }
-
         $request = $GLOBALS['TYPO3_REQUEST'];
         $data = $request->getParsedBody();
         if ($data['deleteExistingRecipients']) {
             $this->repository->deleteAllAction();
         }
         $recipients = GeneralUtility::trimExplode("\n", trim($data['recipientCsvList']));
-        $counter = $matches ? count($matches) : 0;
+        $counter = count($recipients);
+        $created = 0;
         foreach ($recipients as $recipientCsv) {
             $recipient = GeneralUtility::trimExplode(';', $recipientCsv);
             if (count($recipient) >= 3) {
@@ -75,17 +69,27 @@ final class UpdateRecipientController
                         $this->repository->insert($values);
                     }
                 }
+
+                $created++;
             }
         }
-        $content = sprintf('Created %s/%s', $counter, $counter);
+        $content = sprintf('Created %s/%s', $created, $counter);
         return $this->getResponse($content);
     }
 
-    public function messageFromRecipientAction(ServerRequestInterface $request): ResponseInterface
+    public function messageFromRecipientAction(): ResponseInterface
     {
+        $senders = GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders();
+
         $content = file_get_contents(
             GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html'),
         );
+        $sendersList = '';
+        foreach ($senders as $sender) {
+            $sendersList .=
+                '<option value="' . htmlspecialchars($sender) . '">' . htmlspecialchars($sender) . '</option>';
+        }
+        $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
         return $this->getResponse($content);
     }
 
@@ -199,7 +203,11 @@ final class UpdateRecipientController
      */
     public function sendAsTestAction($matches, $data): string
     {
-        $recipientList = GeneralUtility::trimExplode(',', $data['recipientList'], true);
+        $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
+        $emailsArray = [];
+        foreach ($emails as $emailsArrayItem) {
+            $emailsArray[$emailsArrayItem] = $emailsArrayItem;
+        }
         $numberOfSentEmails = 0;
         $recipients = $this->repository->findByUids($matches);
         if ($data['recipientList']) {
@@ -216,7 +224,7 @@ final class UpdateRecipientController
                         ->setSubject($data['subject'])
                         ->setSender($this->getTo($recipient))
                         ->parseToMarkdown(true)
-                        ->setTo($recipientList)
+                        ->setTo($emailsArray)
                         ->send();
                     if ($numberOfSentEmails >= 10) {
                         break; // we want to stop sending email as it is for demo only.
