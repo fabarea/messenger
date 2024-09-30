@@ -1,8 +1,5 @@
 <?php
 
-use Fab\Vidi\Grid\ButtonGroupRenderer;
-use Fab\Vidi\Grid\CheckBoxRenderer;
-
 if (!defined('TYPO3')) {
     die('Access denied.');
 }
@@ -86,27 +83,6 @@ return [
 
 Footer to be replaced...
 ',
-            ],
-        ],
-    ],
-    'grid' => [
-        'facets' => ['uid', 'qualifier'],
-        'columns' => [
-            '__checkbox' => [
-                'renderer' => CheckBoxRenderer::class,
-            ],
-            'uid' => [
-                'visible' => false,
-                'label' =>
-                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
-                'width' => '5px',
-            ],
-            'qualifier' => [
-                'editable' => true,
-            ],
-            'content' => [],
-            '__buttons' => [
-                'renderer' => ButtonGroupRenderer::class,
             ],
         ],
     ],

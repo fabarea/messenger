@@ -1,8 +1,5 @@
 <?php
 
-use Fab\Vidi\Grid\ButtonGroupRenderer;
-use Fab\Vidi\Grid\CheckBoxRenderer;
-
 if (!defined('TYPO3')) {
     die('Access denied.');
 }
@@ -201,8 +198,6 @@ Markers such as {foo} have to be posted by Messenger.
 
 Show detail of an item:
 
-<m:widget.show item="markerName" dataType="tx_ext_foo"/>
-
 {namespace m=Fab\Messenger\ViewHelpers}
 			',
             ],
@@ -219,31 +214,6 @@ Show detail of an item:
                 'size' => 1,
                 'default' => '',
                 'minitems' => 0,
-            ],
-        ],
-    ],
-    'grid' => [
-        'facets' => ['uid', 'qualifier'],
-        'columns' => [
-            '__checkbox' => [
-                'renderer' => CheckBoxRenderer::class,
-            ],
-            'uid' => [
-                'visible' => false,
-                'label' =>
-                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
-                'width' => '5px',
-            ],
-            'qualifier' => [
-                'editable' => true,
-                'width' => '150px',
-            ],
-            'subject' => [
-                'editable' => true,
-            ],
-            'body' => [],
-            '__buttons' => [
-                'renderer' => ButtonGroupRenderer::class,
             ],
         ],
     ],

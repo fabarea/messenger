@@ -142,7 +142,7 @@ a default target recipient which is convenient for sending unwanted emails to re
 Tool to send emails to Frontend Users
 =====================================
 
-When EXT:vidi is installed, Messenger extends the Frontend User module in the BE and make it possible to send bulk messages to a selection / group of users.
+Messenger makes it possible to send bulk messages to a selection / group of users.
 There is BE module to see the state of the queue and the messages waiting to be sent.
 Consider setting up the scheduler task to properly send the emails as messages are put into a queue and are sent by patch.
 
@@ -174,25 +174,6 @@ Send messages and remove them from the queue by batch of 100 messages::
 Sent messages older than 100 days will be removed::
 
     ./vendor/bin/typo3 messenger:cleanUp
-
-Message View Helper
-===================
-
-Messenger provides two interesting View Helpers.
-
-The first one is to render a generic item from the array of markers::
-
-	# The minimum declaration
-	<m:widget.show item="markerName" dataType="tx_ext_foo"/>
-
-	# Additional attributes
-	<m:widget.show item="markerName" dataType="tx_ext_foo" exclude="{0: 'fieldName'}" displaySystemFields="true"/>
-
-	{namespace m=Fab\Messenger\ViewHelpers}
-
-The second one is for retrieving the body of the email. Useful to display a feedback message to the user::
-
-	<m:show.body key="{settings.messageTemplate}"/>
 
 
 Fluid templates

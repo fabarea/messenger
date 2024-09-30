@@ -84,16 +84,3 @@ page_1556100596 {
 		}
 	}
 }
-
-######################################
-# config.tx_extbase
-######################################
-config.tx_extbase {
-	view {
-		widget {
-			Fab\Messenger\ViewHelpers\Widget\ShowViewHelper {
-				templateRootPath = EXT:messenger/Resources/Private/Templates/
-			}
-		}
-	}
-}
