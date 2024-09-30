@@ -47,8 +47,7 @@ final class UpdateRecipientController
      */
     public function saveAction(): ResponseInterface
     {
-        $request = $GLOBALS['TYPO3_REQUEST'];
-        $data = $request->getParsedBody();
+        $data = $this->getRequest()->getParsedBody();
         if ($data['deleteExistingRecipients']) {
             $this->repository->deleteAllAction();
         }
@@ -75,6 +74,11 @@ final class UpdateRecipientController
         }
         $content = sprintf('Created %s/%s', $created, $counter);
         return $this->getResponse($content);
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 
     public function messageFromRecipientAction(): ResponseInterface
@@ -107,8 +111,7 @@ final class UpdateRecipientController
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
             $matches = array_map('intval', $stringUids);
         }
-        $request = $GLOBALS['TYPO3_REQUEST'];
-        $data = $request->getParsedBody();
+        $data = $this->getRequest()->getParsedBody();
         $content = '';
         if ($data['sender'] && empty($data['recipientList'])) {
             $content = $this->getQueueAction($matches, $data);
