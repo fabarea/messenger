@@ -2,6 +2,7 @@
 
 use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
+use Fab\Messenger\Controller\Ajax\UpdateRecipientController;
 
 return [
     'messenger_send_again_confirmation' => [
@@ -20,5 +21,24 @@ return [
     'messenger_export_data_validation' => [
         'path' => '/messenger/export-data/validate',
         'target' => ExportDataAjaxController::class . '::validateAction',
+    ],
+
+    'newsletter_update_recipient' => [
+        'path' => '/newsletter/update-recipient',
+        'target' => UpdateRecipientController::class . '::editAction',
+    ],
+
+    'newsletter_update_recipient_save' => [
+        'path' => '/newsletter/update-recipient/save',
+        'target' => UpdateRecipientController::class . '::saveAction',
+    ],
+
+    'newsletter_send_message_from_clipboard' => [
+        'path' => '/newsletter/send-message-from-clipboard',
+        'target' => UpdateRecipientController::class . '::messageFromRecipientAction',
+    ],
+    'newsletter_send_message_from_enqueue' => [
+        'path' => '/newsletter/send-message-from-enqueue',
+        'target' => UpdateRecipientController::class . '::enqueueAction',
     ],
 ];

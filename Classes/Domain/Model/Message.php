@@ -16,28 +16,22 @@ use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
+use Fab\Messenger\Exception\MissingFileException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 use Fab\Messenger\Redirect\RedirectService;
+use Fab\Messenger\Service\Html2Text;
+use Fab\Messenger\Service\MessageStorage;
 use Fab\Messenger\Validator\EmailValidator;
+use Michelf\Markdown;
 use Psr\Log\LogLevel;
 use RuntimeException;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Mail\MailMessage;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\Messenger\Exception\MissingFileException;
-use Fab\Messenger\Exception\RecordNotFoundException;
-use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Fab\Messenger\Html2Text\TemplateEngine;
-use Fab\Messenger\Service\MessageStorage;
-use Fab\Messenger\Service\LoggerService;
-use Fab\Messenger\Service\Html2Text;
-use Michelf\Markdown;
-use TYPO3\CMS\Extbase\Annotation\Inject;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
 
 /**
  * Message representation
@@ -183,6 +177,7 @@ class Message
 
     /**
      * Prepares the emails and queue it.
+     * @throws InvalidEmailFormatException
      */
     public function enqueue(): void
     {
@@ -192,46 +187,11 @@ class Message
     }
 
     /**
-     * Prepares the emails and send it.
-     *
-     * @return boolean whether or not the email was sent successfully
-     * @throws WrongPluginConfigurationException
-     */
-    public function send(): bool
-    {
-        $this->prepareMessage();
-
-        $this->getMailMessage()->send();
-        $isSent = $this->getMailMessage()->isSent();
-
-        if ($isSent) {
-            $this->sentMessageRepository->add($this->toArray());
-
-            // Store body of the message for possible later use.
-            if ($this->messageTemplate) {
-                MessageStorage::getInstance()->set(
-                    $this->messageTemplate->getUid(),
-                    $this->getMailMessage()->getBody(),
-                );
-            }
-        } else {
-            $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-            GeneralUtility::makeInstance(LogManager::class)($this)
-                ->getLogger(__CLASS__)
-                ->log(LogLevel::ERROR, $message);
-            throw new WrongPluginConfigurationException($message, 1_350_124_220);
-        }
-
-        return $isSent;
-    }
-
-    /**
      * Prepares the emails by fetching an email template and formats its body.
      * @throws InvalidEmailFormatException
      */
     protected function prepareMessage(): void
     {
-
         if (!$this->to) {
             throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
@@ -243,7 +203,6 @@ class Message
             ->setFrom($this->getSender())
             ->setReplyTo($this->getReplyTo())
             ->setSubject($this->getProcessedSubject());
-
 
         // Attach plain text version if HTML tags are found in body
         if ($this->hasHtml($this->getProcessedBody())) {
@@ -276,10 +235,267 @@ class Message
         }
     }
 
-    protected function getDebugInfoSubject(): string
+    public function getMailMessage(): MailMessage
     {
-        $applicationContext = (string) Environment::getContext();
-        return strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
+        if ($this->mailMessage === null) {
+            $this->mailMessage = GeneralUtility::makeInstance(MailMessage::class);
+        }
+        return $this->mailMessage;
+    }
+
+    /**
+     * Return "to" addresses.
+     * Special case: override "to" if a redirection has been set for a Context.
+     */
+    public function getTo(): array
+    {
+        return $this->to;
+    }
+
+    /**
+     * Set "to" addresses. Should be an array('email' => 'name').
+     *
+     * @param mixed $addresses
+     * @throws InvalidEmailFormatException
+     */
+    public function setTo(mixed $addresses): Message
+    {
+        $this->getEmailValidator()->validate($addresses);
+        $this->to = $addresses;
+        return $this;
+    }
+
+    /**
+     * Return "cc" addresses.
+     * Special case: there is no "cc" if a redirection has been set for a Context.
+     */
+    public function getCc(): array
+    {
+        return $this->cc;
+    }
+
+    /**
+     * Set "cc" addresses. Should be an array('email' => 'name').
+     *
+     * @param mixed $addresses
+     * @throws InvalidEmailFormatException
+     */
+    public function setCc(mixed $addresses): Message
+    {
+        $this->getEmailValidator()->validate($addresses);
+        $this->cc = $addresses;
+        return $this;
+    }
+
+    /**
+     * Return "bcc" addresses.
+     * Special case: there is no "bcc" if a redirection has been set for a Context.
+     */
+    public function getBcc(): array
+    {
+        return $this->bcc;
+    }
+
+    /**
+     * Set "cc" addresses. Should be an array('email' => 'name').
+     *
+     * @param mixed $addresses
+     * @throws InvalidEmailFormatException
+     */
+    public function setBcc(mixed $addresses): Message
+    {
+        $this->getEmailValidator()->validate($addresses);
+        $this->bcc = $addresses;
+        return $this;
+    }
+
+    /**
+     * @throws InvalidEmailFormatException
+     */
+    public function getSender(): array
+    {
+        // Compute sender from global configuration.
+        if (!$this->sender) {
+            if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
+                throw new RuntimeException(
+                    'I could not find a sender email address. Missing value for "defaultMailFromAddress"',
+                    1_402_032_685,
+                );
+            }
+
+            $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+            if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
+                $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'];
+            } else {
+                $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
+            }
+
+            $this->sender = [$email => $name];
+            $this->getEmailValidator()->validate($this->sender);
+        }
+
+        return $this->sender;
+    }
+
+    /**
+     * Re-set default sender
+     * @throws InvalidEmailFormatException
+     */
+    public function setSender(array $sender): Message
+    {
+        $this->getEmailValidator()->validate($sender);
+        $this->sender = $sender;
+        return $this;
+    }
+
+    /**
+     * @return EmailValidator
+     */
+    public function getEmailValidator(): EmailValidator
+    {
+        return GeneralUtility::makeInstance(EmailValidator::class);
+    }
+
+    public function getReplyTo(): array
+    {
+        return $this->replyTo;
+    }
+
+    /**
+     * Set "reply-to" addresses. Should be an array('email' => 'name').
+     *
+     * @param mixed $addresses
+     * @throws InvalidEmailFormatException
+     */
+    public function setReplyTo(mixed $addresses): Message
+    {
+        $this->getEmailValidator()->validate($addresses);
+        $this->replyTo = $addresses;
+        return $this;
+    }
+
+    protected function getProcessedSubject(): string
+    {
+        if ($this->processedSubject === '') {
+            $processedSubject = $this->subject;
+            if ($this->messageTemplate) {
+                $processedSubject = $this->messageTemplate->getSubject();
+            }
+            // Possible markers substitution.
+            if ($this->markers) {
+                $processedSubject = $this->getContentRenderer()->render($processedSubject, $this->markers);
+            }
+            $this->processedSubject = $processedSubject;
+        }
+
+        return $this->processedSubject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     * @return $this
+     */
+    public function setSubject(string $subject): self
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * @return ContentRendererInterface
+     */
+    protected function getContentRenderer(): ContentRendererInterface
+    {
+        return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
+        #if ($this->isFrontendMode()) {
+        #    /** @var FrontendRenderer $contentRenderer */
+        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
+        #} else {
+        #    /** @var BackendRenderer $contentRenderer */
+        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
+        #}
+        #return $contentRenderer;
+    }
+
+    /**
+     * Check whether a string contains HTML tags
+     *
+     * @see http://preprocess.me/how-to-check-if-a-string-contains-html-tags-in-php
+     * @param string $content the content to be analyzed
+     */
+    public function hasHtml(string $content): bool
+    {
+        $result = false;
+        //we compare the length of the string with html tags and without html tags
+        if (strlen($content) !== strlen(strip_tags($content))) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    protected function getProcessedBody(): string
+    {
+        if ($this->processedBody === '') {
+            $processedBody = $this->body;
+
+            if ($this->messageTemplate) {
+                $processedBody = $this->messageTemplate->getBody();
+            }
+
+            // Possible wrap body in Layout content.
+            if ($this->messageLayout) {
+                $processedBody = str_replace('{BODY}', $processedBody, $this->messageLayout->getContent());
+            }
+
+            // Parse Markdown only if necessary.
+            if (
+                $this->parseToMarkdown ||
+                ($this->messageTemplate &&
+                    $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
+            ) {
+                $processedBody = Markdown::defaultTransform($processedBody);
+            }
+
+            // Possible markers substitution.
+            if ($this->markers) {
+                $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
+            }
+
+            $this->processedBody = $processedBody;
+        }
+
+        return $this->processedBody;
+    }
+
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param string $body
+     * @return $this
+     */
+    public function setBody(string $body): self
+    {
+        $this->body = $body;
+        return $this;
+    }
+
+    /**
+     * @return RedirectService
+     */
+    public function getRedirectService(): RedirectService
+    {
+        return GeneralUtility::makeInstance(RedirectService::class);
     }
 
     /**
@@ -301,6 +517,105 @@ class Message
         );
     }
 
+    protected function getDebugInfoSubject(): string
+    {
+        $applicationContext = (string) Environment::getContext();
+        return strtoupper($applicationContext) . ' CONTEXT! ' . $this->getSubject();
+    }
+
+    /**
+     * Convert this object to an array.
+     */
+    public function toArray(): array
+    {
+        if (!$this->isMessagePrepared()) {
+            $this->prepareMessage();
+        }
+
+        $mailMessage = $this->getMailMessage();
+        $values = [
+            'sender' => $this->formatAddresses($mailMessage->getFrom()),
+            'to' => $this->formatAddresses($mailMessage->getTo()),
+            'cc' => $this->formatAddresses($mailMessage->getCc()),
+            'bcc' => $this->formatAddresses($mailMessage->getBcc()),
+            'recipient' => $this->formatAddresses($mailMessage->getTo()),
+            'recipient_cc' => $this->formatAddresses($mailMessage->getCc()),
+            'recipient_bcc' => $this->formatAddresses($mailMessage->getBcc()),
+            'reply_to' => $mailMessage->getReplyTo(),
+            'subject' => $mailMessage->getSubject(),
+            'body' => $mailMessage->getBody(),
+            'attachment' => count($this->attachments),
+            'context' => (string) Environment::getContext(),
+            'was_opened' => 0,
+            'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
+            'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
+            'scheduled_distribution_time' => $this->scheduleDistributionTime,
+            'mailing_name' => $this->mailingName ?: '',
+            'redirect_email_from' => $this->formatAddresses($this->redirectEmailFrom),
+            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
+            'mail_message' => $mailMessage,
+            'uuid' => $this->uuid,
+        ];
+
+        return $values;
+    }
+
+    /**
+     * Tell whether the message has been prepared.
+     */
+    protected function isMessagePrepared(): bool
+    {
+        return !empty($this->mailMessage);
+    }
+
+    /**
+     * Format an array of addresses
+     */
+    protected function formatAddresses(array $addresses): string
+    {
+        $formattedAddresses = [];
+        /** @var Address $addresses */
+        foreach ($addresses as $address) {
+            $formattedAddresses[] = sprintf('%s <%s>', $address->getName(), $address->getAddress());
+        }
+        return implode(', ', $formattedAddresses);
+    }
+
+    /**
+     * Prepares the emails and send it.
+     *
+     * @return boolean whether or not the email was sent successfully
+     * @throws WrongPluginConfigurationException
+     * @throws InvalidEmailFormatException
+     */
+    public function send(): bool
+    {
+        $this->prepareMessage();
+
+        $this->getMailMessage()->send();
+        $isSent = $this->getMailMessage()->isSent();
+
+        if ($isSent) {
+            $this->sentMessageRepository->add($this->toArray());
+
+            // Store body of the message for possible later use.
+            if ($this->messageTemplate) {
+                MessageStorage::getInstance()->set(
+                    $this->messageTemplate->getUid(),
+                    $this->getMailMessage()->getBody(),
+                );
+            }
+        } else {
+            $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
+            GeneralUtility::makeInstance(LogManager::class)($this)
+                ->getLogger(__CLASS__)
+                ->log(LogLevel::ERROR, $message);
+            throw new WrongPluginConfigurationException($message, 1_350_124_220);
+        }
+
+        return $isSent;
+    }
+
     /**
      * Retrieves the message template object
      */
@@ -310,19 +625,36 @@ class Message
     }
 
     /**
-     * Check whether a string contains HTML tags
+     * parameter $messageTemplate can be:
+     *      + \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate
+     *      + int $messageTemplate which corresponds to an uid
+     *      + string $messageTemplate which corresponds to a value for property "identifier".
      *
-     * @see http://preprocess.me/how-to-check-if-a-string-contains-html-tags-in-php
-     * @param string $content the content to be analyzed
+     * @param mixed $messageTemplate
      */
-    public function hasHtml(string $content): bool
+    public function setMessageTemplate(mixed $messageTemplate): Message
     {
-        $result = false;
-        //we compare the length of the string with html tags and without html tags
-        if (strlen($content) !== strlen(strip_tags($content))) {
-            $result = true;
+        if ($messageTemplate instanceof MessageTemplate) {
+            $this->messageTemplate = $messageTemplate;
+        } else {
+            // try to convert message template to a possible uid.
+            if ((int) $messageTemplate > 0) {
+                $messageTemplate = (int) $messageTemplate;
+            }
+            $methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
+
+            /** @var MessageTemplate $messageTemplate */
+            $messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
+
+            if ($messageTemplate === null) {
+                $message = sprintf('I could not find message template "%s"', $messageTemplate);
+                throw new RecordNotFoundException($message, 1_350_124_207);
+            }
+
+            $this->messageTemplate = $messageTemplate;
         }
-        return $result;
+
+        return $this;
     }
 
     /**
@@ -396,213 +728,6 @@ class Message
         return $this->addMarker($markerName, $value);
     }
 
-    /**
-     * Return "to" addresses.
-     * Special case: override "to" if a redirection has been set for a Context.
-     */
-    public function getTo(): array
-    {
-        return $this->to;
-    }
-
-    /**
-     * Set "to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     * @throws InvalidEmailFormatException
-     */
-    public function setTo(mixed $addresses): Message
-    {
-        $this->getEmailValidator()->validate($addresses);
-        $this->to = $addresses;
-        return $this;
-    }
-
-    /**
-     * Return "cc" addresses.
-     * Special case: there is no "cc" if a redirection has been set for a Context.
-     */
-    public function getCc(): array
-    {
-        return $this->cc;
-    }
-
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     * @throws InvalidEmailFormatException
-     */
-    public function setCc(mixed $addresses): Message
-    {
-        $this->getEmailValidator()->validate($addresses);
-        $this->cc = $addresses;
-        return $this;
-    }
-
-    /**
-     * Return "bcc" addresses.
-     * Special case: there is no "bcc" if a redirection has been set for a Context.
-     */
-    public function getBcc(): array
-    {
-        return $this->bcc;
-    }
-
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     * @throws InvalidEmailFormatException
-     */
-    public function setBcc(mixed $addresses): Message
-    {
-        $this->getEmailValidator()->validate($addresses);
-        $this->bcc = $addresses;
-        return $this;
-    }
-
-    public function getReplyTo(): array
-    {
-        return $this->replyTo;
-    }
-
-    /**
-     * Set "reply-to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     * @throws InvalidEmailFormatException
-     */
-    public function setReplyTo(mixed $addresses): Message
-    {
-        $this->getEmailValidator()->validate($addresses);
-        $this->replyTo = $addresses;
-        return $this;
-    }
-
-    /**
-     * @throws InvalidEmailFormatException
-     */
-    public function getSender(): array
-    {
-        // Compute sender from global configuration.
-        if (!$this->sender) {
-            if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new RuntimeException(
-                    'I could not find a sender email address. Missing value for "defaultMailFromAddress"',
-                    1_402_032_685,
-                );
-            }
-
-            $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
-            if (!empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'])) {
-                $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'];
-            } else {
-                $name = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
-            }
-
-            $this->sender = [$email => $name];
-            $this->getEmailValidator()->validate($this->sender);
-        }
-
-        return $this->sender;
-    }
-
-    /**
-     * Re-set default sender
-     * @throws InvalidEmailFormatException
-     */
-    public function setSender(array $sender): Message
-    {
-        $this->getEmailValidator()->validate($sender);
-        $this->sender = $sender;
-        return $this;
-    }
-
-    protected function getProcessedSubject(): string
-    {
-        if ($this->processedSubject === '') {
-            $processedSubject = $this->subject;
-            if ($this->messageTemplate) {
-                $processedSubject = $this->messageTemplate->getSubject();
-            }
-            // Possible markers substitution.
-            if ($this->markers) {
-                $processedSubject = $this->getContentRenderer()->render($processedSubject, $this->markers);
-            }
-            $this->processedSubject = $processedSubject;
-        }
-
-        return $this->processedSubject;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSubject(): string
-    {
-        return $this->subject;
-    }
-
-    /**
-     * @param string $subject
-     * @return $this
-     */
-    public function setSubject(string $subject): self
-    {
-        $this->subject = $subject;
-        return $this;
-    }
-
-    protected function getProcessedBody(): string
-    {
-        if ($this->processedBody === '') {
-            $processedBody = $this->body;
-
-            if ($this->messageTemplate) {
-                $processedBody = $this->messageTemplate->getBody();
-            }
-
-            // Possible wrap body in Layout content.
-            if ($this->messageLayout) {
-                $processedBody = str_replace('{BODY}', $processedBody, $this->messageLayout->getContent());
-            }
-
-            // Parse Markdown only if necessary.
-            if (
-                $this->parseToMarkdown ||
-                ($this->messageTemplate &&
-                    $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
-            ) {
-                $processedBody = Markdown::defaultTransform($processedBody);
-            }
-
-            // Possible markers substitution.
-            if ($this->markers) {
-                $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
-            }
-
-            $this->processedBody = $processedBody;
-        }
-
-        return $this->processedBody;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
-    }
-
-    /**
-     * @param string $body
-     * @return $this
-     */
-    public function setBody(string $body): self
-    {
-        $this->body = $body;
-        return $this;
-    }
-
     public function getMessageLayout(): MessageLayout
     {
         return $this->messageLayout;
@@ -638,84 +763,6 @@ class Message
     }
 
     /**
-     * parameter $messageTemplate can be:
-     *      + \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate
-     *      + int $messageTemplate which corresponds to an uid
-     *      + string $messageTemplate which corresponds to a value for property "identifier".
-     *
-     * @param mixed $messageTemplate
-     */
-    public function setMessageTemplate(mixed $messageTemplate): Message
-    {
-        if ($messageTemplate instanceof MessageTemplate) {
-            $this->messageTemplate = $messageTemplate;
-        } else {
-            // try to convert message template to a possible uid.
-            if ((int) $messageTemplate > 0) {
-                $messageTemplate = (int) $messageTemplate;
-            }
-            $methodName = is_int($messageTemplate) ? 'findByUid' : 'findByQualifier';
-
-            /** @var MessageTemplate $messageTemplate */
-            $messageTemplate = $this->messageTemplateRepository->$methodName($messageTemplate);
-
-            if ($messageTemplate === null) {
-                $message = sprintf('I could not find message template "%s"', $messageTemplate);
-                throw new RecordNotFoundException($message, 1_350_124_207);
-            }
-
-            $this->messageTemplate = $messageTemplate;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Tell whether the message has been prepared.
-     */
-    protected function isMessagePrepared(): bool
-    {
-        return !empty($this->mailMessage);
-    }
-
-    /**
-     * Convert this object to an array.
-     */
-    public function toArray(): array
-    {
-        if (!$this->isMessagePrepared()) {
-            $this->prepareMessage();
-        }
-
-        $mailMessage = $this->getMailMessage();
-        $values = [
-            'sender' => $this->formatAddresses($mailMessage->getFrom()),
-            'to' => $this->formatAddresses($mailMessage->getTo()),
-            'cc' => $this->formatAddresses($mailMessage->getCc()),
-            'bcc' => $this->formatAddresses($mailMessage->getBcc()),
-            'recipient' => $this->formatAddresses($mailMessage->getTo()),
-            'recipient_cc' => $this->formatAddresses($mailMessage->getCc()),
-            'recipient_bcc' => $this->formatAddresses($mailMessage->getBcc()),
-            'reply_to' => $mailMessage->getReplyTo(),
-            'subject' => $mailMessage->getSubject(),
-            'body' => $mailMessage->getBody(),
-            'attachment' => count($this->attachments),
-            'context' => (string) Environment::getContext(),
-            'was_opened' => 0,
-            'message_template' => is_object($this->messageTemplate) ? $this->messageTemplate->getUid() : 0,
-            'message_layout' => is_object($this->messageLayout) ? $this->messageLayout->getUid() : 0,
-            'scheduled_distribution_time' => $this->scheduleDistributionTime,
-            'mailing_name' => $this->mailingName ?: '',
-            'redirect_email_from' => $this->formatAddresses($this->redirectEmailFrom),
-            'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
-            'mail_message' => $mailMessage,
-            'uuid' => $this->uuid,
-        ];
-
-        return $values;
-    }
-
-    /**
      * @param $parseToMarkdown
      * @return $this
      */
@@ -723,27 +770,6 @@ class Message
     {
         $this->parseToMarkdown = (bool) $parseToMarkdown;
         return $this;
-    }
-
-    /**
-     * Format an array of addresses
-     */
-    protected function formatAddresses(array $addresses): string
-    {
-        $formattedAddresses = [];
-        /** @var Address $addresses */
-        foreach ($addresses as $address) {
-            $formattedAddresses[] = sprintf('%s <%s>', $address->getName(), $address->getAddress());
-        }
-        return implode(', ', $formattedAddresses);
-    }
-
-    public function getMailMessage(): MailMessage
-    {
-        if ($this->mailMessage === null) {
-            $this->mailMessage = GeneralUtility::makeInstance(MailMessage::class);
-        }
-        return $this->mailMessage;
     }
 
     public function getMailingName(): string
@@ -776,14 +802,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @return EmailValidator
-     */
-    public function getEmailValidator(): EmailValidator
-    {
-        return GeneralUtility::makeInstance(EmailValidator::class);
-    }
-
     public function getUuid(): string
     {
         return $this->uuid;
@@ -797,29 +815,5 @@ class Message
     {
         $this->uuid = $uuid;
         return $this;
-    }
-
-    /**
-     * @return ContentRendererInterface
-     */
-    protected function getContentRenderer(): ContentRendererInterface
-    {
-        return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
-        #if ($this->isFrontendMode()) {
-        #    /** @var FrontendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        #} else {
-        #    /** @var BackendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        #}
-        #return $contentRenderer;
-    }
-
-    /**
-     * @return RedirectService
-     */
-    public function getRedirectService(): RedirectService
-    {
-        return GeneralUtility::makeInstance(RedirectService::class);
     }
 }

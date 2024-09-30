@@ -3,7 +3,7 @@
 use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageTemplateController;
-use Fab\Messenger\Controller\NewsletterController;
+use Fab\Messenger\Controller\RecipientModuleController;
 use Fab\Messenger\Controller\SentMessageModuleController;
 use Fab\Messenger\Module\MessengerModule;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -145,6 +145,23 @@ call_user_func(function () {
                     'access' => 'admin',
                     'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.svg',
                     'labels' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_queue.xlf',
+                ],
+            );
+        }
+        if (!isset($configuration['load_newsletter_module']) || (bool) $configuration['load_newsletter_module']) {
+            ExtensionUtility::registerModule(
+                'Fab.Messenger',
+                'web',
+                'tx_messenger_m5',
+                'bottom',
+                [
+                    RecipientModuleController::class => 'index',
+                ],
+
+                [
+                    'access' => 'admin',
+                    'icon' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
+                    'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_newsletter.xlf',
                 ],
             );
         }

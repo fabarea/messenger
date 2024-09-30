@@ -26,9 +26,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @return string
      * @private
      */
-
     getEditStorageUrl: function (url, type) {
-      var uri = new Uri(url);
+      const uri = new Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -39,8 +38,20 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       return decodeURIComponent(uri.toString());
     },
 
+    getEditRecipientUrl: function (url, data = []) {
+      const uri = new Uri(url);
+
+      // get element by columnsToSend value and assign to the uri object
+      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+
+      if (columnsToSend.length > 0) {
+        uri.addQueryParam('tx_messenger_user_messengerm5[matches][uid]', columnsToSend.join(',') + '&data=' + data);
+      }
+      return decodeURIComponent(uri.toString());
+    },
+
     getExportStorageUrl: function (url, format, module, type) {
-      var uri = new Uri(url);
+      const uri = new Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -58,6 +69,16 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @return void
      */
     initialize: function () {
+      this.initializeExport();
+      this.initializeSendAgainConfirmation();
+      this.initializeUpdateRecipients();
+      this.initializeSendMessage();
+    },
+
+    /**
+     * @return void
+     */
+    initializeSendAgainConfirmation: function () {
       $(document).on('click', '.btn-sendAgain', function (e) {
         if ($('.select:checked').length === 0) {
           Notification.error('Error', 'Please select at least one item');
@@ -105,7 +126,12 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
           ],
         });
       });
+    },
 
+    /**
+     * @return void
+     */
+    initializeExport: function () {
       $(document).on('click', '.btn-export', function (e) {
         if ($('.select:checked').length === 0) {
           Notification.error('Error', 'Please select at least one item');
@@ -118,7 +144,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         const type = $(this).data('data-type');
 
         const url = Messenger.getExportStorageUrl(TYPO3.settings.ajaxUrls.messenger_export_data, format, module, type);
-
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
           title: 'Export as ' + format,
@@ -164,6 +189,122 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                     } else {
                       Notification.error('Error', response);
                       Modal.dismiss();
+                    }
+                  },
+                });
+              },
+            },
+          ],
+        });
+      });
+    },
+
+    /**
+     * @return void
+     */
+    initializeUpdateRecipients: function () {
+      $(document).on('click', '.btn-update-recipient', function (e) {
+        if ($('.select:checked').length === 0) {
+          Notification.error('Error', 'Please select at least one item');
+          return;
+        }
+        e.preventDefault();
+
+        const url = Messenger.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_update_recipient);
+        Messenger.modal = Modal.advanced({
+          type: Modal.types.ajax,
+          title: 'Update recipient',
+          severity: top.TYPO3.Severity.notice,
+          content: url,
+          staticBackdrop: false,
+          buttons: [
+            {
+              text: 'Cancel',
+              btnClass: 'btn btn-default',
+              trigger: function () {
+                Modal.dismiss();
+              },
+            },
+            {
+              text: 'Update recipient',
+              btnClass: 'btn btn-primary',
+              trigger: function () {
+                $('.btn', Messenger.modal).attr('disabled', 'disabled');
+
+                const form = window.parent.document.querySelector('#form-update-many-recipients');
+
+                const url = Messenger.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_update_recipient_save);
+                $.ajax({
+                  url: url,
+                  data: new URLSearchParams(new FormData(form)).toString(),
+                  method: 'post',
+
+                  /**
+                   * On success call back
+                   *
+                   * @param response
+                   */
+                  success: function (response) {
+                    Notification.success('', response);
+                    Modal.dismiss();
+                  },
+                });
+              },
+            },
+          ],
+        });
+      });
+    },
+    /**
+     * @return void
+     */
+    initializeSendMessage: function () {
+      $(document).on('click', '.btn-send-message', function (e) {
+        if ($('.select:checked').length === 0) {
+          Notification.error('Error', 'Please select at least one item');
+          return;
+        }
+        e.preventDefault();
+
+        const sendUrl = Messenger.getEditRecipientUrl(TYPO3.settings.ajaxUrls.newsletter_send_message_from_clipboard);
+        Messenger.modal = Modal.advanced({
+          type: Modal.types.ajax,
+          title: 'Update recipient',
+          severity: top.TYPO3.Severity.notice,
+          content: sendUrl,
+          staticBackdrop: false,
+          buttons: [
+            {
+              text: 'Cancel',
+              btnClass: 'btn btn-default',
+              trigger: function () {
+                Modal.dismiss();
+              },
+            },
+            {
+              text: 'Send',
+              btnClass: 'btn btn-primary',
+              trigger: function () {
+                $('.btn', Messenger.modal).attr('disabled', 'disabled');
+
+                const updateUrl = Messenger.getEditRecipientUrl(
+                  TYPO3.settings.ajaxUrls.newsletter_send_message_from_enqueue,
+                  [],
+                );
+                const form = window.parent.document.querySelector('#form-bulk-send');
+
+                $.ajax({
+                  url: updateUrl,
+                  data: new URLSearchParams(new FormData(form)).toString(),
+                  method: 'post',
+
+                  success: function (response) {
+                    if (response) {
+                      Notification.success('Success', response);
+                      Modal.dismiss();
+                    } else {
+                      Notification.error('Error', response);
+                      $('.btn').removeAttr('disabled');
                     }
                   },
                 });

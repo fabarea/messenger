@@ -4,22 +4,25 @@ rootPageUid = 1
 # cat=basic//; type=boolean; label=Autoload TypoScript: If enabled, Messenger will automatically load the TypoScript setup that is required. When un-checking make sure to include / load the TypoScript on your own as a Static TypoScript .
 autoload_typoscript = 1
 
-# cat=basic//; type=boolean; label=Display "newsletter" module: If extension Vidi is installed, Messenger could load a module to send pages as newsletter.
+# cat=basic//; type=boolean; label=Display "newsletter" module: Messenger could load a module to send pages as newsletter.
 load_newsletter_module = 1
 
-# cat=basic//; type=string; label=Tell what data type should be considered for the list of recipients (newsletter).
+# cat=basic//; type=string; label=Tell what fields should be displayed by default (module newsletter).
+recipient_default_fields = uid,username,email,first_name,last_name
+
+# cat=basic//; type=string; label=Tell what data type should be considered for the list of recipients (module newsletter).
 recipient_data_type = fe_users
 
-# cat=basic//; type=boolean; label=Display message "template" module: If extension Vidi is installed, display a message template module in the Backend.
+# cat=basic//; type=boolean; label=Display message "template" module: Display a message template module in the Backend.
 load_message_template_module = 0
 
-# cat=basic//; type=boolean; label=Display message "layout" module: If extension Vidi is installed, display a message layoue in the Backend.
+# cat=basic//; type=boolean; label=Display message "layout" module: Display a message layoue in the Backend.
 load_message_layout_module = 0
 
-# cat=basic//; type=boolean; label=Display message "sent" module: If extension Vidi is installed, display a log module in the Backend where to see the sent messages.
+# cat=basic//; type=boolean; label=Display message "sent" module: Display a log module in the Backend where to see the sent messages.
 load_message_sent_module = 1
 
-# cat=basic//; type=boolean; label=Display message "queue" module: If extension Vidi is installed, display a queue module in the Backend.
+# cat=basic//; type=boolean; label=Display message "queue" module: Display a queue module in the Backend.
 load_message_queue_module = 1
 
 # cat=redirect//; type=string; label= Development redirect to: List of email addresses where to redirect all messages for "development" context. Notice, it can also be defined in $GLOBALS['TYPO3_CONF_VARS']['MAIL']['development_redirect_to'] = 'email@example.com' which will take the precedence if configured so..

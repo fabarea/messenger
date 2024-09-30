@@ -1,0 +1,37 @@
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+    <f:layout name="Default" />
+
+    <f:section name="main">
+        <f:be.pageRenderer
+            includeJsFiles="{
+                0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js',
+                1: 'EXT:messenger/Resources/Public/JavaScript/Utils/Typo3Lang.js',
+                2: 'EXT:messenger/Resources/Public/JavaScript/Utils/RowsSelection.js'
+                3: 'EXT:messenger/Resources/Public/JavaScript/SendAgainMenuItemNative.js'
+
+            }"
+            includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
+        />
+        <form action="save" role="form" id="form-update-many-recipients" method="post">
+            <div class="form-group">
+                <div id="message-body-container">
+                    <label for="recipient-csv-list">CSV list of recipients</label>
+                    <textarea
+                        class="form-control"
+                        id="recipient-csv-list"
+                        name="recipientCsvList"
+                        placeholder="johne@doe.com;John;Doe"
+                        style="min-height: 400px"
+                    ></textarea>
+                </div>
+                <div class="checkbox pt-2">
+                    <label>
+                        <input checked="checked" name="deleteExistingRecipients" type="checkbox" value="1" />
+                        Delete existing recipients before adding new ones.</label
+                    >
+                </div>
+            </div>
+            <br />
+        </form>
+    </f:section>
+</html>

@@ -1,5 +1,6 @@
 <?php
 
+use Fab\Messenger\Controller\BackendMessageController;
 use Fab\Messenger\Controller\MessageDisplayController;
 use Fab\Messenger\Controller\MessageLayoutController;
 use Fab\Messenger\Controller\MessageQueueController;
@@ -53,6 +54,7 @@ call_user_func(function () {
             MessageTemplateController::class => 'index',
             MessageLayoutController::class => 'index',
             MessageQueueController::class => 'index',
+            BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
         ],
         // non-cacheable actions
         [
@@ -61,6 +63,7 @@ call_user_func(function () {
             MessageTemplateController::class => 'index',
             MessageLayoutController::class => 'index',
             MessageQueueController::class => 'index',
+            BackendMessageController::class => 'compose, enqueue, sendAsTest, feedbackSent, feedbackQueued',
         ],
     );
 

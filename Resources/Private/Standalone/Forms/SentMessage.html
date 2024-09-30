@@ -1,0 +1,88 @@
+<html
+    data-namespace-typo3-fluid="true"
+    lang=""
+
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+<f:layout name="Default"/>
+<f:section name="main">
+    <f:be.pageRenderer
+        includeJsFiles="{
+                0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js',
+                1: 'EXT:messenger/Resources/Public/JavaScript/Utils/Typo3Lang.js',
+                2: 'EXT:messenger/Resources/Public/JavaScript/Utils/RowsSelection.js'
+                3: 'EXT:messenger/Resources/Public/JavaScript/SendAgainMenuItemNative.js'
+
+            }"
+        includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
+    />
+    <form action="enqueue"
+          class="m-2"
+          id="form-bulk-send"
+          method="post"
+          role="form"
+    >
+        <div class="form-group">
+            <label for="messenger-sender">Sender</label>
+            <select class="form-control"
+                    id="messenger-sender" name="sender">
+                <option value="">--Please choose an option--</option>
+                <!-- SENDERS_PLACEHOLDER -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="messenger-subject">Subject</label>
+            <input class="form-control" id="messenger-subject"
+                   name="subject"
+                   required="required"
+                   type="text"
+                   value=""/>
+
+        </div>
+        <div class="form-group">
+            <div class="checkbox pt-2">
+                <label for="has-body-text">
+                    <input class="p-2 m-1"
+                           id="has-body-text"
+                           name="tx_messenger_user_messengerm5[parseMarkdown]"
+                           onchange="this.checked
+                        ? document.getElementById('message-body-container').style = 'display: block'
+                        : document.getElementById('message-body-container').style = 'display: none';
+                        "
+                           type="checkbox" value="1">Replace message body by a free text instead of the page
+                    content.</label>
+            </div>
+            <div id="message-body-container" style="display: none;">
+                <label for="messenger-body">Body</label>
+                <textarea
+                    class="form-control"
+                    id="messenger-body"
+                    name="body"
+                    style="min-height: 100px"
+                >
+                    </textarea>
+            </div>
+        </div>
+        <div>
+            <label for="has-body-test">
+                <input class="p-2 m-1"
+                       id="has-body-test"
+                       name="tx_messenger_user_messengerm5[test]"
+                       onchange="this.checked
+                    ? document.getElementById('recipient-test').style = 'display: block'
+                    : document.getElementById('recipient-test').style = 'display: none';
+                        "
+                       type="checkbox"
+                       value="1">Send test</label>
+        </div>
+        <div class="form-group" id="recipient-test" style="display: none;">
+            <label for="messenger-recipient-test">Test recipient(s) - max 10 emails</label>
+            <input class="form-control" id="messenger-recipient-test"
+                   name="recipientList"
+                   type="text"/>
+        </div>
+    </form>
+
+
+</f:section>
+</html>

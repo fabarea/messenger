@@ -1,9 +1,5 @@
 <?php
 
-use Fab\Messenger\Grid\UuidRenderer;
-use Fab\Vidi\Grid\ButtonGroupRenderer;
-use Fab\Vidi\Grid\CheckBoxRenderer;
-
 if (!defined('TYPO3')) {
     die('Access denied.');
 }
@@ -166,48 +162,6 @@ return [
                 'type' => 'input',
                 'readOnly' => true,
                 'eval' => 'trim',
-            ],
-        ],
-    ],
-    'grid' => [
-        'facets' => ['uid', 'subject'],
-        'columns' => [
-            '__checkbox' => [
-                'renderer' => CheckBoxRenderer::class,
-            ],
-            'uid' => [
-                'visible' => false,
-                'label' =>
-                    'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:uid',
-                'width' => '5px',
-            ],
-            'sender' => [],
-            'recipient' => [],
-            'subject' => [],
-            'body' => [
-                'width' => '500px',
-                'sortable' => false,
-                'visible' => false,
-            ],
-            'scheduled_distribution_time' => [
-                'format' => \Fab\Vidi\Formatter\Datetime::class,
-            ],
-            'mailing_name' => [],
-            'uuid' => [
-                'renderer' => UuidRenderer::class,
-                'rendererConfiguration' => [
-                    'source' => 'queue',
-                ],
-            ],
-            'attachment' => [
-                'visible' => false,
-            ],
-            'context' => [
-                'width' => '100px',
-                'visible' => false,
-            ],
-            '__buttons' => [
-                'renderer' => ButtonGroupRenderer::class,
             ],
         ],
     ],
