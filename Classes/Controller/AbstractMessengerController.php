@@ -139,8 +139,7 @@ abstract class AbstractMessengerController extends ActionController
 
     protected function computeSelectedColumns(): array
     {
-        $currentUrl = $_SERVER['REQUEST_URI'];
-        $moduleVersion = explode('/', $currentUrl);
+        $moduleVersion = explode('/', $this->getRequestUri());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
@@ -151,6 +150,11 @@ abstract class AbstractMessengerController extends ActionController
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
         return $selectedColumns;
+    }
+
+    private function getRequestUri(): string
+    {
+        return $_SERVER['REQUEST_URI'];
     }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void

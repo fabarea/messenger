@@ -2,6 +2,7 @@
 
 use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
+use Fab\Messenger\Controller\Ajax\SendMessageController;
 use Fab\Messenger\Controller\Ajax\UpdateRecipientController;
 
 return [
@@ -35,10 +36,10 @@ return [
 
     'newsletter_send_message_from_clipboard' => [
         'path' => '/newsletter/send-message-from-clipboard',
-        'target' => UpdateRecipientController::class . '::messageFromRecipientAction',
+        'target' => SendMessageController::class . '::messageFromRecipientAction',
     ],
     'newsletter_send_message_from_enqueue' => [
         'path' => '/newsletter/send-message-from-enqueue',
-        'target' => UpdateRecipientController::class . '::enqueueAction',
+        'target' => SendMessageController::class . '::enqueueAction',
     ],
 ];

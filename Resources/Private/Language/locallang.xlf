@@ -177,6 +177,10 @@
 				<source>Delete existing recipients before adding new ones.</source>
 			</trans-unit>
 
+			<trans-unit id="send_message">
+				<source>Send</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>
