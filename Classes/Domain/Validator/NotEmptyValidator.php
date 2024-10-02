@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Validator;
 
 /*
@@ -15,15 +16,13 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  */
 class NotEmptyValidator extends AbstractValidator
 {
-
     /**
      * @param string $value
      */
-    public function isValid($value)
+    public function isValid($value): void
     {
         if (!trim($value)) {
             $this->addError('Empty field', 1_468_509_656);
         }
     }
-
 }

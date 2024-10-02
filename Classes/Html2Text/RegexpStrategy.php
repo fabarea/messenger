@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Html2Text;
 
 /*
@@ -13,7 +14,6 @@ namespace Fab\Messenger\Html2Text;
  */
 class RegexpStrategy implements StrategyInterface
 {
-
     final const ENCODING = 'UTF-8';
 
     /**
@@ -23,7 +23,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $replace
      */
-    protected $search = [
+    protected array $search = [
         "/\r/",
         // Non-legal carriage return
         "/[\n\t]+/",
@@ -75,7 +75,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $search
      */
-    protected $replace = [
+    protected array $replace = [
         '',
         // Non-legal carriage return
         ' ',
@@ -118,7 +118,7 @@ class RegexpStrategy implements StrategyInterface
         // <tr> and </tr>
         "\t\t\\1\n",
         // <td> and </td>
-        "",
+        '',
     ];
 
     /**
@@ -128,7 +128,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $entReplace
      */
-    protected $entSearch = [
+    protected array $entSearch = [
         '/&#153;/i',
         // TM symbol in win-1252
         '/&#151;/i',
@@ -144,7 +144,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $entSearch
      */
-    protected $entReplace = [
+    protected array $entReplace = [
         '™',
         // TM symbol
         '—',
@@ -160,7 +160,7 @@ class RegexpStrategy implements StrategyInterface
      *
      * @var array
      */
-    protected $callbackSearch = [
+    protected array $callbackSearch = [
         '/<(h)[123456]( [^>]*)?>(.*?)<\/h[123456]>/i',
         // h1 - h6
         '/<(b)( [^>]*)?>(.*?)<\/b>/i',
@@ -179,7 +179,7 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $preReplace
      */
-    protected $preSearch = ["/\n/", "/\t/", '/ /', '/<pre[^>]*>/', '/<\/pre>/'];
+    protected array $preSearch = ["/\n/", "/\t/", '/ /', '/<pre[^>]*>/', '/<\/pre>/'];
 
     /**
      * List of pattern replacements corresponding to patterns searched for PRE body.
@@ -187,21 +187,21 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see $preSearch
      */
-    protected $preReplace = ['<br>', '&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;', '', ''];
+    protected array $preReplace = ['<br>', '&nbsp;&nbsp;&nbsp;&nbsp;', '&nbsp;', '', ''];
 
     /**
      * Temporary workspace used during PRE processing.
      *
      * @var string
      */
-    protected $preContent = '';
+    protected string $preContent = '';
 
     /**
      * Contains the base URL that relative links should resolve to.
      *
      * @var string
      */
-    protected $baseurl = '';
+    protected string $baseurl = '';
 
     /**
      * Indicates whether content in the $html variable has been converted yet.
@@ -209,7 +209,7 @@ class RegexpStrategy implements StrategyInterface
      * @var boolean
      * @see $html, $text
      */
-    protected $converted = false;
+    protected bool $converted = false;
 
     /**
      * Contains URL addresses from links to be rendered in plain text.
@@ -217,14 +217,14 @@ class RegexpStrategy implements StrategyInterface
      * @var array
      * @see buildlinkList()
      */
-    protected $linkList = [];
+    protected array $linkList = [];
 
     /**
      * Various configuration options (able to be set in the constructor)
      *
      * @var array
      */
-    protected $options = [
+    protected array $options = [
         'do_links' => 'inline',
         // 'none'
         // 'inline' (show links inline)
@@ -243,22 +243,11 @@ class RegexpStrategy implements StrategyInterface
     }
 
     /**
-     * Set the source HTML
-     *
-     * @param string $html HTML source content
-     */
-    public function setHtml($html)
-    {
-        $this->html = $html;
-        $this->converted = false;
-    }
-
-    /**
      * Sets a base URL to handle relative links.
      *
      * @param string $baseUrl
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl(string $baseUrl): void
     {
         $this->baseurl = $baseUrl;
     }
@@ -269,7 +258,7 @@ class RegexpStrategy implements StrategyInterface
      * @param string $input
      * @return string
      */
-    public function convert($input)
+    public function convert(string $input): string
     {
         $this->setHtml($input);
 
@@ -290,10 +279,16 @@ class RegexpStrategy implements StrategyInterface
         return $text;
     }
 
+    public function setHtml(string $html): void
+    {
+        $this->html = $html;
+        $this->converted = false;
+    }
+
     /**
      * @param $text
      */
-    protected function converter(&$text)
+    protected function converter(&$text): void
     {
         $this->convertBlockquotes($text);
         $this->convertPre($text);
@@ -323,6 +318,172 @@ class RegexpStrategy implements StrategyInterface
     }
 
     /**
+     * Helper function for BLOCKQUOTE body conversion.
+     *
+     * @param string $text HTML content
+     */
+    protected function convertBlockquotes(string &$text): void
+    {
+        if (preg_match_all('/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE)) {
+            $start = 0;
+            $taglen = 0;
+            $level = 0;
+            $diff = 0;
+            foreach ($matches[0] as $m) {
+                if ($m[0][0] == '<' && $m[0][1] == '/') {
+                    $level--;
+                    if ($level < 0) {
+                        $level = 0; // malformed HTML: go to next blockquote
+                    } elseif ($level > 0) {
+                        // skip inner blockquote
+                    } else {
+                        $end = $m[1];
+                        $len = $end - $taglen - $start;
+                        // Get blockquote content
+                        $body = substr($text, $start + $taglen - $diff, $len);
+
+                        // Set text width
+                        $pWidth = $this->options['width'];
+                        if ($this->options['width'] > 0) {
+                            $this->options['width'] -= 2;
+                        }
+                        // Convert blockquote content
+                        $body = trim($body);
+                        $this->converter($body);
+                        // Add citation markers and create PRE block
+                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim((string) $body));
+                        $body = '<pre>' . htmlspecialchars($body) . '</pre>';
+                        // Re-set text width
+                        $this->options['width'] = $pWidth;
+                        // Replace content
+                        $text =
+                            substr($text, 0, $start - $diff) .
+                            $body .
+                            substr($text, $end + strlen((string) $m[0]) - $diff);
+
+                        $diff = $len + $taglen + strlen((string) $m[0]) - strlen($body);
+                        unset($body);
+                    }
+                } else {
+                    if ($level == 0) {
+                        $start = $m[1];
+                        $taglen = strlen((string) $m[0]);
+                    }
+                    $level++;
+                }
+            }
+        }
+    }
+
+    protected function convertPre(&$text): void
+    {
+        // get the content of PRE element
+        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', (string) $text, $matches)) {
+            $this->preContent = $matches[1];
+
+            // Run our defined tags search-and-replace with callback
+            $this->preContent = preg_replace_callback(
+                $this->callbackSearch,
+                $this->pregCallback(...),
+                $this->preContent,
+            );
+
+            // convert the content
+            $this->preContent = sprintf(
+                '<div><br>%s<br></div>',
+                preg_replace($this->preSearch, $this->preReplace, $this->preContent),
+            );
+
+            // replace the content (use callback because content can contain $0 variable)
+            $text = preg_replace_callback('/<pre[^>]*>.*<\/pre>/ismU', $this->pregPreCallback(...), $text, 1);
+
+            // free memory
+            $this->preContent = '';
+        }
+    }
+
+    /**
+     * Whether the converter is available
+     *
+     * @return boolean
+     */
+    public function available(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Callback function for preg_replace_callback use.
+     *
+     * @param array $matches PREG matches
+     * @return string
+     */
+    protected function pregCallback(array $matches): string
+    {
+        switch (strtolower((string) $matches[1])) {
+            case 'b':
+            case 'strong':
+                return $this->toupper($matches[3]);
+            case 'th':
+                return $this->toupper("\t\t" . $matches[3] . "\n");
+            case 'h':
+                return $this->toupper("\n\n" . $matches[3] . "\n\n");
+            case 'a':
+                // override the link method
+                $linkOverride = null;
+                if (preg_match('/_html2text_link_(\w+)/', (string) $matches[4], $linkOverrideMatch)) {
+                    $linkOverride = $linkOverrideMatch[1];
+                }
+                // Remove spaces in URL (#1487805)
+                $url = str_replace(' ', '', (string) $matches[3]);
+
+                return $this->buildlinkList($url, $matches[5], $linkOverride);
+        }
+
+        return '';
+    }
+
+    /**
+     * Strtoupper function with HTML tags and entities handling.
+     *
+     * @param string $str Text to convert
+     * @return string Converted text
+     */
+    private function toupper(string $str): string
+    {
+        // string can contain HTML tags
+        $chunks = preg_split('/(<[^>]*>)/', $str, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+        // convert toupper only the text between HTML tags
+        foreach ($chunks as $i => $chunk) {
+            if ($chunk[0] != '<') {
+                $chunks[$i] = $this->strtoupper($chunk);
+            }
+        }
+
+        return implode($chunks);
+    }
+
+    /**
+     * Strtoupper multibyte wrapper function with HTML entities handling.
+     *
+     * @param string $str Text to convert
+     * @return string Converted text
+     */
+    private function strtoupper(string $str): string
+    {
+        $str = html_entity_decode($str, ENT_COMPAT, self::ENCODING);
+
+        if (function_exists('mb_strtoupper')) {
+            $str = mb_strtoupper($str, self::ENCODING);
+        } else {
+            $str = strtoupper($str);
+        }
+
+        return htmlspecialchars($str, ENT_COMPAT, self::ENCODING);
+    }
+
+    /**
      * Helper function called by preg_replace() on link replacement.
      *
      * Maintains an internal list of links to be displayed at the end of the
@@ -330,12 +491,12 @@ class RegexpStrategy implements StrategyInterface
      * appeared. Also makes an effort at identifying and handling absolute
      * and relative links.
      *
-     * @param  string $link URL of the link
-     * @param  string $display Part of the text to associate number with
-     * @param  null $linkOverride
+     * @param string $link URL of the link
+     * @param string $display Part of the text to associate number with
+     * @param null $linkOverride
      * @return string
      */
-    protected function buildlinkList($link, $display, $linkOverride = null)
+    protected function buildlinkList(string $link, string $display, $linkOverride = null): string
     {
         $linkMethod = $linkOverride ?: $this->options['do_links'];
         if ($linkMethod == 'none') {
@@ -366,190 +527,20 @@ class RegexpStrategy implements StrategyInterface
             return $display . ' [' . ($index + 1) . ']';
         } elseif ($linkMethod == 'nextline') {
             return $display . "\n[" . $url . ']';
-        } else { // link_method defaults to inline
+        } else {
+            // link_method defaults to inline
             return $display . ' [' . $url . ']';
         }
-    }
-
-    protected function convertPre(&$text)
-    {
-        // get the content of PRE element
-        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', (string) $text, $matches)) {
-            $this->preContent = $matches[1];
-
-            // Run our defined tags search-and-replace with callback
-            $this->preContent = preg_replace_callback(
-                $this->callbackSearch,
-                $this->pregCallback(...),
-                $this->preContent
-            );
-
-            // convert the content
-            $this->preContent = sprintf(
-                '<div><br>%s<br></div>',
-                preg_replace($this->preSearch, $this->preReplace, $this->preContent)
-            );
-
-            // replace the content (use callback because content can contain $0 variable)
-            $text = preg_replace_callback(
-                '/<pre[^>]*>.*<\/pre>/ismU',
-                $this->pregPreCallback(...),
-                $text,
-                1
-            );
-
-            // free memory
-            $this->preContent = '';
-        }
-    }
-
-    /**
-     * Helper function for BLOCKQUOTE body conversion.
-     *
-     * @param string $text HTML content
-     */
-    protected function convertBlockquotes(&$text)
-    {
-        if (preg_match_all('/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE)) {
-            $start = 0;
-            $taglen = 0;
-            $level = 0;
-            $diff = 0;
-            foreach ($matches[0] as $m) {
-                if ($m[0][0] == '<' && $m[0][1] == '/') {
-                    $level--;
-                    if ($level < 0) {
-                        $level = 0; // malformed HTML: go to next blockquote
-                    } elseif ($level > 0) {
-                        // skip inner blockquote
-                    } else {
-                        $end = $m[1];
-                        $len = $end - $taglen - $start;
-                        // Get blockquote content
-                        $body = substr($text, $start + $taglen - $diff, $len);
-
-                        // Set text width
-                        $pWidth = $this->options['width'];
-                        if ($this->options['width'] > 0) $this->options['width'] -= 2;
-                        // Convert blockquote content
-                        $body = trim($body);
-                        $this->converter($body);
-                        // Add citation markers and create PRE block
-                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim((string) $body));
-                        $body = '<pre>' . htmlspecialchars($body) . '</pre>';
-                        // Re-set text width
-                        $this->options['width'] = $pWidth;
-                        // Replace content
-                        $text = substr($text, 0, $start - $diff)
-                            . $body . substr($text, $end + strlen((string) $m[0]) - $diff);
-
-                        $diff = $len + $taglen + strlen((string) $m[0]) - strlen($body);
-                        unset($body);
-                    }
-                } else {
-                    if ($level == 0) {
-                        $start = $m[1];
-                        $taglen = strlen((string) $m[0]);
-                    }
-                    $level++;
-                }
-            }
-        }
-    }
-
-    /**
-     * Callback function for preg_replace_callback use.
-     *
-     * @param  array $matches PREG matches
-     * @return string
-     */
-    protected function pregCallback($matches)
-    {
-        switch (strtolower((string) $matches[1])) {
-            case 'b':
-            case 'strong':
-                return $this->toupper($matches[3]);
-            case 'th':
-                return $this->toupper("\t\t" . $matches[3] . "\n");
-            case 'h':
-                return $this->toupper("\n\n" . $matches[3] . "\n\n");
-            case 'a':
-                // override the link method
-                $linkOverride = null;
-                if (preg_match('/_html2text_link_(\w+)/', (string) $matches[4], $linkOverrideMatch)) {
-                    $linkOverride = $linkOverrideMatch[1];
-                }
-                // Remove spaces in URL (#1487805)
-                $url = str_replace(' ', '', (string) $matches[3]);
-
-                return $this->buildlinkList($url, $matches[5], $linkOverride);
-        }
-
-        return '';
     }
 
     /**
      * Callback function for preg_replace_callback use in PRE content handler.
      *
-     * @param  array $matches PREG matches
+     * @param array $matches PREG matches
      * @return string
      */
-    protected function pregPreCallback(/** @noinspection PhpUnusedParameterInspection */
-        $matches)
+    protected function pregPreCallback /** @noinspection PhpUnusedParameterInspection */(array $matches): string
     {
         return $this->preContent;
     }
-
-    /**
-     * Strtoupper function with HTML tags and entities handling.
-     *
-     * @param  string $str Text to convert
-     * @return string Converted text
-     */
-    private function toupper($str)
-    {
-        // string can contain HTML tags
-        $chunks = preg_split('/(<[^>]*>)/', $str, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-
-        // convert toupper only the text between HTML tags
-        foreach ($chunks as $i => $chunk) {
-            if ($chunk[0] != '<') {
-                $chunks[$i] = $this->strtoupper($chunk);
-            }
-        }
-
-        return implode($chunks);
-    }
-
-    /**
-     * Strtoupper multibyte wrapper function with HTML entities handling.
-     *
-     * @param  string $str Text to convert
-     * @return string Converted text
-     */
-    private function strtoupper($str)
-    {
-        $str = html_entity_decode($str, ENT_COMPAT, self::ENCODING);
-
-        if (function_exists('mb_strtoupper')) {
-            $str = mb_strtoupper($str, self::ENCODING);
-        } else {
-            $str = strtoupper($str);
-        }
-
-        $str = htmlspecialchars($str, ENT_COMPAT, self::ENCODING);
-
-        return $str;
-    }
-
-    /**
-     * Whether the converter is available
-     *
-     * @return boolean
-     */
-    public function available()
-    {
-        return TRUE;
-    }
-
 }

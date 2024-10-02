@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Html2Text;
 
 /*
@@ -13,16 +14,12 @@ namespace Fab\Messenger\Html2Text;
  */
 class LynxStrategy implements StrategyInterface
 {
-
-    /**
-     * @var string
-     */
-    protected $lynx = '';
+    protected string $lynx = '';
 
     /**
      * Constructor
      *
-     * @return LynxStrategy
+     * @return void
      */
     public function __construct()
     {
@@ -30,38 +27,12 @@ class LynxStrategy implements StrategyInterface
     }
 
     /**
-     * Convert a given HTML input to Text
-     *
-     * @param string $input
-     * @return string
-     */
-    public function convert($input)
-    {
-
-        $output = '';
-
-        // Only if lynx path exists
-        if ($this->lynx) {
-            $command = sprintf('echo "%s" | %s --dump -stdin | %s',
-                $input,
-                $this->lynx,
-                "sed -e 's/^   //g'"
-            );
-            exec($command, $result);
-            $output = implode("\n", $result);
-        }
-
-        return trim($output);
-    }
-
-    /**
      * Try to guess the lynx binary path
      *
      * @return string
      */
-    public function getLynx()
+    public function getLynx(): string
     {
-
         if (!empty($this->lynx)) {
             return $this->lynx;
         }
@@ -80,9 +51,29 @@ class LynxStrategy implements StrategyInterface
      *
      * @param string $lynx
      */
-    public function setLynx($lynx)
+    public function setLynx(string $lynx): void
     {
         $this->lynx = $lynx;
+    }
+
+    /**
+     * Convert a given HTML input to Text
+     *
+     * @param string $input
+     * @return string
+     */
+    public function convert(string $input): string
+    {
+        $output = '';
+
+        // Only if lynx path exists
+        if ($this->lynx) {
+            $command = sprintf('echo "%s" | %s --dump -stdin | %s', $input, $this->lynx, "sed -e 's/^   //g'");
+            exec($command, $result);
+            $output = implode("\n", $result);
+        }
+
+        return trim($output);
     }
 
     /**
@@ -90,7 +81,7 @@ class LynxStrategy implements StrategyInterface
      *
      * @return boolean
      */
-    public function available()
+    public function available(): bool
     {
         return !empty($this->lynx);
     }

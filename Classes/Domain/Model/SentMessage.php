@@ -16,15 +16,9 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
  */
 class SentMessage extends AbstractEntity
 {
-    /**
-     * @var int
-     */
-    protected $sentTime;
+    protected int $sentTime;
 
-    /**
-     * @return int $sentTime
-     */
-    public function getSentTime()
+    public function getSentTime(): int
     {
         return $this->sentTime;
     }
@@ -33,7 +27,7 @@ class SentMessage extends AbstractEntity
      * @param int $sentTime
      * @return void
      */
-    public function setSentTime($sentTime)
+    public function setSentTime(int $sentTime): void
     {
         $this->sentTime = $sentTime;
     }

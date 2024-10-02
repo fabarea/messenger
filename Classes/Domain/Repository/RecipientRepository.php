@@ -23,6 +23,10 @@ class RecipientRepository extends AbstractContentRepository
         $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();

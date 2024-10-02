@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Redirect;
 
 /*
@@ -8,20 +9,21 @@ namespace Fab\Messenger\Redirect;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Exception\InvalidEmailFormatException;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Validator\EmailValidator;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\Messenger\Utility\ConfigurationUtility;
 
 /**
  * Class providing service for redirection of emails
  */
 class RedirectService implements SingletonInterface
 {
-
     /**
      * Get possible redirect recipients.
+     * @throws InvalidEmailFormatException
      */
     public function getRedirections(): array
     {
@@ -46,16 +48,16 @@ class RedirectService implements SingletonInterface
     public function getRedirectionList(): string
     {
         // Fetch email from PHP configuration array at first.
-        $applicationContext = (string)Environment::getContext()->getParent();
+        $applicationContext = (string) Environment::getContext()->getParent();
         if (!$applicationContext) {
-            $applicationContext = (string)Environment::getContext();
+            $applicationContext = (string) Environment::getContext();
         }
 
         $key = strtolower($applicationContext) . '_redirect_to';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
-            $recipientList = (string)$GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
+            $recipientList = (string) $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
         } else {
-            $recipientList = (string)ConfigurationUtility::getInstance()->get($key);
+            $recipientList = (string) ConfigurationUtility::getInstance()->get($key);
         }
         return trim($recipientList);
     }
@@ -67,5 +69,4 @@ class RedirectService implements SingletonInterface
     {
         return GeneralUtility::makeInstance(EmailValidator::class);
     }
-
 }

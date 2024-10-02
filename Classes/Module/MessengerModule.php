@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Module;
 
 /*
@@ -15,7 +16,6 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class MessengerModule implements SingletonInterface
 {
-
     /**
      * @var string
      */
@@ -29,7 +29,7 @@ class MessengerModule implements SingletonInterface
     /**
      * @return string
      */
-    static public function getSignature()
+    public static function getSignature(): string
     {
         return self::SIGNATURE;
     }
@@ -37,9 +37,8 @@ class MessengerModule implements SingletonInterface
     /**
      * @return string
      */
-    static public function getParameterPrefix()
+    public static function getParameterPrefix(): string
     {
         return self::PARAMETER_PREFIX;
     }
-
 }

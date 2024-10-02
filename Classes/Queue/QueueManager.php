@@ -13,6 +13,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Random\RandomException;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -22,7 +23,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class QueueManager
 {
     /**
+     * @throws RandomException
      * @throws DBALException
+     * @throws Exception
      */
     public function dequeue(int $itemsPerRun): array
     {
@@ -69,6 +72,7 @@ class QueueManager
     }
 
     /**
+     * @throws RandomException
      * @throws Exception
      * @throws DBALException
      */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\TypeConverter;
 
 /*
@@ -8,10 +9,9 @@ namespace Fab\Messenger\TypeConverter;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\ContentRenderer\BackendRenderer;
 use Fab\Messenger\PagePath\PagePath;
+use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\RequestFactoryInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
 
@@ -20,7 +20,6 @@ use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
  */
 class BodyConverter extends AbstractTypeConverter
 {
-
     /**
      * @var array<string>
      */
@@ -36,14 +35,10 @@ class BodyConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-    /**
-     * @var RequestFactory
-     */
-    protected $requestFactory;
+    protected RequestFactoryInterface $requestFactory;
 
-    public function __construct(
-        RequestFactoryInterface $requestFactory
-    ) {
+    public function __construct(RequestFactoryInterface $requestFactory)
+    {
         $this->requestFactory = $requestFactory;
     }
 
@@ -52,26 +47,34 @@ class BodyConverter extends AbstractTypeConverter
      *
      * @param string $source
      * @param string $targetType
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param array $convertedChildProperties
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return string
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string
-    {
-
+    public function convertFrom(
+        $source,
+        string $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null,
+    ): string {
         $body = $source;
         if (is_numeric($source)) {
             //$parameters = []; todo
             $baseUrl = PagePath::getSiteBaseUrl($source);
 
             // Send TYPO3 cookies as this may affect path generation
-            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray([
-                'fe_typo_user' => $_COOKIE['fe_typo_user'],
-            ], $_SERVER['HTTP_HOST']);
+            $jar = CookieJar::fromArray(
+                [
+                    'fe_typo_user' => $_COOKIE['fe_typo_user'],
+                ],
+                $_SERVER['HTTP_HOST'],
+            );
             $url = $baseUrl . 'index.php?id=' . $source;
             $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();
-                $body = preg_match("/<body[^>]*>(.*?)<\/body>/is", $content, $matches);
+                $body = preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches);
 
                 if (is_array($matches) && $matches[0]) {
                     $body = $matches[0];
@@ -80,14 +83,5 @@ class BodyConverter extends AbstractTypeConverter
         }
 
         return $body;
-    }
-
-    /**
-     * @return BackendRenderer
-     */
-    protected function getContentRenderer(): BackendRenderer
-    {
-        /** @var BackendRenderer $contentRenderer */
-        return GeneralUtility::makeInstance(BackendRenderer::class);
     }
 }

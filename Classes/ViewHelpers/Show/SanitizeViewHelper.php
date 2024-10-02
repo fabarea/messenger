@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers\Show;
 
 /*
@@ -17,6 +18,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class SanitizeViewHelper extends AbstractViewHelper
 {
+    public function render(mixed $item): array|string
+    {
+        $item = $this->makeItemTraversable($item);
+        return $this->convertPropertiesToFields($item);
+    }
 
     /**
      * Return a traversable object as for an associative array(key => value).
@@ -24,18 +30,15 @@ class SanitizeViewHelper extends AbstractViewHelper
      * @param mixed $item
      * @return string
      */
-    public function render($item)
+    protected function makeItemTraversable(mixed $item): string
     {
-        $item = $this->makeItemTraversable($item);
-        $item = $this->convertPropertiesToFields($item);
+        if ($item instanceof AbstractEntity) {
+            $item = $item->_getProperties();
+        }
         return $item;
     }
 
-    /**
-     * @param mixed $item
-     * @return string
-     */
-    protected function convertPropertiesToFields($item)
+    protected function convertPropertiesToFields(mixed $item): array|string
     {
         $convertedItem = [];
         foreach ($item as $propertyName => $value) {
@@ -44,19 +47,4 @@ class SanitizeViewHelper extends AbstractViewHelper
         }
         return $convertedItem;
     }
-
-    /**
-     * Return a traversable object as for an associative array(key => value).
-     *
-     * @param mixed $item
-     * @return string
-     */
-    protected function makeItemTraversable($item)
-    {
-        if ($item instanceof AbstractEntity) {
-            $item = $item->_getProperties();
-        }
-        return $item;
-    }
-
 }

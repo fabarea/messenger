@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Utility;
 
 /*
@@ -17,30 +18,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ConfigurationUtility implements SingletonInterface
 {
-
-    /**
-     * @var array
-     */
-    protected $configuration = [];
-
-    /**
-     * Returns a class instance.
-     *
-     * @return ConfigurationUtility
-     */
-    public static function getInstance(): ConfigurationUtility
-    {
-        return GeneralUtility::makeInstance(self::class);
-    }
+    protected array $configuration = [];
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $configuration = GeneralUtility::makeInstance(
-            ExtensionConfiguration::class
-        )->get('messenger');
+        $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('messenger');
 
         // Fill up configuration array with relevant values.
         foreach ($configuration as $key => $value) {
@@ -53,24 +38,22 @@ class ConfigurationUtility implements SingletonInterface
         }
     }
 
-    /**
-     * Returns a setting key.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
+    public function get(string $key): mixed
     {
         return isset($this->configuration[$key]) ? trim((string) $this->configuration[$key]) : null;
     }
 
     /**
-     * Set a setting key.
+     * Returns a class instance.
      *
-     * @param string $key
-     * @param mixed $value
+     * @return ConfigurationUtility
      */
-    public function set($key, $value): void
+    public static function getInstance(): ConfigurationUtility
+    {
+        return GeneralUtility::makeInstance(self::class);
+    }
+
+    public function set(string $key, mixed $value): void
     {
         $this->configuration[$key] = $value;
     }
@@ -79,5 +62,4 @@ class ConfigurationUtility implements SingletonInterface
     {
         return $this->configuration;
     }
-
 }

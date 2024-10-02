@@ -22,7 +22,7 @@ class LabelViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $label = '';
         $fieldName = $this->templateVariableContainer->get('fieldName');

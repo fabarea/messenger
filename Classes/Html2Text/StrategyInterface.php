@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Html2Text;
 
 /*
@@ -13,19 +14,18 @@ namespace Fab\Messenger\Html2Text;
  */
 interface StrategyInterface
 {
-
     /**
      * Convert a given HTML input to Text
      *
      * @param string $input
      * @return string
      */
-    public function convert($input);
+    public function convert(string $input): string;
 
     /**
      * Whether the converter is available
      *
      * @return boolean
      */
-    public function available();
+    public function available(): bool;
 }

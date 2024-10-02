@@ -90,7 +90,7 @@ class TcaFieldsUtility
         return $fields;
     }
 
-    private static function getExcludedFields()
+    private static function getExcludedFields(): array
     {
         return empty($GLOBALS['TCA'][self::$tableName]['excluded_fields'])
             ? []

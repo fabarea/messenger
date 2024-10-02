@@ -21,12 +21,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class ValueViewHelper extends AbstractViewHelper
 {
-    /**
-     * Return a value given by the context.
-     *
-     * @return string
-     */
-    public function render()
+    public function render(): string
     {
         $value = $this->templateVariableContainer->get('value');
         $fieldName = $this->templateVariableContainer->get('fieldName');

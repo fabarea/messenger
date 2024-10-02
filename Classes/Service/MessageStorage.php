@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Service;
 
 /*
@@ -8,7 +9,6 @@ namespace Fab\Messenger\Service;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use InvalidArgumentException;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -19,71 +19,38 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
  */
 class MessageStorage implements SingletonInterface
 {
+    protected string $namespace = 'Fab\Messenger\\';
 
-    /**
-     * @var string
-     */
-    protected $namespace = 'Fab\Messenger\\';
-
-    /**
-     * Returns a class instance
-     *
-     * @return MessageStorage
-     * @throws InvalidArgumentException
-     */
-    static public function getInstance()
+    public static function getInstance(): MessageStorage
     {
         return GeneralUtility::makeInstance(self::class);
     }
 
-    /**
-     * Get a stored value for this run time.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
+    public function get(string $key): mixed
     {
-        $value = NULL;
+        $value = null;
         if ($this->isFrontendMode()) {
             $value = $this->getFrontendUser()->getKey('ses', $this->namespace . $key);
-            $this->getFrontendUser()->setKey('ses', $this->namespace . $key, NULL); // unset variable
+            $this->getFrontendUser()->setKey('ses', $this->namespace . $key, null); // unset variable
         }
         return $value;
     }
 
-    /**
-     * Store a value for this run time.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return mixed
-     */
-    public function set($key, $value)
+    protected function isFrontendMode(): bool
+    {
+        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
+    }
+
+    protected function getFrontendUser(): FrontendUserAuthentication
+    {
+        return $GLOBALS['TSFE']->fe_user;
+    }
+
+    public function set(string $key, mixed $value): static
     {
         if ($this->isFrontendMode()) {
             $this->getFrontendUser()->setKey('ses', $this->namespace . $key, $value);
         }
         return $this;
-    }
-
-    /**
-     * Returns an instance of the current Frontend User.
-     *
-     * @return FrontendUserAuthentication
-     */
-    protected function getFrontendUser()
-    {
-        return $GLOBALS['TSFE']->fe_user;
-    }
-
-    /**
-     * Returns whether the current mode is Frontend
-     *
-     * @return bool
-     */
-    protected function isFrontendMode()
-    {
-        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Validator;
 
 /*
@@ -8,23 +9,22 @@ namespace Fab\Messenger\Validator;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\SingletonInterface;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
+use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Validate Email in the context of SwiftMailer
  */
 class EmailValidator implements SingletonInterface
 {
-
     /**
      * Validate emails to be used in the SwiftMailer framework
      *
-     * @throws InvalidEmailFormatException
      * @param $emails
      * @return boolean
+     * @throws InvalidEmailFormatException
      */
-    public function validate($emails)
+    public function validate($emails): bool
     {
         foreach ($emails as $email => $name) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -36,6 +36,6 @@ class EmailValidator implements SingletonInterface
                 throw new InvalidEmailFormatException($message, 1_350_297_170);
             }
         }
-        return TRUE;
+        return true;
     }
 }

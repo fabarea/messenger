@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers\Show;
 
 /*
@@ -8,22 +9,15 @@ namespace Fab\Messenger\ViewHelpers\Show;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use Fab\Messenger\Service\MessageStorage;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * View helper which return a key from the storage.
  */
 class BodyViewHelper extends AbstractViewHelper
 {
-
-    /**
-     * Return a key from the storage.
-     *
-     * @param string $identifier
-     * @return string|NULL
-     */
-    public function render($identifier)
+    public function render(string $identifier): ?string
     {
         return MessageStorage::getInstance()->get($identifier);
     }

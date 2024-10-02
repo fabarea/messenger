@@ -9,12 +9,18 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use TYPO3\CMS\Core\Localization\LanguageService;
 
 class MessageLayoutRepository extends AbstractContentRepository
 {
     protected string $tableName = 'tx_messenger_domain_model_messagelayout';
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -32,6 +38,10 @@ class MessageLayoutRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findByUids(array $uids): array
     {
         $query = $this->getQueryBuilder();
@@ -43,6 +53,10 @@ class MessageLayoutRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -55,11 +69,15 @@ class MessageLayoutRepository extends AbstractContentRepository
                     ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
             );
 
-        $messages = $query->execute()->fetch();
+        $messages = $query->execute()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findOlderThanDays(int $days): array
     {
         $time = time() - $days * 86400;
@@ -69,7 +87,7 @@ class MessageLayoutRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where('crdate < ' . $time);
 
-        $messages = $query->execute()->fetchAll();
+        $messages = $query->execute()->fetchAllAssociative();
         return is_array($messages) ? $messages : [];
     }
 
@@ -83,6 +101,10 @@ class MessageLayoutRepository extends AbstractContentRepository
         return $query->execute();
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
