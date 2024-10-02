@@ -106,7 +106,7 @@ final class SendAgainConfirmationAjaxController
             /** @var Message $message */
             $message = GeneralUtility::makeInstance(Message::class);
             $isSent = $message
-                ->setBody($sentMessage['body'])
+                ->setBody($sentMessage['body'] ?? '')
                 ->setSubject($sentMessage['subject'])
                 ->setSender($this->normalizeEmails($sentMessage['sender']))
                 ->setTo($this->normalizeEmails($sentMessage['recipient']))

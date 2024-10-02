@@ -9,9 +9,8 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
-use Fab\Vidi\Tca\Tca;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use RuntimeException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -89,7 +88,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute();
     }
 
-
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -130,7 +128,7 @@ class SentMessageRepository extends AbstractContentRepository
         }
 
         // Make sure fields are allowed for this table.
-        $fields = Tca::table($this->tableName)->getFields();
+        $fields = TcaFieldsUtility::getFields($this->tableName);
         foreach ($message as $fieldName => $value) {
             if (in_array($fieldName, $fields, true) && is_string($value)) {
                 $values[$fieldName] = $value;
