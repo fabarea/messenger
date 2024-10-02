@@ -4,7 +4,25 @@ services:
     autoconfigure: true
     public: true
 
+
   Fab\Messenger\Controller\AdminModuleController:
     tags: [ 'backend.controller' ]
+
+  Fab\Messenger\:
+    resource: '../Classes/*'
+
+  Fab\Messenger\Command\LogCommandController:
+    tags:
+      - name: 'console.command'
+        command: 'messenger:cleanUp'
+        description: 'To clean up the log table.'
+        schedulable: true
+
+  Fab\Messenger\Command\MessageQueueCommandController:
+    tags:
+      - name: 'console.command'
+        command: 'messenger:dequeue'
+        description: 'To dequeue messages from the queue.'
+        schedulable: true
 
 

@@ -22,25 +22,32 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LogCommandController extends Command
 {
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
         $olderThanDays = $input->getOption('older-than-days');
         $oldSentMessages = $this->getSentMessageRepository()->findOlderThanDays($olderThanDays);
-
         $numberOfOldSentMessage = count($oldSentMessages);
-
         if ($numberOfOldSentMessage > 0) {
-            $this->getSentMessageRepository()->removeOlderThanDays($olderThanDays);
-            $io->text(
-                sprintf(
-                    'I removed %s sent messages older than %s days from the log.',
-                    $numberOfOldSentMessage,
-                    $olderThanDays,
-                ),
-            );
+            $isDeleted = $this->getSentMessageRepository()->removeOlderThanDays($olderThanDays);
+            if ($isDeleted) {
+                $io->text(
+                    sprintf(
+                        'I removed %s sent messages older than %s days from the log.',
+                        $numberOfOldSentMessage,
+                        $olderThanDays,
+                    ),
+                );
+                return 0;
+            } else {
+                $io->error('An error occurred while removing messages');
+                return 1;
+            }
+        } else {
+            $io->text('No messages to remove');
         }
+        return 0;
     }
 
     /**

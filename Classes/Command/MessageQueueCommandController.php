@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Controller
+ * Class MessageQueueCommandController
  */
 class MessageQueueCommandController extends Command
 {
@@ -26,9 +26,8 @@ class MessageQueueCommandController extends Command
     {
         $itemsPerRun = $input->getOption('items-per-run');
         $result = $this->getQueueManager()->dequeue($itemsPerRun);
-
         $io = new SymfonyStyle($input, $output);
-        if (!$input->getOption('silent')) {
+        if (!$input->getOption('silent') && $result['numberOfSentMessages'] > 0) {
             $io->text(sprintf('I just sent %s messages', $result['numberOfSentMessages']));
         }
         if ($result['errorCount'] > 0) {
@@ -36,7 +35,10 @@ class MessageQueueCommandController extends Command
                 sprintf('I encountered %s problem(s) while processing the message queue.', $result['errorCount']),
             );
         }
-        return 1;
+        if ($result['errorCount'] == 0 && $result['numberOfSentMessages'] == 0) {
+            $io->text(sprintf('No messages were sent and no errors were encountered.'));
+        }
+        return 0;
     }
 
     /**
