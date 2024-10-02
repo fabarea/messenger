@@ -131,8 +131,7 @@ class RecipientModuleController extends ActionController
     {
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
 
-        $currentUrl = $_SERVER['REQUEST_URI'];
-        $moduleVersion = explode('/', $currentUrl);
+        $moduleVersion = explode('/', $this->getRequestUri());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
         }
@@ -148,6 +147,11 @@ class RecipientModuleController extends ActionController
     protected function getFields(): array
     {
         return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
+    }
+
+    private function getRequestUri(): string
+    {
+        return $_SERVER['REQUEST_URI'];
     }
 
     /**

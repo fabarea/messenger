@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Task;
 
 /*
@@ -8,26 +9,26 @@ namespace Fab\Messenger\Task;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DBALException;
 use Fab\Messenger\Queue\QueueManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 class MessengerDequeueTask extends AbstractTask
 {
-    /**
-     * @var int
-     */
-    public $itemsPerRun = 300;
+    public int $itemsPerRun = 300;
 
+    /**
+     * @throws DBALException
+     */
     public function execute(): bool
     {
         $result = $this->getQueueManager()->dequeue($this->itemsPerRun);
         return $result['errorCount'] === 0;
     }
 
-
     /**
-     * @return object|QueueManager
+     * @return QueueManager
      */
     protected function getQueueManager(): QueueManager
     {

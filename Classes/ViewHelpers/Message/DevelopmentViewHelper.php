@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers\Message;
 
 /*
@@ -8,6 +9,7 @@ namespace Fab\Messenger\ViewHelpers\Message;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Redirect\RedirectService;
 use Fab\Messenger\Service\SenderProvider;
 use TYPO3\CMS\Core\Core\Environment;
@@ -19,26 +21,29 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class DevelopmentViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      * @api
      */
     protected $escapeOutput = false;
 
+    /**
+     * @throws InvalidEmailFormatException
+     */
     public function render(): string
     {
         $redirectTo = $this->getRedirectService()->getRedirections();
         $output = '';
 
         // Means we want to redirect email.
-        if (is_array($redirectTo) && $redirectTo) {
-
+        if ($redirectTo) {
             $output = sprintf(
                 "<pre style='clear: both'>%s CONTEXT<br /> %s %s</pre>",
-                strtoupper((string)Environment::getContext()),
+                strtoupper((string) Environment::getContext()),
                 '<br />- All emails will be redirected to ' . implode(', ', array_keys($redirectTo)) . '.',
-                SenderProvider::getInstance()->getPossibleSenders() ? '' : '<br/>- ATTENTION! No sender could be found. This will be a problem when sending emails.'
+                SenderProvider::getInstance()->getPossibleSenders()
+                    ? ''
+                    : '<br/>- ATTENTION! No sender could be found. This will be a problem when sending emails.',
             );
         }
 
@@ -52,5 +57,4 @@ class DevelopmentViewHelper extends AbstractViewHelper
     {
         return GeneralUtility::makeInstance(RedirectService::class);
     }
-
 }

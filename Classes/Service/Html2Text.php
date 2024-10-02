@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Service;
 
 /*
@@ -11,7 +12,6 @@ namespace Fab\Messenger\Service;
 use Fab\Messenger\Html2Text\LynxStrategy;
 use Fab\Messenger\Html2Text\RegexpStrategy;
 use Fab\Messenger\Html2Text\StrategyInterface;
-use InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,38 +20,26 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Html2Text implements SingletonInterface
 {
-
     /**
      * @var StrategyInterface
      */
-    protected $converter;
+    protected StrategyInterface $converter;
 
     /**
      * @var array
      */
-    protected $possibleConverters;
+    protected array $possibleConverters;
 
-    /**
-     * Returns a class instance
-     *
-     * @return Html2Text
-     * @throws InvalidArgumentException
-     */
-    static public function getInstance()
-    {
-        return GeneralUtility::makeInstance(self::class);
-    }
-
-    /**
-     * Constructor
-     *
-     * @return Html2Text
-     * @throws InvalidArgumentException
-     */
     public function __construct()
     {
         $this->possibleConverters[] = GeneralUtility::makeInstance(LynxStrategy::class);
         $this->possibleConverters[] = GeneralUtility::makeInstance(RegexpStrategy::class);
+        $this->converter = GeneralUtility::makeInstance(LynxStrategy::class);
+    }
+
+    public static function getInstance(): Html2Text
+    {
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
@@ -60,7 +48,7 @@ class Html2Text implements SingletonInterface
      * @param string $content to be converted
      * @return string
      */
-    public function convert($content)
+    public function convert(string $content): string
     {
         if ($this->converter === null) {
             $this->converter = $this->findBestConverter();
@@ -73,9 +61,8 @@ class Html2Text implements SingletonInterface
      *
      * @return StrategyInterface
      */
-    public function findBestConverter()
+    public function findBestConverter(): StrategyInterface
     {
-
         $converter = null;
         if ($this->converter) {
             return $this->converter;
@@ -95,32 +82,27 @@ class Html2Text implements SingletonInterface
     }
 
     /**
-     * Set strategy
-     *
-     * @return void
+     * @return StrategyInterface
      */
-    public function setConverter(StrategyInterface $converter)
+    public function getConverter(): StrategyInterface
+    {
+        return $this->converter;
+    }
+
+    public function setConverter(StrategyInterface $converter): void
     {
         $this->converter = $converter;
     }
 
     /**
-     * @return StrategyInterface
-     */
-    public function getConverter()
-    {
-        return $this->converter;
-    }
-
-    /**
      * @return array
      */
-    public function getPossibleConverters()
+    public function getPossibleConverters(): array
     {
         return $this->possibleConverters;
     }
 
-    public function setPossibleConverters(array $possibleConverters)
+    public function setPossibleConverters(array $possibleConverters): void
     {
         $this->possibleConverters = $possibleConverters;
     }
@@ -128,9 +110,8 @@ class Html2Text implements SingletonInterface
     /**
      * @param StrategyInterface $possibleConverter
      */
-    public function addPossibleConverter($possibleConverter)
+    public function addPossibleConverter(StrategyInterface $possibleConverter): void
     {
         $this->possibleConverters[] = $possibleConverter;
     }
-
 }

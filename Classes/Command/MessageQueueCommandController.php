@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Command;
 
 /*
@@ -21,29 +22,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class MessageQueueCommandController extends Command
 {
-
-    /**
-     * Configure the command by defining the name, options and arguments
-     */
-    protected function configure(): void
-    {
-        $this->setDescription('Send messages and remove them from the queue by batch of 100 messages.')
-            ->addOption(
-                'items-per-run',
-                'i',
-                InputOption::VALUE_OPTIONAL,
-                'Items to be processed by each run',
-                300
-            )
-            ->addOption(
-                'silent',
-                's',
-                InputOption::VALUE_OPTIONAL,
-                'If true, only the errors are displayed on the CLI',
-                false
-            );
-    }
-
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $itemsPerRun = $input->getOption('items-per-run');
@@ -51,23 +29,37 @@ class MessageQueueCommandController extends Command
 
         $io = new SymfonyStyle($input, $output);
         if (!$input->getOption('silent')) {
-            $io->text(sprintf(
-                'I just sent %s messages', $result['numberOfSentMessages']
-            ));
+            $io->text(sprintf('I just sent %s messages', $result['numberOfSentMessages']));
         }
         if ($result['errorCount'] > 0) {
-            $io->text(sprintf(
-                'I encountered %s problem(s) while processing the message queue.', $result['errorCount']
-            ));
+            $io->text(
+                sprintf('I encountered %s problem(s) while processing the message queue.', $result['errorCount']),
+            );
         }
         return 1;
     }
 
     /**
-     * @return object|QueueManager
+     * @return QueueManager
      */
     protected function getQueueManager(): QueueManager
     {
         return GeneralUtility::makeInstance(QueueManager::class);
+    }
+
+    /**
+     * Configure the command by defining the name, options and arguments
+     */
+    protected function configure(): void
+    {
+        $this->setDescription('Send messages and remove them from the queue by batch of 100 messages.')
+            ->addOption('items-per-run', 'i', InputOption::VALUE_OPTIONAL, 'Items to be processed by each run', 300)
+            ->addOption(
+                'silent',
+                's',
+                InputOption::VALUE_OPTIONAL,
+                'If true, only the errors are displayed on the CLI',
+                false,
+            );
     }
 }

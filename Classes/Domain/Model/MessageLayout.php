@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Model;
 
 /*
@@ -15,16 +16,9 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
  */
 class MessageLayout extends AbstractEntity
 {
+    protected mixed $identifier;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var string
-     */
-    protected $content;
+    protected mixed $content;
 
     /**
      * Constructor
@@ -35,36 +29,23 @@ class MessageLayout extends AbstractEntity
         $this->content = !empty($data['content']) ? $data['content'] : '';
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @return string
-     */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
 
-    /**
-     * @param string $content
-     */
-    public function setContent($content)
+    public function setContent(string $content): void
     {
         $this->content = $content;
     }
-
 }

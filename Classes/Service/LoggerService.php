@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Service;
 
 /*
@@ -18,20 +19,17 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LoggerService
 {
-
     /**
      * @param object $object
      * @return Logger
      * @throws InvalidArgumentException
      */
-    static public function getLogger($object)
+    public static function getLogger(object $object): Logger
     {
-
         /** @var $loggerManager LogManager */
         $loggerManager = GeneralUtility::makeInstance(LogManager::class);
 
         /** @var $logger Logger */
         return $loggerManager->getLogger($object::class);
     }
-
 }

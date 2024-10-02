@@ -9,6 +9,7 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DBALException;
 use Fab\Messenger\ContentRenderer\ContentRendererInterface;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
@@ -41,71 +42,26 @@ class Message
     final const SUBJECT = 'subject';
     final const BODY = 'body';
 
-    /**
-     * @var int
-     */
-    protected $uid;
+    protected int $uid;
 
-    /**
-     * @var array
-     */
     protected array $sender = [];
 
-    /**
-     * The "to" addresses
-     *
-     * @var array
-     */
     protected array $to = [];
 
-    /**
-     * The "cc" addresses
-     *
-     * @var array
-     */
     protected array $cc = [];
 
-    /**
-     * The "bcc" addresses
-     *
-     * @var array
-     */
     protected array $bcc = [];
 
-    /**
-     * Addresses for reply-to
-     *
-     * @var array
-     */
     protected array $replyTo = [];
 
-    /**
-     * Possible email redirect
-     *
-     * @var array
-     */
     protected array $redirectEmailFrom = [];
 
-    /**
-     * A set of markers.
-     *
-     * @var array
-     */
     protected array $markers = [];
 
-    /**
-     * @var MessageLayout
-     */
     protected ?MessageLayout $messageLayout = null;
 
-    /**
-     * @var string
-     */
     protected string $mailingName = '';
 
-    /**
-     * @var int
-     */
     protected int $scheduleDistributionTime = 0;
 
     /**
@@ -113,60 +69,27 @@ class Message
      */
     protected array $attachments = [];
 
-    /**
-     * @var MessageTemplateRepository
-     */
     protected ?MessageTemplateRepository $messageTemplateRepository = null;
 
-    /**
-     * @var MessageLayoutRepository
-     */
     protected ?MessageLayoutRepository $messageLayoutRepository = null;
 
-    /**
-     * @var SentMessageRepository
-     */
     protected ?SentMessageRepository $sentMessageRepository = null;
 
-    /**
-     * @var MessageTemplate
-     */
     protected ?MessageTemplate $messageTemplate = null;
 
-    /**
-     * @var MailMessage
-     */
     protected ?MailMessage $mailMessage = null;
 
-    /**
-     * @var string
-     */
     protected string $subject = '';
 
-    /**
-     * @var string
-     */
     protected string $body = '';
 
-    /**
-     * @var string
-     */
     protected string $processedSubject = '';
 
-    /**
-     * @var string
-     */
     protected string $processedBody = '';
 
-    /**
-     * @var bool
-     */
     protected bool $parseToMarkdown = false;
 
-    /**
-     * @var string
-     */
-    protected $uuid = '';
+    protected string $uuid = '';
 
     public function __construct()
     {
@@ -177,7 +100,7 @@ class Message
 
     /**
      * Prepares the emails and queue it.
-     * @throws InvalidEmailFormatException
+     * @throws InvalidEmailFormatException|DBALException
      */
     public function enqueue(): void
     {
@@ -252,12 +175,6 @@ class Message
         return $this->to;
     }
 
-    /**
-     * Set "to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     * @throws InvalidEmailFormatException
-     */
     public function setTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
@@ -275,9 +192,6 @@ class Message
     }
 
     /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
      * @throws InvalidEmailFormatException
      */
     public function setCc(mixed $addresses): Message
@@ -297,9 +211,6 @@ class Message
     }
 
     /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
      * @throws InvalidEmailFormatException
      */
     public function setBcc(mixed $addresses): Message
@@ -362,9 +273,6 @@ class Message
     }
 
     /**
-     * Set "reply-to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
      * @throws InvalidEmailFormatException
      */
     public function setReplyTo(mixed $addresses): Message
@@ -525,6 +433,7 @@ class Message
 
     /**
      * Convert this object to an array.
+     * @throws InvalidEmailFormatException
      */
     public function toArray(): array
     {
@@ -533,7 +442,7 @@ class Message
         }
 
         $mailMessage = $this->getMailMessage();
-        $values = [
+        return [
             'sender' => $this->formatAddresses($mailMessage->getFrom()),
             'to' => $this->formatAddresses($mailMessage->getTo()),
             'cc' => $this->formatAddresses($mailMessage->getCc()),
@@ -556,8 +465,6 @@ class Message
             'mail_message' => $mailMessage,
             'uuid' => $this->uuid,
         ];
-
-        return $values;
     }
 
     /**
@@ -613,7 +520,7 @@ class Message
             throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
-        return $isSent;
+        return true;
     }
 
     /**
@@ -625,12 +532,7 @@ class Message
     }
 
     /**
-     * parameter $messageTemplate can be:
-     *      + \Fab\Messenger\Domain\Model\MessageTemplate $messageTemplate
-     *      + int $messageTemplate which corresponds to an uid
-     *      + string $messageTemplate which corresponds to a value for property "identifier".
-     *
-     * @param mixed $messageTemplate
+     * @throws RecordNotFoundException
      */
     public function setMessageTemplate(mixed $messageTemplate): Message
     {
@@ -679,11 +581,6 @@ class Message
         return $this;
     }
 
-    /**
-     * Set multiple markers at once.
-     *
-     * @param array $values
-     */
     public function setMarkers(array $values): Message
     {
         foreach ($values as $markerName => $value) {
@@ -692,12 +589,6 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new marker and its value.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
     public function addMarker(string $markerName, mixed $value): Message
     {
         $this->markers[$markerName] = $value;
@@ -717,12 +608,6 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new maker.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
     public function assign(string $markerName, mixed $value): Message
     {
         return $this->addMarker($markerName, $value);
@@ -733,14 +618,6 @@ class Message
         return $this->messageLayout;
     }
 
-    /**
-     * parameter $messageLayout can be:
-     *      + \Fab\Messenger\Domain\Model\MessageLayout $messageLayout
-     *      + int $messageLayout which corresponds to an uid
-     *      + string $messageLayout which corresponds to a value for property "identifier".
-     *
-     * @param mixed $messageLayout
-     */
     public function setMessageLayout(mixed $messageLayout): Message
     {
         if ($messageLayout instanceof MessageLayout) {

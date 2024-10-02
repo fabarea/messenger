@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Queue;
 
 /*
@@ -8,8 +9,11 @@ namespace Fab\Messenger\Queue;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Random\RandomException;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -18,7 +22,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class QueueManager
 {
-
+    /**
+     * @throws RandomException
+     * @throws DBALException
+     * @throws Exception
+     */
     public function dequeue(int $itemsPerRun): array
     {
         $messengerMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
@@ -27,8 +35,8 @@ class QueueManager
         /** @var array $messengerMessage */
         foreach ($messengerMessages as $messengerMessage) {
             /** @var MailMessage $message */
-            $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
 
+            $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
             $isSent = $message->send();
             if ($isSent) {
                 $numberOfSentMessages++;
@@ -43,10 +51,31 @@ class QueueManager
 
         return [
             'errorCount' => $errorCount,
-            'numberOfSentMessages' => $numberOfSentMessages
+            'numberOfSentMessages' => $numberOfSentMessages,
         ];
     }
 
+    /**
+     * @return QueueRepository
+     */
+    protected function getQueueRepository(): QueueRepository
+    {
+        return GeneralUtility::makeInstance(QueueRepository::class);
+    }
+
+    /**
+     * @return SentMessageRepository
+     */
+    protected function getSentMessageRepository(): SentMessageRepository
+    {
+        return GeneralUtility::makeInstance(SentMessageRepository::class);
+    }
+
+    /**
+     * @throws RandomException
+     * @throws Exception
+     * @throws DBALException
+     */
     public function dequeueOne(int $queuedMessageIdentifier): bool
     {
         $isSent = false;
@@ -56,7 +85,7 @@ class QueueManager
         if ($messengerMessage) {
             /** @var MailMessage $message */
             $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
-            $isSent = (bool)$message->send();
+            $isSent = (bool) $message->send();
 
             if ($isSent) {
                 $this->getQueueRepository()->remove($messengerMessage);
@@ -65,25 +94,7 @@ class QueueManager
                 ++$messengerMessage['error_count'];
                 $this->getQueueRepository()->update($messengerMessage);
             }
-
         }
         return $isSent;
     }
-
-    /**
-     * @return object|QueueRepository
-     */
-    protected function getQueueRepository(): QueueRepository
-    {
-        return GeneralUtility::makeInstance(QueueRepository::class);
-    }
-
-    /**
-     * @return object|SentMessageRepository
-     */
-    protected function getSentMessageRepository(): SentMessageRepository
-    {
-        return GeneralUtility::makeInstance(SentMessageRepository::class);
-    }
-
 }

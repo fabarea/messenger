@@ -13,6 +13,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\TcaFieldsUtility;
+use Random\RandomException;
 use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -161,6 +162,7 @@ class QueueRepository extends AbstractContentRepository
     }
 
     /**
+     * @throws RandomException
      * @throws DBALException
      */
     public function add(array $message): int
@@ -185,6 +187,10 @@ class QueueRepository extends AbstractContentRepository
         return $result;
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     public function findPendingMessages(int $limit): array
     {
         $query = $this->getQueryBuilder();
@@ -194,7 +200,7 @@ class QueueRepository extends AbstractContentRepository
             ->where('scheduled_distribution_time < ' . time())
             ->setMaxResults($limit);
 
-        $messages = $query->execute()->fetchAll();
+        $messages = $query->execute()->fetchAllAssociative();
 
         return is_array($messages) ? $messages : [];
     }

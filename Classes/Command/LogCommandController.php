@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Command;
 
 /*
@@ -21,22 +22,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LogCommandController extends Command
 {
-
-    /**
-     * Configure the command by defining the name, options and arguments
-     */
-    protected function configure(): void
-    {
-        $this->setDescription('Sent messages older than 100 days will be removed.')
-            ->addOption(
-                'older-than-days',
-                '',
-                InputOption::VALUE_OPTIONAL,
-                'Remove messages older than x days',
-                100
-            );
-    }
-
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
@@ -52,18 +37,31 @@ class LogCommandController extends Command
                 sprintf(
                     'I removed %s sent messages older than %s days from the log.',
                     $numberOfOldSentMessage,
-                    $olderThanDays
-                )
+                    $olderThanDays,
+                ),
             );
         }
     }
 
     /**
-     * @return object|SentMessageRepository
+     * @return SentMessageRepository
      */
     protected function getSentMessageRepository(): SentMessageRepository
     {
         return GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
+    /**
+     * Configure the command by defining the name, options and arguments
+     */
+    protected function configure(): void
+    {
+        $this->setDescription('Sent messages older than 100 days will be removed.')->addOption(
+            'older-than-days',
+            '',
+            InputOption::VALUE_OPTIONAL,
+            'Remove messages older than x days',
+            100,
+        );
+    }
 }

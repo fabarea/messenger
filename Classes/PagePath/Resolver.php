@@ -19,16 +19,9 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  */
 class Resolver
 {
+    protected int $pageId;
 
-    /**
-     * @var int
-     */
-    protected $pageId;
-
-    /**
-     * @var array
-     */
-    protected $parameters = [];
+    protected mixed $parameters = [];
 
     /**
      * Initializes the instance of this class.
@@ -37,7 +30,7 @@ class Resolver
     {
         $params = unserialize(base64_decode((string) GeneralUtility::_GP('data')));
         if (is_array($params)) {
-            $this->pageId = (int)$params['id'];
+            $this->pageId = (int) $params['id'];
             $this->parameters = $params['parameters'];
         }
     }
@@ -53,7 +46,6 @@ class Resolver
         if ($myIp === $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
             header('Content-type: text/plain; charset=iso-8859-1');
             if ($this->pageId > 0) {
-
                 $cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
                 /* @var $cObj ContentObjectRenderer */
@@ -77,5 +69,4 @@ class Resolver
             header('HTTP/1.0 403 Access denied');
         }
     }
-
 }

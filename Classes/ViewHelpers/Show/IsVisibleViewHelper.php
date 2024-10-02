@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers\Show;
 
 /*
@@ -9,23 +10,21 @@ namespace Fab\Messenger\ViewHelpers\Show;
  */
 
 use Countable;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Fab\Vidi\Tca\Tca;
 
 /**
  * View helper which tells whether the row of item should be rendered.
  */
 class IsVisibleViewHelper extends AbstractViewHelper
 {
-
     /**
      * Return whether the row of item should be rendered.
      *
      * @return bool
      */
-    public function render()
+    public function render(): bool
     {
-
         $fieldName = $this->templateVariableContainer->get('fieldName');
         $value = $this->templateVariableContainer->get('value');
         $dataType = '';
@@ -35,26 +34,25 @@ class IsVisibleViewHelper extends AbstractViewHelper
 
         // Early return in case value is null, no need to show anything.
         if (is_null($value)) {
-            return FALSE;
+            return false;
         }
 
         // Early return if an empty string is detected
         if (is_string($value) && strlen($value) == 0) {
-            return FALSE;
+            return false;
         }
 
         // Early return if the value is countable and contains nothing
         if ($value instanceof Countable && $value->count() === 0) {
-            return FALSE;
+            return false;
         }
 
-        $isVisible = TRUE;
-
+        $isVisible = true;
 
         // Check whether the field name is not system.
         $displaySystemFields = $this->templateVariableContainer->get('displaySystemFields');
-        if (FALSE === $displaySystemFields && $dataType) {
-            $isVisible = Tca::table($dataType)->field($fieldName)->isNotSystem();
+        if (false === $displaySystemFields && $dataType) {
+            $isVisible = TcaFieldsUtility::getFields($dataType);
         }
 
         // Check whether the field name is not to be excluded.

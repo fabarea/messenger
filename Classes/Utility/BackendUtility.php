@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Utility;
 
 /*
@@ -17,15 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendUtility
 {
-
-    /**
-     * Returns the URL to a given module
-     *
-     * @param string $moduleName Name of the module
-     * @param array $urlParameters URL parameters that should be added as key value pairs
-     * @return string Calculated URL
-     */
-    public static function getModuleUrl($moduleName, $urlParameters = [])
+    public static function getModuleUrl(string $moduleName, array $urlParameters = []): string
     {
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         try {
@@ -33,7 +26,6 @@ class BackendUtility
         } catch (RouteNotFoundException) {
             $uri = $uriBuilder->buildUriFromRoutePath($moduleName, $urlParameters);
         }
-        return (string)$uri;
+        return (string) $uri;
     }
-
 }

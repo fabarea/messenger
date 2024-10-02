@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Utility;
 
 /*
@@ -8,26 +9,33 @@ namespace Fab\Messenger\Utility;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Random\RandomException;
+
 /**
  * A utility class for various algorithms.
  */
 class Algorithms
 {
-
     /**
      * Generates a universally unique identifier (UUID) according to RFC 4122 v4.
      * The algorithm used here, might not be completely random.
      *
      * @return string The universally unique id
+     * @throws RandomException
      * @author Unkown
      */
-    static public function generateUUID()
+    public static function generateUUID(): string
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff),
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
             random_int(0, 0x0fff) | 0x4000,
             random_int(0, 0x3fff) | 0x8000,
-            random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff));
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+        );
     }
-
 }

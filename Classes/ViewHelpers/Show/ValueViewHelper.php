@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers\Show;
 
 /*
@@ -8,25 +9,19 @@ namespace Fab\Messenger\ViewHelpers\Show;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Vidi\Tca\FieldType;
+use Fab\Messenger\Utility\FieldType;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use Fab\Vidi\Tca\Tca;
 
 /**
  * View helper which renders a value given by the context.
  */
 class ValueViewHelper extends AbstractViewHelper
 {
-
-    /**
-     * Return a value given by the context.
-     *
-     * @return string
-     */
-    public function render()
+    public function render(): string
     {
         $value = $this->templateVariableContainer->get('value');
         $fieldName = $this->templateVariableContainer->get('fieldName');
@@ -42,18 +37,18 @@ class ValueViewHelper extends AbstractViewHelper
             $value = implode(', ', $names);
         } elseif ($this->templateVariableContainer->exists('dataType')) {
             $dataType = $this->templateVariableContainer->get('dataType');
-            $fieldType = Tca::table($dataType)->field($fieldName)->getType();
+            $fieldType = TcaFieldsUtility::getFields($dataType);
 
             if ($fieldType === FieldType::RADIO || $fieldType === FieldType::SELECT) {
-                $value = Tca::table($dataType)->field($fieldName)->getLabelForItem($value);
+                $value = TcaFieldsUtility::getFields($dataType);
             } elseif ($fieldType === FieldType::TEXTAREA) {
                 $value = nl2br((string) $value);
             } elseif ($fieldType === FieldType::MULTISELECT) {
-                $explodedValues = GeneralUtility::trimExplode(',', $value, TRUE);
+                $explodedValues = GeneralUtility::trimExplode(',', $value, true);
 
                 $labels = [];
                 foreach ($explodedValues as $_value) {
-                    $label = Tca::table($dataType)->field($fieldName)->getLabelForItem($_value);
+                    $label = TcaFieldsUtility::getFields($dataType);
                     if ($label) {
                         $labels[] = $label;
                     }

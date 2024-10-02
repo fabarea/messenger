@@ -32,6 +32,7 @@ class DataExportService implements SingletonInterface
         $this->repository = $repository;
     }
 
+    #[NoReturn]
     public function exportCsv(
         array $uids,
         string $filename,
@@ -58,7 +59,7 @@ class DataExportService implements SingletonInterface
         echo $csvContent;
         exit();
     }
-    
+
     #[NoReturn]
     public function exportXml(array $dataUids, string $filename, array $header): void
     {
