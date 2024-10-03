@@ -28,8 +28,6 @@ class QueueManager
         /** @var array $messengerMessage */
         foreach ($messengerMessages as $messengerMessage) {
             /** @var Message $message */
-            //$message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
-
             $message = GeneralUtility::makeInstance(Message::class);
             $message->setUuid(Algorithms::generateUUID());
             $message

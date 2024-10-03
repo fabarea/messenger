@@ -57,16 +57,6 @@ class TcaFieldsUtility
         return $hasAccess;
     }
 
-    //    private static function isBackendMode(): bool
-    //    {
-    //        return ApplicationType::fromRequest(self::getRequest())->isBackend();
-    //    }
-    //
-    //    private static function getRequest(): ServerRequestInterface
-    //    {
-    //        return $GLOBALS['TYPO3_REQUEST'];
-    //    }
-
     protected static function hasTableAccess(): bool
     {
         return self::getBackendUser()->check('tables_modify', self::$tableName);
