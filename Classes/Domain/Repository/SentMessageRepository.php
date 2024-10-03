@@ -9,11 +9,8 @@ namespace Fab\Messenger\Domain\Repository;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\TcaFieldsUtility;
-use Random\RandomException;
 use RuntimeException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
@@ -23,10 +20,6 @@ class SentMessageRepository extends AbstractContentRepository
 
     protected QueryInterface $constraints;
 
-    /**
-     * @throws Exception
-     * @throws DBALException
-     */
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -44,10 +37,6 @@ class SentMessageRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @throws DBALException
-     * @throws Exception
-     */
     public function findByUids(array $uids): array
     {
         $query = $this->getQueryBuilder();
@@ -59,10 +48,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
-    /**
-     * @throws Exception
-     * @throws DBALException
-     */
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -80,10 +65,6 @@ class SentMessageRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @throws Exception
-     * @throws DBALException
-     */
     public function findOlderThanDays(int $days): array
     {
         $time = time() - $days * 86400;
@@ -91,15 +72,12 @@ class SentMessageRepository extends AbstractContentRepository
         $query
             ->select('*')
             ->from($this->tableName)
-            ->where('crdate < ' . $time);
+            ->where('crdate <' . $time);
 
-        $messages = $query->execute()->fetchAllAssociative();
+        $messages = $query->execute()->fetchAssociative();
         return is_array($messages) ? $messages : [];
     }
 
-    /**
-     * @throws DBALException
-     */
     public function removeOlderThanDays(int $days): int
     {
         $time = time() - $days * 86400;
@@ -110,10 +88,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute();
     }
 
-    /**
-     * @throws Exception
-     * @throws DBALException
-     */
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -142,10 +116,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $queryBuilder->execute()->fetchAllAssociative();
     }
 
-    /**
-     * @throws RandomException
-     * @throws DBALException
-     */
     public function add(array $message): int
     {
         $values = [];
@@ -175,9 +145,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $result;
     }
 
-    /**
-     * @throws DBALException
-     */
     public function removeByUid(int $uid): int
     {
         $query = $this->getQueryBuilder();
@@ -185,9 +152,6 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute();
     }
 
-    /**
-     * @throws DBALException
-     */
     public function removeByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();

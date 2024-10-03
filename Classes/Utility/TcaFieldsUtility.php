@@ -10,7 +10,6 @@ namespace Fab\Messenger\Utility;
  */
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -24,6 +23,7 @@ class TcaFieldsUtility
     {
         self::$tableName = $tableName;
         $fields = array_keys($GLOBALS['TCA'][self::$tableName]['columns']);
+
         return self::filterByBackendUser($fields);
     }
 
@@ -48,7 +48,6 @@ class TcaFieldsUtility
     {
         $hasAccess = true;
         if (
-            self::isBackendMode() &&
             self::hasTableAccess() &&
             isset($GLOBALS['TCA'][self::$tableName]['columns'][$fieldName]['exclude']) &&
             $GLOBALS['TCA'][self::$tableName]['columns'][$fieldName]['exclude']
@@ -58,18 +57,9 @@ class TcaFieldsUtility
         return $hasAccess;
     }
 
-    private static function isBackendMode(): bool
-    {
-        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
-    }
-
     protected static function hasTableAccess(): bool
     {
-        $hasAccess = true;
-        if (self::isBackendMode()) {
-            $hasAccess = self::getBackendUser()->check('tables_modify', self::$tableName);
-        }
-        return $hasAccess;
+        return self::getBackendUser()->check('tables_modify', self::$tableName);
     }
 
     /**
