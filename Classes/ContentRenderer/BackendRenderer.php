@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ContentRenderer;
 
 /*
@@ -11,6 +12,7 @@ namespace Fab\Messenger\ContentRenderer;
 use Fab\Messenger\PagePath\PagePath;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\ConfigurationUtility;
+use Random\RandomException;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,12 +22,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendRenderer implements ContentRendererInterface
 {
-
     /**
      * Render content in the context of the Backend.
      * This is required in order to correctly resolve the View Helpers for Fluid in the context of the Backend.
      *
      * @param string $content
+     * @throws RandomException
      */
     public function render($content, array $markers): string
     {
@@ -47,7 +49,7 @@ class BackendRenderer implements ContentRendererInterface
             $message .= sprintf(
                 'To sort it out, you could add this IP "%s" to your "devIPmask" settings. Debug me if the problem persists...%s',
                 GeneralUtility::getIndpEnv('REMOTE_ADDR'),
-                chr(10)
+                chr(10),
             );
             die($message);
         }
@@ -61,14 +63,6 @@ class BackendRenderer implements ContentRendererInterface
     }
 
     /**
-     * @return ConfigurationUtility
-     */
-    public function getConfigurationUtility(): ConfigurationUtility
-    {
-        return GeneralUtility::makeInstance(ConfigurationUtility::class);
-    }
-
-    /**
      * @return Registry
      */
     protected function getRegistry(): Registry
@@ -76,4 +70,11 @@ class BackendRenderer implements ContentRendererInterface
         return GeneralUtility::makeInstance(Registry::class);
     }
 
+    /**
+     * @return ConfigurationUtility
+     */
+    public function getConfigurationUtility(): ConfigurationUtility
+    {
+        return GeneralUtility::makeInstance(ConfigurationUtility::class);
+    }
 }

@@ -9,15 +9,15 @@ namespace Fab\Messenger\PagePath;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Messenger\Utility\BackendUtility;
+use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\RequestFactoryInterface;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
-use UnexpectedValueException;
 
 /**
  * This class create frontend page address from the page id value and parameters.
@@ -26,7 +26,10 @@ use UnexpectedValueException;
  */
 class PagePath
 {
-    public function __construct(RequestFactoryInterface $requestFactory) {
+    protected RequestFactoryInterface $requestFactory;
+
+    public function __construct(RequestFactoryInterface $requestFactory)
+    {
         $this->requestFactory = $requestFactory;
     }
 
@@ -36,12 +39,12 @@ class PagePath
      * @param int $pageId
      * @param mixed $parameters
      */
-    public static function getUrl($pageId, $parameters): string
+    public static function getUrl(int $pageId, mixed $parameters): string
     {
         if (is_array($parameters)) {
             $parameters = GeneralUtility::implodeArrayForUrl('', $parameters);
         }
-        $data = ['id' => (int)$pageId];
+        $data = ['id' => (int) $pageId];
         if ($parameters !== '' && $parameters[0] === '&') {
             $data['parameters'] = $parameters;
         }
@@ -52,25 +55,25 @@ class PagePath
 
             $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
             // Send TYPO3 cookies as this may affect path generation
-            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray([
-                'fe_typo_user' => $_COOKIE['fe_typo_user'],
-            ], $_SERVER['HTTP_HOST']);
+            $jar = CookieJar::fromArray(
+                [
+                    'fe_typo_user' => $_COOKIE['fe_typo_user'],
+                ],
+                $_SERVER['HTTP_HOST'],
+            );
             $response = $requestFactory->request($url, 'GET', ['cookies' => $jar]);
             $result = $response->getBody()->getContents();
 
             $urlParts = parse_url($result);
             if (!is_array($urlParts)) {
-
                 // filter_var is too strict (for example, underscore characters make it fail). So we use parse_url here for a quick check.
                 $result = '';
             } elseif ($result) {
-
                 // See if we need to prepend domain part
                 if (!isset($urlParts['host']) || $urlParts['host'] === '') {
                     $result = rtrim($siteUrl, '/') . '/' . ltrim($result, '/');
                 }
             }
-
         } else {
             $result = '';
         }
@@ -82,16 +85,19 @@ class PagePath
      *
      * @static
      * @param int $pageId
-     * @throws UnexpectedValueException
+     * @return string
      */
-    public static function getSiteBaseUrl($pageId): string
+    public static function getSiteBaseUrl(int $pageId): string
     {
         $environmentBaseUrl = null;
         $baseUrl = null;
         // CLI must define its own environment variable.
-        if (Environment::isCli()) { // TODO remove this condition
+        if (Environment::isCli()) {
+            // TODO remove this condition
 
-            die('You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case');
+            die(
+                'You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case'
+            );
 
             // @deprecated.
             $environmentBaseUrl = getenv('TYPO3_BASE_URL');
@@ -106,8 +112,8 @@ class PagePath
         } else {
             $siteRootPage = [];
             $domainName = '';
-            foreach (\TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageId) as $page) {
-                if ((int)$page['is_siteroot'] === 1) {
+            foreach (BackendUtility::BEgetRootLine($pageId) as $page) {
+                if ((int) $page['is_siteroot'] === 1) {
                     $siteRootPage = $page;
                 }
             }
@@ -128,12 +134,14 @@ class PagePath
 
     /**
      * @param int $pageId
-     * @return array
+     * @return string
      */
-    protected static function getScheme($pageId): string
+    protected static function getScheme(int $pageId): string
     {
-        $pageRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
-        return is_array($pageRecord) && isset($pageRecord['url_scheme']) && $pageRecord['url_scheme'] === HttpUtility::SCHEME_HTTPS
+        $pageRecord = BackendUtility::getRecord('pages', $pageId);
+        return is_array($pageRecord) &&
+            isset($pageRecord['url_scheme']) &&
+            $pageRecord['url_scheme'] === HttpUtility::SCHEME_HTTPS
             ? 'https'
             : 'http';
     }
@@ -163,13 +171,12 @@ class PagePath
 
     /**
      * @param string $tableName
-     * @return object|QueryBuilder
+     * @return QueryBuilder
      */
-    protected static function getQueryBuilder($tableName): QueryBuilder
+    protected static function getQueryBuilder(string $tableName): QueryBuilder
     {
         /** @var ConnectionPool $connectionPool */
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         return $connectionPool->getQueryBuilderForTable($tableName);
     }
-
 }

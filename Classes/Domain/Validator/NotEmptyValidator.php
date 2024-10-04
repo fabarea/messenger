@@ -16,10 +16,7 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  */
 class NotEmptyValidator extends AbstractValidator
 {
-    /**
-     * @param string $value
-     */
-    public function isValid($value): void
+    public function isValid(mixed $value): void
     {
         if (!trim($value)) {
             $this->addError('Empty field', 1_468_509_656);
