@@ -318,14 +318,6 @@ class Message
     protected function getContentRenderer(): ContentRendererInterface
     {
         return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
-        #if ($this->isFrontendMode()) {
-        #    /** @var FrontendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        #} else {
-        #    /** @var BackendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        #}
-        #return $contentRenderer;
     }
 
     /**

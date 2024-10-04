@@ -44,8 +44,8 @@ class MessageDisplayController extends ActionController
      */
     public function isUuidValid($uuid): bool
     {
-        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', (string) $uuid) ===
-            1;
+        $expression = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+        return preg_match($expression, (string) $uuid) === 1;
     }
 
     /**
