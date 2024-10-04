@@ -19,18 +19,17 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
  */
 class MessageDisplayController extends ActionController
 {
-
     public function showAction(): string
     {
-
         $result = 'Nothing to show!';
-        $uuid = (string)GeneralUtility::_GP('uuid');
+        $uuid = (string) GeneralUtility::_GP('uuid');
         if ($this->isUuidValid($uuid)) {
-            $source = (string)GeneralUtility::_GP('source');
+            $source = (string) GeneralUtility::_GP('source');
 
-            $message = $source === 'queue'
-                ? $this->getQueueRepository()->findByUuid($uuid)
-                : $this->getSentMessageRepository()->findByUuid($uuid);
+            $message =
+                $source === 'queue'
+                    ? $this->getQueueRepository()->findByUuid($uuid)
+                    : $this->getSentMessageRepository()->findByUuid($uuid);
 
             if (!empty($message)) {
                 $result = $message['body'];
@@ -41,10 +40,12 @@ class MessageDisplayController extends ActionController
 
     /**
      * @param $uuid
+     * @return bool
      */
     public function isUuidValid($uuid): bool
     {
-        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', (string) $uuid) === 1;
+        $expression = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+        return preg_match($expression, (string) $uuid) === 1;
     }
 
     /**
@@ -62,5 +63,4 @@ class MessageDisplayController extends ActionController
     {
         return GeneralUtility::makeInstance(SentMessageRepository::class);
     }
-
 }

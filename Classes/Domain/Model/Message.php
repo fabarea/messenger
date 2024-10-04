@@ -9,7 +9,6 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\DBALException;
 use Fab\Messenger\ContentRenderer\ContentRendererInterface;
 use Fab\Messenger\ContentRenderer\FrontendRenderer;
 use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
@@ -98,10 +97,6 @@ class Message
         $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
-    /**
-     * Prepares the emails and queue it.
-     * @throws InvalidEmailFormatException|DBALException
-     */
     public function enqueue(): void
     {
         $this->prepareMessage();
@@ -323,14 +318,6 @@ class Message
     protected function getContentRenderer(): ContentRendererInterface
     {
         return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
-        #if ($this->isFrontendMode()) {
-        #    /** @var FrontendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        #} else {
-        #    /** @var BackendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        #}
-        #return $contentRenderer;
     }
 
     /**

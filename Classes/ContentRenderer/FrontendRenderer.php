@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ContentRenderer;
 
 /*
@@ -8,8 +9,8 @@ namespace Fab\Messenger\ContentRenderer;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\Messenger\Domain\Model\MessageTemplate;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -17,11 +18,10 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
  */
 class FrontendRenderer implements ContentRendererInterface
 {
-
     /**
      * Constructor
      *
-     * @param MessageTemplate $messageTemplate
+     * @param MessageTemplate|null $messageTemplate
      */
     public function __construct(protected ?MessageTemplate $messageTemplate = null)
     {
@@ -61,5 +61,4 @@ class FrontendRenderer implements ContentRendererInterface
         #$content = array_map('trim', explode("\n", $content));
         #return implode("\n", $content);
     }
-
 }
