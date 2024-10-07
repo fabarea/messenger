@@ -16,6 +16,7 @@ use Fab\Messenger\Utility\Algorithms;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Random\RandomException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -69,17 +70,16 @@ final class SendMessageController
             $matches = array_map('intval', $stringUids);
         }
         $pageContent = $this->pageRepository->findByUid($this->getPageId());
+
         $data = $this->getRequest()->getParsedBody();
-        //        var_dump($pageContent);
-        //        exit();
-        //        if (empty($data['body'])) {
-        //            $data['body'] = $pageContent;
-        //        }
+        if (empty($data['body'])) {
+            $data['body'] = implode(PHP_EOL, $pageContent);
+        }
         $content = '';
         if ($data['sender'] && empty($data['recipientList'])) {
             $content = $this->getQueueAction($matches, $data);
         } elseif ($data['recipientList']) {
-            $content = $this->sendAsTestAction($matches, $data);
+            $content = $this->sendAsTestAction($data);
         }
 
         return $this->getResponse($content);
@@ -104,7 +104,7 @@ final class SendMessageController
     /**
      * @throws DBALException
      * @throws Exception
-     * @throws InvalidEmailFormatException
+     * @throws InvalidEmailFormatException|RandomException
      */
     public function getQueueAction(array $matches, array $data): string
     {
@@ -184,40 +184,38 @@ final class SendMessageController
     }
 
     /**
-     * @throws DBALException
-     * @throws Exception
      * @throws InvalidEmailFormatException
      * @throws WrongPluginConfigurationException
      */
-    public function sendAsTestAction(array $matches, array $data): string
+    public function sendAsTestAction(array $data): string
     {
         $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
+        $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
+
         $emailsArray = [];
         foreach ($emails as $emailsArrayItem) {
             $emailsArray[$emailsArrayItem] = $emailsArrayItem;
         }
+
         $numberOfSentEmails = 0;
-        $recipients = $this->repository->findByUids($matches);
+        if (array_key_exists($data['sender'], $possibleSenders)) {
+            $sender = $possibleSenders[$data['sender']];
+        } else {
+            $sender = $possibleSenders['php'];
+        }
+
         if ($data['recipientList']) {
-            foreach ($recipients as $recipient) {
-                if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
-                    $numberOfSentEmails++;
-                    /** @var Message $message */
-                    $message = GeneralUtility::makeInstance(Message::class);
-                    $message->setUuid(Algorithms::generateUUID());
-                    $markers = $recipient;
-                    $markers['uuid'] = $message->getUuid();
-                    $message
-                        ->setBody($data['body'])
-                        ->setSubject($data['subject'])
-                        ->setSender($this->getTo($recipient))
-                        ->parseToMarkdown(true)
-                        ->setTo($emailsArray)
-                        ->send();
-                    if ($numberOfSentEmails >= 10) {
-                        break; // we want to stop sending email as it is for demo only.
-                    }
-                }
+            if (is_array($possibleSenders) && $sender) {
+                $numberOfSentEmails++;
+                /** @var Message $message */
+                $message = GeneralUtility::makeInstance(Message::class);
+                $message
+                    ->setBody($data['body'])
+                    ->setSubject($data['subject'])
+                    ->setSender($sender)
+                    ->parseToMarkdown(true)
+                    ->setTo($emailsArray)
+                    ->send();
             }
         }
 
@@ -227,8 +225,8 @@ final class SendMessageController
                 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
             ),
             $numberOfSentEmails,
-            count($recipients),
-            $numberOfSentEmails !== count($recipients)
+            1,
+            $numberOfSentEmails !== 1
                 ? $this->getLanguageService()->sL(
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
                 )

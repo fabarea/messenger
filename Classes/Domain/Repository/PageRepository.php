@@ -29,7 +29,7 @@ class PageRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchOne();
+        $messages = $query->execute()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
