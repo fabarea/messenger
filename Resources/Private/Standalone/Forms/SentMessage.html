@@ -44,7 +44,7 @@
                 <label for="has-body-text">
                     <input class="p-2 m-1"
                            id="has-body-text"
-                           name="tx_messenger_user_messengerm5[parseMarkdown]"
+                           name="body-text"
                            onchange="this.checked
                         ? document.getElementById('message-body-container').style = 'display: block'
                         : document.getElementById('message-body-container').style = 'display: none';
@@ -67,7 +67,7 @@
             <label for="has-body-test">
                 <input class="p-2 m-1"
                        id="has-body-test"
-                       name="tx_messenger_user_messengerm5[test]"
+                       name="test"
                        onchange="this.checked
                     ? document.getElementById('recipient-test').style = 'display: block'
                     : document.getElementById('recipient-test').style = 'display: none';
@@ -76,6 +76,7 @@
                        value="1">Send test</label>
         </div>
         <div class="form-group" id="recipient-test" style="display: none;">
+            <p class="bg-warning"> Emails are sent only to test emails if case checked</p>
             <label for="messenger-recipient-test">Test recipient(s) - max 10 emails</label>
             <input class="form-control" id="messenger-recipient-test"
                    name="recipientList"
