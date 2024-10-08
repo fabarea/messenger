@@ -46,6 +46,7 @@ final class SendMessageController
         $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
         return $this->getResponse($content);
     }
+
     protected function getResponse(string $content): ResponseInterface
     {
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
@@ -59,6 +60,7 @@ final class SendMessageController
      * @throws Exception
      * @throws DBALException
      * @throws WrongPluginConfigurationException
+     * @throws RandomException
      */
     public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
@@ -74,18 +76,29 @@ final class SendMessageController
         if (empty($data['body'])) {
             $data['body'] = implode(PHP_EOL, $pageContent);
         }
-        $content = '';
 
         $sender = $this->getSender($data);
-
-        if (empty($data['recipientList'])) {
-            // todo check if the checkbox has been clicked
-            $content = $this->performEnqueue($matches, $data, $sender);
-        } elseif ($data['recipientList']) {
-            $content = $this->sendAsTestEmail($data, $sender);
-        }
+        $content = $data['test']
+            ? $this->sendAsTestEmail($data, $sender)
+            : $this->performEnqueue($matches, $data, $sender);
 
         return $this->getResponse($content);
+    }
+
+    protected function getPageId(): int
+    {
+        $site = $this->getRequest()->getAttribute('normalizedParams');
+        $httpReferer = $site->getHttpReferer();
+        $parsedUrl = parse_url($httpReferer);
+        $queryString = $parsedUrl['query'] ?? '';
+        parse_str($queryString, $queryParams);
+        $id = $queryParams['id'] ?? null;
+        return (int) $id;
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 
     protected function getSender(array $data): array
@@ -103,20 +116,47 @@ final class SendMessageController
         return $sender;
     }
 
-    protected function getPageId(): int
+    /**
+     * @throws InvalidEmailFormatException
+     * @throws WrongPluginConfigurationException
+     */
+    private function sendAsTestEmail(array $data, array $sender): string
     {
-        $site = $this->getRequest()->getAttribute('normalizedParams');
-        $httpReferer = $site->getHttpReferer();
-        $parsedUrl = parse_url($httpReferer);
-        $queryString = $parsedUrl['query'] ?? '';
-        parse_str($queryString, $queryParams);
-        $id = $queryParams['id'] ?? null;
-        return (int) $id;
+        $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
+
+        $emailsArray = [];
+        foreach ($emails as $emailsArrayItem) {
+            if (!filter_var($emailsArrayItem, FILTER_VALIDATE_EMAIL)) {
+                throw new InvalidEmailFormatException('You have an set an invalid email !');
+            }
+            $emailsArray[$emailsArrayItem] = $emailsArrayItem;
+        }
+        $numberOfSentEmails = 0;
+        if (!empty($emails)) {
+            $numberOfSentEmails++;
+            /** @var Message $message */
+            $message = GeneralUtility::makeInstance(Message::class);
+            $message
+                ->setBody($data['body'])
+                ->setSubject($data['subject'])
+                ->setSender($sender)
+                ->parseToMarkdown(true)
+                ->setTo($emailsArray)
+                ->send();
+        }
+
+        return $numberOfSentEmails !== 1
+            ? $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+            )
+            : $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
+            );
     }
 
-    private function getRequest(): ServerRequestInterface
+    protected function getLanguageService(): LanguageService
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        return $GLOBALS['LANG'];
     }
 
     /**
@@ -186,54 +226,5 @@ final class SendMessageController
         $name = implode(' ', $nameParts);
 
         return [$email => $name];
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
-
-    /**
-     * @throws InvalidEmailFormatException
-     * @throws WrongPluginConfigurationException
-     */
-    private function sendAsTestEmail(array $data, array $sender): string
-    {
-        $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
-
-        $emailsArray = [];
-        foreach ($emails as $emailsArrayItem) {
-            // todo validate email
-            $emailsArray[$emailsArrayItem] = $emailsArrayItem;
-        }
-
-        $numberOfSentEmails = 0;
-
-        if (!empty($emails)) {
-            $numberOfSentEmails++;
-            /** @var Message $message */
-            $message = GeneralUtility::makeInstance(Message::class);
-            $message
-                ->setBody($data['body'])
-                ->setSubject($data['subject'])
-                ->setSender($sender)
-                ->parseToMarkdown(true)
-                ->setTo($emailsArray)
-                ->send();
-        }
-
-        return sprintf(
-            '%s %s / %s. %s',
-            $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
-            ),
-            $numberOfSentEmails,
-            1,
-            $numberOfSentEmails !== 1
-                ? $this->getLanguageService()->sL(
-                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-                )
-                : '',
-        );
     }
 }
