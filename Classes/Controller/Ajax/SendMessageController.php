@@ -111,11 +111,9 @@ final class SendMessageController
         $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
         $recipients = $this->repository->findByUids($matches);
         $numberOfSentEmails = 0;
-        if (array_key_exists($data['sender'], $possibleSenders)) {
-            $sender = $possibleSenders[$data['sender']];
-        } else {
-            $sender = $possibleSenders['php'];
-        }
+        $sender = array_key_exists($data['sender'], $possibleSenders)
+            ? $possibleSenders[$data['sender']]
+            : $possibleSenders['php'];
 
         if (is_array($possibleSenders) && $sender) {
             $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
