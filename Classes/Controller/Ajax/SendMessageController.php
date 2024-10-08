@@ -46,7 +46,6 @@ final class SendMessageController
         $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
         return $this->getResponse($content);
     }
-
     protected function getResponse(string $content): ResponseInterface
     {
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
@@ -76,16 +75,35 @@ final class SendMessageController
             $data['body'] = implode(PHP_EOL, $pageContent);
         }
         $content = '';
-        if ($data['sender'] && empty($data['recipientList'])) {
-            $content = $this->getQueueAction($matches, $data);
+
+        $sender = $this->getSender($data);
+
+        if (empty($data['recipientList'])) {
+            // todo check if the checkbox has been clicked
+            $content = $this->performEnqueue($matches, $data, $sender);
         } elseif ($data['recipientList']) {
-            $content = $this->sendAsTestAction($data);
+            $content = $this->sendAsTestEmail($data, $sender);
         }
 
         return $this->getResponse($content);
     }
 
-    public function getPageId(): int
+    protected function getSender(array $data): array
+    {
+        $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
+        $sender = array_key_exists($data['sender'], $possibleSenders)
+            ? $possibleSenders[$data['sender']]
+            : $possibleSenders['php'];
+        if (empty($sender)) {
+            throw new WrongPluginConfigurationException(
+                'No sender found. Please configure one in the extension settings.',
+                1728405668,
+            );
+        }
+        return $sender;
+    }
+
+    protected function getPageId(): int
     {
         $site = $this->getRequest()->getAttribute('normalizedParams');
         $httpReferer = $site->getHttpReferer();
@@ -106,36 +124,30 @@ final class SendMessageController
      * @throws Exception
      * @throws InvalidEmailFormatException|RandomException
      */
-    public function getQueueAction(array $matches, array $data): string
+    public function performEnqueue(array $matches, array $data, array $sender): string
     {
-        $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
         $recipients = $this->repository->findByUids($matches);
         $numberOfSentEmails = 0;
-        $sender = array_key_exists($data['sender'], $possibleSenders)
-            ? $possibleSenders[$data['sender']]
-            : $possibleSenders['php'];
 
-        if (is_array($possibleSenders) && $sender) {
-            $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
-            foreach ($recipients as $recipient) {
-                if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
-                    $numberOfSentEmails++;
-                    /** @var Message $message */
-                    $message = GeneralUtility::makeInstance(Message::class);
-                    $message->setUuid(Algorithms::generateUUID());
-                    $markers = $recipient;
-                    $markers['uuid'] = $message->getUuid();
-                    $message
-                        ->setBody($data['body'])
-                        ->setSubject($data['subject'])
-                        ->setSender($sender)
-                        ->setMailingName($mailingName)
-                        ->assign('recipient', $markers)
-                        ->assignMultiple($markers)
-                        ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
-                        ->setTo($this->getTo($recipient))
-                        ->enqueue();
-                }
+        $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
+        foreach ($recipients as $recipient) {
+            if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
+                $numberOfSentEmails++;
+                /** @var Message $message */
+                $message = GeneralUtility::makeInstance(Message::class);
+                $message->setUuid(Algorithms::generateUUID());
+                $markers = $recipient;
+                $markers['uuid'] = $message->getUuid();
+                $message
+                    ->setBody($data['body'])
+                    ->setSubject($data['subject'])
+                    ->setSender($sender)
+                    ->setMailingName($mailingName)
+                    ->assign('recipient', $markers)
+                    ->assignMultiple($markers)
+                    ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
+                    ->setTo($this->getTo($recipient))
+                    ->enqueue();
             }
         }
 
@@ -185,36 +197,29 @@ final class SendMessageController
      * @throws InvalidEmailFormatException
      * @throws WrongPluginConfigurationException
      */
-    public function sendAsTestAction(array $data): string
+    private function sendAsTestEmail(array $data, array $sender): string
     {
         $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
-        $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
 
         $emailsArray = [];
         foreach ($emails as $emailsArrayItem) {
+            // todo validate email
             $emailsArray[$emailsArrayItem] = $emailsArrayItem;
         }
 
         $numberOfSentEmails = 0;
-        if (array_key_exists($data['sender'], $possibleSenders)) {
-            $sender = $possibleSenders[$data['sender']];
-        } else {
-            $sender = $possibleSenders['php'];
-        }
 
-        if ($data['recipientList']) {
-            if (is_array($possibleSenders) && $sender) {
-                $numberOfSentEmails++;
-                /** @var Message $message */
-                $message = GeneralUtility::makeInstance(Message::class);
-                $message
-                    ->setBody($data['body'])
-                    ->setSubject($data['subject'])
-                    ->setSender($sender)
-                    ->parseToMarkdown(true)
-                    ->setTo($emailsArray)
-                    ->send();
-            }
+        if (!empty($emails)) {
+            $numberOfSentEmails++;
+            /** @var Message $message */
+            $message = GeneralUtility::makeInstance(Message::class);
+            $message
+                ->setBody($data['body'])
+                ->setSubject($data['subject'])
+                ->setSender($sender)
+                ->parseToMarkdown(true)
+                ->setTo($emailsArray)
+                ->send();
         }
 
         return sprintf(
