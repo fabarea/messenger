@@ -439,7 +439,7 @@ class Message
             'recipient_bcc' => $this->formatAddresses($mailMessage->getBcc()),
             'reply_to' => $mailMessage->getReplyTo(),
             'subject' => $mailMessage->getSubject(),
-            'body' => $mailMessage->getBody(),
+            'body' => $mailMessage->getBody() ? $mailMessage->getBody()->toString() : $this->getBody(),
             'attachment' => count($this->attachments),
             'context' => (string) Environment::getContext(),
             'was_opened' => 0,
