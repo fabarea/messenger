@@ -12,4 +12,8 @@ namespace Fab\Messenger\Domain\Repository;
 interface MessengerRepositoryInterface
 {
     public function findByUid(int $uid): array;
+
+    public function findAll(): array;
+
+    public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array;
 }

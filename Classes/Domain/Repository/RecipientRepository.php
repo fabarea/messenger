@@ -65,7 +65,9 @@ class RecipientRepository extends AbstractContentRepository
         if ($constraints) {
             $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
         }
-
+        if ($orderings === []) {
+            $orderings = ['uid' => 'ASC'];
+        }
         # We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
@@ -74,6 +76,17 @@ class RecipientRepository extends AbstractContentRepository
         }
 
         return $queryBuilder->execute()->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
+    public function findAll(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('uid')->from($this->tableName);
+        return $query->execute()->fetchAllAssociative();
     }
 
     /**

@@ -13,12 +13,14 @@ use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\Utility\Algorithms;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Random\RandomException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 
 final class SendMessageController
 {
@@ -69,6 +71,7 @@ final class SendMessageController
         if (!empty($columnsToSendString)) {
             $stringUids = explode(',', $columnsToSendString['matches']['uid']);
             $matches = array_map('intval', $stringUids);
+            $searchTerm = $request->getQueryParams()['search'] ?? '';
         }
         $pageContent = $this->pageRepository->findByUid($this->getPageId());
 
@@ -80,7 +83,7 @@ final class SendMessageController
         $sender = $this->getSender($data);
         $content = $data['test']
             ? $this->sendAsTestEmail($data, $sender)
-            : $this->performEnqueue($matches, $data, $sender);
+            : $this->performEnqueue($matches, $data, $sender, $searchTerm);
 
         return $this->getResponse($content);
     }
@@ -163,12 +166,18 @@ final class SendMessageController
      * @throws DBALException
      * @throws Exception
      * @throws InvalidEmailFormatException|RandomException
+     * @throws NoSuchArgumentException
      */
-    public function performEnqueue(array $matches, array $data, array $sender): string
+    public function performEnqueue(array $matches, array $data, array $sender, string $term): string
     {
-        $recipients = $this->repository->findByUids($matches);
+        $recipients =
+            isset($matches[0]) && $matches[0] === 0
+                ? $this->repository->findAll()
+                : $this->repository->findByUids($matches);
+        if (!empty($term)) {
+            $recipients = $this->repository->findByDemand($this->getDemand($term));
+        }
         $numberOfSentEmails = 0;
-
         $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
         foreach ($recipients as $recipient) {
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
@@ -204,6 +213,22 @@ final class SendMessageController
                 )
                 : '',
         );
+    }
+
+    public function getDemand($searchTerm): array
+    {
+        $demand = [];
+        $demandFields = GeneralUtility::trimExplode(
+            ',',
+            ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+            true,
+        );
+        if (strlen($searchTerm) > 0) {
+            foreach ($demandFields as $field) {
+                $demand[$field] = $searchTerm;
+            }
+        }
+        return $demand;
     }
 
     protected function getTo(array $recipient): array

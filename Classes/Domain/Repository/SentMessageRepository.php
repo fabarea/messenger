@@ -48,6 +48,14 @@ class SentMessageRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
+    public function findAll(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('*')->from($this->tableName);
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
     public function findByUuid(string $uuid): array
     {
         $query = $this->getQueryBuilder();
@@ -105,7 +113,9 @@ class SentMessageRepository extends AbstractContentRepository
         if ($constraints) {
             $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
         }
-
+        if ($orderings === []) {
+            $orderings = ['uid' => 'ASC'];
+        }
         # We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 

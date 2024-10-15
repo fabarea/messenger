@@ -39,10 +39,9 @@ final class ExportDataAjaxController
 
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
-        $data = [];
         $this->request = $request;
-
         $matches = [];
+        $moduleNumber = '';
         $possibleKeys = [
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
@@ -53,18 +52,20 @@ final class ExportDataAjaxController
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
                 $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
+                $moduleNumber = $key;
                 break;
             }
         }
 
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
-
         $this->getDataType($this->dataType);
-
-        if (!empty($matches)) {
-            $stringUids = explode(',', $matches);
-            $uids = array_map('intval', $stringUids);
-            $data = $this->repository->findByUids($uids);
+        $term = $this->request->getQueryParams()['search'] ?? '';
+        if (!empty($term)) {
+            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $term));
+        } else {
+            $data = $matches
+                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
+                : $this->repository->findAll();
         }
         $content =
             count($data) > 1
@@ -105,6 +106,44 @@ final class ExportDataAjaxController
         }
     }
 
+    public function getDemand(string $moduleNumber, string $searchTerm): array
+    {
+        $demandFields = $this->getDemandFields($moduleNumber);
+        return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
+    }
+
+    private function getDemandFields(string $moduleNumber): array
+    {
+        switch ($moduleNumber) {
+            case 'tx_messenger_messenger_messengertxmessengerm1':
+                return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+            case 'tx_messenger_messenger_messengertxmessengerm2':
+                return ['type', 'subject', 'message_layout', 'qualifier'];
+            case 'tx_messenger_messenger_messengertxmessengerm3':
+                return ['content', 'qualifier'];
+            case 'tx_messenger_messenger_messengertxmessengerm4':
+                return [
+                    'recipient_cc',
+                    'recipient',
+                    'sender',
+                    'subject',
+                    'body',
+                    'attachment',
+                    'context',
+                    'mailing_name',
+                    'message_template',
+                    'message_layout',
+                ];
+            case 'tx_messenger_messenger_messengertxmessengerm5':
+                return GeneralUtility::trimExplode(
+                    ',',
+                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                );
+            default:
+                return [];
+        }
+    }
+
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
@@ -124,6 +163,7 @@ final class ExportDataAjaxController
         $this->request = $request;
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
         $matches = [];
+        $moduleNumber = '';
         $possibleKeys = [
             'tx_messenger_messenger_messengertxmessengerm1',
             'tx_messenger_messenger_messengertxmessengerm2',
@@ -134,16 +174,22 @@ final class ExportDataAjaxController
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
                 $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
+                $moduleNumber = $key;
                 break;
             }
         }
         $this->getDataType($this->dataType);
-
-        $uids = [];
-        if (!empty($matches)) {
-            $stringUids = explode(',', $matches);
-            $uids = array_map('intval', $stringUids);
+        $term = $this->request->getQueryParams()['search'] ?? '';
+        if (!empty($term)) {
+            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $request, $term));
+        } else {
+            $data = $matches
+                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
+                : $this->repository->findAll();
         }
+        $uids = array_map(static function ($item) {
+            return $item['uid'];
+        }, $data);
         if ($this->request->getQueryParams()['format'] && $uids) {
             $columns = TcaFieldsUtility::getFields($this->tableName);
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);

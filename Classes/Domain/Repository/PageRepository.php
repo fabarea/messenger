@@ -17,6 +17,24 @@ class PageRepository extends AbstractContentRepository
 {
     protected string $tableName = 'pages';
 
+    public function findByUids(array $uids): array
+    {
+        $query = $this->getQueryBuilder();
+        $query
+            ->select('*')
+            ->from($this->tableName)
+            ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    protected function getQueryBuilder(): QueryBuilder
+    {
+        /** @var ConnectionPool $connectionPool */
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        return $connectionPool->getQueryBuilderForTable($this->tableName);
+    }
+
     public function findByUid(int $uid): array
     {
         $query = $this->getQueryBuilder();
@@ -34,10 +52,41 @@ class PageRepository extends AbstractContentRepository
         return is_array($messages) ? $messages : [];
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    public function findAll(): array
     {
-        /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        return $connectionPool->getQueryBuilderForTable($this->tableName);
+        $query = $this->getQueryBuilder();
+        $query->select('*')->from($this->tableName);
+
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select('*')->from($this->tableName);
+
+        $constraints = [];
+        foreach ($demand as $field => $value) {
+            $constraints[] = $queryBuilder
+                ->expr()
+                ->like(
+                    $field,
+                    $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                );
+        }
+        if ($constraints) {
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+        }
+        if ($orderings === []) {
+            $orderings = ['uid' => 'ASC'];
+        }
+        # We handle the sorting
+        $queryBuilder->addOrderBy(key($orderings), current($orderings));
+
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder->execute()->fetchAllAssociative();
     }
 }
