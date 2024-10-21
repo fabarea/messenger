@@ -21,6 +21,7 @@ use Random\RandomException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 
 final class SendMessageController
 {
@@ -46,7 +47,18 @@ final class SendMessageController
                 '<option value="' . htmlspecialchars($sender) . '">' . htmlspecialchars($sender) . '</option>';
         }
         $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
+
         return $this->getResponse($content);
+        // todo
+        //        /** @var StandaloneView $view */
+        //        $view = GeneralUtility::makeInstance(StandaloneView::class);
+        //
+        //        $view->setTemplatePathAndFilename('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html');
+        //        $view->assignMultiple(
+        //            [
+        //                'senders' => GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders(),
+        //            ]);
+        //        return $this->getResponse($view->render());
     }
 
     protected function getResponse(string $content): ResponseInterface

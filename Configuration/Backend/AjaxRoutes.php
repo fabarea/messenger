@@ -35,11 +35,11 @@ return [
     ],
 
     'newsletter_send_message_from_clipboard' => [
-        'path' => '/newsletter/send-message-from-clipboard',
-        'target' => SendMessageController::class . '::messageFromRecipientAction',
+        'path' => '/newsletter/send-message-from-clipboard', // display-send-message-modal
+        'target' => SendMessageController::class . '::messageFromRecipientAction', // DisplaySendMessageModalAjaxController::class . '::displayAction',
     ],
     'newsletter_send_message_from_enqueue' => [
-        'path' => '/newsletter/send-message-from-enqueue',
-        'target' => SendMessageController::class . '::enqueueAction',
+        'path' => '/newsletter/send-message-from-enqueue', // enqueue or enqueue-messages
+        'target' => SendMessageController::class . '::enqueueAction', // EnqueueMessageAjaxController::class . '::enqueueAction',
     ],
 ];

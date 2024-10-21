@@ -6,7 +6,6 @@ namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
-use Fab\Messenger\Domain\Repository\PageContentRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
