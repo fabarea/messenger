@@ -49,6 +49,7 @@ final class ExportDataAjaxController
             'tx_messenger_messenger_messengertxmessengerm4',
             'tx_messenger_messenger_messengertxmessengerm5',
         ];
+        // todo improve me!
         foreach ($possibleKeys as $key) {
             if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
                 $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
@@ -106,13 +107,13 @@ final class ExportDataAjaxController
         }
     }
 
-    public function getDemand(string $moduleNumber, string $searchTerm): array
+    public function getDemand(string $moduleSignature, string $searchTerm): array
     {
-        $demandFields = $this->getDemandFields($moduleNumber);
+        $demandFields = $this->getDemandedFields($moduleSignature);
         return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
     }
 
-    private function getDemandFields(string $moduleNumber): array
+    private function getDemandedFields(string $moduleNumber): array
     {
         switch ($moduleNumber) {
             case 'tx_messenger_messenger_messengertxmessengerm1':
@@ -181,7 +182,7 @@ final class ExportDataAjaxController
         $this->getDataType($this->dataType);
         $term = $this->request->getQueryParams()['search'] ?? '';
         if (!empty($term)) {
-            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $request, $term));
+            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $term));
         } else {
             $data = $matches
                 ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
