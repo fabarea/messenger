@@ -20,7 +20,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
       uri.addQueryParam(
-        'tx_messenger_user_messengerm1[matches][uid]',
+        'tx_messenger_user_messenger[matches][uid]',
         columnsToSend.join(',') + '&dataType=' + type + '&search=' + searchTerm,
       );
       return decodeURIComponent(uri.toString());
@@ -45,8 +45,16 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
       uri.addQueryParam(
-        module + '[matches][uid]',
-        columnsToSend.join(',') + '&format=' + format + '&dataType=' + type + '&search=' + searchTerm,
+        'tx_messenger_user_messenger' + '[matches][uid]',
+        columnsToSend.join(',') +
+          '&format=' +
+          format +
+          '&dataType=' +
+          type +
+          '&search=' +
+          searchTerm +
+          '&module=' +
+          module,
       );
 
       return decodeURIComponent(uri.toString());
@@ -260,7 +268,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         const searchTerm = $(this).data('search-term');
 
         const sendUrl = Messenger.getEditRecipientUrl(
-          TYPO3.settings.ajaxUrls.newsletter_send_message_from_clipboard,
+          TYPO3.settings.ajaxUrls.newsletter_display_send_message_modal,
           [],
           searchTerm,
         );
@@ -285,7 +293,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
 
                 const updateUrl = Messenger.getEditRecipientUrl(
-                  TYPO3.settings.ajaxUrls.newsletter_send_message_from_enqueue,
+                  TYPO3.settings.ajaxUrls.newsletter_enqueue_messages,
                   [],
                   searchTerm,
                 );

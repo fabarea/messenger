@@ -1,8 +1,9 @@
 <?php
 
+use Fab\Messenger\Controller\Ajax\DisplaySendMessageModalAjaxController;
+use Fab\Messenger\Controller\Ajax\EnqueueMessageAjaxController;
 use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
-use Fab\Messenger\Controller\Ajax\SendMessageController;
 use Fab\Messenger\Controller\Ajax\UpdateRecipientController;
 
 return [
@@ -34,12 +35,12 @@ return [
         'target' => UpdateRecipientController::class . '::saveAction',
     ],
 
-    'newsletter_send_message_from_clipboard' => [
-        'path' => '/newsletter/send-message-from-clipboard', // display-send-message-modal
-        'target' => SendMessageController::class . '::messageFromRecipientAction', // DisplaySendMessageModalAjaxController::class . '::displayAction',
+    'newsletter_display_send_message_modal' => [
+        'path' => '/newsletter/display-send-message-modal',
+        'target' => DisplaySendMessageModalAjaxController::class . '::displayAction',
     ],
-    'newsletter_send_message_from_enqueue' => [
-        'path' => '/newsletter/send-message-from-enqueue', // enqueue or enqueue-messages
-        'target' => SendMessageController::class . '::enqueueAction', // EnqueueMessageAjaxController::class . '::enqueueAction',
+    'newsletter_enqueue_messages' => [
+        'path' => '/newsletter/enqueue-messages',
+        'target' => EnqueueMessageAjaxController::class . '::enqueueAction',
     ],
 ];

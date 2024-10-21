@@ -41,28 +41,16 @@ final class ExportDataAjaxController
     {
         $this->request = $request;
         $matches = [];
-        $moduleNumber = '';
-        $possibleKeys = [
-            'tx_messenger_messenger_messengertxmessengerm1',
-            'tx_messenger_messenger_messengertxmessengerm2',
-            'tx_messenger_messenger_messengertxmessengerm3',
-            'tx_messenger_messenger_messengertxmessengerm4',
-            'tx_messenger_messenger_messengertxmessengerm5',
-        ];
-        // todo improve me!
-        foreach ($possibleKeys as $key) {
-            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
-                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
-                $moduleNumber = $key;
-                break;
-            }
+        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
+            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
         }
-
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
         $this->getDataType($this->dataType);
         $term = $this->request->getQueryParams()['search'] ?? '';
         if (!empty($term)) {
-            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $term));
+            $data = $this->repository->findByDemand(
+                $this->getDemand($this->request->getQueryParams()['module'], $term),
+            );
         } else {
             $data = $matches
                 ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
@@ -164,25 +152,15 @@ final class ExportDataAjaxController
         $this->request = $request;
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
         $matches = [];
-        $moduleNumber = '';
-        $possibleKeys = [
-            'tx_messenger_messenger_messengertxmessengerm1',
-            'tx_messenger_messenger_messengertxmessengerm2',
-            'tx_messenger_messenger_messengertxmessengerm3',
-            'tx_messenger_messenger_messengertxmessengerm4',
-            'tx_messenger_messenger_messengertxmessengerm5',
-        ];
-        foreach ($possibleKeys as $key) {
-            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
-                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
-                $moduleNumber = $key;
-                break;
-            }
+        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
+            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
         }
         $this->getDataType($this->dataType);
         $term = $this->request->getQueryParams()['search'] ?? '';
         if (!empty($term)) {
-            $data = $this->repository->findByDemand($this->getDemand($moduleNumber, $term));
+            $data = $this->repository->findByDemand(
+                $this->getDemand($this->request->getQueryParams()['module'], $term),
+            );
         } else {
             $data = $matches
                 ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
@@ -239,5 +217,14 @@ final class ExportDataAjaxController
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->withBody($stream);
+    }
+
+    protected function getModuleName(ServerRequestInterface $request): string
+    {
+        $pathSegments = explode(
+            '/',
+            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
+        );
+        return end($pathSegments);
     }
 }

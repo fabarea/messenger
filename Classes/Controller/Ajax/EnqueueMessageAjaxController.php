@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fab\Messenger\Controller\Ajax;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\PageRepository;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
@@ -17,13 +15,10 @@ use Fab\Messenger\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Random\RandomException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 
-final class SendMessageController
+class EnqueueMessageAjaxController
 {
     protected ?RecipientRepository $repository;
     protected PageRepository $pageRepository;
@@ -34,48 +29,6 @@ final class SendMessageController
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
     }
 
-    public function messageFromRecipientAction(): ResponseInterface
-    {
-        $senders = GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders();
-
-        $content = file_get_contents(
-            GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html'),
-        );
-        $sendersList = '';
-        foreach ($senders as $sender) {
-            $sendersList .=
-                '<option value="' . htmlspecialchars($sender) . '">' . htmlspecialchars($sender) . '</option>';
-        }
-        $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
-
-        return $this->getResponse($content);
-        // todo
-        //        /** @var StandaloneView $view */
-        //        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        //
-        //        $view->setTemplatePathAndFilename('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html');
-        //        $view->assignMultiple(
-        //            [
-        //                'senders' => GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders(),
-        //            ]);
-        //        return $this->getResponse($view->render());
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
-    }
-
-    /**
-     * @throws InvalidEmailFormatException
-     * @throws Exception
-     * @throws DBALException
-     * @throws WrongPluginConfigurationException
-     * @throws RandomException
-     */
     public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
         $matches = [];
@@ -174,12 +127,6 @@ final class SendMessageController
         return $GLOBALS['LANG'];
     }
 
-    /**
-     * @throws DBALException
-     * @throws Exception
-     * @throws InvalidEmailFormatException|RandomException
-     * @throws NoSuchArgumentException
-     */
     public function performEnqueue(array $matches, array $data, array $sender, string $term): string
     {
         $recipients =
@@ -263,5 +210,13 @@ final class SendMessageController
         $name = implode(' ', $nameParts);
 
         return [$email => $name];
+    }
+
+    protected function getResponse(string $content): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write($content);
+        return $response;
     }
 }
