@@ -85,7 +85,14 @@ class RecipientRepository extends AbstractContentRepository
     public function findAll(): array
     {
         $query = $this->getQueryBuilder();
-        $query->select('uid')->from($this->tableName);
+        $query->select('id')->from($this->tableName);
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findAllEmails(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('email')->from($this->tableName);
         return $query->execute()->fetchAllAssociative();
     }
 

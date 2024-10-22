@@ -130,12 +130,14 @@ class EnqueueMessageAjaxController
     public function performEnqueue(array $matches, array $data, array $sender, string $term): string
     {
         $recipients =
-            isset($matches[0]) && $matches[0] === 0
-                ? $this->repository->findAll()
+            isset($matches[0]) && $matches[0] == 0
+                ? $this->repository->findAllEmails()
                 : $this->repository->findByUids($matches);
+
         if (!empty($term)) {
             $recipients = $this->repository->findByDemand($this->getDemand($term));
         }
+
         $numberOfSentEmails = 0;
         $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
         foreach ($recipients as $recipient) {
