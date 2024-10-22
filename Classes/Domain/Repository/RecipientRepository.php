@@ -54,18 +54,24 @@ class RecipientRepository extends AbstractContentRepository
         $queryBuilder->select('*')->from($this->tableName);
 
         $constraints = [];
-        foreach ($demand as $field => $value) {
-            $constraints[] = $queryBuilder
-                ->expr()
-                ->like(
-                    $field,
-                    $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
-                );
-        }
-        if ($constraints) {
+        if (!empty($demand['likes'])) {
+            foreach ($demand['likes'] as $field => $value) {
+                $constraints[] = $queryBuilder
+                    ->expr()
+                    ->like(
+                        $field,
+                        $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                    );
+            }
             $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
         }
+        if (!empty($demand['uids'])) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
+        }
 
+        if ($orderings === []) {
+            $orderings = ['uid' => 'ASC'];
+        }
         # We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
@@ -74,6 +80,24 @@ class RecipientRepository extends AbstractContentRepository
         }
 
         return $queryBuilder->execute()->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
+    public function findAll(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('id')->from($this->tableName);
+        return $query->execute()->fetchAllAssociative();
+    }
+
+    public function findAllEmails(): array
+    {
+        $query = $this->getQueryBuilder();
+        $query->select('email')->from($this->tableName);
+        return $query->execute()->fetchAllAssociative();
     }
 
     /**

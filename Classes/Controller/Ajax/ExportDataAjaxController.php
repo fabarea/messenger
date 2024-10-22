@@ -15,10 +15,9 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class ExportDataAjaxController
+final class ExportDataAjaxController extends AbstractMessengerAjaxController
 {
     protected ?DataExportService $dataExportService = null;
 
@@ -39,32 +38,22 @@ final class ExportDataAjaxController
 
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
-        $data = [];
         $this->request = $request;
-
         $matches = [];
-        $possibleKeys = [
-            'tx_messenger_messenger_messengertxmessengerm1',
-            'tx_messenger_messenger_messengertxmessengerm2',
-            'tx_messenger_messenger_messengertxmessengerm3',
-            'tx_messenger_messenger_messengertxmessengerm4',
-            'tx_messenger_messenger_messengertxmessengerm5',
-        ];
-        foreach ($possibleKeys as $key) {
-            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
-                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
-                break;
-            }
+        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
+            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
         }
-
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
-
         $this->getDataType($this->dataType);
-
-        if (!empty($matches)) {
-            $stringUids = explode(',', $matches);
-            $uids = array_map('intval', $stringUids);
-            $data = $this->repository->findByUids($uids);
+        $term = $this->request->getQueryParams()['search'] ?? '';
+        if (!empty($term)) {
+            $data = $this->repository->findByDemand(
+                $this->getDemand($this->request->getQueryParams()['module'], $term),
+            );
+        } else {
+            $data = $matches
+                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
+                : $this->repository->findAll();
         }
         $content =
             count($data) > 1
@@ -105,56 +94,81 @@ final class ExportDataAjaxController
         }
     }
 
-    protected function getLanguageService(): LanguageService
+    public function getDemand(string $moduleSignature, string $searchTerm): array
     {
-        return $GLOBALS['LANG'];
+        // todo improve demand
+        $demandFields = $this->getDemandedFields($moduleSignature);
+        return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
     }
 
-    protected function getResponse(string $content): ResponseInterface
+    private function getDemandedFields(string $moduleSignature): array
     {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-
-        return $response;
+        switch ($moduleSignature) {
+            case 'tx_messenger_messenger_messengertxmessengerm1':
+                return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+            case 'tx_messenger_messenger_messengertxmessengerm2':
+                return ['type', 'subject', 'message_layout', 'qualifier'];
+            case 'tx_messenger_messenger_messengertxmessengerm3':
+                return ['content', 'qualifier'];
+            case 'tx_messenger_messenger_messengertxmessengerm4':
+                return [
+                    'recipient_cc',
+                    'recipient',
+                    'sender',
+                    'subject',
+                    'body',
+                    'attachment',
+                    'context',
+                    'mailing_name',
+                    'message_template',
+                    'message_layout',
+                ];
+            case 'tx_messenger_messenger_messengertxmessengerm5':
+                return GeneralUtility::trimExplode(
+                    ',',
+                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                );
+            default:
+                return [];
+        }
     }
 
-    public function validateAction(ServerRequestInterface $request): ResponseInterface
+    public function exportAction(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
         $matches = [];
-        $possibleKeys = [
-            'tx_messenger_messenger_messengertxmessengerm1',
-            'tx_messenger_messenger_messengertxmessengerm2',
-            'tx_messenger_messenger_messengertxmessengerm3',
-            'tx_messenger_messenger_messengertxmessengerm4',
-            'tx_messenger_messenger_messengertxmessengerm5',
-        ];
-        foreach ($possibleKeys as $key) {
-            if (isset($this->request->getQueryParams()[$key]['matches']['uid'])) {
-                $matches = $this->request->getQueryParams()[$key]['matches']['uid'];
-                break;
-            }
+        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
+            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
         }
         $this->getDataType($this->dataType);
+        $term = $this->request->getQueryParams()['search'] ?? '';
 
-        $uids = [];
-        if (!empty($matches)) {
-            $stringUids = explode(',', $matches);
-            $uids = array_map('intval', $stringUids);
+        if (!empty($term)) {
+            $data = $this->repository->findByDemand(
+                $this->getDemand($this->request->getQueryParams()['module'], $term),
+            );
+        } else {
+            $data = $matches
+                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
+                : $this->repository->findAll();
         }
+
+        $uids = array_map(static function ($item) {
+            return $item['uid'];
+        }, $data);
+
         if ($this->request->getQueryParams()['format'] && $uids) {
             $columns = TcaFieldsUtility::getFields($this->tableName);
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
             $this->dataExportService->setRepository($this->repository);
-            $this->exportAction($uids, $this->request->getQueryParams()['format'], $columns);
+            $this->performExport($uids, $this->request->getQueryParams()['format'], $columns);
         }
 
         return $this->getResponse('Error');
     }
 
-    public function exportAction(array $uids, string $format, array $columns): void
+    protected function performExport(array $uids, string $format, array $columns): void
     {
         switch ($format) {
             case 'csv':

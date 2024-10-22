@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fab\Messenger\Controller\Ajax;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\PageRepository;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
@@ -13,14 +11,12 @@ use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\Utility\Algorithms;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Random\RandomException;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class SendMessageController
+class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 {
     protected ?RecipientRepository $repository;
     protected PageRepository $pageRepository;
@@ -31,82 +27,47 @@ final class SendMessageController
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
     }
 
-    public function messageFromRecipientAction(): ResponseInterface
+    public function sendTestAction(ServerRequestInterface $request): ResponseInterface
     {
-        $senders = GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders();
-
-        $content = file_get_contents(
-            GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/SentMessage.html'),
-        );
-        $sendersList = '';
-        foreach ($senders as $sender) {
-            $sendersList .=
-                '<option value="' . htmlspecialchars($sender) . '">' . htmlspecialchars($sender) . '</option>';
-        }
-        $content = str_replace('<!-- SENDERS_PLACEHOLDER -->', $sendersList, $content);
-        return $this->getResponse($content);
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
-    }
-
-    /**
-     * @throws InvalidEmailFormatException
-     * @throws Exception
-     * @throws DBALException
-     * @throws WrongPluginConfigurationException
-     * @throws RandomException
-     */
-    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
-    {
-        $matches = [];
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
-            $matches = array_map('intval', $stringUids);
-        }
-        $pageContent = $this->pageRepository->findByUid($this->getPageId());
-
         $data = $this->getRequest()->getParsedBody();
-        if (empty($data['body'])) {
-            $data['body'] = implode(PHP_EOL, $pageContent);
-        }
+        $data['body'] = $data['body'] ?? $this->getPageId();
 
         $sender = $this->getSender($data);
-        $content = $data['test']
-            ? $this->sendAsTestEmail($data, $sender)
-            : $this->performEnqueue($matches, $data, $sender);
 
+        if (empty($data['recipientList'])) {
+            throw new WrongPluginConfigurationException(
+                'No recipient found. Please configure one in the extension settings.',
+                1729613978,
+            );
+        }
+        $content = $this->sendAsTestEmail($data, $sender);
         return $this->getResponse($content);
     }
 
-    protected function getPageId(): int
+    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
-        $site = $this->getRequest()->getAttribute('normalizedParams');
-        $httpReferer = $site->getHttpReferer();
-        $parsedUrl = parse_url($httpReferer);
-        $queryString = $parsedUrl['query'] ?? '';
-        parse_str($queryString, $queryParams);
-        $id = $queryParams['id'] ?? null;
-        return (int) $id;
-    }
+        $data = $this->getRequest()->getParsedBody();
+        $data['body'] = $data['body'] ?? $this->getPageId();
 
-    private function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
+        $sender = $this->getSender($data);
+
+        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
+
+        $searchTerm = $request->getQueryParams()['search'] ?? '';
+        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
+        return $this->getResponse($content);
     }
 
     protected function getSender(array $data): array
     {
         $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
+
         $sender = array_key_exists($data['sender'], $possibleSenders)
             ? $possibleSenders[$data['sender']]
-            : $possibleSenders['php'];
+            : $possibleSenders['me'];
         if (empty($sender)) {
             throw new WrongPluginConfigurationException(
                 'No sender found. Please configure one in the extension settings.',
@@ -154,21 +115,12 @@ final class SendMessageController
             );
     }
 
-    protected function getLanguageService(): LanguageService
+    public function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
-        return $GLOBALS['LANG'];
-    }
+        $demand = $this->getDemand($uids, $term);
+        $recipients = $this->repository->findByDemand($demand);
 
-    /**
-     * @throws DBALException
-     * @throws Exception
-     * @throws InvalidEmailFormatException|RandomException
-     */
-    public function performEnqueue(array $matches, array $data, array $sender): string
-    {
-        $recipients = $this->repository->findByUids($matches);
         $numberOfSentEmails = 0;
-
         $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
         foreach ($recipients as $recipient) {
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
@@ -204,6 +156,33 @@ final class SendMessageController
                 )
                 : '',
         );
+    }
+
+    public function getDemand(array $uids, string $searchTerm): array
+    {
+        $demand = [
+            'likes' => [],
+            'uids' => [],
+        ];
+
+        // only if we have a list of uids
+        if (!empty($uids)) {
+            $demand['uids'] = $uids;
+        }
+
+        // only if we have a search term
+        if (strlen($searchTerm) > 0) {
+            $demandedFields = GeneralUtility::trimExplode(
+                ',',
+                ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                true,
+            );
+
+            foreach ($demandedFields as $field) {
+                $demand['likes'][$field] = $searchTerm;
+            }
+        }
+        return $demand;
     }
 
     protected function getTo(array $recipient): array

@@ -6,37 +6,36 @@ namespace Fab\Messenger\Controller\Ajax;
 
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
-use Fab\Messenger\Domain\Repository\PageContentRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
-use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class SendAgainConfirmationAjaxController
+final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxController
 {
     protected ?MessengerRepositoryInterface $repository;
 
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
-        $data = [];
-        $columnsToSendString =
-            $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
-            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ??
-                ($request->getQueryParams()['tx_messenger_user_messengerm5'] ?? ''));
-
+        $matches = [];
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
         }
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
-            $columnsToSendArray = array_map('intval', $stringUids);
-            $data = $this->repository->findByUids($columnsToSendArray);
+
+        if (!empty($request->getQueryParams()['tx_messenger_user_messenger'])) {
+            $stringUids = explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid']);
+            if (!empty($stringUids) && $stringUids[0] !== '') {
+                $matches = array_map('intval', $stringUids);
+            }
+        }
+        $term = $request->getQueryParams()['search'] ?? '';
+        if ($term != '') {
+            $data = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
+        } else {
+            $data = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
         }
         $content =
             count($data) > 1
@@ -60,23 +59,46 @@ final class SendAgainConfirmationAjaxController
             case 'message-queue':
                 $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
                 break;
-            case 'recipient-module':
-                $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
-                break;
         }
     }
 
-    protected function getLanguageService(): LanguageService
+    public function getDemand(string $moduleName, string $searchTerm): array
     {
-        return $GLOBALS['LANG'];
+        $demandFields = $this->getDemandFields($moduleName);
+        return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
     }
 
-    protected function getResponse(string $content): ResponseInterface
+    private function getDemandFields(string $moduleName): array
     {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
+        switch ($moduleName) {
+            case 'MessengerTxMessengerM1':
+                return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+
+            case 'MessengerTxMessengerM4':
+                return [
+                    'recipient_cc',
+                    'recipient',
+                    'sender',
+                    'subject',
+                    'body',
+                    'attachment',
+                    'context',
+                    'mailing_name',
+                    'message_template',
+                    'message_layout',
+                ];
+            default:
+                return [];
+        }
+    }
+
+    protected function getModuleName(ServerRequestInterface $request): string
+    {
+        $pathSegments = explode(
+            '/',
+            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
+        );
+        return end($pathSegments);
     }
 
     /**
@@ -85,22 +107,21 @@ final class SendAgainConfirmationAjaxController
      */
     public function sendAgainAction(ServerRequestInterface $request): ResponseInterface
     {
-        $columnsToSendString =
-            $request->getQueryParams()['tx_messenger_user_messengerm1'] ??
-            ($request->getQueryParams()['tx_messenger_user_messengerm4'] ??
-                ($request->getQueryParams()['tx_messenger_user_messengerm5'] ?? ''));
-
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
+        $matches = [];
+        if (!empty($request->getQueryParams()['tx_messenger_user_messenger'])) {
+            $stringUids = explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid']);
             $matches = array_map('intval', $stringUids);
-        } else {
-            $matches = [];
         }
-
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
         }
-        $sentMessages = $this->repository->findByUids($matches);
+        $term = $request->getQueryParams()['search'] ?? '';
+        if (!empty($term) && $term != '') {
+            $sentMessages = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
+        } else {
+            $sentMessages = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
+        }
+
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
             /** @var Message $message */
@@ -151,14 +172,5 @@ final class SendAgainConfirmationAjaxController
             }
         }
         return $normalizedEmails;
-    }
-
-    public function getPageContent(ServerRequestInterface $request): int
-    {
-        $normalizedParams = $request->getAttributes()['normalizedParams'];
-        $parsedUrl = parse_url($normalizedParams->getHttpReferer());
-        parse_str($parsedUrl['query'], $queryParams);
-
-        return (int) $queryParams['id'];
     }
 }

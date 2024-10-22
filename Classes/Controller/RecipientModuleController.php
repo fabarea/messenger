@@ -115,7 +115,11 @@ class RecipientModuleController extends ActionController
     {
         $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
         $demand = [];
-        $demandFields = ['email', 'first_name', 'last_name'];
+        $demandFields = GeneralUtility::trimExplode(
+            ',',
+            ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+            true,
+        );
         if (strlen($searchTerm) > 0) {
             foreach ($demandFields as $field) {
                 $demand[$field] = $searchTerm;
