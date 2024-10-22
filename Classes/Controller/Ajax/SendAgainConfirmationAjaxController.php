@@ -37,7 +37,7 @@ final class SendAgainConfirmationAjaxController
         if ($term != '') {
             $data = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
         } else {
-            $data = $matches ? $this->repository->findByUids($matches) : $this->repository->findAll();
+            $data = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
         }
         $content =
             count($data) > 1
@@ -131,11 +131,12 @@ final class SendAgainConfirmationAjaxController
             $this->getDataType($request->getQueryParams()['dataType']);
         }
         $term = $request->getQueryParams()['search'] ?? '';
-        if (!empty($term)) {
+        if (!empty($term) && $term != '') {
             $sentMessages = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
         } else {
-            $sentMessages = $matches ? $this->repository->findByUids($matches) : $this->repository->findAll();
+            $sentMessages = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
         }
+
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
             /** @var Message $message */
