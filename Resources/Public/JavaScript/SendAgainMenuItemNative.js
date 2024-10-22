@@ -64,7 +64,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @return void
      */
     initialize: function () {
-      this.initializeExport();
+      this.initializeExport(); // todo we must split up the functionalities
       this.initializeSendAgainConfirmation();
       this.initializeUpdateRecipients();
       this.initializeSendMessage();
@@ -141,7 +141,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         const searchTerm = $(this).data('search-term');
 
         const url = Messenger.getExportStorageUrl(
-          TYPO3.settings.ajaxUrls.messenger_export_data,
+          TYPO3.settings.ajaxUrls.messenger_export_data_confirm,
           format,
           module,
           type,
@@ -166,7 +166,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
                 const exportUrl = Messenger.getExportStorageUrl(
-                  TYPO3.settings.ajaxUrls.messenger_export_data_validation,
+                  TYPO3.settings.ajaxUrls.messenger_export_data_export,
                   format,
                   module,
                   type,
@@ -184,7 +184,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                   success: function (response) {
                     if (response) {
                       window.location.href = Messenger.getExportStorageUrl(
-                        TYPO3.settings.ajaxUrls.messenger_export_data_validation,
+                        TYPO3.settings.ajaxUrls.messenger_export_data_export,
                         format,
                         module,
                         type,
@@ -274,7 +274,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
         );
         Messenger.modal = Modal.advanced({
           type: Modal.types.ajax,
-          title: 'Update recipient',
+          title: 'Enqueue messages',
           severity: top.TYPO3.Severity.notice,
           content: sendUrl,
           staticBackdrop: false,
@@ -292,8 +292,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               trigger: function () {
                 $('.btn', Messenger.modal).attr('disabled', 'disabled');
 
+                //$('#has-body-test') detect if checked
                 const updateUrl = Messenger.getEditRecipientUrl(
-                  TYPO3.settings.ajaxUrls.newsletter_enqueue_messages,
+                  TYPO3.settings.ajaxUrls.newsletter_enqueue_messages, // todo detect if test message or not
                   [],
                   searchTerm,
                 );

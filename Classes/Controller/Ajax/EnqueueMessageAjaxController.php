@@ -12,13 +12,11 @@ use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\ConfigurationUtility;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class EnqueueMessageAjaxController
+class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 {
     protected ?RecipientRepository $repository;
     protected PageRepository $pageRepository;
@@ -29,52 +27,47 @@ class EnqueueMessageAjaxController
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
     }
 
-    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
+    public function sendTestAction(ServerRequestInterface $request): ResponseInterface
     {
-        $matches = [];
-        $columnsToSendString = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        if (!empty($columnsToSendString)) {
-            $stringUids = explode(',', $columnsToSendString['matches']['uid']);
-            $matches = array_map('intval', $stringUids);
-            $searchTerm = $request->getQueryParams()['search'] ?? '';
-        }
-        $pageContent = $this->pageRepository->findByUid($this->getPageId());
-
         $data = $this->getRequest()->getParsedBody();
-        if (empty($data['body'])) {
-            $data['body'] = implode(PHP_EOL, $pageContent);
-        }
+        $data['body'] = $data['body'] ?? $this->getPageId();
 
         $sender = $this->getSender($data);
-        $content = $data['test']
-            ? $this->sendAsTestEmail($data, $sender)
-            : $this->performEnqueue($matches, $data, $sender, $searchTerm);
 
+        if (empty($data['recipientList'])) {
+            throw new WrongPluginConfigurationException(
+                'No recipient found. Please configure one in the extension settings.',
+                1729613978,
+            );
+        }
+        $content = $this->sendAsTestEmail($data, $sender);
         return $this->getResponse($content);
     }
 
-    protected function getPageId(): int
+    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
-        $site = $this->getRequest()->getAttribute('normalizedParams');
-        $httpReferer = $site->getHttpReferer();
-        $parsedUrl = parse_url($httpReferer);
-        $queryString = $parsedUrl['query'] ?? '';
-        parse_str($queryString, $queryParams);
-        $id = $queryParams['id'] ?? null;
-        return (int) $id;
-    }
+        $data = $this->getRequest()->getParsedBody();
+        $data['body'] = $data['body'] ?? $this->getPageId();
 
-    private function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
+        $sender = $this->getSender($data);
+
+        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
+
+        $searchTerm = $request->getQueryParams()['search'] ?? '';
+        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
+        return $this->getResponse($content);
     }
 
     protected function getSender(array $data): array
     {
         $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
+
         $sender = array_key_exists($data['sender'], $possibleSenders)
             ? $possibleSenders[$data['sender']]
-            : $possibleSenders['php'];
+            : $possibleSenders['me'];
         if (empty($sender)) {
             throw new WrongPluginConfigurationException(
                 'No sender found. Please configure one in the extension settings.',
@@ -122,21 +115,10 @@ class EnqueueMessageAjaxController
             );
     }
 
-    protected function getLanguageService(): LanguageService
+    public function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
-        return $GLOBALS['LANG'];
-    }
-
-    public function performEnqueue(array $matches, array $data, array $sender, string $term): string
-    {
-        $recipients =
-            isset($matches[0]) && $matches[0] == 0
-                ? $this->repository->findAllEmails()
-                : $this->repository->findByUids($matches);
-
-        if (!empty($term)) {
-            $recipients = $this->repository->findByDemand($this->getDemand($term));
-        }
+        $demand = $this->getDemand($uids, $term);
+        $recipients = $this->repository->findByDemand($demand);
 
         $numberOfSentEmails = 0;
         $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
@@ -176,17 +158,28 @@ class EnqueueMessageAjaxController
         );
     }
 
-    public function getDemand($searchTerm): array
+    public function getDemand(array $uids, string $searchTerm): array
     {
-        $demand = [];
-        $demandFields = GeneralUtility::trimExplode(
-            ',',
-            ConfigurationUtility::getInstance()->get('recipient_default_fields'),
-            true,
-        );
+        $demand = [
+            'likes' => [],
+            'uids' => [],
+        ];
+
+        // only if we have a list of uids
+        if (!empty($uids)) {
+            $demand['uids'] = $uids;
+        }
+
+        // only if we have a search term
         if (strlen($searchTerm) > 0) {
-            foreach ($demandFields as $field) {
-                $demand[$field] = $searchTerm;
+            $demandedFields = GeneralUtility::trimExplode(
+                ',',
+                ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                true,
+            );
+
+            foreach ($demandedFields as $field) {
+                $demand['likes'][$field] = $searchTerm;
             }
         }
         return $demand;
@@ -212,13 +205,5 @@ class EnqueueMessageAjaxController
         $name = implode(' ', $nameParts);
 
         return [$email => $name];
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
     }
 }

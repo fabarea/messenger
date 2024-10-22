@@ -26,7 +26,7 @@
             <select class="form-control"
                     id="messenger-sender" name="sender">
                 <f:for as="sender" each="{senders}">
-                    <option value="{sender.value}">{sender}</option>
+                    <option value="{sender}">{sender}</option>
                 </f:for>
             </select>
         </div>
@@ -67,7 +67,6 @@
             <label for="has-body-test">
                 <input class="p-2 m-1"
                        id="has-body-test"
-                       name="test"
                        onchange="this.checked
                     ? document.getElementById('recipient-test').style = 'display: block'
                     : document.getElementById('recipient-test').style = 'display: none';

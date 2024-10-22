@@ -15,10 +15,9 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class ExportDataAjaxController
+final class ExportDataAjaxController extends AbstractMessengerAjaxController
 {
     protected ?DataExportService $dataExportService = null;
 
@@ -97,13 +96,14 @@ final class ExportDataAjaxController
 
     public function getDemand(string $moduleSignature, string $searchTerm): array
     {
+        // todo improve demand
         $demandFields = $this->getDemandedFields($moduleSignature);
         return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
     }
 
-    private function getDemandedFields(string $moduleNumber): array
+    private function getDemandedFields(string $moduleSignature): array
     {
-        switch ($moduleNumber) {
+        switch ($moduleSignature) {
             case 'tx_messenger_messenger_messengertxmessengerm1':
                 return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
             case 'tx_messenger_messenger_messengertxmessengerm2':
@@ -133,21 +133,7 @@ final class ExportDataAjaxController
         }
     }
 
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-
-        return $response;
-    }
-
-    public function validateAction(ServerRequestInterface $request): ResponseInterface
+    public function exportAction(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
@@ -157,6 +143,7 @@ final class ExportDataAjaxController
         }
         $this->getDataType($this->dataType);
         $term = $this->request->getQueryParams()['search'] ?? '';
+
         if (!empty($term)) {
             $data = $this->repository->findByDemand(
                 $this->getDemand($this->request->getQueryParams()['module'], $term),
@@ -166,20 +153,22 @@ final class ExportDataAjaxController
                 ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
                 : $this->repository->findAll();
         }
+
         $uids = array_map(static function ($item) {
             return $item['uid'];
         }, $data);
+
         if ($this->request->getQueryParams()['format'] && $uids) {
             $columns = TcaFieldsUtility::getFields($this->tableName);
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
             $this->dataExportService->setRepository($this->repository);
-            $this->exportAction($uids, $this->request->getQueryParams()['format'], $columns);
+            $this->performExport($uids, $this->request->getQueryParams()['format'], $columns);
         }
 
         return $this->getResponse('Error');
     }
 
-    public function exportAction(array $uids, string $format, array $columns): void
+    protected function performExport(array $uids, string $format, array $columns): void
     {
         switch ($format) {
             case 'csv':
@@ -217,14 +206,5 @@ final class ExportDataAjaxController
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
             ->withBody($stream);
-    }
-
-    protected function getModuleName(ServerRequestInterface $request): string
-    {
-        $pathSegments = explode(
-            '/',
-            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
-        );
-        return end($pathSegments);
     }
 }

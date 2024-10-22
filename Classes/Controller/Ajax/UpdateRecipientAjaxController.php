@@ -5,12 +5,10 @@ namespace Fab\Messenger\Controller\Ajax;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class UpdateRecipientController
+final class UpdateRecipientAjaxController extends AbstractMessengerAjaxController
 {
     protected ?RecipientRepository $repository;
 
@@ -25,14 +23,6 @@ final class UpdateRecipientController
             GeneralUtility::getFileAbsFileName('EXT:messenger/Resources/Private/Standalone/Forms/UpdateRecipient.html'),
         );
         return $this->getResponse($content);
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
     }
 
     /**
@@ -68,10 +58,5 @@ final class UpdateRecipientController
         }
         $content = sprintf('Created %s/%s', $created, $counter);
         return $this->getResponse($content);
-    }
-
-    private function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

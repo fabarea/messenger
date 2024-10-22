@@ -10,13 +10,11 @@ use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class SendAgainConfirmationAjaxController
+final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxController
 {
     protected ?MessengerRepositoryInterface $repository;
 
@@ -101,19 +99,6 @@ final class SendAgainConfirmationAjaxController
             trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
         );
         return end($pathSegments);
-    }
-
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
-
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
     }
 
     /**
