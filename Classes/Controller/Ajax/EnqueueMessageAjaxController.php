@@ -11,7 +11,6 @@ use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
 use Fab\Messenger\Utility\Algorithms;
-use Fab\Messenger\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -117,7 +116,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 
     public function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
-        $demand = $this->getDemand($uids, $term);
+        $demand = $this->getDemand($uids, 'MessengerTxMessengerM5', $term);
         $recipients = $this->repository->findByDemand($demand);
 
         $numberOfSentEmails = 0;
@@ -156,33 +155,6 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                 )
                 : '',
         );
-    }
-
-    public function getDemand(array $uids, string $searchTerm): array
-    {
-        $demand = [
-            'likes' => [],
-            'uids' => [],
-        ];
-
-        // only if we have a list of uids
-        if (!empty($uids)) {
-            $demand['uids'] = $uids;
-        }
-
-        // only if we have a search term
-        if (strlen($searchTerm) > 0) {
-            $demandedFields = GeneralUtility::trimExplode(
-                ',',
-                ConfigurationUtility::getInstance()->get('recipient_default_fields'),
-                true,
-            );
-
-            foreach ($demandedFields as $field) {
-                $demand['likes'][$field] = $searchTerm;
-            }
-        }
-        return $demand;
     }
 
     protected function getTo(array $recipient): array

@@ -67,7 +67,7 @@ class MessageQueueController extends AbstractMessengerController
 
     protected string $action = 'index';
 
-    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm4';
+    protected string $moduleName = 'MessengerTxMessengerM4';
 
     protected string $dataType = 'message-queue';
 

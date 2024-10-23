@@ -125,16 +125,23 @@ class MessageTemplateRepository extends AbstractContentRepository
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('*')->from($this->tableName);
-
         $constraints = [];
-        foreach ($demand as $field => $value) {
-            $constraints[] = $queryBuilder
-                ->expr()
-                ->like(
-                    $field,
-                    $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
-                );
+
+        if (!empty($demand['likes'])) {
+            foreach ($demand['likes'] as $field => $value) {
+                $constraints[] = $queryBuilder
+                    ->expr()
+                    ->like(
+                        $field,
+                        $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                    );
+            }
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
         }
+        if (!empty($demand['uids'])) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
+        }
+
         if ($constraints) {
             $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
         }

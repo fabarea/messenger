@@ -20,7 +20,7 @@ class MessageLayoutController extends AbstractMessengerController
 
     protected string $action = 'index';
 
-    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm3';
+    protected string $moduleName = 'MessengerTxMessengerM3';
 
     protected string $table = 'tx_messenger_domain_model_messagelayout';
 

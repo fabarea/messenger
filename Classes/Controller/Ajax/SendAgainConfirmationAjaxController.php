@@ -20,23 +20,20 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
 
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
-        $matches = [];
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
         }
 
+        $uids = [];
         if (!empty($request->getQueryParams()['tx_messenger_user_messenger'])) {
-            $stringUids = explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid']);
-            if (!empty($stringUids) && $stringUids[0] !== '') {
-                $matches = array_map('intval', $stringUids);
-            }
+            $uids = array_map(
+                'intval',
+                array_filter(explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])),
+            );
         }
         $term = $request->getQueryParams()['search'] ?? '';
-        if ($term != '') {
-            $data = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
-        } else {
-            $data = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
-        }
+        $data = $this->repository->findByDemand($this->getDemand($uids, $this->getModuleName($request), $term));
+
         $content =
             count($data) > 1
                 ? $this->getLanguageService()->sL(
@@ -62,65 +59,24 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
         }
     }
 
-    public function getDemand(string $moduleName, string $searchTerm): array
-    {
-        $demandFields = $this->getDemandFields($moduleName);
-        return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
-    }
-
-    private function getDemandFields(string $moduleName): array
-    {
-        switch ($moduleName) {
-            case 'MessengerTxMessengerM1':
-                return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
-
-            case 'MessengerTxMessengerM4':
-                return [
-                    'recipient_cc',
-                    'recipient',
-                    'sender',
-                    'subject',
-                    'body',
-                    'attachment',
-                    'context',
-                    'mailing_name',
-                    'message_template',
-                    'message_layout',
-                ];
-            default:
-                return [];
-        }
-    }
-
-    protected function getModuleName(ServerRequestInterface $request): string
-    {
-        $pathSegments = explode(
-            '/',
-            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
-        );
-        return end($pathSegments);
-    }
-
     /**
      * @throws InvalidEmailFormatException
      * @throws WrongPluginConfigurationException
      */
     public function sendAgainAction(ServerRequestInterface $request): ResponseInterface
     {
-        $matches = [];
+        $uids = [];
         if (!empty($request->getQueryParams()['tx_messenger_user_messenger'])) {
-            $stringUids = explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid']);
-            $matches = array_map('intval', $stringUids);
+            $uids = array_map(
+                'intval',
+                array_filter(explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])),
+            );
         }
         if ($request->getQueryParams()['dataType']) {
             $this->getDataType($request->getQueryParams()['dataType']);
         }
         $term = $request->getQueryParams()['search'] ?? '';
-        if (!empty($term) && $term != '') {
-            $sentMessages = $this->repository->findByDemand($this->getDemand($this->getModuleName($request), $term));
-        } else {
-            $sentMessages = $matches[0] != 0 ? $this->repository->findByUids($matches) : $this->repository->findAll();
-        }
+        $sentMessages = $this->repository->findByDemand($this->getDemand($uids, $this->getModuleName($request), $term));
 
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {
