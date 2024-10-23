@@ -44,30 +44,13 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         return $this->getResponse($content);
     }
 
-    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
-    {
-        $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
-
-        $sender = $this->getSender($data);
-
-        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        $uids = empty($demandList)
-            ? []
-            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
-
-        $searchTerm = $request->getQueryParams()['search'] ?? '';
-        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
-        return $this->getResponse($content);
-    }
-
     protected function getSender(array $data): array
     {
         $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
 
         $sender = array_key_exists($data['sender'], $possibleSenders)
             ? $possibleSenders[$data['sender']]
-            : $possibleSenders['me'];
+            : $possibleSenders['php'] ?? $possibleSenders['me'];
         if (empty($sender)) {
             throw new WrongPluginConfigurationException(
                 'No sender found. Please configure one in the extension settings.',
@@ -113,6 +96,23 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             : $this->getLanguageService()->sL(
                 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
             );
+    }
+
+    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $this->getRequest()->getParsedBody();
+        $data['body'] = $data['body'] ?? $this->getPageId();
+
+        $sender = $this->getSender($data);
+
+        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
+
+        $searchTerm = $request->getQueryParams()['search'] ?? '';
+        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
+        return $this->getResponse($content);
     }
 
     public function performEnqueue(array $uids, array $data, array $sender, string $term): string

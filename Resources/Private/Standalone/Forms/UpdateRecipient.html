@@ -6,13 +6,18 @@
             includeJsFiles="{
                 0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js',
                 1: 'EXT:messenger/Resources/Public/JavaScript/Utils/Typo3Lang.js',
-                2: 'EXT:messenger/Resources/Public/JavaScript/Utils/RowsSelection.js'
-                3: 'EXT:messenger/Resources/Public/JavaScript/SendAgainMenuItemNative.js'
+                2: 'EXT:messenger/Resources/Public/JavaScript/Utils/RowsSelection.js',
+                3: 'EXT:messenger/Resources/Public/JavaScript/SendAgainMenuItemNative.js',
+                4: 'EXT:messenger/Resources/Public/JavaScript/DataExport.js',
+                5: 'EXT:messenger/Resources/Public/JavaScript/EnqueueMessages.js',
+                6: 'EXT:messenger/Resources/Public/JavaScript/UpdateRecipient.js'
 
             }"
-            includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative'}"
+            includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative', 1: 'TYPO3/CMS/Messenger/DataExport',
+                                      2: 'TYPO3/CMS/Messenger/EnqueueMessages',
+                                      3: 'TYPO3/CMS/Messenger/UpdateRecipient'}"
         />
-        <form action="save" role="form" id="form-update-many-recipients" method="post">
+        <form action="save" id="form-update-many-recipients" method="post" role="form">
             <div class="form-group">
                 <div id="message-body-container">
                     <label for="recipient-csv-list">CSV list of recipients</label>
