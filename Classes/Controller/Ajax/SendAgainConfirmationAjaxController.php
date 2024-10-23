@@ -47,18 +47,6 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
         return $this->getResponse($content);
     }
 
-    protected function getDataType($type): void
-    {
-        switch ($type) {
-            case 'sent-message':
-                $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
-                break;
-            case 'message-queue':
-                $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
-                break;
-        }
-    }
-
     /**
      * @throws InvalidEmailFormatException
      * @throws WrongPluginConfigurationException
@@ -109,6 +97,18 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
                 : '',
         );
         return $this->getResponse($content);
+    }
+
+    protected function getDataType($type): void
+    {
+        switch ($type) {
+            case 'sent-message':
+                $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
+                break;
+            case 'message-queue':
+                $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+                break;
+        }
     }
 
     protected function normalizeEmails(string $listOfFormattedEmails): array

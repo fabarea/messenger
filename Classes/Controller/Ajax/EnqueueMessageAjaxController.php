@@ -26,6 +26,23 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
     }
 
+    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $this->getRequest()->getParsedBody();
+        $data['body'] = $data['body'] ?? $this->getPageId();
+
+        $sender = $this->getSender($data);
+
+        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
+
+        $searchTerm = $request->getQueryParams()['search'] ?? '';
+        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
+        return $this->getResponse($content);
+    }
+
     public function sendTestAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
@@ -97,24 +114,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             );
     }
 
-    public function enqueueAction(ServerRequestInterface $request): ResponseInterface
-    {
-        $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
-
-        $sender = $this->getSender($data);
-
-        $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
-        $uids = empty($demandList)
-            ? []
-            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
-
-        $searchTerm = $request->getQueryParams()['search'] ?? '';
-        $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
-        return $this->getResponse($content);
-    }
-
-    public function performEnqueue(array $uids, array $data, array $sender, string $term): string
+    protected function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
         $demand = $this->getDemand($uids, $term);
         $recipients = $this->repository->findByDemand($demand);
