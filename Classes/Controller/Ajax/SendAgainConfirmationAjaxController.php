@@ -32,7 +32,7 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
             );
         }
         $term = $request->getQueryParams()['search'] ?? '';
-        $data = $this->repository->findByDemand($this->getDemand($uids, $this->getModuleName($request), $term));
+        $data = $this->repository->findByDemand($this->getDemand($uids, $term));
 
         $content =
             count($data) > 1
@@ -76,7 +76,7 @@ final class SendAgainConfirmationAjaxController extends AbstractMessengerAjaxCon
             $this->getDataType($request->getQueryParams()['dataType']);
         }
         $term = $request->getQueryParams()['search'] ?? '';
-        $sentMessages = $this->repository->findByDemand($this->getDemand($uids, $this->getModuleName($request), $term));
+        $sentMessages = $this->repository->findByDemand($this->getDemand($uids, $term));
 
         $numberOfSentEmails = 0;
         foreach ($sentMessages as $sentMessage) {

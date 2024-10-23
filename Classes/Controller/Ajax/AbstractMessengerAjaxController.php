@@ -11,7 +11,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractMessengerAjaxController
 {
-    public function getDemand(array $uids, ?string $moduleSignature, string $searchTerm): array
+    protected function getDemand(array $uids, string $searchTerm): array
     {
         $demand = [
             'likes' => [],
@@ -23,43 +23,50 @@ abstract class AbstractMessengerAjaxController
             $demand['uids'] = $uids;
         }
         // only if we have a search term
-        if (strlen($searchTerm) > 0 && $moduleSignature != '') {
-            $demandedFields = [];
-            switch ($moduleSignature) {
-                case 'MessengerTxMessengerM1':
-                    $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
-                    break;
-                case 'MessengerTxMessengerM2':
-                    $demandedFields = ['type', 'subject', 'message_layout', 'qualifier'];
-                case 'MessengerTxMessengerM3':
-                    $demandedFields = ['content', 'qualifier'];
-                    break;
-                case 'MessengerTxMessengerM4':
-                    $demandedFields = [
-                        'recipient_cc',
-                        'recipient',
-                        'sender',
-                        'subject',
-                        'body',
-                        'attachment',
-                        'context',
-                        'mailing_name',
-                        'message_template',
-                        'message_layout',
-                    ];
-                    break;
-                case 'MessengerTxMessengerM5':
-                    $demandedFields = GeneralUtility::trimExplode(
-                        ',',
-                        ConfigurationUtility::getInstance()->get('recipient_default_fields'),
-                    );
-                    break;
-            }
+        if (strlen($searchTerm) > 0) {
+            $demandedFields = $this->getDemandedFields();
             foreach ($demandedFields as $field) {
                 $demand['likes'][$field] = $searchTerm;
             }
         }
         return $demand;
+    }
+
+    protected function getDemandedFields(): array
+    {
+        $demandedFields = [];
+        switch ($this->getModuleName()) {
+            case 'MessengerTxMessengerM1':
+                $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+                break;
+            case 'MessengerTxMessengerM2':
+                $demandedFields = ['type', 'subject', 'message_layout', 'qualifier'];
+            case 'MessengerTxMessengerM3':
+                $demandedFields = ['content', 'qualifier'];
+                break;
+            case 'MessengerTxMessengerM4':
+                $demandedFields = [
+                    'recipient_cc',
+                    'recipient',
+                    'sender',
+                    'subject',
+                    'body',
+                    'attachment',
+                    'context',
+                    'mailing_name',
+                    'message_template',
+                    'message_layout',
+                ];
+                break;
+            case 'MessengerTxMessengerM5':
+                $demandedFields = GeneralUtility::trimExplode(
+                    ',',
+                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                );
+                break;
+        }
+
+        return $demandedFields;
     }
 
     protected function getResponse(string $content): ResponseInterface
@@ -70,11 +77,11 @@ abstract class AbstractMessengerAjaxController
         return $response;
     }
 
-    protected function getModuleName(ServerRequestInterface $request): string
+    protected function getModuleName(): string
     {
         $pathSegments = explode(
             '/',
-            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
+            trim(parse_url($this->getRequest()->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
         );
         return end($pathSegments);
     }

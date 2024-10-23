@@ -116,7 +116,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 
     public function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
-        $demand = $this->getDemand($uids, 'MessengerTxMessengerM5', $term);
+        $demand = $this->getDemand($uids, $term);
         $recipients = $this->repository->findByDemand($demand);
 
         $numberOfSentEmails = 0;
