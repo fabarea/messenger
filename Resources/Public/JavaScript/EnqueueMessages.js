@@ -75,7 +75,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                       [],
                       searchTerm,
                     );
-                console.log(updateUrl);
                 const form = window.parent.document.querySelector('#form-bulk-send');
 
                 $.ajax({
