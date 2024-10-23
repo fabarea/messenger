@@ -16,9 +16,11 @@
                 6: 'EXT:messenger/Resources/Public/JavaScript/UpdateRecipient.js'
 
             }"
-        includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative', 1: 'TYPO3/CMS/Messenger/DataExport',
-                                      2: 'TYPO3/CMS/Messenger/EnqueueMessages',
-                                      3: 'TYPO3/CMS/Messenger/UpdateRecipient'}"
+        includeRequireJsModules="{
+        0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative',
+        1: 'TYPO3/CMS/Messenger/DataExport',
+        2: 'TYPO3/CMS/Messenger/EnqueueMessages',
+        3: 'TYPO3/CMS/Messenger/UpdateRecipient'}"
     />
     <form action="enqueue"
           class="m-2"
@@ -90,13 +92,4 @@
 
 
 </f:section>
-<script>
-    function toggleMessageBody(checkbox) {
-        const messageBodyContainer = document.getElementById('message-body-container');
-        messageBodyContainer.style.display = checkbox.checked ? 'block' : 'none';
-
-        // Set the value to 1 if checked, otherwise 0
-        checkbox.value = checkbox.checked ? '1' : '0';
-    }
-</script>
 </html>
