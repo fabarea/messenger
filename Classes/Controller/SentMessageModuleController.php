@@ -37,7 +37,7 @@ class SentMessageModuleController extends AbstractMessengerController
     protected string $domainModel = 'sentmessage';
     protected string $controller = 'SendMessageModule';
     protected string $action = 'index';
-    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm1';
+    protected string $moduleName = 'MessengerTxMessengerM1';
     protected string $table = 'tx_messenger_domain_model_sentmessage';
 
     protected string $dataType = 'sent-message';

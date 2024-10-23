@@ -131,7 +131,7 @@ abstract class AbstractMessengerController extends ActionController
         $demand = [];
         if (strlen($searchTerm) > 0) {
             foreach ($this->demandFields as $field) {
-                $demand[$field] = $searchTerm;
+                $demand['likes'][$field] = $searchTerm;
             }
         }
         return $demand;

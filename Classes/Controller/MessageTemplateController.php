@@ -27,7 +27,7 @@ class MessageTemplateController extends AbstractMessengerController
     protected string $domainModel = 'messagetemplate';
     protected string $controller = 'MessageTemplate';
     protected string $action = 'index';
-    protected string $moduleName = 'tx_messenger_messenger_messengertxmessengerm2';
+    protected string $moduleName = 'MessengerTxMessengerM2';
     protected string $table = 'tx_messenger_domain_model_messagetemplate';
     protected ?MessengerRepositoryInterface $repository;
     protected string $dataType = 'message-template';

@@ -2,6 +2,7 @@
 
 namespace Fab\Messenger\Controller\Ajax;
 
+use Fab\Messenger\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,6 +11,64 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractMessengerAjaxController
 {
+    protected function getDemand(array $uids, string $searchTerm): array
+    {
+        $demand = [
+            'likes' => [],
+            'uids' => [],
+        ];
+
+        // only if we have a list of uids
+        if (!empty($uids)) {
+            $demand['uids'] = $uids;
+        }
+        // only if we have a search term
+        if (strlen($searchTerm) > 0) {
+            $demandedFields = $this->getDemandedFields();
+            foreach ($demandedFields as $field) {
+                $demand['likes'][$field] = $searchTerm;
+            }
+        }
+        return $demand;
+    }
+
+    protected function getDemandedFields(): array
+    {
+        $demandedFields = [];
+        switch ($this->getModuleName()) {
+            case 'MessengerTxMessengerM1':
+                $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
+                break;
+            case 'MessengerTxMessengerM2':
+                $demandedFields = ['type', 'subject', 'message_layout', 'qualifier'];
+            case 'MessengerTxMessengerM3':
+                $demandedFields = ['content', 'qualifier'];
+                break;
+            case 'MessengerTxMessengerM4':
+                $demandedFields = [
+                    'recipient_cc',
+                    'recipient',
+                    'sender',
+                    'subject',
+                    'body',
+                    'attachment',
+                    'context',
+                    'mailing_name',
+                    'message_template',
+                    'message_layout',
+                ];
+                break;
+            case 'MessengerTxMessengerM5':
+                $demandedFields = GeneralUtility::trimExplode(
+                    ',',
+                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
+                );
+                break;
+        }
+
+        return $demandedFields;
+    }
+
     protected function getResponse(string $content): ResponseInterface
     {
         $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
@@ -18,11 +77,11 @@ abstract class AbstractMessengerAjaxController
         return $response;
     }
 
-    protected function getModuleName(ServerRequestInterface $request): string
+    protected function getModuleName(): string
     {
         $pathSegments = explode(
             '/',
-            trim(parse_url($request->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
+            trim(parse_url($this->getRequest()->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
         );
         return end($pathSegments);
     }
@@ -38,13 +97,13 @@ abstract class AbstractMessengerAjaxController
         return (int) $id;
     }
 
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
-    }
-
     protected function getRequest(): ServerRequestInterface
     {
         return $GLOBALS['TYPO3_REQUEST'];
+    }
+
+    protected function getLanguageService(): LanguageService
+    {
+        return $GLOBALS['LANG'];
     }
 }

@@ -39,22 +39,15 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
     public function confirmAction(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
-        $matches = [];
-        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
-            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
-        }
+        $demandList = $this->request->getQueryParams()['tx_messenger_user_messenger'] ?? [];
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
         $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
-        $this->getDataType($this->dataType);
+        $this->initializeRepository($this->dataType);
         $term = $this->request->getQueryParams()['search'] ?? '';
-        if (!empty($term)) {
-            $data = $this->repository->findByDemand(
-                $this->getDemand($this->request->getQueryParams()['module'], $term),
-            );
-        } else {
-            $data = $matches
-                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
-                : $this->repository->findAll();
-        }
+
+        $data = $this->repository->findByDemand($this->getDemand($uids, $term));
         $content =
             count($data) > 1
                 ? $this->getLanguageService()->sL(
@@ -68,7 +61,34 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
         return $this->getResponse($content);
     }
 
-    protected function getDataType($type): void
+    public function exportAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->request = $request;
+        $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
+        $demandList = $this->request->getQueryParams()['tx_messenger_user_messenger'] ?? [];
+        $uids = empty($demandList)
+            ? []
+            : array_map('intval', array_filter(explode(',', $demandList['matches']['uid'])));
+        $this->initializeRepository($this->dataType);
+        $term = $this->request->getQueryParams()['search'] ?? '';
+
+        $data = $this->repository->findByDemand($this->getDemand($uids, $term));
+
+        $dataUids = array_map(static function ($item) {
+            return $item['uid'];
+        }, $data);
+
+        if ($this->request->getQueryParams()['format'] && $dataUids) {
+            $columns = TcaFieldsUtility::getFields($this->tableName);
+            $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
+            $this->dataExportService->setRepository($this->repository);
+            $this->performExport($dataUids, $this->request->getQueryParams()['format'], $columns);
+        }
+
+        return $this->getResponse('Error');
+    }
+
+    protected function initializeRepository(string $type): void
     {
         switch ($type) {
             case 'message-template':
@@ -92,80 +112,6 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
                 $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
                 break;
         }
-    }
-
-    public function getDemand(string $moduleSignature, string $searchTerm): array
-    {
-        // todo improve demand
-        $demandFields = $this->getDemandedFields($moduleSignature);
-        return !empty($searchTerm) ? array_fill_keys($demandFields, $searchTerm) : [];
-    }
-
-    private function getDemandedFields(string $moduleSignature): array
-    {
-        switch ($moduleSignature) {
-            case 'tx_messenger_messenger_messengertxmessengerm1':
-                return ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
-            case 'tx_messenger_messenger_messengertxmessengerm2':
-                return ['type', 'subject', 'message_layout', 'qualifier'];
-            case 'tx_messenger_messenger_messengertxmessengerm3':
-                return ['content', 'qualifier'];
-            case 'tx_messenger_messenger_messengertxmessengerm4':
-                return [
-                    'recipient_cc',
-                    'recipient',
-                    'sender',
-                    'subject',
-                    'body',
-                    'attachment',
-                    'context',
-                    'mailing_name',
-                    'message_template',
-                    'message_layout',
-                ];
-            case 'tx_messenger_messenger_messengertxmessengerm5':
-                return GeneralUtility::trimExplode(
-                    ',',
-                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
-                );
-            default:
-                return [];
-        }
-    }
-
-    public function exportAction(ServerRequestInterface $request): ResponseInterface
-    {
-        $this->request = $request;
-        $this->dataType = $this->request->getQueryParams()['dataType'] ?? '';
-        $matches = [];
-        if (isset($this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])) {
-            $matches = $this->request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'];
-        }
-        $this->getDataType($this->dataType);
-        $term = $this->request->getQueryParams()['search'] ?? '';
-
-        if (!empty($term)) {
-            $data = $this->repository->findByDemand(
-                $this->getDemand($this->request->getQueryParams()['module'], $term),
-            );
-        } else {
-            $data = $matches
-                ? $this->repository->findByUids(array_map('intval', explode(',', $matches)))
-                : $this->repository->findAll();
-        }
-
-        $uids = array_map(static function ($item) {
-            return $item['uid'];
-        }, $data);
-
-        if ($this->request->getQueryParams()['format'] && $uids) {
-            $columns = TcaFieldsUtility::getFields($this->tableName);
-            $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
-            $this->dataExportService->setRepository($this->repository);
-            $this->performExport($uids, $this->request->getQueryParams()['format'], $columns);
-        }
-
-        return $this->getResponse('Error');
     }
 
     protected function performExport(array $uids, string $format, array $columns): void

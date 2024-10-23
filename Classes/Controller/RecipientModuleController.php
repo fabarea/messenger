@@ -122,7 +122,7 @@ class RecipientModuleController extends ActionController
         );
         if (strlen($searchTerm) > 0) {
             foreach ($demandFields as $field) {
-                $demand[$field] = $searchTerm;
+                $demand['likes'][$field] = $searchTerm;
             }
         }
         return $demand;

@@ -4,54 +4,48 @@
 define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
   'use strict';
 
-  const Messenger = {
+  const MessengerUpdateRecipient = {
     /**
      * Get edit storage URL.
      *
      * @param {string} url
-     * @param type
+     * @param data
      * @param searchTerm
      * @return string
      * @private
      */
-    getEditStorageUrl: function (url, type, searchTerm = '') {
-      const uri = new Uri(url);
 
-      // get element by columnsToSend value and assign to the uri object
+    getEditRecipientUrl: function (url, data = [], searchTerm = '') {
+      const uri = new Uri(url);
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
       uri.addQueryParam(
-        'tx_messenger_user_messenger[matches][uid]',
-        columnsToSend.join(',') + '&dataType=' + type + '&search=' + searchTerm,
+        'tx_messenger_user_messengerm5[matches][uid]',
+        columnsToSend.join(',') + '&data=' + data + '&search=' + searchTerm,
       );
       return decodeURIComponent(uri.toString());
     },
-    
-    /**
-     * @return void
-     */
+
     initialize: function () {
-      this.initializeSendAgainConfirmation();
+      this.initializeUpdateRecipients();
     },
 
     /**
      * @return void
      */
-    initializeSendAgainConfirmation: function () {
-      $(document).on('click', '.btn-sendAgain', function (e) {
+    initializeUpdateRecipients: function () {
+      $(document).on('click', '.btn-update-recipient', function (e) {
         e.preventDefault();
-
-        const type = $(this).data('data-type');
         const searchTerm = $(this).data('search-term');
-        const url = Messenger.getEditStorageUrl(
-          TYPO3.settings.ajaxUrls.messenger_send_again_confirmation,
-          type,
+        const url = MessengerUpdateRecipient.getEditRecipientUrl(
+          TYPO3.settings.ajaxUrls.newsletter_update_recipient,
           searchTerm,
         );
-        Messenger.modal = Modal.advanced({
+        MessengerUpdateRecipient.modal = Modal.advanced({
           type: Modal.types.ajax,
-          title: 'Send Again',
+          title: 'Update recipient',
           severity: top.TYPO3.Severity.notice,
           content: url,
+          staticBackdrop: false,
           buttons: [
             {
               text: 'Cancel',
@@ -61,18 +55,21 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
               },
             },
             {
-              text: 'Send Again',
+              text: 'Update recipient',
               btnClass: 'btn btn-primary',
               trigger: function () {
-                $('.btn', Messenger.modal).attr('disabled', 'disabled');
-                const sendAgainUrl = Messenger.getEditStorageUrl(
-                  TYPO3.settings.ajaxUrls.messenger_send_again,
-                  type,
+                $('.btn', MessengerUpdateRecipient.modal).attr('disabled', 'disabled');
+
+                const form = window.parent.document.querySelector('#form-update-many-recipients');
+
+                const url = MessengerUpdateRecipient.getEditRecipientUrl(
+                  TYPO3.settings.ajaxUrls.newsletter_update_recipient_save,
                   searchTerm,
                 );
-                // Ajax request
                 $.ajax({
-                  url: sendAgainUrl,
+                  url: url,
+                  data: new URLSearchParams(new FormData(form)).toString(),
+                  method: 'post',
 
                   /**
                    * On success call back
@@ -92,6 +89,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  Messenger.initialize();
-  return Messenger;
+  MessengerUpdateRecipient.initialize();
+  return MessengerUpdateRecipient;
 });
