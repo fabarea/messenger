@@ -41,6 +41,7 @@ abstract class AbstractMessengerAjaxController
                 break;
             case 'MessengerTxMessengerM2':
                 $demandedFields = ['type', 'subject', 'message_layout', 'qualifier'];
+                break;
             case 'MessengerTxMessengerM3':
                 $demandedFields = ['content', 'qualifier'];
                 break;
@@ -69,14 +70,6 @@ abstract class AbstractMessengerAjaxController
         return $demandedFields;
     }
 
-    protected function getResponse(string $content): ResponseInterface
-    {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
-    }
-
     protected function getModuleName(): string
     {
         $pathSegments = explode(
@@ -84,6 +77,19 @@ abstract class AbstractMessengerAjaxController
             trim(parse_url($this->getRequest()->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
         );
         return end($pathSegments);
+    }
+
+    protected function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
+    }
+
+    protected function getResponse(string $content): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write($content);
+        return $response;
     }
 
     protected function getPageId(): int
@@ -95,11 +101,6 @@ abstract class AbstractMessengerAjaxController
         parse_str($queryString, $queryParams);
         $id = $queryParams['id'] ?? null;
         return (int) $id;
-    }
-
-    protected function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
     }
 
     protected function getLanguageService(): LanguageService
