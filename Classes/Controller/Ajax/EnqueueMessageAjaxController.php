@@ -10,6 +10,7 @@ use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
+use Fab\Messenger\TypeConverter\BodyConverter;
 use Fab\Messenger\Utility\Algorithms;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,17 +20,21 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 {
     protected ?RecipientRepository $repository;
     protected PageRepository $pageRepository;
+    protected BodyConverter $bodyConverter;
 
     public function __construct()
     {
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
+        $this->bodyConverter = GeneralUtility::makeInstance(BodyConverter::class);
     }
 
     public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
+        $data['body'] = !empty($data['body'])
+            ? $data['body']
+            : $this->bodyConverter->convertFrom($this->getPageId(), '');
 
         $sender = $this->getSender($data);
 
@@ -43,30 +48,13 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         return $this->getResponse($content);
     }
 
-    public function sendTestAction(ServerRequestInterface $request): ResponseInterface
-    {
-        $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
-
-        $sender = $this->getSender($data);
-
-        if (empty($data['recipientList'])) {
-            throw new WrongPluginConfigurationException(
-                'No recipient found. Please configure one in the extension settings.',
-                1729613978,
-            );
-        }
-        $content = $this->sendAsTestEmail($data, $sender);
-        return $this->getResponse($content);
-    }
-
     protected function getSender(array $data): array
     {
         $possibleSenders = GeneralUtility::makeInstance(SenderProvider::class)->getPossibleSenders();
 
         $sender = array_key_exists($data['sender'], $possibleSenders)
             ? $possibleSenders[$data['sender']]
-            : $possibleSenders['php'] ?? $possibleSenders['me'];
+            : $possibleSenders['me'] ?? $possibleSenders['php'];
         if (empty($sender)) {
             throw new WrongPluginConfigurationException(
                 'No sender found. Please configure one in the extension settings.',
@@ -74,44 +62,6 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             );
         }
         return $sender;
-    }
-
-    /**
-     * @throws InvalidEmailFormatException
-     * @throws WrongPluginConfigurationException
-     */
-    private function sendAsTestEmail(array $data, array $sender): string
-    {
-        $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
-
-        $emailsArray = [];
-        foreach ($emails as $emailsArrayItem) {
-            if (!filter_var($emailsArrayItem, FILTER_VALIDATE_EMAIL)) {
-                throw new InvalidEmailFormatException('You have an set an invalid email !');
-            }
-            $emailsArray[$emailsArrayItem] = $emailsArrayItem;
-        }
-        $numberOfSentEmails = 0;
-        if (!empty($emails)) {
-            $numberOfSentEmails++;
-            /** @var Message $message */
-            $message = GeneralUtility::makeInstance(Message::class);
-            $message
-                ->setBody($data['body'])
-                ->setSubject($data['subject'])
-                ->setSender($sender)
-                ->parseToMarkdown(true)
-                ->setTo($emailsArray)
-                ->send();
-        }
-
-        return $numberOfSentEmails !== 1
-            ? $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-            )
-            : $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
-            );
     }
 
     protected function performEnqueue(array $uids, array $data, array $sender, string $term): string
@@ -177,5 +127,60 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $name = implode(' ', $nameParts);
 
         return [$email => $name];
+    }
+
+    public function sendTestAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $this->getRequest()->getParsedBody();
+        $data['body'] = !empty($data['body'])
+            ? $data['body']
+            : $this->bodyConverter->convertFrom($this->getPageId(), '');
+        $sender = $this->getSender($data);
+        if (empty($data['recipientList'])) {
+            throw new WrongPluginConfigurationException(
+                'No recipient found. Please configure one in the extension settings.',
+                1729613978,
+            );
+        }
+        $content = $this->sendAsTestEmail($data, $sender);
+        return $this->getResponse($content);
+    }
+
+    /**
+     * @throws InvalidEmailFormatException
+     * @throws WrongPluginConfigurationException
+     */
+    private function sendAsTestEmail(array $data, array $sender): string
+    {
+        $emails = GeneralUtility::trimExplode(',', $data['recipientList'], true);
+
+        $emailsArray = [];
+        foreach ($emails as $emailsArrayItem) {
+            if (!filter_var($emailsArrayItem, FILTER_VALIDATE_EMAIL)) {
+                throw new InvalidEmailFormatException('You have an set an invalid email !');
+            }
+            $emailsArray[$emailsArrayItem] = $emailsArrayItem;
+        }
+        $numberOfSentEmails = 0;
+        if (!empty($emails)) {
+            $numberOfSentEmails++;
+            /** @var Message $message */
+            $message = GeneralUtility::makeInstance(Message::class);
+            $message
+                ->setBody($data['body'])
+                ->setSubject($data['subject'])
+                ->setSender($sender)
+                ->parseToMarkdown(true)
+                ->setTo($emailsArray)
+                ->send();
+        }
+
+        return $numberOfSentEmails !== 1
+            ? $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+            )
+            : $this->getLanguageService()->sL(
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
+            );
     }
 }
