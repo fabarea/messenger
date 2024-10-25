@@ -70,7 +70,7 @@ class BodyConverter extends AbstractTypeConverter
                 ],
                 $_SERVER['HTTP_HOST'],
             );
-            $url = $baseUrl . 'index.php?id=' . $source;
+            $url = $baseUrl . 'typo3/module/web/layout?id=' . $source;
             $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();

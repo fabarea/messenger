@@ -10,6 +10,7 @@ use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
 use Fab\Messenger\Service\SenderProvider;
+use Fab\Messenger\TypeConverter\BodyConverter;
 use Fab\Messenger\Utility\Algorithms;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,17 +20,21 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 {
     protected ?RecipientRepository $repository;
     protected PageRepository $pageRepository;
+    protected BodyConverter $bodyConverter;
 
     public function __construct()
     {
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
         $this->pageRepository = GeneralUtility::makeInstance(PageRepository::class);
+        $this->bodyConverter = GeneralUtility::makeInstance(BodyConverter::class);
     }
 
     public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
+        $data['body'] = !empty($data['body'])
+            ? $data['body']
+            : $this->bodyConverter->convertFrom($this->getPageId(), '');
 
         $sender = $this->getSender($data);
 
@@ -49,7 +54,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 
         $sender = array_key_exists($data['sender'], $possibleSenders)
             ? $possibleSenders[$data['sender']]
-            : $possibleSenders['php'] ?? $possibleSenders['me'];
+            : $possibleSenders['me'] ?? $possibleSenders['php'];
         if (empty($sender)) {
             throw new WrongPluginConfigurationException(
                 'No sender found. Please configure one in the extension settings.',
@@ -127,10 +132,10 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
     public function sendTestAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
-        $data['body'] = $data['body'] ?? $this->getPageId();
-
+        $data['body'] = !empty($data['body'])
+            ? $data['body']
+            : $this->bodyConverter->convertFrom($this->getPageId(), '');
         $sender = $this->getSender($data);
-
         if (empty($data['recipientList'])) {
             throw new WrongPluginConfigurationException(
                 'No recipient found. Please configure one in the extension settings.',
