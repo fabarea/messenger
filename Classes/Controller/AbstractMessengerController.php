@@ -10,6 +10,7 @@ use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -164,7 +165,7 @@ abstract class AbstractMessengerController extends ActionController
         /** @var ColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
         $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
-        $columnSelectorButton->setModule($this->moduleName);
+        $columnSelectorButton->setModule($this->getModuleName($this->moduleName));
         $columnSelectorButton->setTableName($this->table);
         $columnSelectorButton->setAction('index');
         $columnSelectorButton->setController($this->controller);
@@ -175,6 +176,24 @@ abstract class AbstractMessengerController extends ActionController
         }
 
         $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+    }
+
+    protected function getModuleName(string $signature): string
+    {
+        switch ($signature) {
+            case 'MessengerTxMessengerM1':
+                return 'tx_messenger_messenger_messengertxmessengerm1';
+            case 'MessengerTxMessengerM2':
+                return 'tx_messenger_messenger_messengertxmessengerm2';
+            case 'MessengerTxMessengerM3':
+                return 'tx_messenger_messenger_messengertxmessengerm3';
+            case 'MessengerTxMessengerM4':
+                return 'tx_messenger_messenger_messengertxmessengerm4';
+            case 'MessengerTxMessengerM5':
+                return 'tx_messenger_messenger_messengertxmessengerm5';
+            default:
+                return '';
+        }
     }
 
     /**
@@ -214,5 +233,10 @@ abstract class AbstractMessengerController extends ActionController
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+    }
+
+    protected function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 }
