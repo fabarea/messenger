@@ -167,27 +167,23 @@
 			<trans-unit id="label.messenger.itemsPerRun">
 				<source>Number of emails sent per run</source>
 			</trans-unit>
-
 			<trans-unit id="update_recipient">
-				<source>Update recipient</source>
+				<source>Update recipients</source>
 			</trans-unit>
 			<trans-unit id="sender">
 				<source>Sender</source>
 			</trans-unit>
-
 			<trans-unit id="options">
 				<source>--Please choose an option--</source>
 			</trans-unit>
 			<trans-unit id="subject">
 				<source>Subject</source>
 			</trans-unit>
-
 			<trans-unit id="recipient_delete_existing">
 				<source>Delete existing recipients before adding new ones.</source>
 			</trans-unit>
-
 			<trans-unit id="send_message">
-				<source>Send</source>
+				<source>Send newsletters</source>
 			</trans-unit>
 			<trans-unit id="delete">
 				<source>Delete</source>
