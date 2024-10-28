@@ -150,6 +150,13 @@ class MessageLayoutRepository extends AbstractContentRepository
         return $query->execute()->fetchAllAssociative();
     }
 
+    public function deleteByUids(array $uids): int
+    {
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
+        return $query->execute();
+    }
+
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
