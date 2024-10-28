@@ -17,5 +17,5 @@ interface MessengerRepositoryInterface
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array;
 
-    public function MassDelete(array $uids): int;
+    public function deleteByUids(array $uids): int;
 }

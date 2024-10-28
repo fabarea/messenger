@@ -247,7 +247,7 @@ class QueueRepository extends AbstractContentRepository
         return $query->execute();
     }
 
-    public function MassDelete(array $uids): int
+    public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
