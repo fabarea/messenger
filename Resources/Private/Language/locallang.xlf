@@ -78,6 +78,18 @@
 			<trans-unit id="message-sent-successfully">
 				<source>Successfully sent {0} message</source>
 			</trans-unit>
+			<trans-unit id="delete.messages.sure?">
+				<source>Are you sure  to delete  %s item(s) ?</source>
+			</trans-unit>
+			<trans-unit id="delete.success">
+				<source>You have successfully deleted data </source>
+			</trans-unit>
+
+			<trans-unit id="delete.error">
+				<source>Something went wrong with deleting data </source>
+			</trans-unit>
+
+
 			<trans-unit id="x-messages-sent-successfully">
 				<source>Successfully sent {0} messages</source>
 			</trans-unit>
@@ -179,6 +191,9 @@
 
 			<trans-unit id="send_message">
 				<source>Send</source>
+			</trans-unit>
+			<trans-unit id="delete">
+				<source>Delete</source>
 			</trans-unit>
 
 		</body>

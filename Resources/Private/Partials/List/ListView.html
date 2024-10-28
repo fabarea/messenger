@@ -191,15 +191,29 @@
                                 <li>
                                     <a
                                         class="dropdown-item btn-export"
+                                        data-data-type="{dataType}"
                                         data-format="xml"
                                         data-module="{moduleName}"
-                                        data-data-type="{dataType}"
                                         data-search-term="{searchTerm}"
                                         href="#"
                                     >
                                         <core:icon identifier="mimetypes-text-html" size="small" />
                                         <f:translate
                                             key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
+                                        />
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item btn-mass-delete"
+                                        data-module="{moduleName}"
+                                        data-data-type="{dataType}"
+                                        data-search-term="{searchTerm}"
+                                        href="#"
+                                    >
+                                        <core:icon identifier="actions-delete" size="small" />
+                                        <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:delete"
                                         />
                                     </a>
                                 </li>

@@ -3,6 +3,7 @@
 use Fab\Messenger\Controller\Ajax\DisplaySendMessageModalAjaxController;
 use Fab\Messenger\Controller\Ajax\EnqueueMessageAjaxController;
 use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
+use Fab\Messenger\Controller\Ajax\MassDeletionAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
 use Fab\Messenger\Controller\Ajax\UpdateRecipientAjaxController;
 
@@ -46,5 +47,13 @@ return [
     'newsletter_send_test_messages' => [
         'path' => '/newsletter/send-test-messages',
         'target' => EnqueueMessageAjaxController::class . '::sendTestAction',
+    ],
+    'messenger_confirm_mass_delete' => [
+        'path' => '/messenger/confirm-mass-delete',
+        'target' => MassDeletionAjaxController::class . '::confirmAction',
+    ],
+    'messenger_mass_delete' => [
+        'path' => '/messenger/mass-delete',
+        'target' => MassDeletionAjaxController::class . '::deleteAction',
     ],
 ];

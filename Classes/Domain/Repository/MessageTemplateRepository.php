@@ -165,4 +165,11 @@ class MessageTemplateRepository extends AbstractContentRepository
 
         return $query->execute()->fetchAllAssociative();
     }
+
+    public function MassDelete(array $uids): int
+    {
+        $query = $this->getQueryBuilder();
+        $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
+        return $query->execute();
+    }
 }
