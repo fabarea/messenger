@@ -84,12 +84,9 @@
 			<trans-unit id="delete.success">
 				<source>You have successfully deleted data </source>
 			</trans-unit>
-
 			<trans-unit id="delete.error">
 				<source>Something went wrong with deleting data </source>
 			</trans-unit>
-
-
 			<trans-unit id="x-messages-sent-successfully">
 				<source>Successfully sent {0} messages</source>
 			</trans-unit>
