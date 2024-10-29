@@ -77,14 +77,16 @@ class MassDeletionAjaxController extends AbstractMessengerAjaxController
                 array_filter(explode(',', $request->getQueryParams()['tx_messenger_user_messenger']['matches']['uid'])),
             );
         }
-        $result = $this->repository->deleteByUids($uids);
+        $term = $request->getQueryParams()['search'] ?? '';
+        $data = $this->repository->findByDemand($this->getDemand($uids, $term));
+        $result = $this->repository->deleteByUids(array_map(static fn(array $item) => $item['uid'], $data));
         $content = sprintf(
             '%s %s / %s',
             $this->getLanguageService()->sL(
                 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:delete.success',
             ),
             $result,
-            count($uids),
+            count($data),
         );
 
         return $this->getResponse($content);
