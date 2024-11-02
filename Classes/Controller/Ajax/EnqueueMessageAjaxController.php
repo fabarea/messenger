@@ -74,6 +74,15 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         foreach ($recipients as $recipient) {
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                 $numberOfSentEmails++;
+                if (!empty($data['body'])) {
+                    $placeholders = [
+                        '{email}' => $recipient['email'],
+                        '{first_name}' => $recipient['first_name'],
+                        '{last_name}' => $recipient['last_name'],
+                    ];
+                    $data['body'] = str_replace(array_keys($placeholders), array_values($placeholders), $data['body']);
+                }
+
                 /** @var Message $message */
                 $message = GeneralUtility::makeInstance(Message::class);
                 $message->setUuid(Algorithms::generateUUID());
