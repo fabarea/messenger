@@ -189,6 +189,46 @@
 				<source>Delete</source>
 			</trans-unit>
 
+
+			<trans-unit id="username">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="name">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="usergroup">
+				<source>User group</source>
+			</trans-unit>
+			<trans-unit id="uid">
+				<source>Uid</source>
+			</trans-unit>
+			<trans-unit id="password">
+				<source>Password</source>
+			</trans-unit>
+			<trans-unit id="last_name">
+				<source>Last name</source>
+			</trans-unit>
+			<trans-unit id="first_name">
+				<source>First name</source>
+			</trans-unit>
+
+			<trans-unit id="csv">
+				<source>Export csv</source>
+			</trans-unit>
+
+			<trans-unit id="xls">
+				<source>Export xls</source>
+			</trans-unit>
+			<trans-unit id="xml">
+				<source>Export xml</source>
+			</trans-unit>
+			<trans-unit id="send_message">
+				<source>Send again</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>
