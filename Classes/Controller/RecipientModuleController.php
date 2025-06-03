@@ -131,22 +131,30 @@ class RecipientModuleController extends ActionController
     /**
      * @throws NoSuchArgumentException
      */
-    protected function computeSelectedColumns(): array
+     protected function computeSelectedColumns(): array
     {
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
+        $parsedBody = $this->request->getParsedBody();
+        $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
 
         $moduleVersion = explode('/', $this->getRequestUri());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
         }
         $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $defaultSelectedColumns;
+            BackendUserPreferenceService::getInstance()->get('selectedColumns')
+            ?? $defaultSelectedColumns;
+        if (!empty($formData['selectedColumns'])) {
+            $selectedColumns = $formData['selectedColumns'];
+        }
         if ($this->request->hasArgument('selectedColumns')) {
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
+
         return $selectedColumns;
     }
+
 
     protected function getFields(): array
     {
