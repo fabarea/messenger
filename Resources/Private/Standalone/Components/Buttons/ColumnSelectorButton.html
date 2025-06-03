@@ -32,16 +32,19 @@
                                         name="selectedColumns[] "
                                         value="{fieldName}"
                                     />
-                                    <f:if condition="{model} =='fe_users'">
+                                    <f:if condition="{model}">
                                         <f:then>
-                                            <f:translate
-                                                key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:{fieldName}"
-                                            />
+                                            <f:if condition="{model} == 'fe_users'">
+                                                <f:then>
+                                                    <f:translate key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:{fieldName}" />
+                                                </f:then>
+                                                <f:else>
+                                                    <f:translate key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{model}.xlf:{fieldName}" />
+                                                </f:else>
+                                            </f:if>
                                         </f:then>
                                         <f:else>
-                                            <f:translate
-                                                key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{model}.xlf:{fieldName}"
-                                            />
+                                            <f:translate key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:{fieldName}" />
                                         </f:else>
                                     </f:if>
                                 </label>
