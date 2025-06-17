@@ -74,11 +74,43 @@ class BodyConverter extends AbstractTypeConverter
             $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
             if ($response->getStatusCode() === 200) {
                 $content = $response->getBody()->getContents();
-                $body = preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches);
 
-                if (is_array($matches) && $matches[0]) {
-                    $body = $matches[0];
+                // Extract head content for styles and scripts
+                preg_match('/<head[^>]*>(.*?)<\/head>/is', $content, $headMatches);
+                $headContent = $headMatches[1] ?? '';
+
+                // Extract body content
+                preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $bodyMatches);
+                $bodyContent = $bodyMatches[1] ?? '';
+
+                // Add baseUrl to resource paths
+                $baseUrl = rtrim($baseUrl, '/');
+                $patterns = [
+                    '/(href|src)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
+                    '/(url\(["\']?)\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
+                    '/(data-src|data-href)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/'
+                ];
+
+                foreach ($patterns as $pattern) {
+                    $replacement = function($matches) use ($baseUrl) {
+                        // Preserve the equals sign and use double quotes
+                        return $matches[1] . '="' . $baseUrl . '/' . $matches[2];
+                    };
+
+                    $headContent = preg_replace_callback(
+                        $pattern,
+                        $replacement,
+                        $headContent
+                    );
+                    $bodyContent = preg_replace_callback(
+                        $pattern,
+                        $replacement,
+                        $bodyContent
+                    );
                 }
+
+                // Combine head and body content
+                $body = '<div class="typo3-messenger-content">' . $headContent . $bodyContent . '</div>';
             }
         }
 

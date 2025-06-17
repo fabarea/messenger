@@ -179,7 +179,6 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                 ->setBody($data['body'])
                 ->setSubject($data['subject'])
                 ->setSender($sender)
-                ->parseToMarkdown(true)
                 ->setTo($emailsArray)
                 ->send();
         }
