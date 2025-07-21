@@ -2,38 +2,17 @@
 
 namespace Fab\Messenger\TypeConverter;
 
-/*
- * This file is part of the Fab/Media project under GPLv2 or later.
- *
- * For the full copyright and license information, please read the
- * LICENSE.md file that was distributed with this source code.
- */
-
 use Fab\Messenger\PagePath\PagePath;
 use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\RequestFactoryInterface;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
 
-/**
- * Class BodyConverter
- */
 class BodyConverter extends AbstractTypeConverter
 {
-    /**
-     * @var array<string>
-     */
-    protected $sourceTypes = ['int', 'string'];
-
-    /**
-     * @var string
-     */
-    protected $targetType = 'string';
-
-    /**
-     * @var integer
-     */
-    protected $priority = 1;
+    protected  $sourceTypes = ['int', 'string'];
+    protected  $targetType = 'string';
+    protected  $priority = 1;
 
     protected RequestFactoryInterface $requestFactory;
 
@@ -42,111 +21,129 @@ class BodyConverter extends AbstractTypeConverter
         $this->requestFactory = $requestFactory;
     }
 
-    /**
-     * Actually convert from $source to $targetType
-     *
-     * @param string $source
-     * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return string
-     * @api
-     */
     public function convertFrom(
         $source,
         string $targetType,
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null,
     ): string {
-        $body = $source;
-        if (is_numeric($source)) {
-            //$parameters = []; todo
-            $baseUrl = PagePath::getSiteBaseUrl($source);
-
-            $jar = CookieJar::fromArray(
-                [
-                    'fe_typo_user' => $_COOKIE['fe_typo_user'] ?? '',
-                    'be_typo_user' => $_COOKIE['be_typo_user'] ?? '',
-                    'typo3_sess' => $_COOKIE['typo3_sess'] ?? '',
-                ],
-                $_SERVER['HTTP_HOST'] ?? 'localhost',
-            );
-
-            $frontendUrl = $baseUrl . 'index.php?id=' . $source;
-            $headers = [
-                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Charset' => 'utf-8',
-                'Accept-Language' => 'fr,en;q=0.9',
-                'User-Agent' => 'TYPO3-Messenger/1.0',
-                'Cache-Control' => 'no-cache',
-                'Referer' => $baseUrl,
-            ];
-
-            $frontendResponse = $this->requestFactory->request($frontendUrl, 'GET', [
-                'cookies' => $jar,
-                'headers' => $headers,
-                'timeout' => 30
-            ]);
-
-            if ($frontendResponse->getStatusCode() === 200) {
-                $frontendContent = $frontendResponse->getBody()->getContents();
-
-                $frontendContent = quoted_printable_decode($frontendContent);
-
-                $frontendContent = html_entity_decode($frontendContent, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-                $frontendContent = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $frontendContent);
-
-                preg_match('/<body[^>]*>(.*?)<\/body>/is', $frontendContent, $bodyMatches);
-                $bodyContent = $bodyMatches[1] ?? '';
-
-                $backendUrl = $baseUrl . 'typo3/module/web/layout?id=' . $source;
-                $backendResponse = $this->requestFactory->request($backendUrl, 'GET', ['cookies' => $jar]);
-
-                $headContent = '';
-                if ($backendResponse->getStatusCode() === 200) {
-                    $backendContent = $backendResponse->getBody()->getContents();
-                    $backendContent = quoted_printable_decode($backendContent);
-                    $backendContent = html_entity_decode($backendContent, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                    $backendContent = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $backendContent);
-
-                    preg_match('/<head[^>]*>(.*?)<\/head>/is', $backendContent, $headMatches);
-                    $headContent = $headMatches[1] ?? '';
-                }
-
-                $baseUrl = rtrim($baseUrl, '/');
-
-                $resourceBaseUrl = $baseUrl;
-
-                $patterns = [
-                    '/(href|src)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
-                    '/(url\(["\']?)\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
-                    '/(data-src|data-href)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/'
-                ];
-
-                foreach ($patterns as $pattern) {
-                    $replacement = function($matches) use ($resourceBaseUrl) {
-                        // Use normal base URL for resources
-                        return $matches[1] . '="' . $resourceBaseUrl . '/' . $matches[2];
-                    };
-
-                    $headContent = preg_replace_callback(
-                        $pattern,
-                        $replacement,
-                        $headContent
-                    );
-                    $bodyContent = preg_replace_callback(
-                        $pattern,
-                        $replacement,
-                        $bodyContent
-                    );
-                }
-
-                $body = '<div class="typo3-messenger-content">' . $headContent . $bodyContent . '</div>';
-            }
+        if (!is_numeric($source)) {
+            return (string)$source;
         }
+        $pageId = (int)$source;
+        $baseUrl = rtrim(PagePath::getSiteBaseUrl($pageId), '/');
+        $cookieJar = $this->createCookieJar();
 
-        return $body;
+        $headContent = $this->fetchBackendHeadContent($baseUrl, $pageId, $cookieJar);
+        $customHeader = $this->buildCustomHeader($baseUrl);
+        $frontendBody = $this->fetchFrontendBody($baseUrl, $pageId, $cookieJar);
+
+        return $headContent . $customHeader . $frontendBody;
     }
 
+    private function createCookieJar(): CookieJar
+    {
+        $cookie = $_COOKIE['fe_typo_user'] ?? '';
+        $host = filter_var($_SERVER['HTTP_HOST'] ?? 'localhost', FILTER_SANITIZE_URL);
+
+        return CookieJar::fromArray(['fe_typo_user' => $cookie], $host);
+    }
+
+    private function fetchBackendHeadContent(string $baseUrl, int $pageId, CookieJar $jar): string
+    {
+        $url = "{$baseUrl}/typo3/module/web/layout?id={$pageId}";
+        $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
+
+        if ($response->getStatusCode() !== 200) {
+            return '';
+        }
+
+        $content = $response->getBody()->getContents();
+        if (!preg_match('/<head[^>]*>(.*?)<\/head>/is', $content, $matches)) {
+            return '';
+        }
+
+        $headContent = $matches[1];
+        return $this->adjustRelativePaths($headContent, $baseUrl);
+    }
+
+    private function fetchFrontendBody(string $baseUrl, int $pageId, CookieJar $jar): string
+    {
+        $url = "{$baseUrl}/index.php?id={$pageId}";
+        $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
+
+        if ($response->getStatusCode() !== 200) {
+            return '';
+        }
+
+        $content = $response->getBody()->getContents();
+
+        if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {
+            $bodyContent = $matches[1];
+        } else {
+            $bodyContent = $content;
+        }
+        libxml_use_internal_errors(true);
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+        $html = '<?xml encoding="UTF-8">' . $bodyContent;
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $xpath = new \DOMXPath($dom);
+        foreach ($xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " container-fluid ")]') as $containerDiv) {
+            $containerDiv->parentNode->removeChild($containerDiv);
+        }
+        $cleanedBody = $dom->saveHTML();
+        libxml_clear_errors();
+        return $cleanedBody;
+    }
+
+    private function adjustRelativePaths(string $html, string $baseUrl): string
+    {
+        $patterns = [
+            '/(href|src)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
+            '/(url\(["\']?)\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
+            '/(data-src|data-href)=["\']\/(typo3\/|fileadmin\/|uploads\/|t3-assets\/|typo3temp\/|assets\/)/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            $html = preg_replace_callback($pattern, function ($matches) use ($baseUrl) {
+                return $matches[1] . '="' . $baseUrl . '/' . $matches[2];
+            }, $html);
+        }
+
+        return $html;
+    }
+
+    private function buildCustomHeader($baseUrl): string
+    {
+        return <<<HTML
+        <style>
+            body {
+                font-family: Arial, serif;
+                font-size: 16px;
+                line-height: 1.8em;
+                color: #333333;
+                padding: 0;
+                margin: 0;
+            }
+            .container { width: 80%; margin: auto; }
+            h1 { margin: 0; padding: 0; }
+            #footer a { color: white; }
+            #footer .container div { display: inline; }
+            #header { height: 50px; line-height: 50px; background: #3176a2; color: white; text-align: right; font-size: 12px; }
+            #header a { color: white; }
+            #header2 { background: #cce4ee; color: white; font-weight: bold; padding: 10px 20px; height: 80px; margin-bottom: 20px; }
+            #footer { background: #3176a2; color: white; padding: 10px 20px; }
+            #logo img { position: relative; top: -40px; display: block; margin: auto; }
+        </style>
+        <div id="header2">
+            <div class="container">
+                <div id="logo">
+                    <a href="{$baseUrl}">
+                        <img src="{$baseUrl}/ichtus_logo.png" alt="ICHTUS" width="150px" height="150px">
+                    </a>
+                </div>
+            </div>
+        </div>
+HTML;
+    }
 }
