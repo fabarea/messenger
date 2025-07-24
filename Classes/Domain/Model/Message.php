@@ -364,8 +364,7 @@ class Message
                 $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
             }
 
-            // Clean the final processed body
-            $this->processedBody = $this->cleanHtmlContent($processedBody);
+            $this->processedBody = $processedBody;
         }
 
         return $this->processedBody;
@@ -382,43 +381,8 @@ class Message
      */
     public function setBody(string $body): self
     {
-        $this->body = $this->cleanHtmlContent($body);
+        $this->body = $body;
         return $this;
-    }
-
-    /**
-     * Clean HTML content by decoding quoted-printable and removing control characters
-     *
-     * @param string $content
-     * @return string
-     */
-    private function cleanHtmlContent(string $content): string
-    {
-        if (empty($content)) {
-            return $content;
-        }
-
-        // Decode quoted-printable content if present
-        $content = quoted_printable_decode($content);
-
-        // Decode HTML entities multiple times to handle double encoding
-        $previousContent = '';
-        $decodeCount = 0;
-        while ($content !== $previousContent && $decodeCount < 5) {
-            $previousContent = $content;
-            $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            $decodeCount++;
-        }
-
-        // Clean up any remaining control characters
-        $content = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $content);
-
-        // Additional fallback for common HTML entities
-        if (strpos($content, '&lt;') !== false || strpos($content, '&gt;') !== false) {
-            $content = str_replace(['&lt;', '&gt;', '&amp;'], ['<', '>', '&'], $content);
-        }
-
-        return $content;
     }
 
     /**
