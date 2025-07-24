@@ -1,5 +1,4 @@
 <?php
-
 namespace Fab\Messenger\Queue;
 
 /*
@@ -9,15 +8,9 @@ namespace Fab\Messenger\Queue;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\Exception;
-use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
-use Fab\Messenger\Exception\InvalidEmailFormatException;
-use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Fab\Messenger\Utility\Algorithms;
-use Random\RandomException;
+use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -25,13 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class QueueManager
 {
-    /**
-     * @throws RandomException
-     * @throws DBALException
-     * @throws Exception
-     * @throws InvalidEmailFormatException
-     * @throws WrongPluginConfigurationException
-     */
+
     public function dequeue(int $itemsPerRun): array
     {
         $messengerMessages = $this->getQueueRepository()->findPendingMessages($itemsPerRun);
@@ -39,38 +26,9 @@ class QueueManager
         $errorCount = $numberOfSentMessages = 0;
         /** @var array $messengerMessage */
         foreach ($messengerMessages as $messengerMessage) {
-            /** @var Message $message */
-            $message = GeneralUtility::makeInstance(Message::class);
-            $message->setUuid(Algorithms::generateUUID());
+            /** @var MailMessage $message */
+            $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
 
-            // Ensure body content is properly decoded
-            $body = $messengerMessage['body'] ?? '';
-            if (!empty($body)) {
-                $originalBody = $body;
-
-                $body = quoted_printable_decode($body);
-
-                $previousBody = '';
-                $decodeCount = 0;
-                while ($body !== $previousBody && $decodeCount < 5) {
-                    $previousBody = $body;
-                    $body = html_entity_decode($body, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                    $decodeCount++;
-                }
-
-                $body = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $body);
-
-                if (str_contains($body, '&lt;') || str_contains($body, '&gt;')) {
-                    // Try additional decoding methods
-                    $body = str_replace(['&lt;', '&gt;', '&amp;'], ['<', '>', '&'], $body);
-                }
-            }
-
-            $message
-                ->setBody($body)
-                ->setSubject($messengerMessage['subject'])
-                ->setSender($this->normalizeEmails($messengerMessage['sender']))
-                ->setTo($this->normalizeEmails($messengerMessage['recipient']));
             $isSent = $message->send();
             if ($isSent) {
                 $numberOfSentMessages++;
@@ -85,43 +43,8 @@ class QueueManager
 
         return [
             'errorCount' => $errorCount,
-            'numberOfSentMessages' => $numberOfSentMessages,
+            'numberOfSentMessages' => $numberOfSentMessages
         ];
-    }
-
-    /**
-     * @return QueueRepository
-     */
-    protected function getQueueRepository(): QueueRepository
-    {
-        return GeneralUtility::makeInstance(QueueRepository::class);
-    }
-
-    protected function normalizeEmails(string $listOfFormattedEmails): array
-    {
-        $normalizedEmails = [];
-        $formattedEmails = GeneralUtility::trimExplode(',', $listOfFormattedEmails);
-        foreach ($formattedEmails as $formattedEmail) {
-            $formattedEmail = trim($formattedEmail);
-            if (preg_match('/^(.*) <(.*)>$/isU', $formattedEmail, $matches)) {
-                if (count($matches) === 3) {
-                    $normalizedEmails[$matches[2]] = $matches[1];
-                }
-            } else {
-                if (filter_var($formattedEmail, FILTER_VALIDATE_EMAIL)) {
-                    $normalizedEmails[$formattedEmail] = 'Unknown Name';
-                }
-            }
-        }
-        return $normalizedEmails;
-    }
-
-    /**
-     * @return SentMessageRepository
-     */
-    protected function getSentMessageRepository(): SentMessageRepository
-    {
-        return GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
     public function dequeueOne(int $queuedMessageIdentifier): bool
@@ -131,9 +54,9 @@ class QueueManager
         $messengerMessage = $this->getQueueRepository()->findByUid($queuedMessageIdentifier);
 
         if ($messengerMessage) {
-            /** @var Message $message */
+            /** @var MailMessage $message */
             $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
-            $isSent = (bool) $message->send();
+            $isSent = (bool)$message->send();
 
             if ($isSent) {
                 $this->getQueueRepository()->remove($messengerMessage);
@@ -142,7 +65,25 @@ class QueueManager
                 ++$messengerMessage['error_count'];
                 $this->getQueueRepository()->update($messengerMessage);
             }
+
         }
         return $isSent;
     }
+
+    /**
+     * @return object|QueueRepository
+     */
+    protected function getQueueRepository(): QueueRepository
+    {
+        return GeneralUtility::makeInstance(QueueRepository::class);
+    }
+
+    /**
+     * @return object|SentMessageRepository
+     */
+    protected function getSentMessageRepository(): SentMessageRepository
+    {
+        return GeneralUtility::makeInstance(SentMessageRepository::class);
+    }
+
 }
