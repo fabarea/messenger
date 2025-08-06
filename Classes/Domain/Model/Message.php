@@ -53,6 +53,8 @@ class Message
      */
     protected $sender = [];
 
+    protected ?string $messageSerialized = null;
+
     /**
      * The "to" addresses
      *
@@ -311,6 +313,18 @@ class Message
             $result = TRUE;
         }
         return $result;
+    }
+
+
+    /**
+     * set message_serialized
+     * @param string $messageSerialized
+     * @return $this
+     */
+    public function setMessageSerialized(string $messageSerialized): self
+    {
+        $this->messageSerialized = $messageSerialized;
+        return $this;
     }
 
     /**
@@ -694,6 +708,7 @@ class Message
             'ip' => GeneralUtility::getIndpEnv('REMOTE_ADDR') ?: '',
             'mail_message' => $mailMessage,
             'uuid' => $this->uuid,
+            'message_serialized' => $this->messageSerialized,
         ];
 
         return $values;
