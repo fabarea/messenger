@@ -12,15 +12,63 @@ namespace Fab\Messenger\Task;
 use Fab\Messenger\Queue\QueueManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
+use TYPO3\CMS\Core\Log\LogManager;
 
 class MessengerDequeueTask extends AbstractTask
 {
     public int $itemsPerRun = 300;
 
+    protected $logger;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+    }
+
     public function execute(): bool
     {
-        $result = $this->getQueueManager()->dequeue($this->itemsPerRun);
-        return $result['errorCount'] === 0;
+        try {
+            $result = $this->getQueueManager()->dequeue($this->itemsPerRun);
+
+            // Task succeeds if we processed messages, even if some had errors
+            // Also succeed if there are no messages to process (empty queue)
+            $totalProcessed = $result['errorCount'] + $result['numberOfSentMessages'];
+
+            // Log the results for monitoring
+            if ($totalProcessed === 0) {
+                $this->logger->info('Messenger dequeue task completed successfully. No messages in queue to process.');
+                return true;
+            } elseif ($result['errorCount'] > 0) {
+                $this->logger->warning(
+                    sprintf(
+                        'Messenger dequeue task completed with %d errors out of %d processed messages. %d messages sent successfully.',
+                        $result['errorCount'],
+                        $totalProcessed,
+                        $result['numberOfSentMessages']
+                    )
+                );
+            } else {
+                $this->logger->info(
+                    sprintf(
+                        'Messenger dequeue task completed successfully. %d messages sent.',
+                        $result['numberOfSentMessages']
+                    )
+                );
+            }
+
+            return true;
+
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'Messenger dequeue task failed with exception: %s',
+                    $e->getMessage()
+                ),
+                ['exception' => $e]
+            );
+            return false;
+        }
     }
 
     /**

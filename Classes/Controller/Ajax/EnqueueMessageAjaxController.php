@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fab\Messenger\Controller\Ajax;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\PageRepository;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
@@ -14,6 +16,7 @@ use Fab\Messenger\TypeConverter\BodyConverter;
 use Fab\Messenger\Utility\Algorithms;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Random\RandomException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
@@ -29,6 +32,13 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $this->bodyConverter = GeneralUtility::makeInstance(BodyConverter::class);
     }
 
+    /**
+     * @throws RandomException
+     * @throws DBALException
+     * @throws Exception
+     * @throws InvalidEmailFormatException
+     * @throws WrongPluginConfigurationException
+     */
     public function enqueueAction(ServerRequestInterface $request): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
@@ -64,6 +74,12 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         return $sender;
     }
 
+    /**
+     * @throws RandomException
+     * @throws DBALException
+     * @throws Exception
+     * @throws InvalidEmailFormatException
+     */
     protected function performEnqueue(array $uids, array $data, array $sender, string $term): string
     {
         $demand = $this->getDemand($uids, $term);
@@ -96,8 +112,12 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                     ->assign('recipient', $markers)
                     ->assignMultiple($markers)
                     ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
-                    ->setTo($this->getTo($recipient))
+                    ->setTo($this->getTo($recipient));
+
+                $messageSerialized = serialize($message);
+                $message->setMessageSerialized($messageSerialized)
                     ->enqueue();
+
             }
         }
 
@@ -110,8 +130,8 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             count($recipients),
             $numberOfSentEmails !== count($recipients)
                 ? $this->getLanguageService()->sL(
-                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-                )
+                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+            )
                 : '',
         );
     }
