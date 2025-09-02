@@ -35,7 +35,7 @@ abstract class AbstractMessengerAjaxController
     protected function getDemandedFields(): array
     {
         $demandedFields = [];
-        switch ($this->getModuleName()) {
+        switch ($this->getCurrentModuleIdentifier()) {
             case 'MessengerTxMessengerM1':
                 $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
                 break;
@@ -70,8 +70,15 @@ abstract class AbstractMessengerAjaxController
         return $demandedFields;
     }
 
-    protected function getModuleName(): string
+    protected function getCurrentModuleIdentifier(): string
     {
+        // Try to get the route identifier from the request first
+        $routeIdentifier = $this->getRequest()->getAttribute('route')?->getOption('module') ?? '';
+        if (!empty($routeIdentifier)) {
+            return $routeIdentifier;
+        }
+        
+        // Fallback to extracting from URL path for backward compatibility
         $pathSegments = explode(
             '/',
             trim(parse_url($this->getRequest()->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),

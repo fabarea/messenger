@@ -111,14 +111,14 @@ class SentMessageRepository extends AbstractContentRepository
                         $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
                     );
             }
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if (!empty($demand['uids'])) {
             $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
         }
 
         if ($constraints) {
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];

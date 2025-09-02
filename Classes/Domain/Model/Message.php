@@ -32,7 +32,7 @@ use Fab\Messenger\Service\LoggerService;
 use Fab\Messenger\Service\Html2Text;
 use Michelf\Markdown;
 use TYPO3\CMS\Extbase\Annotation\Inject;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+
 
 /**
  * Message representation
@@ -174,11 +174,10 @@ class Message
 
     public function __construct()
     {
-        // todo legacy, migrate me!
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->messageTemplateRepository = $objectManager->get(MessageTemplateRepository::class);
-        $this->messageLayoutRepository = $objectManager->get(MessageLayoutRepository::class);
-        $this->sentMessageRepository = $objectManager->get(SentMessageRepository::class);
+        // Modern dependency injection approach
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
     }
 
     /**
@@ -212,7 +211,10 @@ class Message
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-            LoggerService::getLogger($this)->error($message);
+            LoggerService::getLogger($this)->log(
+                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
+                $message
+            );
             throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 

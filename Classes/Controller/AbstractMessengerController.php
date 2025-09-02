@@ -100,9 +100,8 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $this->moduleTemplate->setContent($this->view->render());
         $this->computeDocHeader($fields, $selectedColumns);
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -140,7 +139,7 @@ abstract class AbstractMessengerController extends ActionController
 
     protected function computeSelectedColumns(): array
     {
-        $moduleVersion = explode('/', $this->getRequestUri());
+        $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
@@ -153,9 +152,9 @@ abstract class AbstractMessengerController extends ActionController
         return $selectedColumns;
     }
 
-    private function getRequestUri(): string
+    private function getRequestUrl(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }
 
     private function computeDocHeader(array $fields, array $selectedColumns): void
@@ -226,7 +225,7 @@ abstract class AbstractMessengerController extends ActionController
      */
     protected function renderUriNewRecord(array $arguments): string
     {
-        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUrl();
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],

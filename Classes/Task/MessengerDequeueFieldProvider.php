@@ -10,7 +10,7 @@ namespace Fab\Messenger\Task;
  */
 
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
@@ -81,7 +81,7 @@ class MessengerDequeueFieldProvider extends AbstractAdditionalFieldProvider
                 $this->getLanguageService()->sL(
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidNumberOfItemsPerRun',
                 ),
-                AbstractMessage::ERROR,
+                ContextualFeedbackSeverity::ERROR,
             );
         }
         return $validData;

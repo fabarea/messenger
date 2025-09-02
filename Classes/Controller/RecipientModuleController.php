@@ -83,10 +83,9 @@ class RecipientModuleController extends ActionController
         ]);
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
 
-        $this->moduleTemplate->setContent($this->view->render());
         $this->computeDocHeader($this->getFields(), $selectedColumns);
 
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -137,7 +136,7 @@ class RecipientModuleController extends ActionController
         $parsedBody = $this->request->getParsedBody();
         $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
 
-        $moduleVersion = explode('/', $this->getRequestUri());
+        $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
         }
@@ -161,9 +160,9 @@ class RecipientModuleController extends ActionController
         return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
-    private function getRequestUri(): string
+    private function getRequestUrl(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }
 
     /**
@@ -231,7 +230,7 @@ class RecipientModuleController extends ActionController
      */
     protected function renderUriNewRecord(array $arguments): string
     {
-        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUrl();
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],

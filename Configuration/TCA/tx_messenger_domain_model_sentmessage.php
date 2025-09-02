@@ -15,6 +15,9 @@ return [
         'typeicon_classes' => [
             'default' => 'extensions-messenger-sentmessage',
         ],
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
     ],
     'types' => [
         '1' => [

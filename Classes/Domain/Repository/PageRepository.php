@@ -75,7 +75,7 @@ class PageRepository extends AbstractContentRepository
                 );
         }
         if ($constraints) {
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
