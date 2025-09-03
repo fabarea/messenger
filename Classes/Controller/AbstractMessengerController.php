@@ -152,7 +152,7 @@ abstract class AbstractMessengerController extends ActionController
         return $selectedColumns;
     }
 
-    private function getRequestUrl(): string
+    private function getRequestUri(): string
     {
         return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }
