@@ -90,13 +90,14 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         foreach ($recipients as $recipient) {
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                 $numberOfSentEmails++;
-                if (!empty($data['body'])) {
+                $body = $data['body']; // Create a copy of the original body for each recipient
+                if (!empty($body)) {
                     $placeholders = [
                         '{email}' => $recipient['email'],
                         '{first_name}' => $recipient['first_name'],
                         '{last_name}' => $recipient['last_name'],
                     ];
-                    $data['body'] = str_replace(array_keys($placeholders), array_values($placeholders), $data['body']);
+                    $body = str_replace(array_keys($placeholders), array_values($placeholders), $body);
                 }
 
                 /** @var Message $message */
@@ -105,7 +106,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                 $markers = $recipient;
                 $markers['uuid'] = $message->getUuid();
                 $message
-                    ->setBody($data['body'])
+                    ->setBody($body)
                     ->setSubject($data['subject'])
                     ->setSender($sender)
                     ->setMailingName($mailingName)
