@@ -90,14 +90,9 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         foreach ($recipients as $recipient) {
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                 $numberOfSentEmails++;
-                $body = $data['body']; // Create a copy of the original body for each recipient
+                $body = $data['body'];
                 if (!empty($body)) {
-                    $placeholders = [
-                        '{email}' => $recipient['email'],
-                        '{first_name}' => $recipient['first_name'],
-                        '{last_name}' => $recipient['last_name'],
-                    ];
-                    $body = str_replace(array_keys($placeholders), array_values($placeholders), $body);
+                    $body = $this->personalizeBody($body, $recipient);
                 }
 
                 /** @var Message $message */
@@ -136,6 +131,18 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                 : '',
         );
     }
+    protected function personalizeBody($body, $recipient): array|string
+    {
+        if (empty($body)) return $body;
+        $placeholders = [
+            '###email###' => htmlspecialchars($recipient['email'] ?? ''),
+            '###first_name###' => htmlspecialchars($recipient['first_name'] ?? ''),
+            '###last_name###' => htmlspecialchars($recipient['last_name'] ?? ''),
+        ];
+
+        return str_replace(array_keys($placeholders), array_values($placeholders), $body);
+    }
+
 
     protected function getTo(array $recipient): array
     {
