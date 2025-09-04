@@ -48,7 +48,7 @@
 				<source>Export xml</source>
 			</trans-unit>
 			<trans-unit id="send_message">
-				<source>Send again</source>
+				<source>Send a message</source>
 			</trans-unit>
 		</body>
 	</file>
