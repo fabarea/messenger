@@ -91,9 +91,6 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                 $numberOfSentEmails++;
                 $body = $data['body'];
-                if (!empty($body)) {
-                    $body = $this->personalizeBody($body, $recipient);
-                }
 
                 /** @var Message $message */
                 $message = GeneralUtility::makeInstance(Message::class);
@@ -130,17 +127,6 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             )
                 : '',
         );
-    }
-    protected function personalizeBody($body, $recipient): array|string
-    {
-        if (empty($body)) return $body;
-        $placeholders = [
-            '###email###' => htmlspecialchars($recipient['email'] ?? ''),
-            '###first_name###' => htmlspecialchars($recipient['first_name'] ?? ''),
-            '###last_name###' => htmlspecialchars($recipient['last_name'] ?? ''),
-        ];
-
-        return str_replace(array_keys($placeholders), array_values($placeholders), $body);
     }
 
 
