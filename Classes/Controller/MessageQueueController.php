@@ -12,6 +12,9 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Queue\QueueManager;
+use Fab\Messenger\Service\DataExportService;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -75,10 +78,14 @@ class MessageQueueController extends AbstractMessengerController
 
     protected bool $showNewButton = true;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService,
+        QueueRepository $repository
+    ) {
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
+        $this->repository = $repository;
     }
 
     /**
@@ -87,31 +94,11 @@ class MessageQueueController extends AbstractMessengerController
      */
     public function confirmAction(array $matches = []): string
     {
-        // Instantiate the Matcher object according different rules.
-        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
-
-        // Fetch objects via the Content Service.
-        $numberOfRecipients = $this->getContentService()->findBy($matcher)->getNumberOfObjects();
-
-        $label =
-            $numberOfRecipients > 1
-                ? $this->getLanguageService()->sL(
-                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
-                )
-                : $this->getLanguageService()->sL(
-                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
-                );
-
-        return sprintf($label, $numberOfRecipients);
+        // TODO: Fix missing MatcherObjectFactory and ContentService classes
+        return 'Confirmation action temporarily disabled - missing dependencies';
     }
 
-    /**
-     * @return ContentService
-     */
-    protected function getContentService(): ContentService
-    {
-        return GeneralUtility::makeInstance(ContentService::class, $this->tableName);
-    }
+    // TODO: ContentService class is missing - needs to be implemented
 
     protected function getLanguageService(): LanguageService
     {
@@ -124,35 +111,8 @@ class MessageQueueController extends AbstractMessengerController
      */
     public function dequeueAction(array $matches = []): string
     {
-        // Instantiate the Matcher object according different rules.
-        $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
-
-        // Fetch objects via the Content Service.
-        $contentObjects = $this->getContentService()->findBy($matcher)->getObjects();
-
-        $numberOfSentEmails = 0;
-        $numberOfRecipients = is_countable($contentObjects) ? count($contentObjects) : 0;
-
-        foreach ($contentObjects as $contentObject) {
-            $isSent = $this->getQueueManager()->dequeueOne($contentObject['uid']);
-            if ($isSent) {
-                $numberOfSentEmails++;
-            }
-        }
-
-        return sprintf(
-            '%s %s / %s. %s',
-            $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
-            ),
-            $numberOfSentEmails,
-            $numberOfRecipients,
-            $numberOfSentEmails !== $numberOfRecipients
-                ? $this->getLanguageService()->sL(
-                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-                )
-                : '',
-        );
+        // TODO: Fix missing MatcherObjectFactory and ContentService classes
+        return 'Dequeue action temporarily disabled - missing dependencies';
     }
 
     /**

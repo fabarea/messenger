@@ -18,6 +18,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractContentRepository implements SingletonInterface, MessengerRepositoryInterface
 {
+    protected string $tableName = '';
     protected function addDemandConstraints(array $demand, QueryBuilder $queryBuilder): void
     {
         $expressions = [];
