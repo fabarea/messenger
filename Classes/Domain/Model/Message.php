@@ -516,19 +516,16 @@ class Message
 
     protected function getProcessedSubject(): string
     {
-        if ($this->processedSubject === '') {
-
-            $processedSubject = $this->subject;
-            if ($this->messageTemplate) {
-                $processedSubject = $this->messageTemplate->getSubject();
-            }
-            // Possible markers substitution.
-            if ($this->markers) {
-                $processedSubject = $this->getContentRenderer()->render($processedSubject, $this->markers);
-            }
-            $this->processedSubject = $processedSubject;
+        // Always process the subject to ensure markers are correctly replaced for each recipient
+        $processedSubject = $this->subject;
+        if ($this->messageTemplate) {
+            $processedSubject = $this->messageTemplate->getSubject();
         }
-
+        // Possible markers substitution.
+        if ($this->markers) {
+            $processedSubject = $this->getContentRenderer()->render($processedSubject, $this->markers);
+        }
+        $this->processedSubject = $processedSubject;
         return $this->processedSubject;
     }
 
@@ -552,34 +549,31 @@ class Message
 
     protected function getProcessedBody(): string
     {
-        if ($this->processedBody === '') {
+        // Always process the body to ensure markers are correctly replaced for each recipient
+        $processedBody = $this->body;
 
-            $processedBody = $this->body;
-
-            if ($this->messageTemplate) {
-                $processedBody = $this->messageTemplate->getBody();
-            }
-
-            // Possible wrap body in Layout content.
-            if ($this->messageLayout) {
-                $processedBody = str_replace('{BODY}', $processedBody, $this->messageLayout->getContent());
-            }
-
-            // Parse Markdown only if necessary.
-            if ($this->parseToMarkdown
-                || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
-            ) {
-                $processedBody = Markdown::defaultTransform($processedBody);
-            }
-
-            // Possible markers substitution.
-            if ($this->markers) {
-                $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
-            }
-
-            $this->processedBody = $processedBody;
+        if ($this->messageTemplate) {
+            $processedBody = $this->messageTemplate->getBody();
         }
 
+        // Possible wrap body in Layout content.
+        if ($this->messageLayout) {
+            $processedBody = str_replace('{BODY}', $processedBody, $this->messageLayout->getContent());
+        }
+
+        // Parse Markdown only if necessary.
+        if ($this->parseToMarkdown
+            || ($this->messageTemplate && $this->messageTemplate->getTemplateEngine() === TemplateEngine::FLUID_AND_MARKDOWN)
+        ) {
+            $processedBody = Markdown::defaultTransform($processedBody);
+        }
+
+        // Possible markers substitution.
+        if ($this->markers) {
+            $processedBody = $this->getContentRenderer()->render($processedBody, $this->markers);
+        }
+
+        $this->processedBody = $processedBody;
         return $this->processedBody;
     }
 
