@@ -33,7 +33,7 @@ class MessageLayoutRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchOne();
+        $messages = $query->executeQuery()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -50,7 +50,7 @@ class MessageLayoutRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -69,7 +69,7 @@ class MessageLayoutRepository extends AbstractContentRepository
                     ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
             );
 
-        $messages = $query->execute()->fetchAssociative();
+        $messages = $query->executeStatement()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -87,7 +87,7 @@ class MessageLayoutRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where('crdate < ' . $time);
 
-        $messages = $query->execute()->fetchAllAssociative();
+        $messages = $query->executeQuery()->fetchAllAssociative();
         return is_array($messages) ? $messages : [];
     }
 
@@ -98,7 +98,7 @@ class MessageLayoutRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('crdate < ' . $time);
 
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     /**
@@ -139,7 +139,7 @@ class MessageLayoutRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $queryBuilder->execute()->fetchAllAssociative();
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 
     public function findAll(): array
@@ -147,14 +147,14 @@ class MessageLayoutRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->select('*')->from($this->tableName);
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     protected function getLanguageService(): LanguageService

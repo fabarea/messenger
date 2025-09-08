@@ -5,7 +5,6 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
-use Fab\Messenger\Resolver\FieldPathResolver;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
@@ -40,11 +39,14 @@ class RecipientModuleController extends ActionController
 
     protected string $tableName = '';
 
-    public function __construct()
-    {
-        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
-        $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        RecipientRepository $repository
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->iconFactory = $iconFactory;
+        $this->repository = $repository;
         $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
 

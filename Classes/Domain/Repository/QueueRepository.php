@@ -48,7 +48,7 @@ class QueueRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchOne();
+        $messages = $query->executeQuery()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -75,7 +75,7 @@ class QueueRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -94,7 +94,7 @@ class QueueRepository extends AbstractContentRepository
                     ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
             );
 
-        $messages = $query->execute()->fetchAllAssociative();
+        $messages = $query->executeQuery()->fetchAllAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -104,7 +104,7 @@ class QueueRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->select('*')->from($this->tableName);
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -120,7 +120,7 @@ class QueueRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where('crdate < ' . $time);
 
-        $messages = $query->execute()->fetchAllAssociative();
+        $messages = $query->executeQuery()->fetchAllAssociative();
         return is_array($messages) ? $messages : [];
     }
 
@@ -134,7 +134,7 @@ class QueueRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('crdate < ' . $time);
 
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     /**
@@ -175,7 +175,7 @@ class QueueRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $queryBuilder->execute()->fetchAllAssociative();
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -197,7 +197,7 @@ class QueueRepository extends AbstractContentRepository
         }
         $query = $this->getQueryBuilder();
         $query->insert($this->tableName)->values($values);
-        $result = $query->execute();
+        $result = $query->executeStatement();
         if (!$result) {
             throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
@@ -217,7 +217,7 @@ class QueueRepository extends AbstractContentRepository
             ->where('scheduled_distribution_time < ' . time())
             ->setMaxResults($limit);
 
-        $messages = $query->execute()->fetchAllAssociative();
+        $messages = $query->executeQuery()->fetchAllAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -230,7 +230,7 @@ class QueueRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('uid = ' . $message['uid']);
 
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     /**
@@ -244,13 +244,13 @@ class QueueRepository extends AbstractContentRepository
         foreach ($message as $field => $value) {
             $query->set($field, $value);
         }
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
-        return $query->execute();
+        return $query->executeStatement();
     }
 }

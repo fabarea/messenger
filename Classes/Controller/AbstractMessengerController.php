@@ -52,11 +52,14 @@ abstract class AbstractMessengerController extends ActionController
 
     protected string $dataType = '';
 
-    public function __construct()
-    {
-        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
-        $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
+    public function __construct(
+        ?ModuleTemplateFactory $moduleTemplateFactory = null,
+        ?IconFactory $iconFactory = null,
+        ?DataExportService $dataExportService = null
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory ?? GeneralUtility::makeInstance(ModuleTemplateFactory::class);
+        $this->iconFactory = $iconFactory ?? GeneralUtility::makeInstance(IconFactory::class);
+        $this->dataExportService = $dataExportService ?? GeneralUtility::makeInstance(DataExportService::class);
     }
 
     /**
@@ -90,7 +93,7 @@ abstract class AbstractMessengerController extends ActionController
                 ? $this->request->getArgument('items')
                 : $this->itemsPerPage,
             'direction' => $orderings[key($orderings)],
-            'controller ' => $this->controller,
+            'controller' => $this->controller,
             'action' => $this->action,
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
@@ -152,7 +155,7 @@ abstract class AbstractMessengerController extends ActionController
         return $selectedColumns;
     }
 
-    private function getRequestUri(): string
+    private function getRequestUrl(): string
     {
         return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }

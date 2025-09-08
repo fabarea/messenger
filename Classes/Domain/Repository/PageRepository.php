@@ -25,7 +25,7 @@ class PageRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function getQueryBuilder(): QueryBuilder
@@ -47,7 +47,7 @@ class PageRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchAssociative();
+        $messages = $query->executeStatement()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -57,7 +57,7 @@ class PageRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->select('*')->from($this->tableName);
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
@@ -87,13 +87,13 @@ class PageRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $queryBuilder->execute()->fetchAllAssociative();
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 
     public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
-        return $query->execute();
+        return $query->executeStatement();
     }
 }

@@ -39,7 +39,7 @@ class RecipientRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchOne();
+        $messages = $query->executeQuery()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -79,7 +79,7 @@ class RecipientRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $queryBuilder->execute()->fetchAllAssociative();
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -90,14 +90,14 @@ class RecipientRepository extends AbstractContentRepository
     {
         $query = $this->getQueryBuilder();
         $query->select('id')->from($this->tableName);
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     public function findAllEmails(): array
     {
         $query = $this->getQueryBuilder();
         $query->select('email')->from($this->tableName);
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -112,7 +112,7 @@ class RecipientRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -122,7 +122,7 @@ class RecipientRepository extends AbstractContentRepository
     {
         $this->getQueryBuilder()
             ->delete($this->tableName)
-            ->execute();
+            ->executeStatement();
     }
 
     /**
@@ -140,7 +140,7 @@ class RecipientRepository extends AbstractContentRepository
                     ->expr()
                     ->eq('email', $this->getQueryBuilder()->expr()->literal($email)),
             )
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
         return !empty($record);
     }
@@ -153,7 +153,7 @@ class RecipientRepository extends AbstractContentRepository
         $result = $this->getQueryBuilder()
             ->insert($this->tableName)
             ->values($values)
-            ->execute();
+            ->executeStatement();
         return (bool) $result;
     }
 
@@ -161,7 +161,7 @@ class RecipientRepository extends AbstractContentRepository
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     protected function getLanguageService(): LanguageService
