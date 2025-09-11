@@ -1,5 +1,5 @@
-<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
-    <f:be.pageRenderer includeCssFiles="{0: '{f:uri.resource(path:\'Css/styles.css\')}'}" />
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:typo3="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers">
+    <typo3:pageRenderer includeCssFiles="{0: '{f:uri.resource(path:\'Css/styles.css\')}'}" />
     <h1>
         <f:translate key="LLL:EXT:messenger/Resources/Private/Language/{domainModel}.xlf:mlang_labels_tablabel" />
     </h1>
@@ -127,13 +127,13 @@
                             <div class="d-flex gap-1 align-items-center pull-right">
                                 <a
                                     class="btn btn-default btn-secondary"
-                                    href="{be:uri.editRecord(uid: '{recipient.uid}', table:'{domainModel}')}"
+                                    href="{typo3:uri.editRecord(uid: '{recipient.uid}', table:'{domainModel}')}"
                                 >
                                     <core:icon identifier="actions-document-open" />
                                 </a>
                                 <f:variable
                                     name="deleteUrl"
-                                    value="{be:moduleLink(route:'tce_db', query:'cmd[{domainModel}][{recipient.uid}][delete]=1', currentUrlParameterName:'redirect')}"
+                                    value="{typo3:moduleLink(route:'tce_db', query:'cmd[{domainModel}][{recipient.uid}][delete]=1', currentUrlParameterName:'redirect')}"
                                 />
                                 <button
                                     class="btn btn-default btn-secondary"
