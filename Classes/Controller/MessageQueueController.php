@@ -14,7 +14,6 @@ use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Queue\QueueManager;
 use Fab\Messenger\Service\DataExportService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Backend\View\BackendViewFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -84,10 +83,9 @@ class MessageQueueController extends AbstractMessengerController
         ModuleTemplateFactory $moduleTemplateFactory,
         IconFactory $iconFactory,
         DataExportService $dataExportService,
-        PageRenderer $pageRenderer,
-        BackendViewFactory $backendViewFactory
+        PageRenderer $pageRenderer
     ) {
-        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService, $pageRenderer, $backendViewFactory);
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService, $pageRenderer);
         $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
     }
 

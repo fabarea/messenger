@@ -16,7 +16,6 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Backend\View\BackendViewFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
@@ -34,7 +33,6 @@ abstract class AbstractMessengerController extends ActionController
     protected IconFactory $iconFactory;
     protected DataExportService $dataExportService;
     protected PageRenderer $pageRenderer;
-    protected BackendViewFactory $backendViewFactory;
 
     protected int $itemsPerPage = 20;
     protected array $allowedColumns = [];
@@ -53,14 +51,12 @@ abstract class AbstractMessengerController extends ActionController
         ModuleTemplateFactory $moduleTemplateFactory,
         IconFactory $iconFactory,
         DataExportService $dataExportService,
-        PageRenderer $pageRenderer,
-        BackendViewFactory $backendViewFactory
+        PageRenderer $pageRenderer
     ) {
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->iconFactory = $iconFactory;
         $this->dataExportService = $dataExportService;
         $this->pageRenderer = $pageRenderer;
-        $this->backendViewFactory = $backendViewFactory;
     }
 
     /**
@@ -68,9 +64,6 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
-        // Créer la vue backend avec les bons chemins de templates
-        $view = $this->backendViewFactory->create($this->request);
-        
         $orderings = $this->getOrderings();
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
@@ -97,7 +90,7 @@ abstract class AbstractMessengerController extends ActionController
         $prevPage = max(1, $currentPage - 1);
         $nextPage = min($totalPages, $currentPage + 1);
         
-        $view->assignMultiple([
+        $this->view->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -125,12 +118,12 @@ abstract class AbstractMessengerController extends ActionController
         ]);
 
         // Configurer le docheader pour la vue Extbase
-        $this->configureDocHeaderForExtbase($view, $fields, $selectedColumns);
+        $this->configureDocHeaderForExtbase($fields, $selectedColumns);
 
-        return $view->renderResponse('Index');
+        return $this->htmlResponse();
     }
 
-    protected function configureDocHeaderForExtbase($view, array $fields, array $selectedColumns): void
+    protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
     {
         try {
             // Créer un ModuleTemplate pour le docheader
