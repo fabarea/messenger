@@ -64,6 +64,9 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        // Utiliser ModuleTemplate pour les modules backend TYPO3 v12
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        
         $orderings = $this->getOrderings();
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
@@ -90,7 +93,7 @@ abstract class AbstractMessengerController extends ActionController
         $prevPage = max(1, $currentPage - 1);
         $nextPage = min($totalPages, $currentPage + 1);
         
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -117,10 +120,48 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        // Configurer le docheader pour la vue Extbase
-        $this->configureDocHeaderForExtbase($fields, $selectedColumns);
+        // Configurer le docheader
+        $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
 
-        return $this->htmlResponse();
+        return $moduleTemplate->renderResponse('Index');
+    }
+
+    protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
+    {
+        try {
+            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
+            $docHeaderComponent->enable();
+            
+            $buttonBar = $docHeaderComponent->getButtonBar();
+
+            // Ajouter le bouton de sélection de colonnes
+            if (class_exists(ColumnSelectorButton::class)) {
+                /** @var ColumnSelectorButton $columnSelectorButton */
+                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+                $columnSelectorButton
+                    ->setFields($fields)
+                    ->setSelectedColumns($selectedColumns)
+                    ->setModule($this->getModuleName($this->moduleName))
+                    ->setTableName($this->table)
+                    ->setAction('index')
+                    ->setController($this->controller)
+                    ->setModel($this->domainModel);
+
+                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+            }
+
+            if ($this->showNewButton) {
+                $this->addNewButtonToDocHeader($moduleTemplate);
+            }
+            
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error in configureDocHeaderForModuleTemplate: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
     }
 
     protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
