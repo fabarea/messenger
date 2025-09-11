@@ -121,7 +121,7 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        return $view->renderResponse('Index');
+        return $view->renderContent();
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
@@ -134,6 +134,9 @@ abstract class AbstractMessengerController extends ActionController
         // S'assurer que le docheader est activé
         $docHeaderComponent = $view->getDocHeaderComponent();
         $docHeaderComponent->enable();
+        
+        // Assigner le ModuleTemplate à la vue pour qu'il soit disponible dans les templates
+        $view->assign('moduleTemplate', $view);
         
         return $view;
     }
