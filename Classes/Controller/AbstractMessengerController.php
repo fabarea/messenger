@@ -74,11 +74,10 @@ abstract class AbstractMessengerController extends ActionController
         });
         $fields = array_merge(['uid'], $fields);
         $selectedColumns = $this->computeSelectedColumns();
-        $pagination = new SimplePagination($paginator);
 
         $pagination = new SimplePagination($paginator);
 
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -104,7 +103,7 @@ abstract class AbstractMessengerController extends ActionController
 
         $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
 
-        
+
 
         return $moduleTemplate->renderResponse('Index');
     }
@@ -298,4 +297,3 @@ abstract class AbstractMessengerController extends ActionController
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }
-
