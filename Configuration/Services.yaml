@@ -4,6 +4,11 @@ services:
     autoconfigure: true
     public: true
 
+  Fab\Messenger\Controller\:
+    resource: '../Classes/Controller/*'
+    tags: ['backend.controller']
+    arguments:
+      $view: '@TYPO3\CMS\Backend\View\BackendViewFactory'
 
   Fab\Messenger\Controller\AdminModuleController:
     tags: [ 'backend.controller' ]
