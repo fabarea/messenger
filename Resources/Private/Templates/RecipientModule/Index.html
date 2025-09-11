@@ -1,4 +1,4 @@
-<f:be.container
+<f:be.pageRenderer
     includeCssFiles="{0: '{f:uri.resource(path:\'Css/Styles.css\')}'}"
     includeJavaScriptModules="{
         0: '@fab/messenger/Utils/Uri.js',
@@ -13,6 +13,5 @@
     3: 'TYPO3/CMS/Messenger/UpdateRecipient',
     4: 'TYPO3/CMS/Messenger/MassDeletion'
     }"
->
-    <f:render arguments="{_all}" partial="List/RecipientListView" />
-</f:be.container>
+/>
+<f:render arguments="{_all}" partial="List/RecipientListView" />
