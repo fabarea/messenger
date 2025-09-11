@@ -82,6 +82,7 @@ const Messenger = {
                   success: function (response) {
                     Notification.success('', response);
                     Modal.dismiss();
+                    window.location.reload();
                   },
                 });
               },
