@@ -1,10 +1,11 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/UpdateRecipient
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+import $ from 'jquery';
+import { Modal } from '@typo3/backend/modal';
+import { Notification } from '@typo3/backend/notification';
 
-  const MessengerUpdateRecipient = {
+const MessengerUpdateRecipient = {
     /**
      * Get edit storage URL.
      *
@@ -91,6 +92,5 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  MessengerUpdateRecipient.initialize();
-  return MessengerUpdateRecipient;
-});
+MessengerUpdateRecipient.initialize();
+export default MessengerUpdateRecipient;

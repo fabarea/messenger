@@ -1,10 +1,11 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/EnqueueMessages
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+import $ from 'jquery';
+import { Modal } from '@typo3/backend/modal';
+import { Notification } from '@typo3/backend/notification';
 
-  const MessengerEnqueueMessages = {
+const MessengerEnqueueMessages = {
     /**
      * Get edit storage URL.
      *
@@ -100,6 +101,5 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  MessengerEnqueueMessages.initialize();
-  return MessengerEnqueueMessages;
-});
+MessengerEnqueueMessages.initialize();
+export default MessengerEnqueueMessages;

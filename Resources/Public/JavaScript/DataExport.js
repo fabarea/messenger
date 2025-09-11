@@ -1,10 +1,11 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/DataExport
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+import $ from 'jquery';
+import { Modal } from '@typo3/backend/modal';
+import { Notification } from '@typo3/backend/notification';
 
-  const MessengerDataExport = {
+const MessengerDataExport = {
     /**
      * Get edit storage URL.
      *
@@ -124,6 +125,5 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  MessengerDataExport.initialize();
-  return MessengerDataExport;
-});
+MessengerDataExport.initialize();
+export default MessengerDataExport;
