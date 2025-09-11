@@ -1,10 +1,8 @@
 /**
  * Module: Fab/Messenger/DataExport
  */
-import $ from 'jquery';
-import { Modal } from '@typo3/backend/modal';
-import { Notification } from '@typo3/backend/notification';
-import { Uri } from './Utils/UriWrapper.js';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
 const MessengerDataExport = {
     /**
@@ -20,7 +18,7 @@ const MessengerDataExport = {
      */
 
     getExportStorageUrl: function (url, format, module, type, searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -126,9 +124,10 @@ const MessengerDataExport = {
     },
   };
 
-MessengerDataExport.initialize();
+    MessengerDataExport.initialize();
 
-// Expose globally for compatibility
-window.MessengerDataExport = MessengerDataExport;
+    // Expose globally for compatibility
+    window.MessengerDataExport = MessengerDataExport;
 
-export default MessengerDataExport;
+    return MessengerDataExport;
+});

@@ -1,10 +1,8 @@
 /**
  * Module: Fab/Messenger/UpdateRecipient
  */
-import $ from 'jquery';
-import { Modal } from '@typo3/backend/modal';
-import { Notification } from '@typo3/backend/notification';
-import { Uri } from './Utils/UriWrapper.js';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
 const MessengerUpdateRecipient = {
     /**
@@ -18,7 +16,7 @@ const MessengerUpdateRecipient = {
      */
 
     getEditRecipientUrl: function (url, data = [], searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
       uri.addQueryParam(
         'tx_messenger_user_messengerm5[matches][uid]',
@@ -93,9 +91,10 @@ const MessengerUpdateRecipient = {
     },
   };
 
-MessengerUpdateRecipient.initialize();
+    MessengerUpdateRecipient.initialize();
 
-// Expose globally for compatibility
-window.MessengerUpdateRecipient = MessengerUpdateRecipient;
+    // Expose globally for compatibility
+    window.MessengerUpdateRecipient = MessengerUpdateRecipient;
 
-export default MessengerUpdateRecipient;
+    return MessengerUpdateRecipient;
+});

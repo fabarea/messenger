@@ -1,10 +1,8 @@
 /**
  * Module: Fab/Messenger/MassDeletion
  */
-import $ from 'jquery';
-import { Modal } from '@typo3/backend/modal';
-import { Notification } from '@typo3/backend/notification';
-import { Uri } from './Utils/UriWrapper.js';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
 const MessengerMassDeletion = {
     /**
@@ -19,7 +17,7 @@ const MessengerMassDeletion = {
      */
 
     getMassDeletionUrl: function (url, module, type, searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -97,9 +95,10 @@ const MessengerMassDeletion = {
     },
   };
 
-MessengerMassDeletion.initialize();
+    MessengerMassDeletion.initialize();
 
-// Expose globally for compatibility
-window.MessengerMassDeletion = MessengerMassDeletion;
+    // Expose globally for compatibility
+    window.MessengerMassDeletion = MessengerMassDeletion;
 
-export default MessengerMassDeletion;
+    return MessengerMassDeletion;
+});

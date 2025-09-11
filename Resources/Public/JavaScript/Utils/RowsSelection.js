@@ -1,4 +1,7 @@
-window.Messenger = {
+define(['jquery'], function($) {
+    'use strict';
+
+    const Messenger = {
   deleteItem: function (element) {
     return top.TYPO3.Modal.confirm(
       'Delete',
@@ -29,3 +32,22 @@ window.Messenger = {
     return [...document.querySelectorAll('.select:checked')].map((element) => element.value);
   },
 };
+
+    // Initialize when DOM is ready
+    $(document).ready(function() {
+        // Initialize selectAll functionality
+        if (window.Messenger && window.Messenger.selectAll) {
+            window.Messenger.selectAll();
+        }
+        
+        // Handle form submission for items per page
+        $('#itemsPerPage').on('change', function() {
+            $(this).closest('form').submit();
+        });
+    });
+
+    // Expose globally for compatibility
+    window.Messenger = Messenger;
+
+    return Messenger;
+});
