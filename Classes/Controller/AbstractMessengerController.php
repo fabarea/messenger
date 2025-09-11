@@ -67,10 +67,16 @@ abstract class AbstractMessengerController extends ActionController
         $view = $this->initializeModuleTemplate($this->request);
 
         $orderings = $this->getOrderings();
-        $messages = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
-        $paginator = new ArrayPaginator($messages, $currentPage, $items);
+        $offset = ($currentPage - 1) * $items;
+        
+        // Récupérer le nombre total d'éléments pour la pagination
+        $totalCount = $this->getTotalCount();
+        
+        // Récupérer seulement les messages de la page courante
+        $messages = $this->repository->findByDemand($this->getDemand(), $orderings, $offset, $items);
+        $paginator = new ArrayPaginator($messages, $currentPage, $items, $totalCount);
 
         $fields = TcaFieldsUtility::getFields($this->table);
         $fields = array_filter($fields, function ($field) {
@@ -90,7 +96,7 @@ abstract class AbstractMessengerController extends ActionController
             'paginator' => $paginator,
             'pagination' => $pagination,
             'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
-            'count' => count($messages),
+            'count' => $totalCount,
             'sortBy' => key($orderings),
             'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
             'itemsPerPages' => $this->request->hasArgument('items')
@@ -183,6 +189,13 @@ abstract class AbstractMessengerController extends ActionController
             }
         }
         return $demand;
+    }
+
+    protected function getTotalCount(): int
+    {
+        // Récupérer le nombre total d'éléments correspondant aux critères de recherche
+        $demand = $this->getDemand();
+        return $this->repository->countByDemand($demand);
     }
 
     protected function computeSelectedColumns(): array

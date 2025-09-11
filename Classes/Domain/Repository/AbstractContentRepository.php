@@ -51,4 +51,16 @@ abstract class AbstractContentRepository implements SingletonInterface, Messenge
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
+
+    public function countByDemand(array $demand = []): int
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->count('uid')->from($this->tableName);
+        
+        if (!empty($demand)) {
+            $this->addDemandConstraints($demand, $queryBuilder);
+        }
+
+        return (int) $queryBuilder->execute()->fetchOne();
+    }
 }

@@ -133,6 +133,34 @@ class SentMessageRepository extends AbstractContentRepository
         return $queryBuilder->execute()->fetchAllAssociative();
     }
 
+    public function countByDemand(array $demand = []): int
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->count('uid')->from($this->tableName);
+        $constraints = [];
+
+        if (!empty($demand['likes'])) {
+            foreach ($demand['likes'] as $field => $value) {
+                $constraints[] = $queryBuilder
+                    ->expr()
+                    ->like(
+                        $field,
+                        $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                    );
+            }
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+        }
+        if (!empty($demand['uids'])) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
+        }
+
+        if ($constraints) {
+            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+        }
+
+        return (int) $queryBuilder->execute()->fetchOne();
+    }
+
     public function add(array $message): int
     {
         $values = [];
