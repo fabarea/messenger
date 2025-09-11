@@ -85,6 +85,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                   success: function (response) {
                     Notification.success('', response);
                     Modal.dismiss();
+                    window.location.reload();
                   },
                 });
               },

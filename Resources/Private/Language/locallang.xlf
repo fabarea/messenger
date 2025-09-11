@@ -228,7 +228,9 @@
 			<trans-unit id="send_message">
 				<source>Send a message</source>
 			</trans-unit>
-
+			<trans-unit id="delete.messages.none.selected">
+				<source>No items selected to delete.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
