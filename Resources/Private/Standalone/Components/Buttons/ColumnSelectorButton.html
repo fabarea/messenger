@@ -1,12 +1,10 @@
 {namespace m=Fab\Messenger\ViewHelpers}
 
 <div class="btn-toolbar btn-default btn-sm" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
-    <f:form
-        action="{action}"
-        controller="{controller}"
-        extensionName="{module}"
-        fieldNamePrefix="{module}"
+    <form
+        action="{formAction}"
         method="post"
+        name="{module}"
     >
         <div aria-label="" class="btn-toolbar btn-default bg-white" role="toolbar">
             <div class="dropdown dropdown-fields pull-right">
@@ -25,12 +23,13 @@
                                         name="isChecked"
                                         value="{m:inArray(haystack:'{selectedColumns}', needle:'{fieldName}', then:'1', else:'0')}"
                                     />
-                                    <f:form.checkbox
-                                        additionalAttributes="{onchange: 'this.form.submit()'}"
-                                        checked="{f:if(condition:'{isChecked}' , then:'true' , else:'false')}"
+                                    <input
+                                        type="checkbox"
                                         class="check-visible-toggle"
-                                        name="selectedColumns[] "
+                                        name="{module}[selectedColumns][]"
                                         value="{fieldName}"
+                                        onchange="this.form.submit()"
+                                        {f:if(condition:'{isChecked}' , then:'checked="checked"' , else:'')}
                                     />
                                     <f:if condition="{model}">
                                         <f:then>
@@ -54,5 +53,5 @@
                 </ul>
             </div>
         </div>
-    </f:form>
+    </form>
 </div>

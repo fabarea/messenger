@@ -78,7 +78,7 @@ abstract class AbstractMessengerController extends ActionController
 
         $pagination = new SimplePagination($paginator);
 
-        $moduleTemplate->assignMultiple([
+        $this->view->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -102,19 +102,22 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
+        $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
+
+        
+
         return $moduleTemplate->renderResponse('Index');
     }
 
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
-    
+
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $docHeaderComponent->enable();
 
             $buttonBar = $docHeaderComponent->getButtonBar();
 
-            // Ajouter le bouton de sélection de colonnes
             if (class_exists(ColumnSelectorButton::class)) {
                 /** @var ColumnSelectorButton $columnSelectorButton */
                 $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
@@ -136,46 +139,10 @@ abstract class AbstractMessengerController extends ActionController
 
     }
 
-
-    protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
-    {
-
-            // Créer un ModuleTemplate pour le docheader
-            $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
-            $docHeaderComponent->enable();
-
-            $buttonBar = $docHeaderComponent->getButtonBar();
-
-            // Ajouter le bouton de sélection de colonnes
-            if (class_exists(ColumnSelectorButton::class)) {
-                /** @var ColumnSelectorButton $columnSelectorButton */
-                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
-                $columnSelectorButton
-                    ->setFields($fields)
-                    ->setSelectedColumns($selectedColumns)
-                    ->setModule($this->getModuleName($this->moduleName))
-                    ->setTableName($this->table)
-                    ->setAction('index')
-                    ->setController($this->controller)
-                    ->setModel($this->domainModel);
-
-                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
-            }
-
-            if ($this->showNewButton) {
-                $this->addNewButtonToDocHeader($moduleTemplate);
-            }
-
-            // Assigner le ModuleTemplate à la vue pour le rendu
-            $this->view->assign('moduleTemplate', $moduleTemplate);
-
-    
-    }
 
     protected function addNewButtonToDocHeader(ModuleTemplate $moduleTemplate): void
     {
-    
+
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $buttonBar = $docHeaderComponent->getButtonBar();
 
@@ -191,56 +158,21 @@ abstract class AbstractMessengerController extends ActionController
 
                 $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
             }
-      
+
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
     {
         $view = $this->moduleTemplateFactory->create($request);
 
-        // Définir le titre du module pour TYPO3 v12
         $view->setTitle('Messenger Module');
 
-        // S'assurer que le docheader est activé
         $docHeaderComponent = $view->getDocHeaderComponent();
         $docHeaderComponent->enable();
 
-        // Assigner le ModuleTemplate à la vue pour qu'il soit disponible dans les templates
         $view->assign('moduleTemplate', $view);
 
         return $view;
-    }
-
-    private function modifyDocHeaderComponent(ModuleTemplate $view, array $fields, array $selectedColumns): void
-    {
-       
-            $docHeaderComponent = $view->getDocHeaderComponent();
-
-            // S'assurer que le docheader est activé dans TYPO3 v12
-            $docHeaderComponent->enable();
-
-            $buttonBar = $docHeaderComponent->getButtonBar();
-
-            // Ajouter le bouton de sélection de colonnes
-            if (class_exists(ColumnSelectorButton::class)) {
-                /** @var ColumnSelectorButton $columnSelectorButton */
-                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
-                $columnSelectorButton
-                    ->setFields($fields)
-                    ->setSelectedColumns($selectedColumns)
-                    ->setModule($this->getModuleName($this->moduleName))
-                    ->setTableName($this->table)
-                    ->setAction('index')
-                    ->setController($this->controller)
-                    ->setModel($this->domainModel);
-
-                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
-            }
-
-            if ($this->showNewButton) {
-                $this->addNewButton($view);
-            }
-       
     }
 
     /**
@@ -278,7 +210,6 @@ abstract class AbstractMessengerController extends ActionController
 
     protected function getTotalCount(): int
     {
-        // Récupérer le nombre total d'éléments correspondant aux critères de recherche
         $demand = $this->getDemand();
         return $this->repository->countByDemand($demand);
     }
@@ -326,7 +257,7 @@ abstract class AbstractMessengerController extends ActionController
      */
     protected function addNewButton(ModuleTemplate $view): void
     {
-        
+
             $docHeaderComponent = $view->getDocHeaderComponent();
             $buttonBar = $docHeaderComponent->getButtonBar();
 
@@ -345,7 +276,7 @@ abstract class AbstractMessengerController extends ActionController
 
                 $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
             }
-        
+
     }
 
     protected function getConfigurationUtility(): ConfigurationUtility
@@ -367,3 +298,4 @@ abstract class AbstractMessengerController extends ActionController
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }
+

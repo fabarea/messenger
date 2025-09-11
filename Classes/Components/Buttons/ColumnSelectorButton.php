@@ -13,6 +13,7 @@ use TYPO3\CMS\Backend\Template\Components\Buttons\ButtonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 
 class ColumnSelectorButton implements ButtonInterface
 {
@@ -132,6 +133,23 @@ class ColumnSelectorButton implements ButtonInterface
             ExtensionManagementUtility::extPath('messenger') .
                 'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
         );
+        
+        // Generate the form action URL
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        
+        // Map the module names to their actual route names
+        $routeMap = [
+            'tx_messenger_messenger_messengertxmessengerm1' => 'messenger_tx_messenger_m1',
+            'tx_messenger_messenger_messengertxmessengerm2' => 'messenger_tx_messenger_m2',
+            'tx_messenger_messenger_messengertxmessengerm3' => 'messenger_tx_messenger_m3',
+            'tx_messenger_messenger_messengertxmessengerm4' => 'messenger_tx_messenger_m4',
+            'tx_messenger_messenger_messengertxmessengerm5' => 'web_tx_messenger_m5',
+        ];
+        
+        $routeName = $routeMap[$this->module] ?? $this->module;
+        
+        $formAction = $uriBuilder->buildUriFromRoute($routeName);
+        
         $view->assignMultiple([
             'selectedColumns' => $this->selectedColumns,
             'fields' => $this->fields,
@@ -140,6 +158,7 @@ class ColumnSelectorButton implements ButtonInterface
             'controller' => $this->controller,
             'action' => $this->action,
             'model' => $this->model,
+            'formAction' => $formAction,
         ]);
         return $view->render();
     }
