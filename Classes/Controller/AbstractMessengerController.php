@@ -95,7 +95,6 @@ abstract class AbstractMessengerController extends ActionController
         $nextPage = min($totalPages, $currentPage + 1);
         
         $view->assignMultiple([
-            'moduleTemplate' => $view,
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -107,7 +106,7 @@ abstract class AbstractMessengerController extends ActionController
             'prevPage' => $prevPage,
             'nextPage' => $nextPage,
             'sortBy' => key($orderings),
-            'searchTerm' => $this->request->hasArgumentgit('searchTerm') ? $this->request->getArgument('searchTerm') : '',
+            'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
             'itemsPerPages' => $this->request->hasArgument('items')
                 ? $this->request->getArgument('items')
                 : $this->itemsPerPage,
@@ -122,7 +121,7 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        return $view->renderResponse();
+        return $view->renderResponse('Index');
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
