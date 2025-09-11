@@ -44,6 +44,39 @@ define(['jquery'], function($) {
         $('#itemsPerPage').on('change', function() {
             $(this).closest('form').submit();
         });
+        
+        // Initialize other modules when they become available
+        const initializeModules = function() {
+            if (window.MessengerMassDeletion && !window.MessengerMassDeletion.initialized) {
+                window.MessengerMassDeletion.initialize();
+                window.MessengerMassDeletion.initialized = true;
+            }
+            if (window.MessengerDataExport && !window.MessengerDataExport.initialized) {
+                window.MessengerDataExport.initialize();
+                window.MessengerDataExport.initialized = true;
+            }
+            if (window.MessengerEnqueueMessages && !window.MessengerEnqueueMessages.initialized) {
+                window.MessengerEnqueueMessages.initialize();
+                window.MessengerEnqueueMessages.initialized = true;
+            }
+            if (window.MessengerSendAgain && !window.MessengerSendAgain.initialized) {
+                window.MessengerSendAgain.initialize();
+                window.MessengerSendAgain.initialized = true;
+            }
+            if (window.MessengerUpdateRecipient && !window.MessengerUpdateRecipient.initialized) {
+                window.MessengerUpdateRecipient.initialize();
+                window.MessengerUpdateRecipient.initialized = true;
+            }
+        };
+        
+        // Try to initialize immediately
+        initializeModules();
+        
+        // Also try after a short delay
+        setTimeout(initializeModules, 100);
+        
+        // And try again after a longer delay
+        setTimeout(initializeModules, 500);
     });
 
     // Expose globally for compatibility

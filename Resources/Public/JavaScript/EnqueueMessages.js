@@ -100,10 +100,9 @@ const MessengerEnqueueMessages = {
     },
   };
 
-    MessengerEnqueueMessages.initialize();
-
     // Expose globally for compatibility
     window.MessengerEnqueueMessages = MessengerEnqueueMessages;
+    window.MessengerEnqueueMessages.initialized = false;
 
     return MessengerEnqueueMessages;
 });

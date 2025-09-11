@@ -92,10 +92,9 @@ const Messenger = {
     },
   };
 
-    Messenger.initialize();
-
     // Expose globally for compatibility
     window.MessengerSendAgain = Messenger;
+    window.MessengerSendAgain.initialized = false;
 
     return Messenger;
 });

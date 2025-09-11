@@ -91,10 +91,9 @@ const MessengerUpdateRecipient = {
     },
   };
 
-    MessengerUpdateRecipient.initialize();
-
     // Expose globally for compatibility
     window.MessengerUpdateRecipient = MessengerUpdateRecipient;
+    window.MessengerUpdateRecipient.initialized = false;
 
     return MessengerUpdateRecipient;
 });

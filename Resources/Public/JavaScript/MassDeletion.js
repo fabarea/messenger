@@ -95,10 +95,9 @@ const MessengerMassDeletion = {
     },
   };
 
-    MessengerMassDeletion.initialize();
-
     // Expose globally for compatibility
     window.MessengerMassDeletion = MessengerMassDeletion;
+    window.MessengerMassDeletion.initialized = false;
 
     return MessengerMassDeletion;
 });

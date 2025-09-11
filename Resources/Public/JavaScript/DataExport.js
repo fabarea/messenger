@@ -124,10 +124,9 @@ const MessengerDataExport = {
     },
   };
 
-    MessengerDataExport.initialize();
-
     // Expose globally for compatibility
     window.MessengerDataExport = MessengerDataExport;
+    window.MessengerDataExport.initialized = false;
 
     return MessengerDataExport;
 });
