@@ -54,15 +54,16 @@ class RecipientModuleController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $orderings = $this->getOrderings();
         $records = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $paginator = new ArrayPaginator($records, $currentPage, $items);
-
-        $selectedColumns = $this->computeSelectedColumns();
         $pagination = new SimplePagination($paginator);
-        $this->view->assignMultiple([
+        $selectedColumns = $this->computeSelectedColumns();
+
+        $moduleTemplate->assignMultiple([
             'recipients' => $records,
             'selectedColumns' => $selectedColumns,
             'fields' => $this->getFields(),
@@ -81,12 +82,12 @@ class RecipientModuleController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
 
-        $this->moduleTemplate->setContent($this->view->render());
-        $this->computeDocHeader($this->getFields(), $selectedColumns);
 
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        $this->computeDocHeader($moduleTemplate,$this->getFields(), $selectedColumns);
+
+        return $moduleTemplate->renderResponse('Index');
+
     }
 
     /**
@@ -169,9 +170,9 @@ class RecipientModuleController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    private function computeDocHeader(array $fields, array $selectedColumns): void
+    private function computeDocHeader(ModuleTemplate $moduleTemplate,array $fields, array $selectedColumns): void
     {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         /** @var ColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);

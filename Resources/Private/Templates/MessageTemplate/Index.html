@@ -1,3 +1,8 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
 <f:be.pageRenderer
     includeJsFiles="{
         0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js'
@@ -10,3 +15,5 @@
     }"
 />
 <f:render arguments="{_all}" partial="List/ListView" />
+    </f:section>
+</html>

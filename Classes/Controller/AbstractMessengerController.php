@@ -133,32 +133,13 @@ abstract class AbstractMessengerController extends ActionController
             }
 
             if ($this->showNewButton) {
-                $this->addNewButtonToDocHeader($moduleTemplate);
+                $this->addNewButton($moduleTemplate);
             }
 
     }
 
 
-    protected function addNewButtonToDocHeader(ModuleTemplate $moduleTemplate): void
-    {
 
-            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
-            $buttonBar = $docHeaderComponent->getButtonBar();
-
-            if (class_exists(NewButton::class)) {
-                /** @var NewButton $newButton */
-                $newButton = $buttonBar->makeButton(NewButton::class);
-                $newButton
-                    ->setModule($this->getModuleName($this->moduleName))
-                    ->setTableName($this->table)
-                    ->setAction('new')
-                    ->setController($this->controller)
-                    ->setModel($this->domainModel);
-
-                $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
-            }
-
-    }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
     {
