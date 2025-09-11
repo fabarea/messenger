@@ -64,9 +64,6 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
-        // Utiliser ModuleTemplate pour les modules backend TYPO3 v12
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        
         $orderings = $this->getOrderings();
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
@@ -93,7 +90,7 @@ abstract class AbstractMessengerController extends ActionController
         $prevPage = max(1, $currentPage - 1);
         $nextPage = min($totalPages, $currentPage + 1);
         
-        $moduleTemplate->assignMultiple([
+        $this->view->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -120,15 +117,38 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        // Configurer le docheader
-        $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
+        return $this->htmlResponse();
+    }
 
-        return $moduleTemplate->renderResponse('Index');
+    protected function addResourcesToView(): void
+    {
+        try {
+            // Ajouter les fichiers CSS
+            $this->pageRenderer->addCssFile(
+                'EXT:messenger/Resources/Public/Css/Backend.css'
+            );
+            
+            // Ajouter les modules JavaScript
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Uri.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Typo3Lang.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/RowsSelection.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/MassDeletion.js');
+            
+        } catch (\Exception $e) {
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error adding resources to view: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
     }
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
         try {
+            // Ajouter les ressources CSS et JavaScript via ModuleTemplate
+            $this->addResourcesToModuleTemplate($moduleTemplate);
+            
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $docHeaderComponent->enable();
             
@@ -158,6 +178,29 @@ abstract class AbstractMessengerController extends ActionController
             // Log l'erreur pour le débogage
             \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
                 'Error in configureDocHeaderForModuleTemplate: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
+    }
+
+    protected function addResourcesToModuleTemplate(ModuleTemplate $moduleTemplate): void
+    {
+        try {
+            // Utiliser PageRenderer pour ajouter les ressources
+            $this->pageRenderer->addCssFile(
+                'EXT:messenger/Resources/Public/Css/Styles.css'
+            );
+            
+            // Ajouter les modules JavaScript
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Uri.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Typo3Lang.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/RowsSelection.js');
+            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/MassDeletion.js');
+            
+        } catch (\Exception $e) {
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error adding resources to ModuleTemplate: ' . $e->getMessage(),
                 'messenger',
                 3
             );
