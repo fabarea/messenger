@@ -4,6 +4,11 @@ namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Service\DataExportService;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Backend\View\BackendViewFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class MessageTemplateController extends AbstractMessengerController
@@ -33,9 +38,14 @@ class MessageTemplateController extends AbstractMessengerController
     protected string $dataType = 'message-template';
     protected bool $showNewButton = true;
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService,
+        PageRenderer $pageRenderer,
+        BackendViewFactory $backendViewFactory
+    ) {
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService, $pageRenderer, $backendViewFactory);
         $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
     }
 }
