@@ -64,8 +64,6 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
-        $view = $this->initializeModuleTemplate($this->request);
-
         $orderings = $this->getOrderings();
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
@@ -87,14 +85,12 @@ abstract class AbstractMessengerController extends ActionController
         $selectedColumns = $this->computeSelectedColumns();
         $pagination = new SlidingWindowPagination($paginator, 5);
 
-        $this->modifyDocHeaderComponent($view, $fields, $selectedColumns);
-
         // Calculer le nombre total de pages
         $totalPages = (int) ceil($totalCount / $items);
         $prevPage = max(1, $currentPage - 1);
         $nextPage = min($totalPages, $currentPage + 1);
         
-        $view->assignMultiple([
+        $this->view->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -121,7 +117,80 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        return $view->renderContent();
+        // Configurer le docheader pour la vue Extbase
+        $this->configureDocHeaderForExtbase($fields, $selectedColumns);
+
+        return $this->htmlResponse();
+    }
+
+    protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
+    {
+        try {
+            // Créer un ModuleTemplate pour le docheader
+            $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
+            $docHeaderComponent->enable();
+            
+            $buttonBar = $docHeaderComponent->getButtonBar();
+
+            // Ajouter le bouton de sélection de colonnes
+            if (class_exists(ColumnSelectorButton::class)) {
+                /** @var ColumnSelectorButton $columnSelectorButton */
+                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+                $columnSelectorButton
+                    ->setFields($fields)
+                    ->setSelectedColumns($selectedColumns)
+                    ->setModule($this->getModuleName($this->moduleName))
+                    ->setTableName($this->table)
+                    ->setAction('index')
+                    ->setController($this->controller)
+                    ->setModel($this->domainModel);
+
+                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+            }
+
+            if ($this->showNewButton) {
+                $this->addNewButtonToDocHeader($moduleTemplate);
+            }
+
+            // Assigner le ModuleTemplate à la vue pour le rendu
+            $this->view->assign('moduleTemplate', $moduleTemplate);
+            
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error in configureDocHeaderForExtbase: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
+    }
+
+    protected function addNewButtonToDocHeader(ModuleTemplate $moduleTemplate): void
+    {
+        try {
+            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
+            $buttonBar = $docHeaderComponent->getButtonBar();
+
+            if (class_exists(NewButton::class)) {
+                /** @var NewButton $newButton */
+                $newButton = $buttonBar->makeButton(NewButton::class);
+                $newButton
+                    ->setModule($this->getModuleName($this->moduleName))
+                    ->setTableName($this->table)
+                    ->setAction('new')
+                    ->setController($this->controller)
+                    ->setModel($this->domainModel);
+
+                $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
+            }
+        } catch (\Exception $e) {
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error in addNewButtonToDocHeader: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate

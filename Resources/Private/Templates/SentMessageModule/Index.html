@@ -1,13 +1,10 @@
-<f:layout name="Default" />
-
-<f:section name="main">
-    <f:be.pageRenderer
-            includeJavaScriptModules="{
-            0: '@fab/messenger/Utils/Uri.js',
-            1: '@fab/messenger/Utils/Typo3Lang.js',
-            2: '@fab/messenger/Utils/RowsSelection.js',
-            3: '@fab/messenger/MassDeletion.js'
-        }"
-    />
-    <f:render arguments="{_all}" partial="List/ListView" />
-</f:section>
+<f:be.pageRenderer
+        includeJavaScriptModules="{
+        0: '@fab/messenger/Utils/Uri.js',
+        1: '@fab/messenger/Utils/Typo3Lang.js',
+        2: '@fab/messenger/Utils/RowsSelection.js',
+        3: '@fab/messenger/MassDeletion.js'
+    }"
+/>
+{moduleTemplate -> f:format.raw()}
+<f:render arguments="{_all}" partial="List/ListView" />
