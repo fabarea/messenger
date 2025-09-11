@@ -89,6 +89,9 @@ abstract class AbstractMessengerController extends ActionController
 
         $this->modifyDocHeaderComponent($view, $fields, $selectedColumns);
 
+        // Calculer le nombre total de pages
+        $totalPages = (int) ceil($totalCount / $items);
+        
         $view->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
@@ -97,6 +100,7 @@ abstract class AbstractMessengerController extends ActionController
             'pagination' => $pagination,
             'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
             'count' => $totalCount,
+            'totalPages' => $totalPages,
             'sortBy' => key($orderings),
             'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
             'itemsPerPages' => $this->request->hasArgument('items')

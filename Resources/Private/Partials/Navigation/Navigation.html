@@ -18,75 +18,29 @@
     
     <div class="pull-right">
         <ul class="list-unstyled d-flex">
-            <!-- Pagination simple -->
-            <f:variable name="totalPages" value="{f:math.ceil(a: '{count / itemsPerPages}')}" />
-            
-            <!-- Bouton Précédent -->
+            <!-- Pagination très simple -->
             <f:if condition="{currentPage} > 1">
                 <li>
                     <f:link.action
                         arguments="{page: {currentPage - 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                        style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
                     >
-                        <core:icon identifier="actions-chevron-left" size="small" />
+                        ← Précédent
                     </f:link.action>
                 </li>
             </f:if>
 
-            <!-- Pages -->
-            <f:variable name="startPage" value="{f:math.max(a: 1, b: '{currentPage - 2}')}" />
-            <f:variable name="endPage" value="{f:math.min(a: totalPages, b: '{currentPage + 2}')}" />
+            <li style="padding: 5px 10px; margin: 0 2px;">
+                Page {currentPage} sur {totalPages}
+            </li>
             
-            <f:if condition="{startPage} > 1">
-                <li>
-                    <f:link.action
-                        arguments="{page: 1, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
-                    >
-                        1
-                    </f:link.action>
-                </li>
-                <f:if condition="{startPage} > 2">
-                    <li><span>...</span></li>
-                </f:if>
-            </f:if>
-            
-            <f:for as="page" from="{startPage}" to="{endPage}">
-                <li>
-                    <f:if condition="{currentPage} == {page}">
-                        <span class="active" style="font-weight: bold; background: #007cba; color: white; padding: 5px 10px; border-radius: 3px;">
-                            {page}
-                        </span>
-                    </f:if>
-                    <f:if condition="{currentPage} != {page}">
-                        <f:link.action
-                            arguments="{page: page, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
-                            style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
-                        >
-                            {page}
-                        </f:link.action>
-                    </f:if>
-                </li>
-            </f:for>
-            
-            <f:if condition="{endPage} < {totalPages}">
-                <f:if condition="{endPage} < {totalPages - 1}">
-                    <li><span>...</span></li>
-                </f:if>
-                <li>
-                    <f:link.action
-                        arguments="{page: totalPages, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
-                    >
-                        {totalPages}
-                    </f:link.action>
-                </li>
-            </f:if>
-            
-            <!-- Bouton Suivant -->
             <f:if condition="{currentPage} < {totalPages}">
                 <li>
                     <f:link.action
                         arguments="{page: {currentPage + 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                        style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
                     >
-                        <core:icon identifier="actions-chevron-right" size="small" />
+                        Suivant →
                     </f:link.action>
                 </li>
             </f:if>
