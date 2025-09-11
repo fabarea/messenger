@@ -4,7 +4,7 @@
         <f:variable name="startIndex" value="{index*itemsPerPages + 1}"></f:variable>
         <f:variable name="endIndex" value="{currentPage * itemsPerPages}" />
         <f:translate
-            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:showing"
+                key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:showing"
         />
         {startIndex}
         <f:translate key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:to" />
@@ -12,37 +12,47 @@
         <f:translate key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:of" />
         <f:format.number decimals="0"> {count}</f:format.number>
         <f:translate
-            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:items"
+                key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:items"
         />
     </div>
-    
     <div class="pull-right">
         <ul class="list-unstyled d-flex">
-            <!-- Pagination très simple -->
-            <f:if condition="{currentPage} > 1">
+            <f:if condition="{pagination.previousPageNumber}">
                 <li>
                     <f:link.action
-                        action="index"
-                        arguments="{page: prevPage, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
-                        style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
+                            arguments="{page: pagination.previousPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
                     >
-                        ← Précédent
+                        <core:icon identifier="actions-chevron-left" size="small" />
                     </f:link.action>
                 </li>
             </f:if>
 
-            <li style="padding: 5px 10px; margin: 0 2px;">
-                Page {currentPage} sur {totalPages}
-            </li>
-            
-            <f:if condition="{currentPage} < {totalPages}">
+            <f:for as="page" each="{pagination.allPageNumbers}" iteration="iterator">
+                <f:if condition="{iterator.isFirst} && {currentPage} > 1">
+                    <li>... &nbsp;</li>
+                </f:if>
+
+                <f:if condition="{iterator.index} >= {currentPage - 1} && {iterator.index} < {10 + currentPage - 1}">
+                    <li>
+                        <f:link.action
+                                arguments="{page: page, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
+                                class="{f:if(condition: '{currentPage} == {page}', then: 'active', else: '')}"
+                        >
+                            {page}
+                        </f:link.action>
+                        &nbsp;
+                    </li>
+                </f:if>
+                <f:if condition="{iterator.index} == {10 + currentPage - 1}">
+                    <li>...</li>
+                </f:if>
+            </f:for>
+            <f:if condition="{pagination.nextPageNumber}">
                 <li>
                     <f:link.action
-                        action="index"
-                        arguments="{page: nextPage, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
-                        style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
+                            arguments="{page: pagination.nextPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
                     >
-                        Suivant →
+                        <core:icon identifier="actions-chevron-right" size="small" />
                     </f:link.action>
                 </li>
             </f:if>

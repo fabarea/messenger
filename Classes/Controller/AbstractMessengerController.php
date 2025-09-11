@@ -19,6 +19,7 @@ use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
+use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
@@ -60,35 +61,23 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
-        // Utiliser ModuleTemplate pour les modules backend TYPO3 v12
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        
+
         $orderings = $this->getOrderings();
+        $messages = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
-        $offset = ($currentPage - 1) * $items;
-        
-        // Récupérer le nombre total d'éléments pour la pagination
-        $totalCount = $this->getTotalCount();
-        
-        // Récupérer seulement les messages de la page courante
-        $messages = $this->repository->findByDemand($this->getDemand(), $orderings, $offset, $items);
-        $paginator = new ArrayPaginator($messages, $currentPage, $items, $totalCount);
-
+        $paginator = new ArrayPaginator($messages, $currentPage, $items);
         $fields = TcaFieldsUtility::getFields($this->table);
         $fields = array_filter($fields, function ($field) {
             return !in_array($field, $this->excludedFields);
         });
         $fields = array_merge(['uid'], $fields);
-
         $selectedColumns = $this->computeSelectedColumns();
-        $pagination = new SlidingWindowPagination($paginator, 5);
+        $pagination = new SimplePagination($paginator);
 
-        // Calculer le nombre total de pages
-        $totalPages = (int) ceil($totalCount / $items);
-        $prevPage = max(1, $currentPage - 1);
-        $nextPage = min($totalPages, $currentPage + 1);
-        
+        $pagination = new SimplePagination($paginator);
+
         $moduleTemplate->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
@@ -96,17 +85,14 @@ abstract class AbstractMessengerController extends ActionController
             'paginator' => $paginator,
             'pagination' => $pagination,
             'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
-            'count' => $totalCount,
-            'totalPages' => $totalPages,
-            'prevPage' => $prevPage,
-            'nextPage' => $nextPage,
+            'count' => count($messages),
             'sortBy' => key($orderings),
             'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
             'itemsPerPages' => $this->request->hasArgument('items')
                 ? $this->request->getArgument('items')
                 : $this->itemsPerPage,
             'direction' => $orderings[key($orderings)],
-            'controller' => $this->controller,
+            'controller ' => $this->controller,
             'action' => $this->action,
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
@@ -122,10 +108,10 @@ abstract class AbstractMessengerController extends ActionController
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
-        try {
+    
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $docHeaderComponent->enable();
-            
+
             $buttonBar = $docHeaderComponent->getButtonBar();
 
             // Ajouter le bouton de sélection de colonnes
@@ -147,26 +133,18 @@ abstract class AbstractMessengerController extends ActionController
             if ($this->showNewButton) {
                 $this->addNewButtonToDocHeader($moduleTemplate);
             }
-            
-        } catch (\Exception $e) {
-            // Log l'erreur pour le débogage
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error in configureDocHeaderForModuleTemplate: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
+
     }
 
 
     protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
     {
-        try {
+
             // Créer un ModuleTemplate pour le docheader
             $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $docHeaderComponent->enable();
-            
+
             $buttonBar = $docHeaderComponent->getButtonBar();
 
             // Ajouter le bouton de sélection de colonnes
@@ -191,20 +169,13 @@ abstract class AbstractMessengerController extends ActionController
 
             // Assigner le ModuleTemplate à la vue pour le rendu
             $this->view->assign('moduleTemplate', $moduleTemplate);
-            
-        } catch (\Exception $e) {
-            // Log l'erreur pour le débogage
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error in configureDocHeaderForExtbase: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
+
+    
     }
 
     protected function addNewButtonToDocHeader(ModuleTemplate $moduleTemplate): void
     {
-        try {
+    
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $buttonBar = $docHeaderComponent->getButtonBar();
 
@@ -220,40 +191,34 @@ abstract class AbstractMessengerController extends ActionController
 
                 $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 1);
             }
-        } catch (\Exception $e) {
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error in addNewButtonToDocHeader: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
+      
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
     {
         $view = $this->moduleTemplateFactory->create($request);
-        
+
         // Définir le titre du module pour TYPO3 v12
         $view->setTitle('Messenger Module');
-        
+
         // S'assurer que le docheader est activé
         $docHeaderComponent = $view->getDocHeaderComponent();
         $docHeaderComponent->enable();
-        
+
         // Assigner le ModuleTemplate à la vue pour qu'il soit disponible dans les templates
         $view->assign('moduleTemplate', $view);
-        
+
         return $view;
     }
 
     private function modifyDocHeaderComponent(ModuleTemplate $view, array $fields, array $selectedColumns): void
     {
-        try {
+       
             $docHeaderComponent = $view->getDocHeaderComponent();
-            
+
             // S'assurer que le docheader est activé dans TYPO3 v12
             $docHeaderComponent->enable();
-            
+
             $buttonBar = $docHeaderComponent->getButtonBar();
 
             // Ajouter le bouton de sélection de colonnes
@@ -275,14 +240,7 @@ abstract class AbstractMessengerController extends ActionController
             if ($this->showNewButton) {
                 $this->addNewButton($view);
             }
-        } catch (\Exception $e) {
-            // Log l'erreur pour le débogage
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error in modifyDocHeaderComponent: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
+       
     }
 
     /**
@@ -368,7 +326,7 @@ abstract class AbstractMessengerController extends ActionController
      */
     protected function addNewButton(ModuleTemplate $view): void
     {
-        try {
+        
             $docHeaderComponent = $view->getDocHeaderComponent();
             $buttonBar = $docHeaderComponent->getButtonBar();
 
@@ -387,14 +345,7 @@ abstract class AbstractMessengerController extends ActionController
 
                 $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
             }
-        } catch (\Exception $e) {
-            // Log l'erreur pour le débogage
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error in addNewButton: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
+        
     }
 
     protected function getConfigurationUtility(): ConfigurationUtility
