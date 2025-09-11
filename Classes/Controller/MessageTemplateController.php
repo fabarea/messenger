@@ -7,7 +7,6 @@ use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Service\DataExportService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class MessageTemplateController extends AbstractMessengerController
@@ -40,10 +39,9 @@ class MessageTemplateController extends AbstractMessengerController
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         IconFactory $iconFactory,
-        DataExportService $dataExportService,
-        PageRenderer $pageRenderer
+        DataExportService $dataExportService
     ) {
-        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService, $pageRenderer);
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
         $this->repository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
     }
 }

@@ -23,7 +23,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Core\Page\PageRenderer;
 
 abstract class AbstractMessengerController extends ActionController
 {
@@ -32,7 +31,6 @@ abstract class AbstractMessengerController extends ActionController
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected DataExportService $dataExportService;
-    protected PageRenderer $pageRenderer;
 
     protected int $itemsPerPage = 20;
     protected array $allowedColumns = [];
@@ -50,13 +48,11 @@ abstract class AbstractMessengerController extends ActionController
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         IconFactory $iconFactory,
-        DataExportService $dataExportService,
-        PageRenderer $pageRenderer
+        DataExportService $dataExportService
     ) {
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->iconFactory = $iconFactory;
         $this->dataExportService = $dataExportService;
-        $this->pageRenderer = $pageRenderer;
     }
 
     /**
@@ -120,41 +116,13 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        // Ajouter les ressources CSS et JavaScript
-        $this->addResourcesToModuleTemplate($moduleTemplate);
-
         return $moduleTemplate->renderResponse('Index');
     }
 
-    protected function addResourcesToView(): void
-    {
-        try {
-            // Ajouter les fichiers CSS
-            $this->pageRenderer->addCssFile(
-                'EXT:messenger/Resources/Public/Css/Backend.css'
-            );
-            
-            // Ajouter les modules JavaScript
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Uri.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Typo3Lang.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/RowsSelection.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/MassDeletion.js');
-            
-        } catch (\Exception $e) {
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error adding resources to view: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
-    }
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
         try {
-            // Ajouter les ressources CSS et JavaScript via ModuleTemplate
-            $this->addResourcesToModuleTemplate($moduleTemplate);
-            
             $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
             $docHeaderComponent->enable();
             
@@ -190,28 +158,6 @@ abstract class AbstractMessengerController extends ActionController
         }
     }
 
-    protected function addResourcesToModuleTemplate(ModuleTemplate $moduleTemplate): void
-    {
-        try {
-            // Utiliser PageRenderer pour ajouter les ressources
-            $this->pageRenderer->addCssFile(
-                'EXT:messenger/Resources/Public/Css/Styles.css'
-            );
-            
-            // Ajouter les modules JavaScript
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Uri.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/Typo3Lang.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/Utils/RowsSelection.js');
-            $this->pageRenderer->loadJavaScriptModule('@fab/messenger/MassDeletion.js');
-            
-        } catch (\Exception $e) {
-            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
-                'Error adding resources to ModuleTemplate: ' . $e->getMessage(),
-                'messenger',
-                3
-            );
-        }
-    }
 
     protected function configureDocHeaderForExtbase(array $fields, array $selectedColumns): void
     {
