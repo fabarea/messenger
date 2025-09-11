@@ -91,6 +91,8 @@ abstract class AbstractMessengerController extends ActionController
 
         // Calculer le nombre total de pages
         $totalPages = (int) ceil($totalCount / $items);
+        $prevPage = max(1, $currentPage - 1);
+        $nextPage = min($totalPages, $currentPage + 1);
         
         $view->assignMultiple([
             'messages' => $messages,
@@ -101,6 +103,8 @@ abstract class AbstractMessengerController extends ActionController
             'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
             'count' => $totalCount,
             'totalPages' => $totalPages,
+            'prevPage' => $prevPage,
+            'nextPage' => $nextPage,
             'sortBy' => key($orderings),
             'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
             'itemsPerPages' => $this->request->hasArgument('items')
@@ -123,7 +127,10 @@ abstract class AbstractMessengerController extends ActionController
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
     {
         $view = $this->moduleTemplateFactory->create($request);
-
+        
+        // Définir le titre du module pour TYPO3 v12
+        $view->setTitle('Messenger Module');
+        
         return $view;
     }
 
@@ -131,6 +138,10 @@ abstract class AbstractMessengerController extends ActionController
     {
         try {
             $docHeaderComponent = $view->getDocHeaderComponent();
+            
+            // S'assurer que le docheader est activé dans TYPO3 v12
+            $docHeaderComponent->enable();
+            
             $buttonBar = $docHeaderComponent->getButtonBar();
 
             // Ajouter le bouton de sélection de colonnes

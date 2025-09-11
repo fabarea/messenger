@@ -22,7 +22,8 @@
             <f:if condition="{currentPage} > 1">
                 <li>
                     <f:link.action
-                        arguments="{page: {currentPage - 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                        action="index"
+                        arguments="{page: prevPage, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
                         style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
                     >
                         ← Précédent
@@ -37,7 +38,8 @@
             <f:if condition="{currentPage} < {totalPages}">
                 <li>
                     <f:link.action
-                        arguments="{page: {currentPage + 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                        action="index"
+                        arguments="{page: nextPage, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
                         style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
                     >
                         Suivant →
