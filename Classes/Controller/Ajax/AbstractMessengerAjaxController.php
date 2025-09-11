@@ -1,110 +1,277 @@
 <?php
 
-namespace Fab\Messenger\Controller\Ajax;
+namespace Fab\Messenger\Controller;
 
+use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
+use Fab\Messenger\Components\Buttons\NewButton;
+use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
+use Fab\Messenger\Service\BackendUserPreferenceService;
+use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Fab\Messenger\Utility\TcaFieldsUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Pagination\ArrayPaginator;
+use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-abstract class AbstractMessengerAjaxController
+abstract class AbstractMessengerController extends ActionController
 {
-    protected function getDemand(array $uids, string $searchTerm): array
-    {
-        $demand = [
-            'likes' => [],
-            'uids' => [],
-        ];
+    protected ?MessengerRepositoryInterface $repository;
+    protected ModuleTemplateFactory $moduleTemplateFactory;
+    protected IconFactory $iconFactory;
+    protected DataExportService $dataExportService;
+    protected PageRenderer $pageRenderer;
 
-        // only if we have a list of uids
-        if (!empty($uids)) {
-            $demand['uids'] = $uids;
+    protected int $itemsPerPage = 20;
+    protected array $allowedColumns = [];
+    protected string $table = '';
+    protected bool $showNewButton = false;
+    protected array $defaultSelectedColumns = [];
+    protected array $demandFields = [];
+    protected string $controller = '';
+    protected string $action = '';
+    protected string $domainModel = '';
+    protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
+    protected string $moduleName = '';
+    protected string $dataType = '';
+
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService,
+        PageRenderer $pageRenderer
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->iconFactory = $iconFactory;
+        $this->dataExportService = $dataExportService;
+        $this->pageRenderer = $pageRenderer;
+    }
+
+    /**
+     * @throws NoSuchArgumentException
+     */
+    public function indexAction(): ResponseInterface
+    {
+        $view = $this->initializeModuleTemplate($this->request);
+
+        $orderings = $this->getOrderings();
+        $messages = $this->repository->findByDemand($this->getDemand(), $orderings);
+        $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
+        $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
+        $paginator = new ArrayPaginator($messages, $currentPage, $items);
+
+        $fields = TcaFieldsUtility::getFields($this->table);
+        $fields = array_filter($fields, function ($field) {
+            return !in_array($field, $this->excludedFields);
+        });
+        $fields = array_merge(['uid'], $fields);
+
+        $selectedColumns = $this->computeSelectedColumns();
+        $pagination = new SimplePagination($paginator);
+
+        $this->modifyDocHeaderComponent($view, $fields, $selectedColumns);
+
+        $view->assignMultiple([
+            'messages' => $messages,
+            'selectedColumns' => $selectedColumns,
+            'fields' => $fields,
+            'paginator' => $paginator,
+            'pagination' => $pagination,
+            'currentPage' => $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1,
+            'count' => count($messages),
+            'sortBy' => key($orderings),
+            'searchTerm' => $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '',
+            'itemsPerPages' => $this->request->hasArgument('items')
+                ? $this->request->getArgument('items')
+                : $this->itemsPerPage,
+            'direction' => $orderings[key($orderings)],
+            'controller' => $this->controller,
+            'action' => $this->action,
+            'domainModel' => $this->domainModel,
+            'moduleName' => $this->moduleName,
+            'dataType' => $this->dataType,
+            'selectedRecords' => $this->request->hasArgument('selectedRecords')
+                ? $this->request->getArgument('selectedRecords')
+                : [],
+        ]);
+
+        return $view->renderResponse('Index');
+    }
+
+    protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
+    {
+        $view = $this->moduleTemplateFactory->create($request);
+
+        return $view;
+    }
+
+    private function modifyDocHeaderComponent(ModuleTemplate $view, array $fields, array $selectedColumns): void
+    {
+        try {
+            $docHeaderComponent = $view->getDocHeaderComponent();
+            $buttonBar = $docHeaderComponent->getButtonBar();
+
+            // Ajouter le bouton de sélection de colonnes
+            if (class_exists(ColumnSelectorButton::class)) {
+                /** @var ColumnSelectorButton $columnSelectorButton */
+                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+                $columnSelectorButton
+                    ->setFields($fields)
+                    ->setSelectedColumns($selectedColumns)
+                    ->setModule($this->getModuleName($this->moduleName))
+                    ->setTableName($this->table)
+                    ->setAction('index')
+                    ->setController($this->controller)
+                    ->setModel($this->domainModel);
+
+                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+            }
+
+            if ($this->showNewButton) {
+                $this->addNewButton($view);
+            }
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error in modifyDocHeaderComponent: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
         }
-        // only if we have a search term
+    }
+
+    /**
+     * @throws NoSuchArgumentException
+     */
+    protected function getOrderings(): array
+    {
+        $sortBy = $this->request->hasArgument('sortBy') ? $this->request->getArgument('sortBy') : 'crdate';
+        if (!in_array($sortBy, $this->allowedColumns)) {
+            $sortBy = 'crdate';
+        }
+        $defaultDirection = QueryInterface::ORDER_DESCENDING;
+        $direction = $this->request->hasArgument('direction')
+            ? $this->request->getArgument('direction')
+            : $defaultDirection;
+        if ($this->request->hasArgument('direction') && strtoupper($direction) === 'DESC') {
+            $defaultDirection = QueryInterface::ORDER_ASCENDING;
+        }
+        return [
+            $sortBy => $defaultDirection,
+        ];
+    }
+
+    protected function getDemand(): array
+    {
+        $searchTerm = $this->request->hasArgument('searchTerm') ? $this->request->getArgument('searchTerm') : '';
+        $demand = [];
         if (strlen($searchTerm) > 0) {
-            $demandedFields = $this->getDemandedFields();
-            foreach ($demandedFields as $field) {
+            foreach ($this->demandFields as $field) {
                 $demand['likes'][$field] = $searchTerm;
             }
         }
         return $demand;
     }
 
-    protected function getDemandedFields(): array
+    protected function computeSelectedColumns(): array
     {
-        $demandedFields = [];
-        switch ($this->getModuleName()) {
-            case 'MessengerTxMessengerM1':
-                $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
-                break;
-            case 'MessengerTxMessengerM2':
-                $demandedFields = ['type', 'subject', 'message_layout', 'qualifier'];
-                break;
-            case 'MessengerTxMessengerM3':
-                $demandedFields = ['content', 'qualifier'];
-                break;
-            case 'MessengerTxMessengerM4':
-                $demandedFields = [
-                    'recipient_cc',
-                    'recipient',
-                    'sender',
-                    'subject',
-                    'body',
-                    'attachment',
-                    'context',
-                    'mailing_name',
-                    'message_template',
-                    'message_layout',
-                ];
-                break;
-            case 'MessengerTxMessengerM5':
-                $demandedFields = GeneralUtility::trimExplode(
-                    ',',
-                    ConfigurationUtility::getInstance()->get('recipient_default_fields'),
-                );
-                break;
+        $moduleVersion = explode('/', $this->getRequestUrl());
+        if (count(array_unique($moduleVersion)) !== 1) {
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
-
-        return $demandedFields;
+        $selectedColumns =
+            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
+        if ($this->request->hasArgument('selectedColumns')) {
+            $selectedColumns = $this->request->getArgument('selectedColumns');
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+        }
+        return $selectedColumns;
     }
 
-    protected function getModuleName(): string
+    private function getRequestUrl(): string
     {
-        $pathSegments = explode(
-            '/',
-            trim(parse_url($this->getRequest()->getAttributes()['normalizedParams']->getHttpReferer())['path'], '/'),
-        );
-        return end($pathSegments);
+        return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }
 
-    protected function getRequest(): ServerRequestInterface
+    protected function getModuleName(string $signature): string
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        switch ($signature) {
+            case 'MessengerTxMessengerM1':
+                return 'tx_messenger_messenger_messengertxmessengerm1';
+            case 'MessengerTxMessengerM2':
+                return 'tx_messenger_messenger_messengertxmessengerm2';
+            case 'MessengerTxMessengerM3':
+                return 'tx_messenger_messenger_messengertxmessengerm3';
+            case 'MessengerTxMessengerM4':
+                return 'tx_messenger_messenger_messengertxmessengerm4';
+            case 'MessengerTxMessengerM5':
+                return 'tx_messenger_messenger_messengertxmessengerm5';
+            default:
+                return '';
+        }
     }
 
-    protected function getResponse(string $content): ResponseInterface
+    /**
+     * @throws RouteNotFoundException
+     */
+    protected function addNewButton(ModuleTemplate $view): void
     {
-        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
-        $response = $responseFactory->createResponse();
-        $response->getBody()->write($content);
-        return $response;
+        try {
+            $docHeaderComponent = $view->getDocHeaderComponent();
+            $buttonBar = $docHeaderComponent->getButtonBar();
+
+            if (class_exists(NewButton::class)) {
+                /** @var NewButton $newButton */
+                $newButton = $buttonBar->makeButton(NewButton::class);
+                $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
+
+                $newButton->setLink(
+                    $this->renderUriNewRecord([
+                        'table' => $this->table,
+                        'pid' => $pagePid,
+                        'uid' => 0,
+                    ])
+                );
+
+                $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+            }
+        } catch (\Exception $e) {
+            // Log l'erreur pour le débogage
+            \TYPO3\CMS\Core\Utility\GeneralUtility::devLog(
+                'Error in addNewButton: ' . $e->getMessage(),
+                'messenger',
+                3
+            );
+        }
     }
 
-    protected function getPageId(): int
+    protected function getConfigurationUtility(): ConfigurationUtility
     {
-        $site = $this->getRequest()->getAttribute('normalizedParams');
-        $httpReferer = $site->getHttpReferer();
-        $parsedUrl = parse_url($httpReferer);
-        $queryString = $parsedUrl['query'] ?? '';
-        parse_str($queryString, $queryParams);
-        $id = $queryParams['id'] ?? null;
-        return (int) $id;
+        return GeneralUtility::makeInstance(ConfigurationUtility::class);
     }
 
-    protected function getLanguageService(): LanguageService
+    /**
+     * @throws RouteNotFoundException
+     */
+    protected function renderUriNewRecord(array $arguments): string
     {
-        return $GLOBALS['LANG'];
+        $arguments['returnUrl'] = $this->request->getAttribute('normalizedParams')->getRequestUrl();
+        $params = [
+            'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
+            'returnUrl' => $arguments['returnUrl'],
+        ];
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }
