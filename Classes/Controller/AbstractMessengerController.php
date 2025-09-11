@@ -121,7 +121,7 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        return $view->renderResponse('Index');
+        return $view->renderResponse();
     }
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
@@ -130,6 +130,10 @@ abstract class AbstractMessengerController extends ActionController
         
         // Définir le titre du module pour TYPO3 v12
         $view->setTitle('Messenger Module');
+        
+        // S'assurer que le docheader est activé
+        $docHeaderComponent = $view->getDocHeaderComponent();
+        $docHeaderComponent->enable();
         
         return $view;
     }
