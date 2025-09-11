@@ -25,7 +25,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-abstract class AbstractMessengerController extends ActionController
+abstract class AbstractMessengerAjaxController extends ActionController
 {
     protected ?MessengerRepositoryInterface $repository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
