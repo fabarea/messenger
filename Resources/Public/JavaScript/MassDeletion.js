@@ -98,4 +98,8 @@ const MessengerMassDeletion = {
   };
 
 MessengerMassDeletion.initialize();
+
+// Expose globally for compatibility
+window.MessengerMassDeletion = MessengerMassDeletion;
+
 export default MessengerMassDeletion;

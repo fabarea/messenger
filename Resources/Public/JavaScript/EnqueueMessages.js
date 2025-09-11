@@ -103,4 +103,8 @@ const MessengerEnqueueMessages = {
   };
 
 MessengerEnqueueMessages.initialize();
+
+// Expose globally for compatibility
+window.MessengerEnqueueMessages = MessengerEnqueueMessages;
+
 export default MessengerEnqueueMessages;

@@ -94,4 +94,8 @@ const MessengerUpdateRecipient = {
   };
 
 MessengerUpdateRecipient.initialize();
+
+// Expose globally for compatibility
+window.MessengerUpdateRecipient = MessengerUpdateRecipient;
+
 export default MessengerUpdateRecipient;

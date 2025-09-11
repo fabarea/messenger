@@ -127,4 +127,8 @@ const MessengerDataExport = {
   };
 
 MessengerDataExport.initialize();
+
+// Expose globally for compatibility
+window.MessengerDataExport = MessengerDataExport;
+
 export default MessengerDataExport;

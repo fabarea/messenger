@@ -95,4 +95,8 @@ const Messenger = {
   };
 
 Messenger.initialize();
+
+// Expose globally for compatibility
+window.MessengerSendAgain = Messenger;
+
 export default Messenger;
