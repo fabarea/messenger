@@ -64,6 +64,9 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        // Utiliser ModuleTemplate pour les modules backend TYPO3 v12
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        
         $orderings = $this->getOrderings();
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
@@ -90,7 +93,7 @@ abstract class AbstractMessengerController extends ActionController
         $prevPage = max(1, $currentPage - 1);
         $nextPage = min($totalPages, $currentPage + 1);
         
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -117,7 +120,10 @@ abstract class AbstractMessengerController extends ActionController
                 : [],
         ]);
 
-        return $this->htmlResponse();
+        // Ajouter les ressources CSS et JavaScript
+        $this->addResourcesToModuleTemplate($moduleTemplate);
+
+        return $moduleTemplate->renderResponse('Index');
     }
 
     protected function addResourcesToView(): void
