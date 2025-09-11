@@ -4,6 +4,7 @@
 import $ from 'jquery';
 import { Modal } from '@typo3/backend/modal';
 import { Notification } from '@typo3/backend/notification';
+import { Uri } from './Utils/UriWrapper.js';
 
 const Messenger = {
     /**
