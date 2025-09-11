@@ -10,6 +10,7 @@ namespace Fab\Messenger\Task;
  */
 
 use Fab\Messenger\Queue\QueueManager;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -18,7 +19,7 @@ class MessengerDequeueTask extends AbstractTask
 {
     public int $itemsPerRun = 300;
 
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     public function __construct()
     {
