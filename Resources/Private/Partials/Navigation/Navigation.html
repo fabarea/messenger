@@ -15,42 +15,76 @@
             key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_sentmessage.xlf:items"
         />
     </div>
+    
     <div class="pull-right">
         <ul class="list-unstyled d-flex">
-            <f:if condition="{pagination.previousPageNumber}">
+            <!-- Pagination simple -->
+            <f:variable name="totalPages" value="{f:math.ceil(a: '{count / itemsPerPages}')}" />
+            
+            <!-- Bouton Précédent -->
+            <f:if condition="{currentPage} > 1">
                 <li>
                     <f:link.action
-                        arguments="{page: pagination.previousPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
+                        arguments="{page: {currentPage - 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
                     >
                         <core:icon identifier="actions-chevron-left" size="small" />
                     </f:link.action>
                 </li>
             </f:if>
 
-            <f:for as="page" each="{pagination.allPageNumbers}" iteration="iterator">
-                <f:if condition="{iterator.isFirst} && {currentPage} > 1">
-                    <li>... &nbsp;</li>
+            <!-- Pages -->
+            <f:variable name="startPage" value="{f:math.max(a: 1, b: '{currentPage - 2}')}" />
+            <f:variable name="endPage" value="{f:math.min(a: totalPages, b: '{currentPage + 2}')}" />
+            
+            <f:if condition="{startPage} > 1">
+                <li>
+                    <f:link.action
+                        arguments="{page: 1, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                    >
+                        1
+                    </f:link.action>
+                </li>
+                <f:if condition="{startPage} > 2">
+                    <li><span>...</span></li>
                 </f:if>
-
-                <f:if condition="{iterator.index} >= {currentPage - 1} && {iterator.index} < {10 + currentPage - 1}">
-                    <li>
+            </f:if>
+            
+            <f:for as="page" from="{startPage}" to="{endPage}">
+                <li>
+                    <f:if condition="{currentPage} == {page}">
+                        <span class="active" style="font-weight: bold; background: #007cba; color: white; padding: 5px 10px; border-radius: 3px;">
+                            {page}
+                        </span>
+                    </f:if>
+                    <f:if condition="{currentPage} != {page}">
                         <f:link.action
-                            arguments="{page: page, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
-                            class="{f:if(condition: '{currentPage} == {page}', then: 'active', else: '')}"
+                            arguments="{page: page, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                            style="padding: 5px 10px; text-decoration: none; border: 1px solid #ddd; border-radius: 3px; margin: 0 2px;"
                         >
                             {page}
                         </f:link.action>
-                        &nbsp;
-                    </li>
-                </f:if>
-                <f:if condition="{iterator.index} == {10 + currentPage - 1}">
-                    <li>...</li>
-                </f:if>
+                    </f:if>
+                </li>
             </f:for>
-            <f:if condition="{pagination.nextPageNumber}">
+            
+            <f:if condition="{endPage} < {totalPages}">
+                <f:if condition="{endPage} < {totalPages - 1}">
+                    <li><span>...</span></li>
+                </f:if>
                 <li>
                     <f:link.action
-                        arguments="{page: pagination.nextPageNumber, sortBy: sortBy, direction: direction, searchTerm: searchTerm,items: itemsPerPages}"
+                        arguments="{page: totalPages, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
+                    >
+                        {totalPages}
+                    </f:link.action>
+                </li>
+            </f:if>
+            
+            <!-- Bouton Suivant -->
+            <f:if condition="{currentPage} < {totalPages}">
+                <li>
+                    <f:link.action
+                        arguments="{page: {currentPage + 1}, sortBy: sortBy, direction: direction, searchTerm: searchTerm, items: itemsPerPages}"
                     >
                         <core:icon identifier="actions-chevron-right" size="small" />
                     </f:link.action>

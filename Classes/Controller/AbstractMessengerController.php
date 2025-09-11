@@ -18,7 +18,7 @@ use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
-use TYPO3\CMS\Core\Pagination\SimplePagination;
+use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
@@ -85,7 +85,7 @@ abstract class AbstractMessengerController extends ActionController
         $fields = array_merge(['uid'], $fields);
 
         $selectedColumns = $this->computeSelectedColumns();
-        $pagination = new SimplePagination($paginator);
+        $pagination = new SlidingWindowPagination($paginator, 5);
 
         $this->modifyDocHeaderComponent($view, $fields, $selectedColumns);
 
