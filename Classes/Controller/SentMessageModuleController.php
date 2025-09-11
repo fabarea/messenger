@@ -49,10 +49,11 @@ class SentMessageModuleController extends AbstractMessengerController
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
-        IconFactory $iconFactory,
-        DataExportService $dataExportService,
+        IconFactory           $iconFactory,
+        DataExportService     $dataExportService,
         SentMessageRepository $repository
-    ) {
+    )
+    {
         parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
         $this->repository = $repository;
     }

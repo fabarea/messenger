@@ -56,11 +56,11 @@ abstract class AbstractContentRepository implements SingletonInterface, Messenge
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->count('uid')->from($this->tableName);
-        
+
         if (!empty($demand)) {
             $this->addDemandConstraints($demand, $queryBuilder);
         }
 
-        return (int) $queryBuilder->execute()->fetchOne();
+        return (int)$queryBuilder->execute()->fetchOne();
     }
 }

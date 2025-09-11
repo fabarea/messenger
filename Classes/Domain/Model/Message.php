@@ -43,30 +43,30 @@ class Message
     final const SUBJECT = 'subject';
     final const BODY = 'body';
 
-  
+
     protected int $uid;
 
-    
+
     protected array $sender = [];
 
     protected ?string $messageSerialized = null;
 
-   
+
     protected array $to = [];
 
-    
+
     protected array $cc = [];
 
-   
+
     protected array $bcc = [];
 
-   
+
     protected array $replyTo = [];
 
-   
+
     protected array $redirectEmailFrom = [];
 
-    
+
     protected array $markers = [];
 
     /**
@@ -74,19 +74,19 @@ class Message
      */
     protected MessageLayout $messageLayout;
 
-    
+
     protected string $mailingName;
 
-   
+
     protected int $scheduleDistributionTime = 0;
 
-    
+
     protected array $attachments = [];
 
     /**
      * @var MessageTemplateRepository
      */
-    protected  MessageTemplateRepository $messageTemplateRepository;
+    protected MessageTemplateRepository $messageTemplateRepository;
 
     /**
      * @var MessageLayoutRepository
@@ -108,22 +108,22 @@ class Message
      */
     protected MailMessage $mailMessage;
 
-    
+
     protected string $subject = '';
 
-    
+
     protected string $body = '';
 
- 
+
     protected string $processedSubject = '';
 
-   
+
     protected string $processedBody = '';
 
-   
+
     protected bool $parseToMarkdown = false;
 
-  
+
     protected string $uuid = '';
 
     public function __construct()
@@ -131,7 +131,7 @@ class Message
         $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
         $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
         $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
-      
+
     }
 
     /**
@@ -308,7 +308,7 @@ class Message
         return $this;
     }
 
- 
+
     public function setMarkers(array $values): Message
     {
         foreach ($values as $markerName => $value) {
@@ -317,7 +317,7 @@ class Message
         return $this;
     }
 
- 
+
     public function addMarker(string $markerName, mixed $value): Message
     {
         $this->markers[$markerName] = $value;
@@ -337,7 +337,7 @@ class Message
         return $this;
     }
 
-   
+
     public function assign(string $markerName, mixed $value): Message
     {
         return $this->addMarker($markerName, $value);
@@ -369,7 +369,7 @@ class Message
         return $this->cc;
     }
 
-  
+
     public function setCc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
@@ -386,7 +386,7 @@ class Message
         return $this->bcc;
     }
 
-    
+
     public function setBcc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
@@ -399,7 +399,7 @@ class Message
         return $this->replyTo;
     }
 
-  
+
     public function setReplyTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);

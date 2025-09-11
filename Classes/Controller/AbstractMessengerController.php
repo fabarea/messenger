@@ -237,26 +237,24 @@ abstract class AbstractMessengerController extends ActionController
      */
     protected function addNewButton(ModuleTemplate $view): void
     {
+        $docHeaderComponent = $view->getDocHeaderComponent();
+        $buttonBar = $docHeaderComponent->getButtonBar();
 
-            $docHeaderComponent = $view->getDocHeaderComponent();
-            $buttonBar = $docHeaderComponent->getButtonBar();
+        if (class_exists(NewButton::class)) {
+            /** @var NewButton $newButton */
+            $newButton = $buttonBar->makeButton(NewButton::class);
+            $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
 
-            if (class_exists(NewButton::class)) {
-                /** @var NewButton $newButton */
-                $newButton = $buttonBar->makeButton(NewButton::class);
-                $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
+            $newButton->setLink(
+                $this->renderUriNewRecord([
+                    'table' => $this->table,
+                    'pid' => $pagePid,
+                    'uid' => 0,
+                ])
+            );
 
-                $newButton->setLink(
-                    $this->renderUriNewRecord([
-                        'table' => $this->table,
-                        'pid' => $pagePid,
-                        'uid' => 0,
-                    ])
-                );
-
-                $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
-            }
-
+            $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+        }
     }
 
     protected function getConfigurationUtility(): ConfigurationUtility

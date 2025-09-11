@@ -32,11 +32,8 @@ class MessengerDequeueTask extends AbstractTask
         try {
             $result = $this->getQueueManager()->dequeue($this->itemsPerRun);
 
-            // Task succeeds if we processed messages, even if some had errors
-            // Also succeed if there are no messages to process (empty queue)
             $totalProcessed = $result['errorCount'] + $result['numberOfSentMessages'];
 
-            // Log the results for monitoring
             if ($totalProcessed === 0) {
                 $this->logger->info('Messenger dequeue task completed successfully. No messages in queue to process.');
                 return true;

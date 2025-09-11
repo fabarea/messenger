@@ -30,6 +30,7 @@ call_user_func(function () {
         'messagetemplate' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png',
         'messagelayout' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
         'queue' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.png',
+        'module' => 'EXT:messenger/Resources/Public/Icons/module-messenger.png'
     ];
 
     /** @var IconRegistry $iconRegistry */
@@ -41,5 +42,5 @@ call_user_func(function () {
     }
     unset($iconRegistry);
 
- 
+
 });

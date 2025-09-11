@@ -84,7 +84,7 @@ class RecipientModuleController extends ActionController
         ]);
 
 
-        $this->computeDocHeader($moduleTemplate,$this->getFields(), $selectedColumns);
+        $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
 
         return $moduleTemplate->renderResponse('Index');
 
@@ -132,7 +132,7 @@ class RecipientModuleController extends ActionController
     /**
      * @throws NoSuchArgumentException
      */
-     protected function computeSelectedColumns(): array
+    protected function computeSelectedColumns(): array
     {
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
         $parsedBody = $this->request->getParsedBody();
@@ -170,7 +170,7 @@ class RecipientModuleController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    private function computeDocHeader(ModuleTemplate $moduleTemplate,array $fields, array $selectedColumns): void
+    private function computeDocHeader(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
@@ -240,6 +240,6 @@ class RecipientModuleController extends ActionController
             'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }

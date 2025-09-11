@@ -24,7 +24,7 @@ class MessageDisplayController extends ActionController
         $result = 'Nothing to show!';
         $uuid = $this->request->getParsedBody()['uuid'] ?? $this->request->getQueryParams()['uuid'] ?? null;
         if ($this->isUuidValid($uuid)) {
-            $source = (string) $this->request->getParsedBody()['source'] ?? $this->request->getQueryParams()['source'] ?? null;
+            $source = (string)$this->request->getParsedBody()['source'] ?? $this->request->getQueryParams()['source'] ?? null;
 
             $message =
                 $source === 'queue'
@@ -45,7 +45,7 @@ class MessageDisplayController extends ActionController
     public function isUuidValid($uuid): bool
     {
         $expression = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
-        return preg_match($expression, (string) $uuid) === 1;
+        return preg_match($expression, (string)$uuid) === 1;
     }
 
     /**

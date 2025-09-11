@@ -35,9 +35,10 @@ class MessageLayoutController extends AbstractMessengerController
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
-        IconFactory $iconFactory,
-        DataExportService $dataExportService
-    ) {
+        IconFactory           $iconFactory,
+        DataExportService     $dataExportService
+    )
+    {
         parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
         $this->repository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
     }

@@ -18,11 +18,9 @@ abstract class AbstractMessengerAjaxController
             'uids' => [],
         ];
 
-        // only if we have a list of uids
         if (!empty($uids)) {
             $demand['uids'] = $uids;
         }
-        // only if we have a search term
         if (strlen($searchTerm) > 0) {
             $demandedFields = $this->getDemandedFields();
             foreach ($demandedFields as $field) {
