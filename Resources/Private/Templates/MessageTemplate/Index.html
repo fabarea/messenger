@@ -1,19 +1,18 @@
 <html
     data-namespace-typo3-fluid="true"
-    xmlns:typo3="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
     xmlns:core="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 >
     <f:layout name="Default" />
 
     <f:section name="main">
-        <typo3:be.pageRenderer
-            includeJsFiles="{
-                0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js',
-                1: 'EXT:messenger/Resources/Public/JavaScript/Utils/Typo3Lang.js',
-                2: 'EXT:messenger/Resources/Public/JavaScript/Utils/RowsSelection.js',
-                3: 'EXT:messenger/Resources/Public/JavaScript/MassDeletion.js'
-
+        <f:be.pageRenderer
+            includeJavaScriptModules="{
+                0: '@fab/messenger/Utils/Uri.js',
+                1: '@fab/messenger/Utils/Typo3Lang.js',
+                2: '@fab/messenger/Utils/RowsSelection.js',
+                3: '@fab/messenger/MassDeletion.js'
             }"
             includeRequireJsModules="{0: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative', 1: 'TYPO3/CMS/Messenger/DataExport',2: 'TYPO3/CMS/Messenger/MassDeletion'
             }"
