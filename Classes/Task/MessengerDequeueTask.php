@@ -61,7 +61,8 @@ class MessengerDequeueTask extends AbstractTask
             return true;
 
         } catch (\Exception $e) {
-            $this->logger->error(
+            $this->logger->log(
+                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
                 sprintf(
                     'Messenger dequeue task failed with exception: %s',
                     $e->getMessage()

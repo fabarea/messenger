@@ -23,11 +23,7 @@ call_user_func(function () {
         'Send a message to a group of people',
     );
 
-    // Allow domain model to be on standard pages.
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_sentmessage');
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagetemplate');
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_messagelayout');
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_messenger_domain_model_queue');
+
 
     $icons = [
         'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',

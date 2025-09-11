@@ -43,142 +43,95 @@ class Message
     final const SUBJECT = 'subject';
     final const BODY = 'body';
 
-    /**
-     * @var int
-     */
-    protected $uid;
+  
+    protected int $uid;
 
-    /**
-     * @var array
-     */
-    protected $sender = [];
+    
+    protected array $sender = [];
 
     protected ?string $messageSerialized = null;
 
-    /**
-     * The "to" addresses
-     *
-     * @var array
-     */
-    protected $to = [];
+   
+    protected array $to = [];
 
-    /**
-     * The "cc" addresses
-     *
-     * @var array
-     */
-    protected $cc = [];
+    
+    protected array $cc = [];
 
-    /**
-     * The "bcc" addresses
-     *
-     * @var array
-     */
-    protected $bcc = [];
+   
+    protected array $bcc = [];
 
-    /**
-     * Addresses for reply-to
-     *
-     * @var array
-     */
-    protected $replyTo = [];
+   
+    protected array $replyTo = [];
 
-    /**
-     * Possible email redirect
-     *
-     * @var array
-     */
-    protected $redirectEmailFrom = [];
+   
+    protected array $redirectEmailFrom = [];
 
-    /**
-     * A set of markers.
-     *
-     * @var array
-     */
-    protected $markers = [];
+    
+    protected array $markers = [];
 
     /**
      * @var MessageLayout
      */
-    protected $messageLayout;
+    protected MessageLayout $messageLayout;
 
-    /**
-     * @var string
-     */
-    protected $mailingName;
+    
+    protected string $mailingName;
 
-    /**
-     * @var int
-     */
-    protected $scheduleDistributionTime = 0;
+   
+    protected int $scheduleDistributionTime = 0;
 
-    /**
-     * @var array
-     */
-    protected $attachments = [];
+    
+    protected array $attachments = [];
 
     /**
      * @var MessageTemplateRepository
      */
-    protected $messageTemplateRepository;
+    protected  MessageTemplateRepository $messageTemplateRepository;
 
     /**
      * @var MessageLayoutRepository
      */
-    protected $messageLayoutRepository;
+    protected MessageLayoutRepository $messageLayoutRepository;
 
     /**
      * @var SentMessageRepository
      */
-    protected $sentMessageRepository;
+    protected SentMessageRepository $sentMessageRepository;
 
     /**
      * @var MessageTemplate
      */
-    protected $messageTemplate;
+    protected MessageTemplate $messageTemplate;
 
     /**
      * @var MailMessage
      */
-    protected $mailMessage;
+    protected MailMessage $mailMessage;
 
-    /**
-     * @var string
-     */
-    protected $subject = '';
+    
+    protected string $subject = '';
 
-    /**
-     * @var string
-     */
-    protected $body = '';
+    
+    protected string $body = '';
 
-    /**
-     * @var string
-     */
-    protected $processedSubject = '';
+ 
+    protected string $processedSubject = '';
 
-    /**
-     * @var string
-     */
-    protected $processedBody = '';
+   
+    protected string $processedBody = '';
 
-    /**
-     * @var bool
-     */
-    protected $parseToMarkdown = false;
+   
+    protected bool $parseToMarkdown = false;
 
-    /**
-     * @var string
-     */
-    protected $uuid = '';
+  
+    protected string $uuid = '';
 
     public function __construct()
     {
-        // todo legacy, migrate me!
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->messageTemplateRepository = $objectManager->get(MessageTemplateRepository::class);
-        $this->messageLayoutRepository = $objectManager->get(MessageLayoutRepository::class);
-        $this->sentMessageRepository = $objectManager->get(SentMessageRepository::class);
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
+      
     }
 
     /**
@@ -212,7 +165,10 @@ class Message
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-            LoggerService::getLogger($this)->error($message);
+            LoggerService::getLogger($this)->log(
+                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
+                $message
+            );
             throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
@@ -332,7 +288,7 @@ class Message
      *
      * @param string $attachment an absolute path to a file
      */
-    public function addAttachment($attachment): Message
+    public function addAttachment(string $attachment): Message
     {
 
         // Convert $file to absolute path.
@@ -352,12 +308,8 @@ class Message
         return $this;
     }
 
-    /**
-     * Set multiple markers at once.
-     *
-     * @param array $values
-     */
-    public function setMarkers($values): Message
+ 
+    public function setMarkers(array $values): Message
     {
         foreach ($values as $markerName => $value) {
             $this->addMarker($markerName, $value);
@@ -365,13 +317,8 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new marker and its value.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
-    public function addMarker($markerName, $value): Message
+ 
+    public function addMarker(string $markerName, mixed $value): Message
     {
         $this->markers[$markerName] = $value;
         return $this;
@@ -390,13 +337,8 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new maker.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
-    public function assign($markerName, $value): Message
+   
+    public function assign(string $markerName, mixed $value): Message
     {
         return $this->addMarker($markerName, $value);
     }
@@ -411,12 +353,7 @@ class Message
     }
 
 
-    /**
-     * Set "to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setTo($addresses): Message
+    public function setTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->to = $addresses;
@@ -432,12 +369,8 @@ class Message
         return $this->cc;
     }
 
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setCc($addresses): Message
+  
+    public function setCc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->cc = $addresses;
@@ -453,12 +386,8 @@ class Message
         return $this->bcc;
     }
 
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setBcc($addresses): Message
+    
+    public function setBcc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->bcc = $addresses;
@@ -470,12 +399,8 @@ class Message
         return $this->replyTo;
     }
 
-    /**
-     * Set "reply-to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setReplyTo($addresses): Message
+  
+    public function setReplyTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->replyTo = $addresses;
@@ -541,7 +466,7 @@ class Message
      * @param string $subject
      * @return $this
      */
-    public function setSubject($subject): self
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
         return $this;
@@ -586,7 +511,7 @@ class Message
      * @param string $body
      * @return $this
      */
-    public function setBody($body): self
+    public function setBody(string $body): self
     {
         $this->body = $body;
         return $this;
@@ -749,7 +674,7 @@ class Message
      * @param string $mailingName
      * @return $this
      */
-    public function setMailingName($mailingName): self
+    public function setMailingName(string $mailingName): self
     {
         $this->mailingName = $mailingName;
         return $this;
@@ -787,7 +712,7 @@ class Message
      * @param string $uuid
      * @return $this
      */
-    public function setUuid($uuid): self
+    public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
         return $this;

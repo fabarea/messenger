@@ -11,6 +11,7 @@ namespace Fab\Messenger\PagePath;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
  * This class create frontend page address from the page id value and parameters.
@@ -28,7 +29,8 @@ class Resolver
      */
     public function __construct()
     {
-        $params = unserialize(base64_decode((string) GeneralUtility::_GP('data')));
+        $request = ServerRequestFactory::fromGlobals();
+        $params = $request->getParsedBody()['data'] ?? $request->getQueryParams()['data'] ?? '';
         if (is_array($params)) {
             $this->pageId = (int) $params['id'];
             $this->parameters = $params['parameters'];

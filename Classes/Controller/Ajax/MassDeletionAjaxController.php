@@ -40,7 +40,7 @@ class MassDeletionAjaxController extends AbstractMessengerAjaxController
                 )
                 : null;
 
-        $content = sprintf($content, count($data));
+        $content = $content = $content ? sprintf($content, count($data)) : 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:data.notFound';
         return $this->getResponse($content);
     }
 

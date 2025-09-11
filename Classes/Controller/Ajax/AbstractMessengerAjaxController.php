@@ -35,7 +35,7 @@ abstract class AbstractMessengerAjaxController
     protected function getDemandedFields(): array
     {
         $demandedFields = [];
-        switch ($this->getModuleName()) {
+        switch ($this->getModule()) {
             case 'MessengerTxMessengerM1':
                 $demandedFields = ['sender', 'recipient', 'subject', 'mailing_name', 'sent_time'];
                 break;
@@ -70,7 +70,7 @@ abstract class AbstractMessengerAjaxController
         return $demandedFields;
     }
 
-    protected function getModuleName(): string
+    protected function getModule(): string
     {
         $pathSegments = explode(
             '/',

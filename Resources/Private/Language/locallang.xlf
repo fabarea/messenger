@@ -24,6 +24,9 @@
 			<trans-unit id="message">
 				<source>Message</source>
 			</trans-unit>
+			<trans-unit id="data.notFound">
+				<source>Data not found.</source>
+			</trans-unit>
 			<trans-unit id="recipients">
 				<source>Recipients</source>
 			</trans-unit>

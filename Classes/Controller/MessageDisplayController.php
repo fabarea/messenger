@@ -22,9 +22,9 @@ class MessageDisplayController extends ActionController
     public function showAction(): string
     {
         $result = 'Nothing to show!';
-        $uuid = (string) GeneralUtility::_GP('uuid');
+        $uuid = $this->request->getParsedBody()['uuid'] ?? $this->request->getQueryParams()['uuid'] ?? null;
         if ($this->isUuidValid($uuid)) {
-            $source = (string) GeneralUtility::_GP('source');
+            $source = (string) $this->request->getParsedBody()['source'] ?? $this->request->getQueryParams()['source'] ?? null;
 
             $message =
                 $source === 'queue'
