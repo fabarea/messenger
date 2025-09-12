@@ -201,6 +201,7 @@ abstract class AbstractMessengerController extends ActionController
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
+
         $selectedColumns =
             BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
         if ($this->request->hasArgument('selectedColumns')) {
@@ -211,15 +212,14 @@ abstract class AbstractMessengerController extends ActionController
         $module = BackendUserPreferenceService::getInstance()->get('module');
 
         if ($module !== $this->getModuleName($this->moduleName)) {
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
-            return $this->defaultSelectedColumns;
+            return $selectedColumns;
         }else{
             if (!empty($storedColumns)) {
                 $selectedColumns = $storedColumns;
             }
         }
 
-        return $this->defaultSelectedColumns;
+        return $selectedColumns;
     }
 
 
@@ -296,7 +296,6 @@ abstract class AbstractMessengerController extends ActionController
     public function updateColumnsAction(ServerRequestInterface $request): ResponseInterface
     {
         $requestBody = $request->getParsedBody();
-        $queryParams = $request->getQueryParams();
 
         $selectedColumns = $requestBody['selectedColumns'] ?? [];
         $module = $requestBody['module'] ?? '';
@@ -309,9 +308,8 @@ abstract class AbstractMessengerController extends ActionController
         }
 
         $backendPreference = BackendUserPreferenceService::getInstance();
-        $backendPreference->set('selectedColumns', $selectedColumns);
+        $backendPreference->set('AjaxSelectedColumns', $selectedColumns);
         $backendPreference->set('module', $module);
-
 
         return $this->getAjaxResponse([
             'success' => true,
