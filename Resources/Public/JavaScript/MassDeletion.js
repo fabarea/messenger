@@ -1,10 +1,10 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/MassDeletion
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
-  const MessengerMassDeletion = {
+const MessengerMassDeletion = {
     /**
      * Get edit storage URL.
      *
@@ -17,7 +17,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      */
 
     getMassDeletionUrl: function (url, module, type, searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -96,6 +96,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  MessengerMassDeletion.initialize();
-  return MessengerMassDeletion;
+    // Expose globally for compatibility
+    window.MessengerMassDeletion = MessengerMassDeletion;
+    window.MessengerMassDeletion.initialized = false;
+
+    return MessengerMassDeletion;
 });

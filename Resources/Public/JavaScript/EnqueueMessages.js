@@ -1,10 +1,10 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/EnqueueMessages
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
-  const MessengerEnqueueMessages = {
+const MessengerEnqueueMessages = {
     /**
      * Get edit storage URL.
      *
@@ -16,7 +16,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      */
 
     getEditRecipientUrl: function (url, data = [], searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
       uri.addQueryParam(
         'tx_messenger_user_messengerm5[matches][uid]',
@@ -100,6 +100,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  MessengerEnqueueMessages.initialize();
-  return MessengerEnqueueMessages;
+    // Expose globally for compatibility
+    window.MessengerEnqueueMessages = MessengerEnqueueMessages;
+    window.MessengerEnqueueMessages.initialized = false;
+
+    return MessengerEnqueueMessages;
 });

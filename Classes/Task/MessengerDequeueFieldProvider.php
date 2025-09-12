@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * Additional BE fields for ip address anonymization task.
@@ -81,7 +82,8 @@ class MessengerDequeueFieldProvider extends AbstractAdditionalFieldProvider
                 $this->getLanguageService()->sL(
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidNumberOfItemsPerRun',
                 ),
-                AbstractMessage::ERROR,
+                ContextualFeedbackSeverity::ERROR,
+                
             );
         }
         return $validData;

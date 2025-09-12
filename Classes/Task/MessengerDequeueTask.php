@@ -10,6 +10,7 @@ namespace Fab\Messenger\Task;
  */
 
 use Fab\Messenger\Queue\QueueManager;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -18,7 +19,7 @@ class MessengerDequeueTask extends AbstractTask
 {
     public int $itemsPerRun = 300;
 
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     public function __construct()
     {
@@ -31,11 +32,8 @@ class MessengerDequeueTask extends AbstractTask
         try {
             $result = $this->getQueueManager()->dequeue($this->itemsPerRun);
 
-            // Task succeeds if we processed messages, even if some had errors
-            // Also succeed if there are no messages to process (empty queue)
             $totalProcessed = $result['errorCount'] + $result['numberOfSentMessages'];
 
-            // Log the results for monitoring
             if ($totalProcessed === 0) {
                 $this->logger->info('Messenger dequeue task completed successfully. No messages in queue to process.');
                 return true;
@@ -60,7 +58,8 @@ class MessengerDequeueTask extends AbstractTask
             return true;
 
         } catch (\Exception $e) {
-            $this->logger->error(
+            $this->logger->log(
+                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
                 sprintf(
                     'Messenger dequeue task failed with exception: %s',
                     $e->getMessage()

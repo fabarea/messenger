@@ -1,11 +1,11 @@
 module.tx_messenger {
 	view {
 		# cat=module.tx_messenger/file; type=string; label=Path to template root (BE)
-		templateRootPath = EXT:messenger/Resources/Private/Backend/Templates/
+		templateRootPath = EXT:messenger/Resources/Private/Templates/
 		# cat=module.tx_messenger/file; type=string; label=Path to template partials (BE)
-		partialRootPath = EXT:messenger/Resources/Private/Backend/Partials/
+		partialRootPath = EXT:messenger/Resources/Private/Partials/
 		# cat=module.tx_messenger/file; type=string; label=Path to template layouts (BE)
-		layoutRootPath = EXT:messenger/Resources/Private/Backend/Layouts/
+		layoutRootPath = EXT:messenger/Resources/Private/Layouts/
 	}
 	persistence {
 		# cat=module.tx_messenger//a; type=string; label=Default storage PID

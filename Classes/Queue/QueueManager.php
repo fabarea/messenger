@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Queue;
 
 /*

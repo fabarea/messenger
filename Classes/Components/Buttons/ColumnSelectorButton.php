@@ -13,6 +13,9 @@ use TYPO3\CMS\Backend\Template\Components\Buttons\ButtonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Core\Page\PageRenderer;
 
 class ColumnSelectorButton implements ButtonInterface
 {
@@ -127,11 +130,38 @@ class ColumnSelectorButton implements ButtonInterface
 
     public function render(): string
     {
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addJsFile(
+            'EXT:messenger/Resources/Public/JavaScript/ColumnSelector.js',
+            'text/javascript',
+            false,
+            false,
+            '',
+            true
+        );
+        $pageRenderer->addCssFile(
+            'EXT:messenger/Resources/Public/Css/ColumnSelector.css'
+        );
+
         $view = GeneralUtility::makeInstance(StandaloneView::class);
         $view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('messenger') .
-                'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
+            'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
         );
+
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $routeName = $this->getAjaxRouteNameForModule($this->module);
+
+        try {
+            $ajaxUrl = $uriBuilder->buildUriFromRoute($routeName);
+        } catch (RouteNotFoundException $e) {
+            try {
+                $ajaxUrl = $uriBuilder->buildUriFromRoutePath('/ajax' . $this->getAjaxPathForModule($this->module));
+            } catch (\Exception $fallbackException) {
+                $ajaxUrl = '/typo3/ajax' . $this->getAjaxPathForModule($this->module);
+            }
+        }
+
         $view->assignMultiple([
             'selectedColumns' => $this->selectedColumns,
             'fields' => $this->fields,
@@ -140,7 +170,40 @@ class ColumnSelectorButton implements ButtonInterface
             'controller' => $this->controller,
             'action' => $this->action,
             'model' => $this->model,
+            'ajaxUrl' => $ajaxUrl,
         ]);
         return $view->render();
+    }
+
+    /**
+     * Get AJAX route name based on module
+     */
+    private function getAjaxRouteNameForModule(string $module): string
+    {
+        $routeMap = [
+            'tx_messenger_messenger_messengertxmessengerm1' => 'messenger_column_selector_m1',
+            'tx_messenger_messenger_messengertxmessengerm2' => 'messenger_column_selector_m2',
+            'tx_messenger_messenger_messengertxmessengerm3' => 'messenger_column_selector_m3',
+            'tx_messenger_messenger_messengertxmessengerm4' => 'messenger_column_selector_m4',
+            'tx_messenger_messenger_messengertxmessengerm5' => 'messenger_column_selector_m5',
+        ];
+
+        return $routeMap[$module] ?? 'messenger_column_selector_m1';
+    }
+
+    /**
+     * Get AJAX path based on module for fallback
+     */
+    private function getAjaxPathForModule(string $module): string
+    {
+        $pathMap = [
+            'tx_messenger_messenger_messengertxmessengerm1' => '/messenger/column-selector/m1',
+            'tx_messenger_messenger_messengertxmessengerm2' => '/messenger/column-selector/m2',
+            'tx_messenger_messenger_messengertxmessengerm3' => '/messenger/column-selector/m3',
+            'tx_messenger_messenger_messengertxmessengerm4' => '/messenger/column-selector/m4',
+            'tx_messenger_messenger_messengertxmessengerm5' => '/messenger/column-selector/m5',
+        ];
+
+        return $pathMap[$module] ?? '/messenger/column-selector/m1';
     }
 }

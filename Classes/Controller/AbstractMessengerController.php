@@ -18,45 +18,44 @@ use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
+use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 
 abstract class AbstractMessengerController extends ActionController
 {
+
     protected ?MessengerRepositoryInterface $repository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
-    protected ModuleTemplate $moduleTemplate;
-
     protected DataExportService $dataExportService;
+
     protected int $itemsPerPage = 20;
     protected array $allowedColumns = [];
-
     protected string $table = '';
-
     protected bool $showNewButton = false;
     protected array $defaultSelectedColumns = [];
-
     protected array $demandFields = [];
-
     protected string $controller = '';
-
     protected string $action = '';
-
     protected string $domainModel = '';
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected string $moduleName = '';
-
     protected string $dataType = '';
 
-    public function __construct()
-    {
-        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
-        $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
+
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->iconFactory = $iconFactory;
+        $this->dataExportService = $dataExportService;
     }
 
     /**
@@ -64,6 +63,8 @@ abstract class AbstractMessengerController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+
         $orderings = $this->getOrderings();
         $messages = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
@@ -75,8 +76,10 @@ abstract class AbstractMessengerController extends ActionController
         });
         $fields = array_merge(['uid'], $fields);
         $selectedColumns = $this->computeSelectedColumns();
+
         $pagination = new SimplePagination($paginator);
-        $this->view->assignMultiple([
+
+        $moduleTemplate->assignMultiple([
             'messages' => $messages,
             'selectedColumns' => $selectedColumns,
             'fields' => $fields,
@@ -99,10 +102,59 @@ abstract class AbstractMessengerController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $this->moduleTemplate->setContent($this->view->render());
-        $this->computeDocHeader($fields, $selectedColumns);
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+
+        $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
+
+
+
+        return $moduleTemplate->renderResponse('Index');
+    }
+
+
+    protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
+    {
+
+        $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
+        $docHeaderComponent->enable();
+
+        $buttonBar = $docHeaderComponent->getButtonBar();
+
+        if (class_exists(ColumnSelectorButton::class)) {
+            /** @var ColumnSelectorButton $columnSelectorButton */
+            $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+            $columnSelectorButton
+                ->setFields($fields)
+                ->setSelectedColumns($selectedColumns)
+                ->setModule($this->getModuleName($this->moduleName))
+                ->setTableName($this->table)
+                ->setAction('index')
+                ->setController($this->controller)
+                ->setModel($this->domainModel);
+
+            $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+        }
+
+        if ($this->showNewButton) {
+            $this->addNewButton($moduleTemplate);
+        }
+
+    }
+
+
+
+
+    protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
+    {
+        $view = $this->moduleTemplateFactory->create($request);
+
+        $view->setTitle('Messenger Module');
+
+        $docHeaderComponent = $view->getDocHeaderComponent();
+        $docHeaderComponent->enable();
+
+        $view->assign('moduleTemplate', $view);
+
+        return $view;
     }
 
     /**
@@ -138,44 +190,37 @@ abstract class AbstractMessengerController extends ActionController
         return $demand;
     }
 
+    protected function getTotalCount(): int
+    {
+        $demand = $this->getDemand();
+        return $this->repository->countByDemand($demand);
+    }
     protected function computeSelectedColumns(): array
     {
-        $moduleVersion = explode('/', $this->getRequestUri());
-        if (count(array_unique($moduleVersion)) !== 1) {
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
-        }
-        $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
         if ($this->request->hasArgument('selectedColumns')) {
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
-        }
-        return $selectedColumns;
-    }
-
-    private function getRequestUri(): string
-    {
-        return $_SERVER['REQUEST_URI'];
-    }
-
-    private function computeDocHeader(array $fields, array $selectedColumns): void
-    {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-
-        /** @var ColumnSelectorButton $columnSelectorButton */
-        $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
-        $columnSelectorButton->setFields($fields)->setSelectedColumns($selectedColumns);
-        $columnSelectorButton->setModule($this->getModuleName($this->moduleName));
-        $columnSelectorButton->setTableName($this->table);
-        $columnSelectorButton->setAction('index');
-        $columnSelectorButton->setController($this->controller);
-        $columnSelectorButton->setModel($this->domainModel);
-
-        if ($this->showNewButton) {
-            $this->addNewButton();
+            return $selectedColumns;
         }
 
-        $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+        $storedColumns = BackendUserPreferenceService::getInstance()->get('selectedColumns');
+
+        if (!empty($storedColumns) && is_array($storedColumns)) {
+            return $storedColumns;
+        }
+
+        $moduleVersion = explode('/', $this->getRequestUrl());
+        if (count(array_unique($moduleVersion)) !== 1) {
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
+        }
+
+        return $this->defaultSelectedColumns;
+    }
+
+
+    private function getRequestUrl(): string
+    {
+        return $this->request->getAttribute('normalizedParams')->getRequestUrl();
     }
 
     protected function getModuleName(string $signature): string
@@ -199,21 +244,26 @@ abstract class AbstractMessengerController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    public function addNewButton(): AbstractMessengerController
+    protected function addNewButton(ModuleTemplate $view): void
     {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-        $newButton = $buttonBar->makeButton(NewButton::class);
-        $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
-        $newButton->setLink(
-            $this->renderUriNewRecord([
-                'table' => $this->table,
-                'pid' => $pagePid,
-                'uid' => 0,
-            ]),
-        );
-        $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+        $docHeaderComponent = $view->getDocHeaderComponent();
+        $buttonBar = $docHeaderComponent->getButtonBar();
 
-        return $this;
+        if (class_exists(NewButton::class)) {
+            /** @var NewButton $newButton */
+            $newButton = $buttonBar->makeButton(NewButton::class);
+            $pagePid = $this->getConfigurationUtility()->get('rootPageUid');
+
+            $newButton->setLink(
+                $this->renderUriNewRecord([
+                    'table' => $this->table,
+                    'pid' => $pagePid,
+                    'uid' => 0,
+                ])
+            );
+
+            $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
+        }
     }
 
     protected function getConfigurationUtility(): ConfigurationUtility
@@ -226,7 +276,7 @@ abstract class AbstractMessengerController extends ActionController
      */
     protected function renderUriNewRecord(array $arguments): string
     {
-        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+        $arguments['returnUrl'] = $this->request->getAttribute('normalizedParams')->getRequestUrl();
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],
@@ -235,8 +285,41 @@ abstract class AbstractMessengerController extends ActionController
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 
-    protected function getRequest(): ServerRequestInterface
+    /**
+     * AJAX action to update selected columns
+     */
+    public function updateColumnsAction(ServerRequestInterface $request): ResponseInterface
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        $requestBody = $request->getParsedBody();
+        $queryParams = $request->getQueryParams();
+
+        $selectedColumns = $requestBody['selectedColumns'] ?? [];
+        $module = $requestBody['module'] ?? $queryParams['module'] ?? '';
+
+        if (empty($module)) {
+            return $this->getAjaxResponse([
+                'success' => false,
+                'error' => 'Missing required parameter: module'
+            ]);
+        }
+
+        BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+
+        return $this->getAjaxResponse([
+            'success' => true,
+            'selectedColumns' => $selectedColumns,
+            'message' => 'Column selection updated successfully'
+        ]);
+    }
+
+    /**
+     * Helper method to create JSON AJAX responses
+     */
+    protected function getAjaxResponse(array $data): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

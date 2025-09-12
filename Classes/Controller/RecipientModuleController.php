@@ -54,15 +54,16 @@ class RecipientModuleController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $orderings = $this->getOrderings();
         $records = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $paginator = new ArrayPaginator($records, $currentPage, $items);
-
-        $selectedColumns = $this->computeSelectedColumns();
         $pagination = new SimplePagination($paginator);
-        $this->view->assignMultiple([
+        $selectedColumns = $this->computeSelectedColumns();
+
+        $moduleTemplate->assignMultiple([
             'recipients' => $records,
             'selectedColumns' => $selectedColumns,
             'fields' => $this->getFields(),
@@ -81,12 +82,12 @@ class RecipientModuleController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
 
-        $this->moduleTemplate->setContent($this->view->render());
-        $this->computeDocHeader($this->getFields(), $selectedColumns);
 
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
+
+        return $moduleTemplate->renderResponse('Index');
+
     }
 
     /**
@@ -131,13 +132,13 @@ class RecipientModuleController extends ActionController
     /**
      * @throws NoSuchArgumentException
      */
-     protected function computeSelectedColumns(): array
+    protected function computeSelectedColumns(): array
     {
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
         $parsedBody = $this->request->getParsedBody();
         $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
 
-        $moduleVersion = explode('/', $this->getRequestUri());
+        $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
         }
@@ -161,7 +162,7 @@ class RecipientModuleController extends ActionController
         return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
-    private function getRequestUri(): string
+    private function getRequestUrl(): string
     {
         return $_SERVER['REQUEST_URI'];
     }
@@ -169,9 +170,9 @@ class RecipientModuleController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    private function computeDocHeader(array $fields, array $selectedColumns): void
+    private function computeDocHeader(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         /** @var ColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
@@ -231,12 +232,14 @@ class RecipientModuleController extends ActionController
      */
     protected function renderUriNewRecord(array $arguments): string
     {
-        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        $normalizedParams = $request->getAttribute('normalizedParams');
+        $arguments['returnUrl'] = $normalizedParams->getRequestUrl();
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }

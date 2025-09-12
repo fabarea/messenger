@@ -40,9 +40,7 @@ class MassDeletionAjaxController extends AbstractMessengerAjaxController
                 )
                 : null;
 
-        $content = $content ? sprintf($content, count($data)) : $this->getLanguageService()->sL(
-            'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:delete.messages.none.selected',
-        );
+        $content = $content = $content ? sprintf($content, count($data)) : 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:data.notFound';
         return $this->getResponse($content);
     }
 

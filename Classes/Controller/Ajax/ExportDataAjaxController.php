@@ -57,7 +57,7 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:export.sure?',
                 );
 
-        $content = sprintf($content, count($data));
+        $content = $content = $content ? sprintf($content, count($data)) : 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:data.notFound';
         return $this->getResponse($content);
     }
 
