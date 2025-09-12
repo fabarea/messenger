@@ -1,0 +1,82 @@
+/**
+ * Column Selector Styles
+ * Styling for the AJAX column selector component
+ */
+
+/* Loading state for checkboxes */
+.column-selector-checkbox.loading {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* Loading indicator */
+.column-selector-checkbox.loading + label::after {
+    content: " (updating...)";
+    font-size: 0.8em;
+    color: #666;
+    font-style: italic;
+}
+
+/* Disabled state */
+.column-selector-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Smooth transitions */
+.column-selector-checkbox {
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Dropdown menu enhancements */
+.dropdown-fields .dropdown-menu {
+    max-width: 300px;
+    min-width: 200px;
+}
+
+/* Checkbox labels */
+.dropdown-fields .checkbox label {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+    font-weight: normal;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dropdown-fields .checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    margin-top: 0;
+}
+
+/* Hover effects */
+.dropdown-fields .checkbox:hover {
+    background-color: #f8f9fa;
+}
+
+/* TYPO3 Backend specific adjustments */
+.module-docheader .dropdown-fields .dropdown-menu {
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Success/Error states (if you want visual feedback) */
+.column-selector-success {
+    border-left: 3px solid #28a745;
+    animation: successFlash 0.5s ease-in-out;
+}
+
+.column-selector-error {
+    border-left: 3px solid #dc3545;
+    animation: errorFlash 0.5s ease-in-out;
+}
+
+@keyframes successFlash {
+    0% { background-color: #d4edda; }
+    100% { background-color: transparent; }
+}
+
+@keyframes errorFlash {
+    0% { background-color: #f8d7da; }
+    100% { background-color: transparent; }
+}
