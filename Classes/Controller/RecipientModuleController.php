@@ -22,6 +22,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RecipientModuleController extends ActionController
 {
@@ -137,7 +139,6 @@ class RecipientModuleController extends ActionController
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
         $parsedBody = $this->request->getParsedBody();
         $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
-
         $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
@@ -152,8 +153,19 @@ class RecipientModuleController extends ActionController
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
+        $storedColumns = BackendUserPreferenceService::getInstance()->get('AjaxSelectedColumns');
+        $module = BackendUserPreferenceService::getInstance()->get('module');
+
+        if (empty($module)) {
+            return $selectedColumns;
+        }else{
+            if (!empty($storedColumns)) {
+                $selectedColumns = $storedColumns;
+            }
+        }
 
         return $selectedColumns;
+
     }
 
 
@@ -241,5 +253,41 @@ class RecipientModuleController extends ActionController
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
+    }
+
+    public function updateColumnsAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $requestBody = $request->getParsedBody();
+
+        $selectedColumns = $requestBody['selectedColumns'] ?? [];
+        $module = $requestBody['module'] ?? '';
+
+        if (empty($module)) {
+            return $this->getAjaxResponse([
+                'success' => false,
+                'error' => 'Missing required parameter: module'
+            ]);
+        }
+
+        $backendPreference = BackendUserPreferenceService::getInstance();
+        $backendPreference->set('AjaxSelectedColumns', $selectedColumns);
+        $backendPreference->set('module', $module);
+
+        return $this->getAjaxResponse([
+            'success' => true,
+            'selectedColumns' => $selectedColumns,
+            'message' => 'Column selection updated successfully'
+        ]);
+    }
+
+    /**
+     * Helper method to create JSON AJAX responses
+     */
+    protected function getAjaxResponse(array $data): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }
