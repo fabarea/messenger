@@ -153,7 +153,7 @@ class RecipientModuleController extends ActionController
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
-        $storedColumns = BackendUserPreferenceService::getInstance()->get('AjaxSelectedColumns');
+        $storedColumns = BackendUserPreferenceService::getInstance()->get('RecipientAjaxSelectedColumns');
         $module = BackendUserPreferenceService::getInstance()->get('module');
 
         if (empty($module)) {
@@ -270,7 +270,7 @@ class RecipientModuleController extends ActionController
         }
 
         $backendPreference = BackendUserPreferenceService::getInstance();
-        $backendPreference->set('AjaxSelectedColumns', $selectedColumns);
+        $backendPreference->set('RecipientAjaxSelectedColumns', $selectedColumns);
         $backendPreference->set('module', $module);
 
         return $this->getAjaxResponse([
