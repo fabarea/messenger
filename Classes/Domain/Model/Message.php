@@ -72,41 +72,34 @@ class Message
     /**
      * @var MessageLayout
      */
-    protected MessageLayout $messageLayout;
+    protected ?MessageLayout $messageLayout = null;
 
 
-    protected string $mailingName;
+    protected ?string $mailingName = '';
+
+    protected ?MailMessage $mailMessage = null;
 
 
     protected int $scheduleDistributionTime = 0;
 
 
     protected array $attachments = [];
-
     /**
      * @var MessageTemplateRepository
      */
-    protected MessageTemplateRepository $messageTemplateRepository;
-
+    protected ?MessageTemplateRepository $messageTemplateRepository = null;
     /**
      * @var MessageLayoutRepository
      */
-    protected MessageLayoutRepository $messageLayoutRepository;
-
+    protected ?MessageLayoutRepository $messageLayoutRepository = null;
     /**
      * @var SentMessageRepository
      */
-    protected SentMessageRepository $sentMessageRepository;
-
+    protected ?SentMessageRepository $sentMessageRepository = null;
     /**
      * @var MessageTemplate
      */
-    protected MessageTemplate $messageTemplate;
-
-    /**
-     * @var MailMessage
-     */
-    protected MailMessage $mailMessage;
+    protected ?MessageTemplate $messageTemplate = null;
 
 
     protected string $subject = '';
