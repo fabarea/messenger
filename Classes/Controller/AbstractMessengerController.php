@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 
 abstract class AbstractMessengerController extends ActionController
 {
@@ -45,6 +46,7 @@ abstract class AbstractMessengerController extends ActionController
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected string $moduleName = '';
     protected string $dataType = '';
+
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
@@ -112,29 +114,29 @@ abstract class AbstractMessengerController extends ActionController
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
 
-            $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
-            $docHeaderComponent->enable();
+        $docHeaderComponent = $moduleTemplate->getDocHeaderComponent();
+        $docHeaderComponent->enable();
 
-            $buttonBar = $docHeaderComponent->getButtonBar();
+        $buttonBar = $docHeaderComponent->getButtonBar();
 
-            if (class_exists(ColumnSelectorButton::class)) {
-                /** @var ColumnSelectorButton $columnSelectorButton */
-                $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
-                $columnSelectorButton
-                    ->setFields($fields)
-                    ->setSelectedColumns($selectedColumns)
-                    ->setModule($this->getModuleName($this->moduleName))
-                    ->setTableName($this->table)
-                    ->setAction('index')
-                    ->setController($this->controller)
-                    ->setModel($this->domainModel);
+        if (class_exists(ColumnSelectorButton::class)) {
+            /** @var ColumnSelectorButton $columnSelectorButton */
+            $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
+            $columnSelectorButton
+                ->setFields($fields)
+                ->setSelectedColumns($selectedColumns)
+                ->setModule($this->getModuleName($this->moduleName))
+                ->setTableName($this->table)
+                ->setAction('index')
+                ->setController($this->controller)
+                ->setModel($this->domainModel);
 
-                $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
-            }
+            $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
+        }
 
-            if ($this->showNewButton) {
-                $this->addNewButton($moduleTemplate);
-            }
+        if ($this->showNewButton) {
+            $this->addNewButton($moduleTemplate);
+        }
 
     }
 
@@ -193,21 +195,28 @@ abstract class AbstractMessengerController extends ActionController
         $demand = $this->getDemand();
         return $this->repository->countByDemand($demand);
     }
-
     protected function computeSelectedColumns(): array
     {
+        if ($this->request->hasArgument('selectedColumns')) {
+            $selectedColumns = $this->request->getArgument('selectedColumns');
+            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+            return $selectedColumns;
+        }
+
+        $storedColumns = BackendUserPreferenceService::getInstance()->get('selectedColumns');
+
+        if (!empty($storedColumns) && is_array($storedColumns)) {
+            return $storedColumns;
+        }
+
         $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
         }
-        $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
-        if ($this->request->hasArgument('selectedColumns')) {
-            $selectedColumns = $this->request->getArgument('selectedColumns');
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
-        }
-        return $selectedColumns;
+
+        return $this->defaultSelectedColumns;
     }
+
 
     private function getRequestUrl(): string
     {
@@ -274,5 +283,43 @@ abstract class AbstractMessengerController extends ActionController
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+    }
+
+    /**
+     * AJAX action to update selected columns
+     */
+    public function updateColumnsAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $requestBody = $request->getParsedBody();
+        $queryParams = $request->getQueryParams();
+
+        $selectedColumns = $requestBody['selectedColumns'] ?? [];
+        $module = $requestBody['module'] ?? $queryParams['module'] ?? '';
+
+        if (empty($module)) {
+            return $this->getAjaxResponse([
+                'success' => false,
+                'error' => 'Missing required parameter: module'
+            ]);
+        }
+
+        BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
+
+        return $this->getAjaxResponse([
+            'success' => true,
+            'selectedColumns' => $selectedColumns,
+            'message' => 'Column selection updated successfully'
+        ]);
+    }
+
+    /**
+     * Helper method to create JSON AJAX responses
+     */
+    protected function getAjaxResponse(array $data): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }
