@@ -80,12 +80,22 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
 
         if ($this->request->getQueryParams()['format'] && $dataUids) {
             $columns = TcaFieldsUtility::getFields($this->tableName);
+            
+            // Debug: Log the table name and columns for troubleshooting
+            if (empty($columns)) {
+                $errorMessage = 'No columns found for table: ' . $this->tableName;
+                if ($this->dataType === 'recipient-module') {
+                    $errorMessage .= ' (recipient_data_type: ' . ConfigurationUtility::getInstance()->get('recipient_data_type') . ')';
+                }
+                return $this->getResponse('Error: ' . $errorMessage);
+            }
+            
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
             $this->dataExportService->setRepository($this->repository);
             $this->performExport($dataUids, $this->request->getQueryParams()['format'], $columns);
+        } else {
+            return $this->getResponse('Error: No data to export or format not specified');
         }
-
-        return $this->getResponse('Error');
     }
 
     protected function initializeRepository(string $type): void
