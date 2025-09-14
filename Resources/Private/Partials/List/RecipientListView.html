@@ -68,13 +68,13 @@
                 <tr class="t3-row-header">
                     <f:variable name="color" value="text-black" />
                     <th class="action" scope="col">
-                        <f:form.checkbox
-                            class="select-all"
-                            id="record-all"
-                            name="selectedRecords[]"
-                            onclick="Messenger.selectAll(this); "
-                            value="1"
-                        />
+                    <f:form.checkbox
+                        class="select-all"
+                        id="record-all"
+                        name="selectedRecords[]"
+                        data-action="select-all"
+                        value="1"
+                    />
                     </th>
 
                     <f:for as="selectedField" each="{selectedColumns}" iteration="iterator">
@@ -106,7 +106,7 @@
                             <f:form.checkbox
                                 class="select"
                                 name="selectedRecords[]"
-                                onclick="Messenger.getSelectedItems()"
+                                data-action="select-item"
                                 value="{recipient.uid}"
                             />
                         </td>
@@ -142,7 +142,7 @@
                                     class="btn btn-default btn-secondary"
                                     data-delete-url="{deleteUrl}"
                                     data-name="{recipient.uid}"
-                                    onclick="Messenger.deleteItem(this); return false"
+                                    data-action="delete-item"
                                 >
                                     <core:icon identifier="actions-delete" size="small" />
                                 </button>
@@ -163,7 +163,7 @@
                             <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
                                 <li>
                                     <a
-                                        class="dropdown-item btn-send-message"
+                                        class="dropdown-item btn-sendAgain btn-send-message border-bottom border-secondary"
                                         data-data-type="recipient-module"
                                         data-search-term="{searchTerm}"
                                         href="#"
@@ -177,6 +177,7 @@
                                 <li>
                                     <a
                                         class="dropdown-item btn-update-recipient border-bottom border-secondary"
+                                        data-search-term="{searchTerm}"
                                         href="#"
                                     >
                                         <core:icon identifier="mimetypes-open-document-database" size="small" />
