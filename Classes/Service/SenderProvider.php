@@ -58,8 +58,8 @@ class SenderProvider implements SingletonInterface
     {
         $senders = [];
         $tsConfig = $this->getBackendUser()->getTSConfig();
-        $tsSenders = $tsConfig['options.messenger.senders'];
-        if (is_array($tsSenders)) {
+        $tsSenders = $tsConfig['options.messenger.senders'] ?? [];
+        if (is_array($tsSenders) && !empty($tsSenders)) {
             foreach ($tsSenders as $key => $sender) {
                 $senders[$key] = [$sender['email'] => $sender['name']];
             }

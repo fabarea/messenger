@@ -30,7 +30,7 @@ class DisplaySendMessageModalAjaxController extends AbstractMessengerAjaxControl
         $pageContent = $this->pageRepository->findByUid($this->getPageId());
         $view->assignMultiple([
             'senders' => GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders(),
-            'title' => $pageContent['title'],
+            'title' => $pageContent['title'] ?? ''
         ]);
         return $this->getResponse($view->render());
     }
