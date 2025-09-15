@@ -32,10 +32,14 @@ final class UpdateRecipientAjaxController extends AbstractMessengerAjaxControlle
     public function saveAction(): ResponseInterface
     {
         $data = $this->getRequest()->getParsedBody();
-        if ($data['deleteExistingRecipients']) {
+
+        $deleteExistingRecipients = isset($data['deleteExistingRecipients']) && $data['deleteExistingRecipients'];
+        $recipientCsvList = $data['recipientCsvList'] ?? '';
+
+        if ($deleteExistingRecipients) {
             $this->repository->deleteAllAction();
         }
-        $recipients = GeneralUtility::trimExplode("\n", trim($data['recipientCsvList']));
+        $recipients = GeneralUtility::trimExplode("\n", trim($recipientCsvList));
         $counter = count($recipients);
         $created = 0;
         foreach ($recipients as $recipientCsv) {
@@ -43,17 +47,16 @@ final class UpdateRecipientAjaxController extends AbstractMessengerAjaxControlle
             if (count($recipient) >= 3) {
                 [$email, $firstName, $lastName] = $recipient;
                 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    if ($data['deleteExistingRecipients'] || !$this->repository->exists($email)) {
+                    if ($deleteExistingRecipients || !$this->repository->exists($email)) {
                         $values = [
                             'email' => $email,
                             'first_name' => $firstName,
                             'last_name' => $lastName,
                         ];
                         $this->repository->insert($values);
+                        $created++;
                     }
                 }
-
-                $created++;
             }
         }
         $content = sprintf('Created %s/%s', $created, $counter);
