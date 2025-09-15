@@ -55,12 +55,11 @@ class PagePath
 
             $requestFactory = GeneralUtility::makeInstance(RequestFactory::class);
             // Send TYPO3 cookies as this may affect path generation
-            $jar = CookieJar::fromArray(
-                [
-                    'fe_typo_user' => $_COOKIE['fe_typo_user'],
-                ],
-                $_SERVER['HTTP_HOST'],
-            );
+            $cookies = [];
+            if (isset($_COOKIE['fe_typo_user'])) {
+                $cookies['fe_typo_user'] = $_COOKIE['fe_typo_user'];
+            }
+            $jar = CookieJar::fromArray($cookies, $_SERVER['HTTP_HOST']);
             $response = $requestFactory->request($url, 'GET', ['cookies' => $jar]);
             $result = $response->getBody()->getContents();
 
@@ -96,7 +95,7 @@ class PagePath
             // TODO remove this condition
 
             die(
-                'You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case'
+            'You should never see that message. Please report to https://github.com/fabarea/messenger if that is the case'
             );
 
             // @deprecated.
@@ -140,8 +139,8 @@ class PagePath
     {
         $pageRecord = BackendUtility::getRecord('pages', $pageId);
         return is_array($pageRecord) &&
-            isset($pageRecord['url_scheme']) &&
-            $pageRecord['url_scheme'] === HttpUtility::SCHEME_HTTPS
+        isset($pageRecord['url_scheme']) &&
+        $pageRecord['url_scheme'] === HttpUtility::SCHEME_HTTPS
             ? 'https'
             : 'http';
     }

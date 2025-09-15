@@ -64,9 +64,11 @@ class BodyConverter extends AbstractTypeConverter
             $baseUrl = PagePath::getSiteBaseUrl($source);
 
             // Send TYPO3 cookies as this may affect path generation
-            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray([
-                'fe_typo_user' => $_COOKIE['fe_typo_user'],
-            ], $_SERVER['HTTP_HOST']);
+            $cookies = [];
+            if (isset($_COOKIE['fe_typo_user'])) {
+                $cookies['fe_typo_user'] = $_COOKIE['fe_typo_user'];
+            }
+            $jar = \GuzzleHttp\Cookie\CookieJar::fromArray($cookies, $_SERVER['HTTP_HOST']);
             $url = $baseUrl . 'index.php?id=' . $source;
             $response = $this->requestFactory->request($url, 'GET', ['cookies' => $jar]);
             if ($response->getStatusCode() === 200) {
