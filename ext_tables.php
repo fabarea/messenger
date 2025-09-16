@@ -23,14 +23,12 @@ call_user_func(function () {
         'Send a message to a group of people',
     );
 
-
-
     $icons = [
-        'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.png',
-        'messagetemplate' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.png',
-        'messagelayout' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.png',
-        'queue' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.png',
-        'module' => 'EXT:messenger/Resources/Public/Icons/module-messenger.png'
+        'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
+        'messagetemplate' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',
+        'messagelayout' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagelayout.svg',
+        'queue' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_queue.svg',
+        'module' => 'EXT:messenger/Resources/Public/Icons/module-messenger.svg'
     ];
 
     /** @var IconRegistry $iconRegistry */
@@ -41,6 +39,4 @@ call_user_func(function () {
         ]);
     }
     unset($iconRegistry);
-
-
 });
