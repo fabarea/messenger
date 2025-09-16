@@ -187,11 +187,13 @@ class Message
 
         // Attach plain text version if HTML tags are found in body
         if ($this->hasHtml($this->getProcessedBody())) {
-            $message->setBody()->html($this->getProcessedBody());
+            $htmlPart = new \Symfony\Component\Mime\Part\TextPart($this->getProcessedBody(), 'utf-8', 'html');
             $text = Html2Text::getInstance()->convert($this->getProcessedBody());
-            $message->setBody()->text($text);
+            $textPart = new \Symfony\Component\Mime\Part\TextPart($text, 'utf-8', 'plain');
+            $message->setBody(new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $htmlPart));
         } else {
-            $message->setBody()->text($this->getProcessedBody());
+            $textPart = new \Symfony\Component\Mime\Part\TextPart($this->getProcessedBody(), 'utf-8', 'plain');
+            $message->setBody($textPart);
         }
 
         // Handle attachment
@@ -206,8 +208,9 @@ class Message
         if ($redirectTo) {
             $this->redirectEmailFrom = $this->getMailMessage()->getTo();
 
+            $htmlPart = new \Symfony\Component\Mime\Part\TextPart($this->getDebugInfoBody(), 'utf-8', 'html');
             $this->getMailMessage()
-                ->setBody()->html($this->getDebugInfoBody())
+                ->setBody($htmlPart)
                 ->setTo($redirectTo)
                 ->setCc([])// reset cc which was written as debug in the body message previously.
                 ->setBcc([])// same remark as bcc.
@@ -682,7 +685,7 @@ class Message
      * @param int $scheduleDistributionTime
      * @return $this
      */
-    public function setScheduleDistributionTime($scheduleDistributionTime): self
+    public function setScheduleDistributionTime(int $scheduleDistributionTime): self
     {
         $this->scheduleDistributionTime = $scheduleDistributionTime;
         return $this;
