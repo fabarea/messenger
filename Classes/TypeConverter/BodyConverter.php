@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\TypeConverter;
 
 /*
@@ -20,7 +21,6 @@ use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
  */
 class BodyConverter extends AbstractTypeConverter
 {
-
     /**
      * @var array<string>
      */
@@ -32,7 +32,7 @@ class BodyConverter extends AbstractTypeConverter
     protected $targetType = 'string';
 
     /**
-     * @var integer
+     * @var int
      */
     protected $priority = 1;
 
@@ -80,7 +80,6 @@ class BodyConverter extends AbstractTypeConverter
                 }
             }
         }
-
 
         return $body;
     }

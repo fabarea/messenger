@@ -22,7 +22,7 @@ class TcaFieldsUtility
     public static function getFields(string $tableName): array
     {
         self::$tableName = $tableName;
-        
+
         // Check if table exists in TCA
         if (!isset($GLOBALS['TCA'][self::$tableName]) || !isset($GLOBALS['TCA'][self::$tableName]['columns'])) {
             // Fallback to fe_users if the configured table doesn't exist
@@ -35,7 +35,7 @@ class TcaFieldsUtility
                 return [];
             }
         }
-        
+
         $fields = array_keys($GLOBALS['TCA'][self::$tableName]['columns']);
 
         return self::filterByBackendUser($fields);

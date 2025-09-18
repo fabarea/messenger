@@ -132,7 +132,7 @@ class MessageLayoutRepository extends AbstractContentRepository
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {

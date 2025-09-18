@@ -5,11 +5,12 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
-use Fab\Messenger\Resolver\FieldPathResolver;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -22,8 +23,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class RecipientModuleController extends ActionController
 {
@@ -84,7 +83,6 @@ class RecipientModuleController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-
 
         $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
 
@@ -158,16 +156,14 @@ class RecipientModuleController extends ActionController
 
         if (empty($module)) {
             return $selectedColumns;
-        }else{
-            if (!empty($storedColumns)) {
-                $selectedColumns = $storedColumns;
-            }
+        }
+        if (!empty($storedColumns)) {
+            $selectedColumns = $storedColumns;
         }
 
         return $selectedColumns;
 
     }
-
 
     protected function getFields(): array
     {
@@ -265,7 +261,7 @@ class RecipientModuleController extends ActionController
         if (empty($module)) {
             return $this->getAjaxResponse([
                 'success' => false,
-                'error' => 'Missing required parameter: module'
+                'error' => 'Missing required parameter: module',
             ]);
         }
 
@@ -276,7 +272,7 @@ class RecipientModuleController extends ActionController
         return $this->getAjaxResponse([
             'success' => true,
             'selectedColumns' => $selectedColumns,
-            'message' => 'Column selection updated successfully'
+            'message' => 'Column selection updated successfully',
         ]);
     }
 

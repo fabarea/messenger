@@ -9,9 +9,9 @@ namespace Fab\Messenger\PagePath;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 
 /**
  * This class create frontend page address from the page id value and parameters.

@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Html2Text;
 
 /*
@@ -15,8 +16,7 @@ use TYPO3\CMS\Core\Type\Enumeration;
  */
 class TemplateEngine extends Enumeration
 {
+    final public const FLUID_ONLY = 'fluid';
 
-    final const FLUID_ONLY = 'fluid';
-
-    final const FLUID_AND_MARKDOWN = 'both';
+    final public const FLUID_AND_MARKDOWN = 'both';
 }

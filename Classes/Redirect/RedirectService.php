@@ -48,16 +48,16 @@ class RedirectService implements SingletonInterface
     public function getRedirectionList(): string
     {
         // Fetch email from PHP configuration array at first.
-        $applicationContext = (string) Environment::getContext()->getParent();
+        $applicationContext = (string)Environment::getContext()->getParent();
         if (!$applicationContext) {
-            $applicationContext = (string) Environment::getContext();
+            $applicationContext = (string)Environment::getContext();
         }
 
         $key = strtolower($applicationContext) . '_redirect_to';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key])) {
-            $recipientList = (string) $GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
+            $recipientList = (string)$GLOBALS['TYPO3_CONF_VARS']['MAIL'][$key];
         } else {
-            $recipientList = (string) ConfigurationUtility::getInstance()->get($key);
+            $recipientList = (string)ConfigurationUtility::getInstance()->get($key);
         }
         return trim($recipientList);
     }

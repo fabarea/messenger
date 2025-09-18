@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Domain\Model;
 
 /*
@@ -8,20 +9,18 @@ namespace Fab\Messenger\Domain\Model;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use RuntimeException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Fab\Messenger\Html2Text\TemplateEngine;
 
 /**
  * Message Template representation
  */
 class MessageTemplate extends AbstractEntity
 {
-
-    final const TYPE_TEXT = 1;
-    final const TYPE_PAGE = 2;
-    final const TYPE_FILE = 3;
+    final public const TYPE_TEXT = 1;
+    final public const TYPE_PAGE = 2;
+    final public const TYPE_FILE = 3;
 
     /**
      * @var string
@@ -86,7 +85,6 @@ class MessageTemplate extends AbstractEntity
      * Sets the subject
      *
      * @param string $subject
-     * @return void
      */
     public function setSubject(string $subject): void
     {
@@ -96,7 +94,7 @@ class MessageTemplate extends AbstractEntity
     /**
      * Returns the body according to the type of the message template.
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return string $body
      */
     public function getBody(): string
@@ -104,13 +102,14 @@ class MessageTemplate extends AbstractEntity
 
         if ($this->type === self::TYPE_PAGE) {
             // @todo use $crawler to fetch body content of page
-            throw new RuntimeException('Messenger: not implemented', 1_400_517_075);
+            throw new \RuntimeException('Messenger: not implemented', 1_400_517_075);
 
-        } elseif ($this->type === self::TYPE_FILE) {
+        }
+        if ($this->type === self::TYPE_FILE) {
             $file = GeneralUtility::getFileAbsFileName($this->sourceFile);
             if (!is_file($file)) {
                 $message = sprintf('Messenger: I could not found file "%s"', $file);
-                throw new RuntimeException($message, 1_400_517_074);
+                throw new \RuntimeException($message, 1_400_517_074);
             }
             $this->body = file_get_contents($file);
         }
@@ -122,7 +121,6 @@ class MessageTemplate extends AbstractEntity
      * Sets the body
      *
      * @param string $body
-     * @return void
      */
     public function setBody(string $body): void
     {
@@ -139,7 +137,6 @@ class MessageTemplate extends AbstractEntity
 
     /**
      * @param string $qualifier
-     * @return void
      */
     public function setQualifier(string $qualifier): void
     {

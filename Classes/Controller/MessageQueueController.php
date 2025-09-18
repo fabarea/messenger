@@ -80,10 +80,9 @@ class MessageQueueController extends AbstractMessengerController
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
-        IconFactory           $iconFactory,
-        DataExportService     $dataExportService
-    )
-    {
+        IconFactory $iconFactory,
+        DataExportService $dataExportService
+    ) {
         parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
         $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
     }
@@ -101,11 +100,11 @@ class MessageQueueController extends AbstractMessengerController
         $label =
             $numberOfRecipients > 1
                 ? $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
-            )
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.messages.sure?',
+                )
                 : $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
-            );
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
+                );
 
         return sprintf($label, $numberOfRecipients);
     }
@@ -153,8 +152,8 @@ class MessageQueueController extends AbstractMessengerController
             $numberOfRecipients,
             $numberOfSentEmails !== $numberOfRecipients
                 ? $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-            )
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+                )
                 : '',
         );
     }

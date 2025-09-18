@@ -122,12 +122,11 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             count($recipients),
             $numberOfSentEmails !== count($recipients)
                 ? $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-            )
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+                )
                 : '',
         );
     }
-
 
     protected function getTo(array $recipient): array
     {

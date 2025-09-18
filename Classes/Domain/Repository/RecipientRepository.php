@@ -72,7 +72,7 @@ class RecipientRepository extends AbstractContentRepository
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {
@@ -154,7 +154,7 @@ class RecipientRepository extends AbstractContentRepository
             ->insert($this->tableName)
             ->values($values)
             ->execute();
-        return (bool) $result;
+        return (bool)$result;
     }
 
     public function deleteByUids(array $uids): int

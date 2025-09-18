@@ -1,16 +1,16 @@
 <?php
 
 use Fab\Messenger\Controller\Ajax\DisplaySendMessageModalAjaxController;
-use Fab\Messenger\Controller\SentMessageModuleController;
-use Fab\Messenger\Controller\MessageTemplateController;
-use Fab\Messenger\Controller\MessageLayoutController;
-use Fab\Messenger\Controller\MessageQueueController;
-use Fab\Messenger\Controller\RecipientModuleController;
 use Fab\Messenger\Controller\Ajax\EnqueueMessageAjaxController;
 use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\MassDeletionAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
 use Fab\Messenger\Controller\Ajax\UpdateRecipientAjaxController;
+use Fab\Messenger\Controller\MessageLayoutController;
+use Fab\Messenger\Controller\MessageQueueController;
+use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\RecipientModuleController;
+use Fab\Messenger\Controller\SentMessageModuleController;
 
 return [
     'messenger_send_again_confirmation' => [

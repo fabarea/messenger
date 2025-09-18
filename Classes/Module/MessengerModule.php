@@ -19,12 +19,12 @@ class MessengerModule implements SingletonInterface
     /**
      * @var string
      */
-    final const SIGNATURE = 'user_MessengerM1';
+    final public const SIGNATURE = 'user_MessengerM1';
 
     /**
      * @var string
      */
-    final const PARAMETER_PREFIX = 'tx_messenger_user_messengerm1';
+    final public const PARAMETER_PREFIX = 'tx_messenger_user_messengerm1';
 
     /**
      * @return string

@@ -36,7 +36,7 @@ class ConfigurationUtility implements SingletonInterface
         if (empty($this->configuration['recipient_data_type'])) {
             $this->configuration['recipient_data_type'] = 'fe_users';
         }
-        
+
         // Ensure recipient_data_type is valid, fallback to fe_users if not
         if (!isset($GLOBALS['TCA'][$this->configuration['recipient_data_type']])) {
             $this->configuration['recipient_data_type'] = 'fe_users';
@@ -45,7 +45,7 @@ class ConfigurationUtility implements SingletonInterface
 
     public function get(string $key): mixed
     {
-        return isset($this->configuration[$key]) ? trim((string) $this->configuration[$key]) : null;
+        return isset($this->configuration[$key]) ? trim((string)$this->configuration[$key]) : null;
     }
 
     /**

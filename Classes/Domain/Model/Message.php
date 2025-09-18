@@ -15,57 +15,45 @@ use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Exception\MissingFileException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 use Fab\Messenger\Redirect\RedirectService;
+use Fab\Messenger\Service\Html2Text;
+use Fab\Messenger\Service\LoggerService;
+use Fab\Messenger\Service\MessageStorage;
 use Fab\Messenger\Validator\EmailValidator;
-use RuntimeException;
+use Michelf\Markdown;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\Messenger\Exception\MissingFileException;
-use Fab\Messenger\Exception\RecordNotFoundException;
-use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Fab\Messenger\Html2Text\TemplateEngine;
-use Fab\Messenger\Service\MessageStorage;
-use Fab\Messenger\Service\LoggerService;
-use Fab\Messenger\Service\Html2Text;
-use Michelf\Markdown;
-use TYPO3\CMS\Extbase\Annotation\Inject;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Message representation
  */
 class Message
 {
-
-    final const SUBJECT = 'subject';
-    final const BODY = 'body';
-
+    final public const SUBJECT = 'subject';
+    final public const BODY = 'body';
 
     protected int $uid;
-
 
     protected array $sender = [];
 
     protected ?string $messageSerialized = null;
 
-
     protected array $to = [];
-
 
     protected array $cc = [];
 
-
     protected array $bcc = [];
-
 
     protected array $replyTo = [];
 
-
     protected array $redirectEmailFrom = [];
-
 
     protected array $markers = [];
 
@@ -74,14 +62,11 @@ class Message
      */
     protected ?MessageLayout $messageLayout = null;
 
-
     protected ?string $mailingName = '';
 
     protected ?MailMessage $mailMessage = null;
 
-
     protected int $scheduleDistributionTime = 0;
-
 
     protected array $attachments = [];
     /**
@@ -101,21 +86,15 @@ class Message
      */
     protected ?MessageTemplate $messageTemplate = null;
 
-
     protected string $subject = '';
-
 
     protected string $body = '';
 
-
     protected string $processedSubject = '';
-
 
     protected string $processedBody = '';
 
-
     protected bool $parseToMarkdown = false;
-
 
     protected string $uuid = '';
 
@@ -140,7 +119,7 @@ class Message
     /**
      * Prepares the emails and send it.
      *
-     * @return boolean whether or not the email was sent successfully
+     * @return bool whether or not the email was sent successfully
      */
     public function send(): bool
     {
@@ -174,7 +153,7 @@ class Message
     protected function prepareMessage(): void
     {
         if (!$this->to) {
-            throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
+            throw new \RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
 
         $message = $this->getMailMessage()
@@ -259,14 +238,13 @@ class Message
      */
     public function hasHtml($content): bool
     {
-        $result = FALSE;
+        $result = false;
         //we compare the length of the string with html tags and without html tags
         if (strlen($content) !== strlen(strip_tags($content))) {
-            $result = TRUE;
+            $result = true;
         }
         return $result;
     }
-
 
     /**
      * set message_serialized
@@ -289,13 +267,13 @@ class Message
 
         // Convert $file to absolute path.
         if ($attachment instanceof File) {
-            $attachment = $attachment->getForLocalProcessing(FALSE);
+            $attachment = $attachment->getForLocalProcessing(false);
         }
 
         // Makes sure the file exist
         if (is_file($attachment)) {
-            #$parts = explode('/', $attachment);
-            #$fileName = array_pop($parts);
+            //$parts = explode('/', $attachment);
+            //$fileName = array_pop($parts);
             $this->attachments[] = $attachment;
         } else {
             $message = sprintf('File not found "%s"', $attachment);
@@ -304,7 +282,6 @@ class Message
         return $this;
     }
 
-
     public function setMarkers(array $values): Message
     {
         foreach ($values as $markerName => $value) {
@@ -312,7 +289,6 @@ class Message
         }
         return $this;
     }
-
 
     public function addMarker(string $markerName, mixed $value): Message
     {
@@ -333,7 +309,6 @@ class Message
         return $this;
     }
 
-
     public function assign(string $markerName, mixed $value): Message
     {
         return $this->addMarker($markerName, $value);
@@ -347,7 +322,6 @@ class Message
     {
         return $this->to;
     }
-
 
     public function setTo(mixed $addresses): Message
     {
@@ -365,7 +339,6 @@ class Message
         return $this->cc;
     }
 
-
     public function setCc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
@@ -382,7 +355,6 @@ class Message
         return $this->bcc;
     }
 
-
     public function setBcc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
@@ -394,7 +366,6 @@ class Message
     {
         return $this->replyTo;
     }
-
 
     public function setReplyTo(mixed $addresses): Message
     {
@@ -408,7 +379,7 @@ class Message
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
+                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -720,14 +691,14 @@ class Message
     protected function getContentRenderer(): ContentRendererInterface
     {
         return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
-        #if ($this->isFrontendMode()) {
-        #    /** @var FrontendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        #} else {
-        #    /** @var BackendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        #}
-        #return $contentRenderer;
+        //if ($this->isFrontendMode()) {
+        //    /** @var FrontendRenderer $contentRenderer */
+        //    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
+        //} else {
+        //    /** @var BackendRenderer $contentRenderer */
+        //    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
+        //}
+        //return $contentRenderer;
     }
 
     /**

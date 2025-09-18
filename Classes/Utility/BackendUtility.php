@@ -26,6 +26,6 @@ class BackendUtility
         } catch (RouteNotFoundException) {
             $uri = $uriBuilder->buildUriFromRoutePath($moduleName, $urlParameters);
         }
-        return (string) $uri;
+        return (string)$uri;
     }
 }

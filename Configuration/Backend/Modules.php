@@ -30,7 +30,7 @@ return [
         'extensionName' => 'Fab.Messenger',
         'controllerActions' => [
             MessageTemplateController::class => [
-                'index'
+                'index',
             ],
         ],
     ],
@@ -46,7 +46,7 @@ return [
         'extensionName' => 'Fab.Messenger',
         'controllerActions' => [
             MessageLayoutController::class => [
-                'index'
+                'index',
             ],
         ],
     ],
@@ -62,7 +62,7 @@ return [
         'extensionName' => 'Fab.Messenger',
         'controllerActions' => [
             SentMessageModuleController::class => [
-                'index'
+                'index',
             ],
         ],
     ],
@@ -78,7 +78,7 @@ return [
         'extensionName' => 'Fab.Messenger',
         'controllerActions' => [
             MessageQueueController::class => [
-                'index'
+                'index',
             ],
         ],
     ],
@@ -94,7 +94,7 @@ return [
         'extensionName' => 'Fab.Messenger',
         'controllerActions' => [
             RecipientModuleController::class => [
-                'index'
+                'index',
             ],
         ],
     ],

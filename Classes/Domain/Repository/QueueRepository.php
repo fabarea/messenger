@@ -14,7 +14,6 @@ use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Random\RandomException;
-use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -168,7 +167,7 @@ class QueueRepository extends AbstractContentRepository
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {
@@ -199,7 +198,7 @@ class QueueRepository extends AbstractContentRepository
         $query->insert($this->tableName)->values($values);
         $result = $query->execute();
         if (!$result) {
-            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
+            throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
         return $result;
     }

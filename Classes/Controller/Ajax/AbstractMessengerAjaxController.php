@@ -98,7 +98,7 @@ abstract class AbstractMessengerAjaxController
         $queryString = $parsedUrl['query'] ?? '';
         parse_str($queryString, $queryParams);
         $id = $queryParams['id'] ?? null;
-        $pageId = (int) $id;
+        $pageId = (int)$id;
 
         if ($pageId <= 0) {
             $pageId = 1;

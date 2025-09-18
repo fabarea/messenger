@@ -9,6 +9,7 @@ use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
 use Fab\Messenger\Utility\TcaFieldsUtility;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -18,17 +19,14 @@ use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
-use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 
 abstract class AbstractMessengerController extends ActionController
 {
-
     protected ?MessengerRepositoryInterface $repository;
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
@@ -46,7 +44,6 @@ abstract class AbstractMessengerController extends ActionController
     protected array $excludedFields = ['l10n_parent', 'l10n_diffsource', 'sys_language_uid'];
     protected string $moduleName = '';
     protected string $dataType = '';
-
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
@@ -105,11 +102,8 @@ abstract class AbstractMessengerController extends ActionController
 
         $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
 
-
-
         return $moduleTemplate->renderResponse('Index');
     }
-
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
@@ -139,9 +133,6 @@ abstract class AbstractMessengerController extends ActionController
         }
 
     }
-
-
-
 
     protected function initializeModuleTemplate(ServerRequestInterface $request): ModuleTemplate
     {
@@ -213,15 +204,13 @@ abstract class AbstractMessengerController extends ActionController
 
         if ($module !== $this->getModuleName($this->moduleName)) {
             return $selectedColumns;
-        }else{
-            if (!empty($storedColumns)) {
-                $selectedColumns = $storedColumns;
-            }
+        }
+        if (!empty($storedColumns)) {
+            $selectedColumns = $storedColumns;
         }
 
         return $selectedColumns;
     }
-
 
     private function getRequestUrl(): string
     {
@@ -287,7 +276,7 @@ abstract class AbstractMessengerController extends ActionController
             'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 
     /**
@@ -303,7 +292,7 @@ abstract class AbstractMessengerController extends ActionController
         if (empty($module)) {
             return $this->getAjaxResponse([
                 'success' => false,
-                'error' => 'Missing required parameter: module'
+                'error' => 'Missing required parameter: module',
             ]);
         }
 
@@ -314,7 +303,7 @@ abstract class AbstractMessengerController extends ActionController
         return $this->getAjaxResponse([
             'success' => true,
             'selectedColumns' => $selectedColumns,
-            'message' => 'Column selection updated successfully'
+            'message' => 'Column selection updated successfully',
         ]);
     }
 

@@ -43,7 +43,7 @@ class IsVisibleViewHelper extends AbstractViewHelper
         }
 
         // Early return if the value is countable and contains nothing
-        if ($value instanceof Countable && $value->count() === 0) {
+        if ($value instanceof \Countable && $value->count() === 0) {
             return false;
         }
 
@@ -51,7 +51,7 @@ class IsVisibleViewHelper extends AbstractViewHelper
 
         // Check whether the field name is not system.
         $displaySystemFields = $this->templateVariableContainer->get('displaySystemFields');
-        if (false === $displaySystemFields && $dataType) {
+        if ($displaySystemFields === false && $dataType) {
             $isVisible = TcaFieldsUtility::getFields($dataType);
         }
 

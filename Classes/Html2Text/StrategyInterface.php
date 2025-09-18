@@ -25,7 +25,7 @@ interface StrategyInterface
     /**
      * Whether the converter is available
      *
-     * @return boolean
+     * @return bool
      */
     public function available(): bool;
 }
