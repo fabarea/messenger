@@ -97,13 +97,7 @@ abstract class AbstractMessengerAjaxController
         $parsedUrl = parse_url($httpReferer);
         $queryString = $parsedUrl['query'] ?? '';
         parse_str($queryString, $queryParams);
-        $id = $queryParams['id'] ?? null;
-        $pageId = (int)$id;
-
-        if ($pageId <= 0) {
-            $pageId = 1;
-        }
-        return $pageId;
+        return max(1, (int)($queryParams['id'] ?? 1));
     }
 
     protected function getLanguageService(): LanguageService
