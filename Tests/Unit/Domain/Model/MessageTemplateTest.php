@@ -26,12 +26,12 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->fixture = new \Fab\Messenger\Domain\Model\MessageTemplate();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		unset($this->fixture);
 	}
@@ -39,7 +39,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setSubjectForStringSetsSubject() {
+	public function setSubjectForStringSetsSubject(): void {
 		$this->fixture->setSubject('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -56,7 +56,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setBodyForStringSetsBody() {
+	public function setBodyForStringSetsBody(): void {
 		$this->fixture->setBody('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -74,7 +74,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setIdentifierForStringSetsIdentifier() {
+	public function setIdentifierForStringSetsIdentifier(): void {
 		$this->fixture->setIdentifier('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -86,7 +86,7 @@ class MessageTemplateTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getMarkerTemplateReturnsDefaultMarker() {
+	public function getMarkerTemplateReturnsDefaultMarker(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\MessageTemplate', 'getMarkerTemplate'
 		);

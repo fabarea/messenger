@@ -25,18 +25,18 @@ class RegexpStrategyTest extends UnitTestCase {
 	 */
 	private $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Html2Text\RegexpStrategy();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertMethodReturnsTextIfLynxPathIsDefined() {
+	public function convertMethodReturnsTextIfLynxPathIsDefined(): void {
 		$input = 'hello my dear <b>friend</b>';
 		$expected = 'hello my dear FRIEND';
 		$actual = $this->fixture->convert($input);

@@ -25,18 +25,18 @@ class LynxStrategyTest extends UnitTestCase {
 	 */
 	private $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Html2Text\LynxStrategy();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function lynxPropertyCanBeSetAndGet() {
+	public function lynxPropertyCanBeSetAndGet(): void {
 		$lynxPath = uniqid('_path_');
 		$this->fixture->setLynx($lynxPath);
 		$this->assertEquals($lynxPath, $this->fixture->getLynx());
@@ -45,7 +45,7 @@ class LynxStrategyTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function convertMethodReturnsTextIfLynxPathIsDefined() {
+	public function convertMethodReturnsTextIfLynxPathIsDefined(): void {
 		$input = 'hello my dear <b>friend</b>';
 		$lynxPath = '/opt/local/bin/lynx'; // @to-improve corresponds to Fabien's environment
 		$this->fixture->setLynx($lynxPath);
@@ -58,7 +58,7 @@ class LynxStrategyTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function convertMethodReturnsEmptyStringIfLynxPathIsNotDefined() {
+	public function convertMethodReturnsEmptyStringIfLynxPathIsNotDefined(): void {
 		$input = 'hello my dear <b>friend</b>';
 		$this->fixture->setLynx('');
 		$actual = $this->fixture->convert($input);
@@ -70,7 +70,7 @@ class LynxStrategyTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function detectIfLynxIsInstalled() {
+	public function detectIfLynxIsInstalled(): void {
 		$this->assertFalse($this->fixture->available());
 		$this->fixture->setLynx(uniqid('lynx'));
 		$this->assertTrue($this->fixture->available());

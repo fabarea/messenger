@@ -19,7 +19,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
  */
 class MessageDisplayController extends ActionController
 {
-    public function showAction(): string
+    public function showAction(): \Psr\Http\Message\ResponseInterface
     {
         $result = 'Nothing to show!';
         $uuid = $this->request->getParsedBody()['uuid'] ?? $this->request->getQueryParams()['uuid'] ?? null;
@@ -35,7 +35,7 @@ class MessageDisplayController extends ActionController
                 $result = $message['body'];
             }
         }
-        return $result;
+        return $this->htmlResponse($result);
     }
 
     /**

@@ -25,11 +25,11 @@ class MessageLayoutTest extends UnitTestCase {
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Domain\Model\MessageLayout();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
@@ -41,7 +41,7 @@ class MessageLayoutTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setContentForStringSetsContent() {
+	public function setContentForStringSetsContent(): void {
 		$this->fixture->setContent('Conceived at T3CON10');
 
 		$this->assertSame(
@@ -59,7 +59,7 @@ class MessageLayoutTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setIdentifierForStringSetsIdentifier() {
+	public function setIdentifierForStringSetsIdentifier(): void {
 		$this->fixture->setIdentifier('Conceived at T3CON10');
 
 		$this->assertSame(

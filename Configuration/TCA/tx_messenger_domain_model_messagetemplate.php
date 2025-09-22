@@ -16,7 +16,6 @@ return [
         'default_sortby' => 'ORDER BY qualifier ASC',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'requestUpdate' => 'type',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
@@ -58,7 +57,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [['', 0]],
+                'items' => [['label' => '', 'value' => 0]],
                 'foreign_table' => 'tx_messenger_domain_model_messagetemplate',
                 'foreign_table_where' =>
                     'AND tx_messenger_domain_model_messagetemplate.pid=###CURRENT_PID### AND tx_messenger_domain_model_messagetemplate.sys_language_uid IN (-1,0)',
@@ -77,16 +76,16 @@ return [
                 'renderType' => 'selectSingle',
                 'items' => [
                     [
-                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_text',
-                        1,
+                        'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_text',
+                        'value' => 1,
                     ],
                     [
-                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_page',
-                        2,
+                        'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_page',
+                        'value' => 2,
                     ],
                     [
-                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_file',
-                        3,
+                        'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:type.content_from_file',
+                        'value' => 3,
                     ],
                 ],
                 'size' => 1,
@@ -119,7 +118,8 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 100,
-                'eval' => 'trim,required',
+                'eval' => 'trim',
+                'required' => true,
             ],
         ],
         'source_file' => [
@@ -129,7 +129,8 @@ return [
                 'type' => 'input',
                 'default' => 'EXT:foo/Resources/Private/Message/Contact.html',
                 'size' => 100,
-                'eval' => 'trim,required',
+                'eval' => 'trim',
+                'required' => true,
             ],
         ],
         'source_page' => [
@@ -137,7 +138,6 @@ return [
                 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:source_page',
             'config' => [
                 'type' => 'group',
-                'internal_type' => 'db',
                 'allowed' => 'pages',
                 'size' => '1',
                 'minitems' => '0',
@@ -157,12 +157,12 @@ return [
                 'renderType' => 'selectSingle',
                 'items' => [
                     [
-                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.both',
-                        'both',
+                        'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.both',
+                        'value' => 'both',
                     ],
                     [
-                        'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.fluid',
-                        'fluid',
+                        'label' => 'LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_messagetemplate.xlf:template_engine.fluid',
+                        'value' => 'fluid',
                     ],
                 ],
                 'size' => 1,
@@ -209,7 +209,7 @@ Show detail of an item:
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'allowNonIdValues' => true,
-                'items' => [['', 0]],
+                'items' => [['label' => '', 'value' => 0]],
                 'foreign_table' => 'tx_messenger_domain_model_messagelayout',
                 'size' => 1,
                 'default' => '',

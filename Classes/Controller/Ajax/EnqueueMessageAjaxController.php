@@ -178,7 +178,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $emailsArray = [];
         foreach ($emails as $emailsArrayItem) {
             if (!filter_var($emailsArrayItem, FILTER_VALIDATE_EMAIL)) {
-                throw new InvalidEmailFormatException('You have an set an invalid email !');
+                throw new InvalidEmailFormatException('You have an set an invalid email !', 7081816043);
             }
             $emailsArray[$emailsArrayItem] = $emailsArrayItem;
         }

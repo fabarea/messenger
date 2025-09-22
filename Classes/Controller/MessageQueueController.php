@@ -91,7 +91,7 @@ class MessageQueueController extends AbstractMessengerController
      * @param array $matches
      * @return string
      */
-    public function confirmAction(array $matches = []): string
+    public function confirmAction(array $matches = []): \Psr\Http\Message\ResponseInterface
     {
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
 
@@ -106,7 +106,7 @@ class MessageQueueController extends AbstractMessengerController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
                 );
 
-        return sprintf($label, $numberOfRecipients);
+        return $this->htmlResponse(sprintf($label, $numberOfRecipients));
     }
 
     /**
@@ -126,7 +126,7 @@ class MessageQueueController extends AbstractMessengerController
      * @param array $matches
      * @return string
      */
-    public function dequeueAction(array $matches = []): string
+    public function dequeueAction(array $matches = []): \Psr\Http\Message\ResponseInterface
     {
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
 
@@ -143,7 +143,7 @@ class MessageQueueController extends AbstractMessengerController
             }
         }
 
-        return sprintf(
+        return $this->htmlResponse(sprintf(
             '%s %s / %s. %s',
             $this->getLanguageService()->sL(
                 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
@@ -155,7 +155,7 @@ class MessageQueueController extends AbstractMessengerController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
                 )
                 : '',
-        );
+        ));
     }
 
     /**

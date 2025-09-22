@@ -16,13 +16,6 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 defined('TYPO3') || die('Access denied.');
 
 call_user_func(function () {
-    // Add static TypoScript template
-    ExtensionManagementUtility::addStaticFile(
-        'messenger',
-        'Configuration/TypoScript',
-        'Send a message to a group of people',
-    );
-
     $icons = [
         'sentmessage' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_sentmessage.svg',
         'messagetemplate' => 'EXT:messenger/Resources/Public/Icons/tx_messenger_domain_model_messagetemplate.svg',

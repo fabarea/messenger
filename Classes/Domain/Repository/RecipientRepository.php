@@ -120,9 +120,7 @@ class RecipientRepository extends AbstractContentRepository
      */
     public function deleteAllAction(): void
     {
-        $this->getQueryBuilder()
-            ->delete($this->tableName)
-            ->execute();
+        $this->getQueryBuilder()->delete($this->tableName)->executeStatement();
     }
 
     /**
@@ -134,13 +132,9 @@ class RecipientRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $record = $query
             ->select('*')
-            ->from($this->tableName)
-            ->where(
-                $this->getQueryBuilder()
-                    ->expr()
-                    ->eq('email', $this->getQueryBuilder()->expr()->literal($email)),
-            )
-            ->execute()
+            ->from($this->tableName)->where($this->getQueryBuilder()
+            ->expr()
+            ->eq('email', $this->getQueryBuilder()->expr()->literal($email)))->executeQuery()
             ->fetchAllAssociative();
         return !empty($record);
     }
@@ -151,9 +145,7 @@ class RecipientRepository extends AbstractContentRepository
     public function insert(array $values): bool
     {
         $result = $this->getQueryBuilder()
-            ->insert($this->tableName)
-            ->values($values)
-            ->execute();
+            ->insert($this->tableName)->values($values)->executeStatement();
         return (bool)$result;
     }
 

@@ -37,18 +37,18 @@ class Html2TextTest extends UnitTestCase {
 	 */
 	protected $markers;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Service\Html2Text();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
 	/**
 	 * @test
 	 */
-	public function convertReturnsTextWithRegexpConverter() {
+	public function convertReturnsTextWithRegexpConverter(): void {
 
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
@@ -61,7 +61,7 @@ class Html2TextTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function convertReturnsTextWithLynxConverter() {
+	public function convertReturnsTextWithLynxConverter(): void {
 		$input = 'End of the <span>comprehensible</span> World';
 		$expected = 'End of the comprehensible World';
 		$converter = new \Fab\Messenger\Html2Text\LynxStrategy();
@@ -75,7 +75,7 @@ class Html2TextTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function findBestConverterReturnsRegexpConverter() {
+	public function findBestConverterReturnsRegexpConverter(): void {
 		$converter = $this->fixture->findBestConverter();
 		$this->assertTrue($converter instanceof \Fab\Messenger\Html2Text\RegexpStrategy);
 	}

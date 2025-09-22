@@ -30,6 +30,9 @@ class QueueRepository extends AbstractContentRepository
     protected string $tableName = 'tx_messenger_domain_model_queue';
 
     protected QueryInterface $constraints;
+    public function __construct(private \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    {
+    }
 
     /**
      * @throws Exception
@@ -58,7 +61,7 @@ class QueueRepository extends AbstractContentRepository
     protected function getQueryBuilder(): QueryBuilder
     {
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
