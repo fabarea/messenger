@@ -16,9 +16,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class PageRepository extends AbstractContentRepository
 {
     protected string $tableName = 'pages';
-    public function __construct(private \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
-    {
-    }
+    protected  ConnectionPool $connectionPool;
+
+    public function __construct(ConnectionPool $connectionPool)
+     {
+         $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+     }
 
     public function findByUids(array $uids): array
     {
