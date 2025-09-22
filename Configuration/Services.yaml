@@ -13,6 +13,13 @@ services:
   Fab\Messenger\Controller\AdminModuleController:
     tags: [ 'backend.controller' ]
 
+  Fab\Messenger\Controller\MessageTemplateController:
+    arguments:
+      $moduleTemplateFactory: '@TYPO3\CMS\Backend\Template\ModuleTemplateFactory'
+      $iconFactory: '@TYPO3\CMS\Core\Imaging\IconFactory'
+      $dataExportService: '@Fab\Messenger\Service\DataExportService'
+    tags: ['backend.controller']
+
   Fab\Messenger\:
     resource: '../Classes/*'
 
