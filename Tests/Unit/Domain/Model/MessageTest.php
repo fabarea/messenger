@@ -53,7 +53,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 */
 	protected $mboxFile;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$name = uniqid('name');
 		$this->recipients = array("$name@domain.ch" => $name);
@@ -76,7 +76,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 		$GLOBALS['TYPO3_CONF_VARS']['MAIL']['transport_mbox_file'] = $this->mboxFile;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		unset($this->fixture);
 		if (file_exists($this->mboxFile)) {
@@ -87,7 +87,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function checkSenderPropertyIsNotEmptyByDefault() {
+	public function checkSenderPropertyIsNotEmptyByDefault(): void {
 		$this->assertAttributeNotEmpty(
 			'sender',
 			$this->fixture
@@ -97,7 +97,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setSenderCanBeSetWithRandomValue() {
+	public function setSenderCanBeSetWithRandomValue(): void {
 		$name = uniqid('name');
 		$sender = array($name . "@domain.ch" => $name);
 		$this->fixture->setSender($sender);
@@ -111,7 +111,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getTemplateReturnsMessageTemplateForUidOfTypeInt() {
+	public function getTemplateReturnsMessageTemplateForUidOfTypeInt(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
@@ -126,7 +126,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getTemplateReturnsMessageTemplateForUidOfTypeString() {
+	public function getTemplateReturnsMessageTemplateForUidOfTypeString(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
@@ -141,7 +141,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getTemplateReturnsMessageTemplateForIdentifier() {
+	public function getTemplateReturnsMessageTemplateForIdentifier(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\Message', 'getTemplate'
 		);
@@ -157,7 +157,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 * @expectedException \Fab\Messenger\Exception\RecordNotFoundException
 	 */
-	public function setTemplateRaisesException() {
+	public function setTemplateRaisesException(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\Message', 'setTemplate'
 		);
@@ -169,7 +169,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setRecipientPropertyIsSetBySetRecipientMethod() {
+	public function setRecipientPropertyIsSetBySetRecipientMethod(): void {
 		$this->fixture->setTo($this->recipients);
 		$this->assertAttributeEquals($this->recipients, 'recipients', $this->fixture);
 	}
@@ -177,7 +177,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setRecipientPropertyCanBeSetWithEmail() {
+	public function setRecipientPropertyCanBeSetWithEmail(): void {
 		$email = uniqid() . '@test.com';
 		$this->fixture->setTo($email);
 	}
@@ -185,7 +185,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getRecipientsForSimulationIsNotEmptyByDefault() {
+	public function getRecipientsForSimulationIsNotEmptyByDefault(): void {
 		$this->fixture->setTo($this->recipients);
 
 		$method = new ReflectionMethod(
@@ -199,7 +199,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function getMessageBodyForSimulationPrependsBodyMessage() {
+	public function getMessageBodyForSimulationPrependsBodyMessage(): void {
 		$method = new ReflectionMethod(
 			'Fab\Messenger\Domain\Model\Message', 'getMessageBodyForSimulation'
 		);
@@ -212,7 +212,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function hasHtmlMethodReturnsTrueIfContentIsHtml() {
+	public function hasHtmlMethodReturnsTrueIfContentIsHtml(): void {
 		$content = 'This is my message to the <b>PHPUnit</b>';
 		$this->assertTrue($this->fixture->hasHtml($content));
 	}
@@ -220,7 +220,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function hasHtmlMethodReturnsFalseIfContentIsText() {
+	public function hasHtmlMethodReturnsFalseIfContentIsText(): void {
 		$content = 'This is my message to the PHPUnit';
 		$this->assertFalse($this->fixture->hasHtml($content));
 	}
@@ -228,7 +228,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function canSendMessageWithSimulateFlagUsingMboxTransport() {
+	public function canSendMessageWithSimulateFlagUsingMboxTransport(): void {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setTo($this->recipients)
 			->setMarkers($this->markers)
@@ -240,7 +240,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function canSendMessageWithSetMarkers() {
+	public function canSendMessageWithSetMarkers(): void {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setTo($this->recipients)
 			->setMarkers($this->markers)
@@ -251,7 +251,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function canSendMessageWithNoSetMarkers() {
+	public function canSendMessageWithNoSetMarkers(): void {
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setTo($this->recipients)
 			->send();
@@ -261,7 +261,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne() {
+	public function canSendMessageWithDebugFlagWithSysLanguageEqualsToOne(): void {
 		$language = 1;
 		$mailSent = $this->fixture->setMessageTemplate($this->identifier)
 			->setTo($this->recipients)
@@ -275,7 +275,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function addAttachmentToMessage() {
+	public function addAttachmentToMessage(): void {
 		$this->assertAttributeEmpty('attachments', $this->fixture);
 		$this->fixture->addAttachment($this->attachment);
 		$this->assertAttributeNotEmpty('attachments', $this->fixture);
@@ -285,7 +285,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 * @expectedException \Fab\Messenger\Exception\MissingFileException
 	 */
-	public function addAttachmentRaisesAnExceptionWhenFileDoesNotExistToMessage() {
+	public function addAttachmentRaisesAnExceptionWhenFileDoesNotExistToMessage(): void {
 		$attachment = '/unknown/file.pdf';
 		$this->fixture->addAttachment($attachment);
 	}
@@ -293,7 +293,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setMarkerWithStdClassObjectGetConvertedToArray() {
+	public function setMarkerWithStdClassObjectGetConvertedToArray(): void {
 		$fakeObject = new stdClass();
 		$fakeObject->foo = uniqid();
 		$this->fixture->setMarkers($fakeObject);
@@ -303,7 +303,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	/**
 	 * @test
 	 */
-	public function setMarkerWithFeUserObjectGetConvertedToArray() {
+	public function setMarkerWithFeUserObjectGetConvertedToArray(): void {
 		$expected = uniqid();
 		$fakeUser = new Tx_Extbase_Domain_Model_FrontendUser();
 		$fakeUser->setName($expected);
@@ -317,7 +317,7 @@ class MessageTest extends Tx_Messenger_BaseTest {
 	 * @test
 	 * @dataProvider propertyProvider
 	 */
-	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set') {
+	public function settersReturnInstanceOfMessageObject($propertyName, $value, $setterName = 'set'): void {
 		$method = $setterName . ucfirst($propertyName);
 		$actual = call_user_func_array(array($this->fixture, $method), array($value));
 		$this->assertTrue($actual instanceof \Fab\Messenger\Domain\Model\Message);

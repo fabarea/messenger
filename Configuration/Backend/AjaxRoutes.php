@@ -6,6 +6,11 @@ use Fab\Messenger\Controller\Ajax\ExportDataAjaxController;
 use Fab\Messenger\Controller\Ajax\MassDeletionAjaxController;
 use Fab\Messenger\Controller\Ajax\SendAgainConfirmationAjaxController;
 use Fab\Messenger\Controller\Ajax\UpdateRecipientAjaxController;
+use Fab\Messenger\Controller\MessageLayoutController;
+use Fab\Messenger\Controller\MessageQueueController;
+use Fab\Messenger\Controller\MessageTemplateController;
+use Fab\Messenger\Controller\RecipientModuleController;
+use Fab\Messenger\Controller\SentMessageModuleController;
 
 return [
     'messenger_send_again_confirmation' => [
@@ -55,5 +60,25 @@ return [
     'messenger_mass_delete' => [
         'path' => '/messenger/mass-delete',
         'target' => MassDeletionAjaxController::class . '::deleteAction',
+    ],
+    'messenger_column_selector_m1' => [
+        'path' => '/messenger/column-selector/m1',
+        'target' => SentMessageModuleController::class . '::updateColumnsAction',
+    ],
+    'messenger_column_selector_m2' => [
+        'path' => '/messenger/column-selector/m2',
+        'target' => MessageTemplateController::class . '::updateColumnsAction',
+    ],
+    'messenger_column_selector_m3' => [
+        'path' => '/messenger/column-selector/m3',
+        'target' => MessageLayoutController::class . '::updateColumnsAction',
+    ],
+    'messenger_column_selector_m4' => [
+        'path' => '/messenger/column-selector/m4',
+        'target' => MessageQueueController::class . '::updateColumnsAction',
+    ],
+    'messenger_column_selector_m5' => [
+        'path' => '/messenger/column-selector/m5',
+        'target' => RecipientModuleController::class . '::updateColumnsAction',
     ],
 ];

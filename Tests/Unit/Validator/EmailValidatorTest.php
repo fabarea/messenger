@@ -25,11 +25,11 @@ class EmailValidatorTest extends UnitTestCase {
 	 */
 	private $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Validator\EmailValidator();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
@@ -44,7 +44,7 @@ class EmailValidatorTest extends UnitTestCase {
 	 * @test
 	 * @dataProvider validEmailsProvider
 	 */
-	public function emailsAreCorrectlyValidated($emails) {
+	public function emailsAreCorrectlyValidated($emails): void {
 		$this->assertTrue($this->fixture->validate($emails));
 	}
 
@@ -53,7 +53,7 @@ class EmailValidatorTest extends UnitTestCase {
 	 * @dataProvider invalidEmailsProvider
 	 * @expectedException \Fab\Messenger\Exception\InvalidEmailFormatException
 	 */
-	public function wrongEmailsRaiseException($emails) {
+	public function wrongEmailsRaiseException($emails): void {
 		$this->fixture->validate($emails);
 	}
 

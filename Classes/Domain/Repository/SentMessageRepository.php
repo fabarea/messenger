@@ -11,7 +11,6 @@ namespace Fab\Messenger\Domain\Repository;
 
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\TcaFieldsUtility;
-use RuntimeException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class SentMessageRepository extends AbstractContentRepository
@@ -111,19 +110,19 @@ class SentMessageRepository extends AbstractContentRepository
                         $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
                     );
             }
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if (!empty($demand['uids'])) {
             $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
         }
 
         if ($constraints) {
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {
@@ -131,6 +130,34 @@ class SentMessageRepository extends AbstractContentRepository
         }
 
         return $queryBuilder->execute()->fetchAllAssociative();
+    }
+
+    public function countByDemand(array $demand = []): int
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->count('uid')->from($this->tableName);
+        $constraints = [];
+
+        if (!empty($demand['likes'])) {
+            foreach ($demand['likes'] as $field => $value) {
+                $constraints[] = $queryBuilder
+                    ->expr()
+                    ->like(
+                        $field,
+                        $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
+                    );
+            }
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
+        }
+        if (!empty($demand['uids'])) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
+        }
+
+        if ($constraints) {
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
+        }
+
+        return (int)$queryBuilder->execute()->fetchOne();
     }
 
     public function add(array $message): int
@@ -157,7 +184,7 @@ class SentMessageRepository extends AbstractContentRepository
 
         $result = $query->execute();
         if (!$result) {
-            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
+            throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
         return $result;
     }

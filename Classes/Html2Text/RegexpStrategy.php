@@ -14,7 +14,7 @@ namespace Fab\Messenger\Html2Text;
  */
 class RegexpStrategy implements StrategyInterface
 {
-    final const ENCODING = 'UTF-8';
+    final public const ENCODING = 'UTF-8';
 
     /**
      * List of preg* regular expression patterns to search for,
@@ -206,7 +206,7 @@ class RegexpStrategy implements StrategyInterface
     /**
      * Indicates whether content in the $html variable has been converted yet.
      *
-     * @var boolean
+     * @var bool
      * @see $html, $text
      */
     protected bool $converted = false;
@@ -351,7 +351,7 @@ class RegexpStrategy implements StrategyInterface
                         $body = trim($body);
                         $this->converter($body);
                         // Add citation markers and create PRE block
-                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim((string) $body));
+                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim((string)$body));
                         $body = '<pre>' . htmlspecialchars($body) . '</pre>';
                         // Re-set text width
                         $this->options['width'] = $pWidth;
@@ -359,15 +359,15 @@ class RegexpStrategy implements StrategyInterface
                         $text =
                             substr($text, 0, $start - $diff) .
                             $body .
-                            substr($text, $end + strlen((string) $m[0]) - $diff);
+                            substr($text, $end + strlen((string)$m[0]) - $diff);
 
-                        $diff = $len + $taglen + strlen((string) $m[0]) - strlen($body);
+                        $diff = $len + $taglen + strlen((string)$m[0]) - strlen($body);
                         unset($body);
                     }
                 } else {
                     if ($level == 0) {
                         $start = $m[1];
-                        $taglen = strlen((string) $m[0]);
+                        $taglen = strlen((string)$m[0]);
                     }
                     $level++;
                 }
@@ -378,7 +378,7 @@ class RegexpStrategy implements StrategyInterface
     protected function convertPre(&$text): void
     {
         // get the content of PRE element
-        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', (string) $text, $matches)) {
+        while (preg_match('/<pre[^>]*>(.*)<\/pre>/ismU', (string)$text, $matches)) {
             $this->preContent = $matches[1];
 
             // Run our defined tags search-and-replace with callback
@@ -405,7 +405,7 @@ class RegexpStrategy implements StrategyInterface
     /**
      * Whether the converter is available
      *
-     * @return boolean
+     * @return bool
      */
     public function available(): bool
     {
@@ -420,7 +420,7 @@ class RegexpStrategy implements StrategyInterface
      */
     protected function pregCallback(array $matches): string
     {
-        switch (strtolower((string) $matches[1])) {
+        switch (strtolower((string)$matches[1])) {
             case 'b':
             case 'strong':
                 return $this->toupper($matches[3]);
@@ -431,11 +431,11 @@ class RegexpStrategy implements StrategyInterface
             case 'a':
                 // override the link method
                 $linkOverride = null;
-                if (preg_match('/_html2text_link_(\w+)/', (string) $matches[4], $linkOverrideMatch)) {
+                if (preg_match('/_html2text_link_(\w+)/', (string)$matches[4], $linkOverrideMatch)) {
                     $linkOverride = $linkOverrideMatch[1];
                 }
                 // Remove spaces in URL (#1487805)
-                $url = str_replace(' ', '', (string) $matches[3]);
+                $url = str_replace(' ', '', (string)$matches[3]);
 
                 return $this->buildlinkList($url, $matches[5], $linkOverride);
         }
@@ -525,12 +525,13 @@ class RegexpStrategy implements StrategyInterface
             }
 
             return $display . ' [' . ($index + 1) . ']';
-        } elseif ($linkMethod == 'nextline') {
-            return $display . "\n[" . $url . ']';
-        } else {
-            // link_method defaults to inline
-            return $display . ' [' . $url . ']';
         }
+        if ($linkMethod == 'nextline') {
+            return $display . "\n[" . $url . ']';
+        }
+        // link_method defaults to inline
+        return $display . ' [' . $url . ']';
+
     }
 
     /**
@@ -539,7 +540,7 @@ class RegexpStrategy implements StrategyInterface
      * @param array $matches PREG matches
      * @return string
      */
-    protected function pregPreCallback /** @noinspection PhpUnusedParameterInspection */(array $matches): string
+    protected function pregPreCallback /** @noinspection PhpUnusedParameterInspection */ (array $matches): string
     {
         return $this->preContent;
     }

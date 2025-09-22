@@ -4,7 +4,9 @@ namespace Fab\Messenger\Controller;
 
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Fab\Messenger\Service\DataExportService;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 
 class SentMessageModuleController extends AbstractMessengerController
 {
@@ -44,9 +46,13 @@ class SentMessageModuleController extends AbstractMessengerController
 
     protected ?MessengerRepositoryInterface $repository;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->repository = GeneralUtility::makeInstance(SentMessageRepository::class);
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService,
+        SentMessageRepository $repository
+    ) {
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
+        $this->repository = $repository;
     }
 }

@@ -3,9 +3,7 @@
 namespace Fab\Messenger\Service;
 
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
-use InvalidArgumentException;
 use JetBrains\PhpStorm\NoReturn;
-use SimpleXMLElement;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,7 +18,7 @@ class DataExportService implements SingletonInterface
      * Returns a class instance
      *
      * @return DataExportService
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public static function getInstance(): DataExportService
     {
@@ -64,7 +62,7 @@ class DataExportService implements SingletonInterface
     public function exportXml(array $dataUids, string $filename, array $header): void
     {
         $dataSets = $this->repository->findByUids($dataUids);
-        $xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+        $xml = new \SimpleXMLElement('<?xml version="1.0"?><data></data>');
         $xml->addChild('header', implode(',', $header));
         foreach ($dataSets as $dataSet) {
             $xmlRow = $xml->addChild('row');

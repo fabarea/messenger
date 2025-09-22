@@ -57,7 +57,7 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:export.sure?',
                 );
 
-        $content = sprintf($content, count($data));
+        $content = $content = $content ? sprintf($content, count($data)) : 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:data.notFound';
         return $this->getResponse($content);
     }
 
@@ -80,12 +80,22 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
 
         if ($this->request->getQueryParams()['format'] && $dataUids) {
             $columns = TcaFieldsUtility::getFields($this->tableName);
+
+            if (empty($columns)) {
+                $errorMessage = 'No columns found for table: ' . $this->tableName;
+                if ($this->dataType === 'recipient-module') {
+                    $errorMessage .= ' (recipient_data_type: ' . ConfigurationUtility::getInstance()->get('recipient_data_type') . ')';
+                }
+                return $this->getResponse('Error: ' . $errorMessage);
+            }
+
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
             $this->dataExportService->setRepository($this->repository);
             $this->performExport($dataUids, $this->request->getQueryParams()['format'], $columns);
+        } else {
+            return $this->getResponse('Error: No data to export or format not specified');
         }
-
-        return $this->getResponse('Error');
+        return $this->getResponse('Success');
     }
 
     protected function initializeRepository(string $type): void

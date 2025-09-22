@@ -21,7 +21,7 @@ class EmailValidator implements SingletonInterface
      * Validate emails to be used in the SwiftMailer framework
      *
      * @param $emails
-     * @return boolean
+     * @return bool
      * @throws InvalidEmailFormatException
      */
     public function validate($emails): bool
@@ -31,7 +31,7 @@ class EmailValidator implements SingletonInterface
                 $message = sprintf('Email provided is not valid, given value "%s"', $email);
                 throw new InvalidEmailFormatException($message, 1_350_297_165);
             }
-            if (strlen((string) $name) <= 0) {
+            if (strlen((string)$name) <= 0) {
                 $message = sprintf('Name should not be empty, given value "%s"', $name);
                 throw new InvalidEmailFormatException($message, 1_350_297_170);
             }

@@ -23,11 +23,11 @@ class SentMessageTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Domain\Model\SentMessage();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 
@@ -39,7 +39,7 @@ class SentMessageTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function setContentForStringSetsContent() {
+	public function setContentForStringSetsContent(): void {
 		$this->fixture->setContent('Conceived at T3CON10');
 
 		$this->assertSame(

@@ -9,6 +9,7 @@ namespace Fab\Messenger\PagePath;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -28,9 +29,10 @@ class Resolver
      */
     public function __construct()
     {
-        $params = unserialize(base64_decode((string) GeneralUtility::_GP('data')));
+        $request = ServerRequestFactory::fromGlobals();
+        $params = $request->getParsedBody()['data'] ?? $request->getQueryParams()['data'] ?? '';
         if (is_array($params)) {
-            $this->pageId = (int) $params['id'];
+            $this->pageId = (int)$params['id'];
             $this->parameters = $params['parameters'];
         }
     }
@@ -41,7 +43,7 @@ class Resolver
     public function resolveUrl(): void
     {
         $myIp = GeneralUtility::getIndpEnv('REMOTE_ADDR');
-        $devIPMask = trim((string) $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
+        $devIPMask = trim((string)$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']);
 
         if ($myIp === $_SERVER['SERVER_ADDR'] || GeneralUtility::cmpIP($myIp, $devIPMask)) {
             header('Content-type: text/plain; charset=iso-8859-1');
@@ -57,7 +59,7 @@ class Resolver
                 if ($url === '') {
                     $url = '/';
                 }
-                $parts = parse_url((string) $url);
+                $parts = parse_url((string)$url);
                 if ($parts['host'] === '') {
                     $url = GeneralUtility::locationHeaderUrl($url);
                 }

@@ -25,7 +25,6 @@ class SentMessage extends AbstractEntity
 
     /**
      * @param int $sentTime
-     * @return void
      */
     public function setSentTime(int $sentTime): void
     {

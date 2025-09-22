@@ -24,11 +24,11 @@ class SentMessageControllerTest extends UnitTestCase {
 	 */
 	protected $fixture;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->fixture = new \Fab\Messenger\Domain\Model\SentMessage();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		unset($this->fixture);
 	}
 

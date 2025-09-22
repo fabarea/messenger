@@ -6,9 +6,9 @@ module.tx_messenger {
 		storagePid = {$module.tx_messenger.persistence.storagePid}
 	}
 	view {
-		templateRootPath = {$module.tx_messenger.view.templateRootPath}
-		partialRootPath = {$module.tx_messenger.view.partialRootPath}
-		layoutRootPath = {$module.tx_messenger.view.layoutRootPath}
+		templateRootPaths.0 = {$module.tx_messenger.view.templateRootPath}
+		partialRootPaths.0 = {$module.tx_messenger.view.partialRootPath}
+		layoutRootPaths.0 = {$module.tx_messenger.view.layoutRootPath}
 	}
 }
 

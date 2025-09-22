@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;

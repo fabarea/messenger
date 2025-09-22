@@ -14,7 +14,6 @@ use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Utility\Algorithms;
 use Fab\Messenger\Utility\TcaFieldsUtility;
 use Random\RandomException;
-use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -31,6 +30,9 @@ class QueueRepository extends AbstractContentRepository
     protected string $tableName = 'tx_messenger_domain_model_queue';
 
     protected QueryInterface $constraints;
+    public function __construct(private \TYPO3\CMS\Core\Database\ConnectionPool $connectionPool)
+    {
+    }
 
     /**
      * @throws Exception
@@ -59,7 +61,7 @@ class QueueRepository extends AbstractContentRepository
     protected function getQueryBuilder(): QueryBuilder
     {
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
@@ -156,19 +158,19 @@ class QueueRepository extends AbstractContentRepository
                         $queryBuilder->createNamedParameter('%' . $queryBuilder->escapeLikeWildcards($value) . '%'),
                     );
             }
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if (!empty($demand['uids'])) {
             $queryBuilder->andWhere($queryBuilder->expr()->in('uid', $demand['uids']));
         }
 
         if ($constraints) {
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {
@@ -199,7 +201,7 @@ class QueueRepository extends AbstractContentRepository
         $query->insert($this->tableName)->values($values);
         $result = $query->execute();
         if (!$result) {
-            throw new RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
+            throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
         return $result;
     }

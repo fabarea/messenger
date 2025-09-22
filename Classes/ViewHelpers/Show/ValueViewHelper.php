@@ -42,7 +42,7 @@ class ValueViewHelper extends AbstractViewHelper
             if ($fieldType === FieldType::RADIO || $fieldType === FieldType::SELECT) {
                 $value = TcaFieldsUtility::getFields($dataType);
             } elseif ($fieldType === FieldType::TEXTAREA) {
-                $value = nl2br((string) $value);
+                $value = nl2br((string)$value);
             } elseif ($fieldType === FieldType::MULTISELECT) {
                 $explodedValues = GeneralUtility::trimExplode(',', $value, true);
 

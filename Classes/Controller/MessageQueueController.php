@@ -12,6 +12,9 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Domain\Repository\MessengerRepositoryInterface;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Queue\QueueManager;
+use Fab\Messenger\Service\DataExportService;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -75,9 +78,12 @@ class MessageQueueController extends AbstractMessengerController
 
     protected bool $showNewButton = true;
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        DataExportService $dataExportService
+    ) {
+        parent::__construct($moduleTemplateFactory, $iconFactory, $dataExportService);
         $this->repository = GeneralUtility::makeInstance(QueueRepository::class);
     }
 
@@ -85,12 +91,10 @@ class MessageQueueController extends AbstractMessengerController
      * @param array $matches
      * @return string
      */
-    public function confirmAction(array $matches = []): string
+    public function confirmAction(array $matches = []): \Psr\Http\Message\ResponseInterface
     {
-        // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
 
-        // Fetch objects via the Content Service.
         $numberOfRecipients = $this->getContentService()->findBy($matcher)->getNumberOfObjects();
 
         $label =
@@ -102,7 +106,7 @@ class MessageQueueController extends AbstractMessengerController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:send.message.sure?',
                 );
 
-        return sprintf($label, $numberOfRecipients);
+        return $this->htmlResponse(sprintf($label, $numberOfRecipients));
     }
 
     /**
@@ -122,9 +126,8 @@ class MessageQueueController extends AbstractMessengerController
      * @param array $matches
      * @return string
      */
-    public function dequeueAction(array $matches = []): string
+    public function dequeueAction(array $matches = []): \Psr\Http\Message\ResponseInterface
     {
-        // Instantiate the Matcher object according different rules.
         $matcher = MatcherObjectFactory::getInstance()->getMatcher($matches, $this->tableName);
 
         // Fetch objects via the Content Service.
@@ -140,7 +143,7 @@ class MessageQueueController extends AbstractMessengerController
             }
         }
 
-        return sprintf(
+        return $this->htmlResponse(sprintf(
             '%s %s / %s. %s',
             $this->getLanguageService()->sL(
                 'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.success',
@@ -152,7 +155,7 @@ class MessageQueueController extends AbstractMessengerController
                     'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
                 )
                 : '',
-        );
+        ));
     }
 
     /**

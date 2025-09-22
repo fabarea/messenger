@@ -15,170 +15,95 @@ use Fab\Messenger\Domain\Repository\MessageLayoutRepository;
 use Fab\Messenger\Domain\Repository\MessageTemplateRepository;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
+use Fab\Messenger\Exception\MissingFileException;
+use Fab\Messenger\Exception\RecordNotFoundException;
+use Fab\Messenger\Exception\WrongPluginConfigurationException;
+use Fab\Messenger\Html2Text\TemplateEngine;
 use Fab\Messenger\Redirect\RedirectService;
+use Fab\Messenger\Service\Html2Text;
+use Fab\Messenger\Service\LoggerService;
+use Fab\Messenger\Service\MessageStorage;
 use Fab\Messenger\Validator\EmailValidator;
-use RuntimeException;
+use Michelf\Markdown;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\Messenger\Exception\MissingFileException;
-use Fab\Messenger\Exception\RecordNotFoundException;
-use Fab\Messenger\Exception\WrongPluginConfigurationException;
-use Fab\Messenger\Html2Text\TemplateEngine;
-use Fab\Messenger\Service\MessageStorage;
-use Fab\Messenger\Service\LoggerService;
-use Fab\Messenger\Service\Html2Text;
-use Michelf\Markdown;
-use TYPO3\CMS\Extbase\Annotation\Inject;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Message representation
  */
 class Message
 {
+    final public const SUBJECT = 'subject';
+    final public const BODY = 'body';
 
-    final const SUBJECT = 'subject';
-    final const BODY = 'body';
+    protected int $uid;
 
-    /**
-     * @var int
-     */
-    protected $uid;
-
-    /**
-     * @var array
-     */
-    protected $sender = [];
+    protected array $sender = [];
 
     protected ?string $messageSerialized = null;
 
-    /**
-     * The "to" addresses
-     *
-     * @var array
-     */
-    protected $to = [];
+    protected array $to = [];
 
-    /**
-     * The "cc" addresses
-     *
-     * @var array
-     */
-    protected $cc = [];
+    protected array $cc = [];
 
-    /**
-     * The "bcc" addresses
-     *
-     * @var array
-     */
-    protected $bcc = [];
+    protected array $bcc = [];
 
-    /**
-     * Addresses for reply-to
-     *
-     * @var array
-     */
-    protected $replyTo = [];
+    protected array $replyTo = [];
 
-    /**
-     * Possible email redirect
-     *
-     * @var array
-     */
-    protected $redirectEmailFrom = [];
+    protected array $redirectEmailFrom = [];
 
-    /**
-     * A set of markers.
-     *
-     * @var array
-     */
-    protected $markers = [];
+    protected array $markers = [];
 
     /**
      * @var MessageLayout
      */
-    protected $messageLayout;
+    protected ?MessageLayout $messageLayout = null;
 
-    /**
-     * @var string
-     */
-    protected $mailingName;
+    protected ?string $mailingName = '';
 
-    /**
-     * @var int
-     */
-    protected $scheduleDistributionTime = 0;
+    protected ?MailMessage $mailMessage = null;
 
-    /**
-     * @var array
-     */
-    protected $attachments = [];
+    protected int $scheduleDistributionTime = 0;
 
+    protected array $attachments = [];
     /**
      * @var MessageTemplateRepository
      */
-    protected $messageTemplateRepository;
-
+    protected ?MessageTemplateRepository $messageTemplateRepository = null;
     /**
      * @var MessageLayoutRepository
      */
-    protected $messageLayoutRepository;
-
+    protected ?MessageLayoutRepository $messageLayoutRepository = null;
     /**
      * @var SentMessageRepository
      */
-    protected $sentMessageRepository;
-
+    protected ?SentMessageRepository $sentMessageRepository = null;
     /**
      * @var MessageTemplate
      */
-    protected $messageTemplate;
+    protected ?MessageTemplate $messageTemplate = null;
 
-    /**
-     * @var MailMessage
-     */
-    protected $mailMessage;
+    protected string $subject = '';
 
-    /**
-     * @var string
-     */
-    protected $subject = '';
+    protected string $body = '';
 
-    /**
-     * @var string
-     */
-    protected $body = '';
+    protected string $processedSubject = '';
 
-    /**
-     * @var string
-     */
-    protected $processedSubject = '';
+    protected string $processedBody = '';
 
-    /**
-     * @var string
-     */
-    protected $processedBody = '';
+    protected bool $parseToMarkdown = false;
 
-    /**
-     * @var bool
-     */
-    protected $parseToMarkdown = false;
-
-    /**
-     * @var string
-     */
-    protected $uuid = '';
+    protected string $uuid = '';
 
     public function __construct()
     {
-        // todo legacy, migrate me!
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->messageTemplateRepository = $objectManager->get(MessageTemplateRepository::class);
-        $this->messageLayoutRepository = $objectManager->get(MessageLayoutRepository::class);
-        $this->sentMessageRepository = $objectManager->get(SentMessageRepository::class);
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
+
     }
 
     /**
@@ -194,7 +119,7 @@ class Message
     /**
      * Prepares the emails and send it.
      *
-     * @return boolean whether or not the email was sent successfully
+     * @return bool whether or not the email was sent successfully
      */
     public function send(): bool
     {
@@ -212,7 +137,10 @@ class Message
             }
         } else {
             $message = 'No Email sent, something went wrong. Check Swift Mail configuration';
-            LoggerService::getLogger($this)->error($message);
+            LoggerService::getLogger($this)->log(
+                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
+                $message
+            );
             throw new WrongPluginConfigurationException($message, 1_350_124_220);
         }
 
@@ -225,7 +153,7 @@ class Message
     protected function prepareMessage(): void
     {
         if (!$this->to) {
-            throw new RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
+            throw new \RuntimeException('Messenger: no recipient was defined', 1_354_536_585);
         }
 
         $message = $this->getMailMessage()
@@ -238,11 +166,13 @@ class Message
 
         // Attach plain text version if HTML tags are found in body
         if ($this->hasHtml($this->getProcessedBody())) {
-            $message->setBody()->html($this->getProcessedBody());
+            $htmlPart = new \Symfony\Component\Mime\Part\TextPart($this->getProcessedBody(), 'utf-8', 'html');
             $text = Html2Text::getInstance()->convert($this->getProcessedBody());
-            $message->setBody()->text($text);
+            $textPart = new \Symfony\Component\Mime\Part\TextPart($text, 'utf-8', 'plain');
+            $message->setBody(new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $htmlPart));
         } else {
-            $message->setBody()->text($this->getProcessedBody());
+            $textPart = new \Symfony\Component\Mime\Part\TextPart($this->getProcessedBody(), 'utf-8', 'plain');
+            $message->setBody($textPart);
         }
 
         // Handle attachment
@@ -257,8 +187,9 @@ class Message
         if ($redirectTo) {
             $this->redirectEmailFrom = $this->getMailMessage()->getTo();
 
+            $htmlPart = new \Symfony\Component\Mime\Part\TextPart($this->getDebugInfoBody(), 'utf-8', 'html');
             $this->getMailMessage()
-                ->setBody()->html($this->getDebugInfoBody())
+                ->setBody($htmlPart)
                 ->setTo($redirectTo)
                 ->setCc([])// reset cc which was written as debug in the body message previously.
                 ->setBcc([])// same remark as bcc.
@@ -307,14 +238,13 @@ class Message
      */
     public function hasHtml($content): bool
     {
-        $result = FALSE;
+        $result = false;
         //we compare the length of the string with html tags and without html tags
         if (strlen($content) !== strlen(strip_tags($content))) {
-            $result = TRUE;
+            $result = true;
         }
         return $result;
     }
-
 
     /**
      * set message_serialized
@@ -332,18 +262,18 @@ class Message
      *
      * @param string $attachment an absolute path to a file
      */
-    public function addAttachment($attachment): Message
+    public function addAttachment(string $attachment): Message
     {
 
         // Convert $file to absolute path.
         if ($attachment instanceof File) {
-            $attachment = $attachment->getForLocalProcessing(FALSE);
+            $attachment = $attachment->getForLocalProcessing(false);
         }
 
         // Makes sure the file exist
         if (is_file($attachment)) {
-            #$parts = explode('/', $attachment);
-            #$fileName = array_pop($parts);
+            //$parts = explode('/', $attachment);
+            //$fileName = array_pop($parts);
             $this->attachments[] = $attachment;
         } else {
             $message = sprintf('File not found "%s"', $attachment);
@@ -352,12 +282,7 @@ class Message
         return $this;
     }
 
-    /**
-     * Set multiple markers at once.
-     *
-     * @param array $values
-     */
-    public function setMarkers($values): Message
+    public function setMarkers(array $values): Message
     {
         foreach ($values as $markerName => $value) {
             $this->addMarker($markerName, $value);
@@ -365,13 +290,7 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new marker and its value.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
-    public function addMarker($markerName, $value): Message
+    public function addMarker(string $markerName, mixed $value): Message
     {
         $this->markers[$markerName] = $value;
         return $this;
@@ -390,13 +309,7 @@ class Message
         return $this;
     }
 
-    /**
-     * Add a new maker.
-     *
-     * @param string $markerName
-     * @param mixed $value
-     */
-    public function assign($markerName, $value): Message
+    public function assign(string $markerName, mixed $value): Message
     {
         return $this->addMarker($markerName, $value);
     }
@@ -410,13 +323,7 @@ class Message
         return $this->to;
     }
 
-
-    /**
-     * Set "to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setTo($addresses): Message
+    public function setTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->to = $addresses;
@@ -432,12 +339,7 @@ class Message
         return $this->cc;
     }
 
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setCc($addresses): Message
+    public function setCc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->cc = $addresses;
@@ -453,12 +355,7 @@ class Message
         return $this->bcc;
     }
 
-    /**
-     * Set "cc" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setBcc($addresses): Message
+    public function setBcc(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->bcc = $addresses;
@@ -470,12 +367,7 @@ class Message
         return $this->replyTo;
     }
 
-    /**
-     * Set "reply-to" addresses. Should be an array('email' => 'name').
-     *
-     * @param mixed $addresses
-     */
-    public function setReplyTo($addresses): Message
+    public function setReplyTo(mixed $addresses): Message
     {
         $this->getEmailValidator()->validate($addresses);
         $this->replyTo = $addresses;
@@ -487,7 +379,7 @@ class Message
         // Compute sender from global configuration.
         if (!$this->sender) {
             if (empty($GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'])) {
-                throw new RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
+                throw new \RuntimeException('I could not find a sender email address. Missing value for "defaultMailFromAddress"', 1_402_032_685);
             }
 
             $email = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'];
@@ -541,7 +433,7 @@ class Message
      * @param string $subject
      * @return $this
      */
-    public function setSubject($subject): self
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
         return $this;
@@ -586,7 +478,7 @@ class Message
      * @param string $body
      * @return $this
      */
-    public function setBody($body): self
+    public function setBody(string $body): self
     {
         $this->body = $body;
         return $this;
@@ -749,7 +641,7 @@ class Message
      * @param string $mailingName
      * @return $this
      */
-    public function setMailingName($mailingName): self
+    public function setMailingName(string $mailingName): self
     {
         $this->mailingName = $mailingName;
         return $this;
@@ -764,7 +656,7 @@ class Message
      * @param int $scheduleDistributionTime
      * @return $this
      */
-    public function setScheduleDistributionTime($scheduleDistributionTime): self
+    public function setScheduleDistributionTime(int $scheduleDistributionTime): self
     {
         $this->scheduleDistributionTime = $scheduleDistributionTime;
         return $this;
@@ -787,7 +679,7 @@ class Message
      * @param string $uuid
      * @return $this
      */
-    public function setUuid($uuid): self
+    public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
         return $this;
@@ -799,14 +691,14 @@ class Message
     protected function getContentRenderer(): ContentRendererInterface
     {
         return GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate ?: null);
-        #if ($this->isFrontendMode()) {
-        #    /** @var FrontendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
-        #} else {
-        #    /** @var BackendRenderer $contentRenderer */
-        #    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
-        #}
-        #return $contentRenderer;
+        //if ($this->isFrontendMode()) {
+        //    /** @var FrontendRenderer $contentRenderer */
+        //    $contentRenderer = GeneralUtility::makeInstance(FrontendRenderer::class, $this->messageTemplate);
+        //} else {
+        //    /** @var BackendRenderer $contentRenderer */
+        //    $contentRenderer = GeneralUtility::makeInstance(BackendRenderer::class);
+        //}
+        //return $contentRenderer;
     }
 
     /**

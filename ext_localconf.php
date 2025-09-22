@@ -55,6 +55,9 @@ call_user_func(function () {
     // eID for resolving Frontend URL in the context of the Backend.
     $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['messenger'] = Resolver::class . '::resolveUrl';
 
+    // Load additional stylesheets for TYPO3 backend
+    $GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets']['messenger'] = 'EXT:messenger/Resources/Public/Css/Styles.css';
+
     // Add caching framework garbage collection task
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][MessengerDequeueTask::class] = [
         'extension' => 'messenger',

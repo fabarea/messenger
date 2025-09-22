@@ -18,8 +18,6 @@ class LynxStrategy implements StrategyInterface
 
     /**
      * Constructor
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -79,7 +77,7 @@ class LynxStrategy implements StrategyInterface
     /**
      * Whether the converter is available
      *
-     * @return boolean
+     * @return bool
      */
     public function available(): bool
     {

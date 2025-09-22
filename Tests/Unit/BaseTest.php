@@ -76,7 +76,7 @@ class Tx_Messenger_BaseTest extends UnitTestCase {
 	protected $uidLayout;
 
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->testingFramework = new Tx_Phpunit_Framework('tx_messenger');
 
 		$pid = $this->testingFramework->createFrontEndPage(0, array('title' => 'foo'));
@@ -99,7 +99,7 @@ class Tx_Messenger_BaseTest extends UnitTestCase {
 		$this->populateRecordLayouts();
 	}
 
-		public function tearDown() {
+		public function tearDown(): void {
 			$this->testingFramework->cleanUp();
 			unset($this->testingFramework);
 	}
@@ -107,7 +107,7 @@ class Tx_Messenger_BaseTest extends UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function frameWorkIsCorrectlyInstantiated() {
+	public function frameWorkIsCorrectlyInstantiated(): void {
 		$this->assertTrue($this->testingFramework instanceof Tx_Phpunit_Framework);
 	}
 

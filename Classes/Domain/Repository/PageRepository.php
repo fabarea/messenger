@@ -16,6 +16,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class PageRepository extends AbstractContentRepository
 {
     protected string $tableName = 'pages';
+    protected  ConnectionPool $connectionPool;
+
+    public function __construct(ConnectionPool $connectionPool)
+     {
+         $this->connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+     }
 
     public function findByUids(array $uids): array
     {
@@ -31,7 +37,7 @@ class PageRepository extends AbstractContentRepository
     protected function getQueryBuilder(): QueryBuilder
     {
         /** @var ConnectionPool $connectionPool */
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connectionPool = $this->connectionPool;
         return $connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
@@ -75,12 +81,12 @@ class PageRepository extends AbstractContentRepository
                 );
         }
         if ($constraints) {
-            $queryBuilder->where($queryBuilder->expr()->orX(...$constraints));
+            $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
         if ($orderings === []) {
             $orderings = ['uid' => 'ASC'];
         }
-        # We handle the sorting
+        // We handle the sorting
         $queryBuilder->addOrderBy(key($orderings), current($orderings));
 
         if ($limit > 0) {

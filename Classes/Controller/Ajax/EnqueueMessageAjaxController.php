@@ -122,12 +122,11 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
             count($recipients),
             $numberOfSentEmails !== count($recipients)
                 ? $this->getLanguageService()->sL(
-                'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
-            )
+                    'LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:message.invalidEmails',
+                )
                 : '',
         );
     }
-
 
     protected function getTo(array $recipient): array
     {
@@ -179,7 +178,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $emailsArray = [];
         foreach ($emails as $emailsArrayItem) {
             if (!filter_var($emailsArrayItem, FILTER_VALIDATE_EMAIL)) {
-                throw new InvalidEmailFormatException('You have an set an invalid email !');
+                throw new InvalidEmailFormatException('You have an set an invalid email !', 7081816043);
             }
             $emailsArray[$emailsArrayItem] = $emailsArrayItem;
         }

@@ -2,7 +2,6 @@
 
 namespace Fab\Messenger\ViewHelpers\SentMessage;
 
-use Closure;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -11,7 +10,7 @@ class LabelViewHelper extends AbstractViewHelper
 {
     public static function renderStatic(
         array $arguments,
-        Closure $renderChildrenClosure,
+        \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext,
     ) {
         return self::getLanguageService()->sL(

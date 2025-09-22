@@ -40,13 +40,14 @@ class LogCommandController extends Command
                     ),
                 );
                 return 0;
-            } else {
-                $io->error('An error occurred while removing messages');
-                return 1;
             }
-        } else {
-            $io->text('No messages to remove');
+            $io->text('An error occurred while removing messages');
+
+            return 1;
+
         }
+        $io->text('No messages to remove');
+
         return 0;
     }
 

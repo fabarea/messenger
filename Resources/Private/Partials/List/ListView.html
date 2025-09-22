@@ -1,230 +1,233 @@
-<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
-    <f:be.pageRenderer includeCssFiles="{0: '{f:uri.resource(path:\'Css/styles.css\')}'}" />
-    <h1>
-        <f:translate
+
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:typo3="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers">
+    <f:be.pageRenderer
+    includeCssFiles="{
+    0: 'EXT:messenger/Resources/Public/Css/styles.css'
+}"/>
+<h1>
+    <f:translate
             key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:mlang_labels_tablabel"
-        />
-    </h1>
-    <div class="w-100">
-        <f:if condition="{sortBy} && {direction}">
-            <f:then>
-                <f:variable name="sortBy" value="{sortBy}" />
-                <f:variable name="direction" value="{direction}" />
-            </f:then>
-            <f:else>
-                <f:variable name="sortBy" value="crdate" />
-                <f:variable name="direction" value="asc" />
-            </f:else>
-        </f:if>
-        <div class="pull-right align-items-md-end">
-            <f:form
+    />
+</h1>
+<div class="w-100">
+    <f:if condition="{sortBy} && {direction}">
+        <f:then>
+            <f:variable name="sortBy" value="{sortBy}" />
+            <f:variable name="direction" value="{direction}" />
+        </f:then>
+        <f:else>
+            <f:variable name="sortBy" value="crdate" />
+            <f:variable name="direction" value="asc" />
+        </f:else>
+    </f:if>
+    <div class="pull-right align-items-md-end">
+        <f:form
                 action="{action}"
                 arguments="{searchTerm: searchTerm, items: items}"
                 controller="{controller}"
                 method="post"
-            >
-                <f:form.select
+        >
+            <f:form.select
                     class="form-select"
                     id="itemsPerPage"
                     name="items"
-                    onclick="this.form.submit()"
                     value="{itemsPerPages}"
-                >
-                    <f:form.select.option value="20">20</f:form.select.option>
-                    <f:form.select.option value="50">50</f:form.select.option>
-                    <f:form.select.option value="100">100</f:form.select.option>
-                    <f:form.select.option value="200">200</f:form.select.option>
-                    <f:form.select.option value="500">500</f:form.select.option>
-                    <f:form.select.option value="1000">1000</f:form.select.option>
-                </f:form.select>
-            </f:form>
-        </div>
+            >
+                <f:form.select.option value="20">20</f:form.select.option>
+                <f:form.select.option value="50">50</f:form.select.option>
+                <f:form.select.option value="100">100</f:form.select.option>
+                <f:form.select.option value="200">200</f:form.select.option>
+                <f:form.select.option value="500">500</f:form.select.option>
+                <f:form.select.option value="1000">1000</f:form.select.option>
+            </f:form.select>
+        </f:form>
+    </div>
 
-        <div class="w-100">
-            <f:form
+    <div class="w-100">
+        <f:form
                 action="{action}"
                 arguments="{searchTerm: searchTerm, items: items}"
                 controller="{controller}"
                 method="post"
-            >
-                <div class="d-flex gap-1 mb-2">
-                    <div class="w-75">
-                        <f:form.textfield
+        >
+            <div class="d-flex gap-1 mb-2">
+                <div class="w-75">
+                    <f:form.textfield
                             class="form-control text-black"
                             name="searchTerm"
                             placeholder="Search..."
                             value="{searchTerm}"
-                        />
-                    </div>
-                    <button class="btn btn-default" type="submit">
-                        <core:icon identifier="actions-search" size="small" />
-                    </button>
+                    />
                 </div>
-            </f:form>
-        </div>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr class="t3-row-header">
-                    <f:variable name="color" value="text-black" />
-                    <th class="action" scope="col">
-                        <f:form.checkbox
-                            class="select-all"
-                            id="record-all"
-                            name="selectedRecords[]"
-                            onclick="Messenger.selectAll(this); "
-                            value="1"
-                        />
-                    </th>
-
-                    <f:for as="selectedField" each="{selectedColumns}" iteration="iterator">
-                        <f:if condition="{selectedField} != ''">
-                            <th
-                                class="sorting{f:if(condition: '{direction} == \'ASC\' && {sortBy} == {selectedField}', then: '_asc')}{f:if(condition: '{direction} == \'DESC\' && {sortBy} == {selectedField}', then: '_desc')}"
-                                scope="col"
-                            >
-                                <f:link.action
-                                    action="{action}"
-                                    arguments="{sortBy: '{selectedField}', direction: '{direction}', searchTerm: searchTerm,page: currentPage,items: itemsPerPages,selectedColumns: selectedColumns}"
-                                    class="text-decoration-none d-block"
-                                    controller="{controller}"
-                                >
-                                    <f:translate
-                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:{selectedField}"
-                                    />
-                                </f:link.action>
-                            </th>
-                        </f:if>
-                    </f:for>
-                    <th class="action" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody class="checkboxes">
-                <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
-                    <tr>
-                        <td>
-                            <f:form.checkbox
-                                class="select"
-                                name="selectedRecords[]"
-                                onclick="Messenger.getSelectedItems()"
-                                value="{message.uid}"
-                            />
-                        </td>
-                        <f:for as="selectedField" each="{selectedColumns}" iteration="selectedFieldIterator">
-                            <f:if condition="{selectedField} != ''">
-                                <f:if condition="{selectedField} == 'sent_time'">
-                                    <f:then>
-                                        <td>
-                                            <f:format.date format="d.m.Y H:i">{message.{selectedField}}</f:format.date>
-                                        </td>
-                                    </f:then>
-                                    <f:else>
-                                        <td>{message.{selectedField}}</td>
-                                    </f:else>
-                                </f:if>
-                            </f:if>
-                        </f:for>
-                        <td>
-                            <div class="d-flex gap-1 align-items-center pull-right">
-                                <a
-                                    class="btn btn-default btn-secondary"
-                                    href="{be:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
-                                >
-                                    <core:icon identifier="actions-document-open" />
-                                </a>
-                                <f:variable
-                                    name="deleteUrl"
-                                    value="{be:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_{domainModel}][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
-                                />
-                                <button
-                                    class="btn btn-default btn-secondary"
-                                    data-delete-url="{deleteUrl}"
-                                    data-name="{message.sender}"
-                                    onclick="Messenger.deleteItem(this); return false"
-                                >
-                                    <core:icon identifier="actions-delete" size="small" />
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </f:for>
-                <tr>
-                    <td>
-                        <div class="dropdown">
-                            <button
-                                aria-expanded="false"
-                                class="btn btn-secondary btn-sm dropdown-toggle border-1"
-                                data-bs-toggle="dropdown"
-                                id="dropdownMenuButton1"
-                                type="button"
-                            ></button>
-                            <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
-                                <f:if condition="{domainModel} == 'sentmessage' || {domainModel} == 'queue'">
-                                    <li>
-                                        <a
-                                            class="dropdown-item btn-sendAgain border-bottom border-secondary"
-                                            data-data-type="{dataType}"
-                                            data-search-term="{searchTerm}"
-                                            href="#"
-                                        >
-                                            <core:icon identifier="content-elements-mailform" size="small" />
-                                            <f:translate
-                                                key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
-                                            />
-                                        </a>
-                                    </li>
-                                </f:if>
-                                <li>
-                                    <a
-                                        class="dropdown-item btn-export"
-                                        data-data-type="{dataType}"
-                                        data-format="csv"
-                                        data-module="{moduleName}"
-                                        data-search-term="{searchTerm}"
-                                        href="#"
-                                    >
-                                        <core:icon identifier="mimetypes-text-csv" size="small" />
-                                        <f:translate
-                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
-                                        />
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        class="dropdown-item btn-export"
-                                        data-data-type="{dataType}"
-                                        data-format="xml"
-                                        data-module="{moduleName}"
-                                        data-search-term="{searchTerm}"
-                                        href="#"
-                                    >
-                                        <core:icon identifier="mimetypes-text-html" size="small" />
-                                        <f:translate
-                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
-                                        />
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        class="dropdown-item btn-mass-delete"
-                                        data-module="{moduleName}"
-                                        data-data-type="{dataType}"
-                                        data-search-term="{searchTerm}"
-                                        href="#"
-                                    >
-                                        <core:icon identifier="actions-delete" size="small" />
-                                        <f:translate
-                                            key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:delete"
-                                        />
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <f:if condition="{pagination}">
-            <f:render arguments="{_all}" partial="Navigation/Navigation" />
-        </f:if>
+                <button class="btn btn-default" type="submit">
+                    <core:icon identifier="actions-search" size="small" />
+                </button>
+            </div>
+        </f:form>
     </div>
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr class="t3-row-header">
+            <f:variable name="color" value="text-black" />
+            <th class="action" scope="col">
+                <f:form.checkbox
+                        class="select-all"
+                        id="record-all"
+                        name="selectedRecords[]"
+                        data-action="select-all"
+                        value="1"
+                />
+            </th>
+
+            <f:for as="selectedField" each="{selectedColumns}" iteration="iterator">
+                <f:if condition="{selectedField} != ''">
+                    <th
+                            class="sorting{f:if(condition: '{direction} == \'ASC\' && {sortBy} == {selectedField}', then: '_asc')}{f:if(condition: '{direction} == \'DESC\' && {sortBy} == {selectedField}', then: '_desc')}"
+                            scope="col"
+                    >
+                        <f:link.action
+                                action="{action}"
+                                arguments="{sortBy: '{selectedField}', direction: '{direction}', searchTerm: searchTerm,page: currentPage,items: itemsPerPages,selectedColumns: selectedColumns}"
+                                class="text-decoration-none d-block"
+                                controller="{controller}"
+                        >
+                            <f:translate
+                                    key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:{selectedField}"
+                            />
+                        </f:link.action>
+                    </th>
+                </f:if>
+            </f:for>
+            <th class="action" scope="col"></th>
+        </tr>
+        </thead>
+        <tbody class="checkboxes">
+        <f:for as="message" each="{paginator.paginatedItems }" iteration="iterator">
+            <tr>
+                <td>
+                    <f:form.checkbox
+                            class="select"
+                            name="selectedRecords[]"
+                            data-action="select-item"
+                            value="{message.uid}"
+                    />
+                </td>
+                <f:for as="selectedField" each="{selectedColumns}" iteration="selectedFieldIterator">
+                    <f:if condition="{selectedField} != ''">
+                        <f:if condition="{selectedField} == 'sent_time'">
+                            <f:then>
+                                <td>
+                                    <f:format.date format="d.m.Y H:i">{message.{selectedField}}</f:format.date>
+                                </td>
+                            </f:then>
+                            <f:else>
+                                <td>{message.{selectedField}}</td>
+                            </f:else>
+                        </f:if>
+                    </f:if>
+                </f:for>
+                <td>
+                    <div class="d-flex gap-1 align-items-center pull-right">
+                        <a
+                                class="btn btn-default btn-secondary"
+                                href="{typo3:uri.editRecord(uid: '{message.uid}', table:'tx_messenger_domain_model_{domainModel}')}"
+                        >
+                            <core:icon identifier="actions-document-open" />
+                        </a>
+                        <f:variable
+                                name="deleteUrl"
+                                value="{typo3:moduleLink(route:'tce_db', query:'cmd[tx_messenger_domain_model_{domainModel}][{message.uid}][delete]=1', currentUrlParameterName:'redirect')}"
+                        />
+                        <button
+                                class="btn btn-default btn-secondary"
+                                data-delete-url="{deleteUrl}"
+                                data-name="{message.sender}"
+                                data-action="delete-item"
+                        >
+                            <core:icon identifier="actions-delete" size="small" />
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </f:for>
+        <tr class="dropdown-tr">
+            <td>
+                <div class="dropdown">
+                    <button
+                            aria-expanded="false"
+                            class="btn btn-secondary btn-sm dropdown-toggle border-1"
+                            data-bs-toggle="dropdown"
+                            id="dropdownMenuButton1"
+                            type="button"
+                    ></button>
+                    <ul aria-labelledby="dropdownMenuButton1" class="dropdown-menu bg-white text-black">
+                        <f:if condition="{domainModel} == 'sentmessage' || {domainModel} == 'queue'">
+                            <li>
+                                <a
+                                        class="dropdown-item btn-sendAgain border-bottom border-secondary"
+                                        data-data-type="{dataType}"
+                                        data-search-term="{searchTerm}"
+                                        href="#"
+                                >
+                                    <core:icon identifier="content-elements-mailform" size="small" />
+                                    <f:translate
+                                            key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:send_message"
+                                    />
+                                </a>
+                            </li>
+                        </f:if>
+                        <li>
+                            <a
+                                    class="dropdown-item btn-export"
+                                    data-data-type="{dataType}"
+                                    data-format="csv"
+                                    data-module="{moduleName}"
+                                    data-search-term="{searchTerm}"
+                                    href="#"
+                            >
+                                <core:icon identifier="mimetypes-text-csv" size="small" />
+                                <f:translate
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:csv"
+                                />
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                    class="dropdown-item btn-export"
+                                    data-data-type="{dataType}"
+                                    data-format="xml"
+                                    data-module="{moduleName}"
+                                    data-search-term="{searchTerm}"
+                                    href="#"
+                            >
+                                <core:icon identifier="mimetypes-text-html" size="small" />
+                                <f:translate
+                                        key="LLL:EXT:messenger/Resources/Private/Language/tx_messenger_domain_model_{domainModel}.xlf:xml"
+                                />
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                    class="dropdown-item btn-mass-delete"
+                                    data-module="{moduleName}"
+                                    data-data-type="{dataType}"
+                                    data-search-term="{searchTerm}"
+                                    href="#"
+                            >
+                                <core:icon identifier="actions-delete" size="small" />
+                                <f:translate
+                                        key="LLL:EXT:messenger/Resources/Private/Language/locallang.xlf:delete"
+                                />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <f:if condition="{pagination}">
+        <f:render arguments="{_all}" partial="Navigation/Navigation" />
+    </f:if>
+</div>
 </html>

@@ -4,9 +4,21 @@ services:
     autoconfigure: true
     public: true
 
+  Fab\Messenger\Controller\:
+    resource: '../Classes/Controller/*'
+    tags: ['backend.controller']
+    arguments:
+      $view: '@TYPO3\CMS\Backend\View\BackendViewFactory'
 
   Fab\Messenger\Controller\AdminModuleController:
     tags: [ 'backend.controller' ]
+
+  Fab\Messenger\Controller\MessageTemplateController:
+    arguments:
+      $moduleTemplateFactory: '@TYPO3\CMS\Backend\Template\ModuleTemplateFactory'
+      $iconFactory: '@TYPO3\CMS\Core\Imaging\IconFactory'
+      $dataExportService: '@Fab\Messenger\Service\DataExportService'
+    tags: ['backend.controller']
 
   Fab\Messenger\:
     resource: '../Classes/*'

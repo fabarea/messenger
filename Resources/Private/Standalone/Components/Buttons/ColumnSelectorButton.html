@@ -1,20 +1,14 @@
 {namespace m=Fab\Messenger\ViewHelpers}
 
 <div class="btn-toolbar btn-default btn-sm" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
-    <f:form
-        action="{action}"
-        controller="{controller}"
-        extensionName="{module}"
-        fieldNamePrefix="{module}"
-        method="post"
-    >
+    <div id="column-selector-{module}" data-module="{module}" data-table-name="{tableName}" data-ajax-url="{ajaxUrl}">
         <div aria-label="" class="btn-toolbar btn-default bg-white" role="toolbar">
             <div class="dropdown dropdown-fields pull-right">
                 <a
-                    class="btn btn-default btn-secondary btn-sm dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    href="#"
-                    style="position: relative; bottom: 1px"
+                        class="btn btn-default btn-secondary btn-sm dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        href="#"
+                        style="position: relative; bottom: 1px"
                 ></a>
                 <ul class="dropdown-menu bg-white p-2" style="max-height: 800px; overflow-y: scroll">
                     <f:for as="fieldName" each="{fields}">
@@ -22,15 +16,16 @@
                             <li class="checkbox text-black">
                                 <label>
                                     <f:variable
-                                        name="isChecked"
-                                        value="{m:inArray(haystack:'{selectedColumns}', needle:'{fieldName}', then:'1', else:'0')}"
+                                            name="isChecked"
+                                            value="{m:inArray(haystack:'{selectedColumns}', needle:'{fieldName}', then:'1', else:'0')}"
                                     />
-                                    <f:form.checkbox
-                                        additionalAttributes="{onchange: 'this.form.submit()'}"
-                                        checked="{f:if(condition:'{isChecked}' , then:'true' , else:'false')}"
-                                        class="check-visible-toggle"
-                                        name="selectedColumns[] "
-                                        value="{fieldName}"
+                                    <input
+                                            type="checkbox"
+                                            class="check-visible-toggle column-selector-checkbox"
+                                            name="selectedColumns[]"
+                                            value="{fieldName}"
+                                            data-field="{fieldName}"
+                                            {f:if(condition:'{isChecked}' , then:'checked="checked"' , else:'')}
                                     />
                                     <f:if condition="{model}">
                                         <f:then>
@@ -54,5 +49,5 @@
                 </ul>
             </div>
         </div>
-    </f:form>
+    </div>
 </div>

@@ -22,7 +22,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 class DevelopmentViewHelper extends AbstractViewHelper
 {
     /**
-     * @var boolean
+     * @var bool
      * @api
      */
     protected $escapeOutput = false;
@@ -39,7 +39,7 @@ class DevelopmentViewHelper extends AbstractViewHelper
         if ($redirectTo) {
             $output = sprintf(
                 "<pre style='clear: both'>%s CONTEXT<br /> %s %s</pre>",
-                strtoupper((string) Environment::getContext()),
+                strtoupper((string)Environment::getContext()),
                 '<br />- All emails will be redirected to ' . implode(', ', array_keys($redirectTo)) . '.',
                 SenderProvider::getInstance()->getPossibleSenders()
                     ? ''

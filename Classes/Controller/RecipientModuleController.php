@@ -5,11 +5,12 @@ namespace Fab\Messenger\Controller;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
-use Fab\Messenger\Resolver\FieldPathResolver;
 use Fab\Messenger\Service\BackendUserPreferenceService;
 use Fab\Messenger\Service\DataExportService;
 use Fab\Messenger\Utility\ConfigurationUtility;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -54,15 +55,16 @@ class RecipientModuleController extends ActionController
      */
     public function indexAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $orderings = $this->getOrderings();
         $records = $this->repository->findByDemand($this->getDemand(), $orderings);
         $items = $this->request->hasArgument('items') ? $this->request->getArgument('items') : $this->itemsPerPage;
         $currentPage = $this->request->hasArgument('page') ? $this->request->getArgument('page') : 1;
         $paginator = new ArrayPaginator($records, $currentPage, $items);
-
-        $selectedColumns = $this->computeSelectedColumns();
         $pagination = new SimplePagination($paginator);
-        $this->view->assignMultiple([
+        $selectedColumns = $this->computeSelectedColumns();
+
+        $moduleTemplate->assignMultiple([
             'recipients' => $records,
             'selectedColumns' => $selectedColumns,
             'fields' => $this->getFields(),
@@ -81,12 +83,11 @@ class RecipientModuleController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
-        $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
 
-        $this->moduleTemplate->setContent($this->view->render());
-        $this->computeDocHeader($this->getFields(), $selectedColumns);
+        $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
 
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse('Index');
+
     }
 
     /**
@@ -131,13 +132,12 @@ class RecipientModuleController extends ActionController
     /**
      * @throws NoSuchArgumentException
      */
-     protected function computeSelectedColumns(): array
+    protected function computeSelectedColumns(): array
     {
         $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
         $parsedBody = $this->request->getParsedBody();
         $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
-
-        $moduleVersion = explode('/', $this->getRequestUri());
+        $moduleVersion = explode('/', $this->getRequestUrl());
         if (count(array_unique($moduleVersion)) !== 1) {
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
         }
@@ -151,17 +151,26 @@ class RecipientModuleController extends ActionController
             $selectedColumns = $this->request->getArgument('selectedColumns');
             BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
         }
+        $storedColumns = BackendUserPreferenceService::getInstance()->get('RecipientAjaxSelectedColumns');
+        $module = BackendUserPreferenceService::getInstance()->get('module');
+
+        if (empty($module)) {
+            return $selectedColumns;
+        }
+        if (!empty($storedColumns)) {
+            $selectedColumns = $storedColumns;
+        }
 
         return $selectedColumns;
-    }
 
+    }
 
     protected function getFields(): array
     {
         return GeneralUtility::trimExplode(',', ConfigurationUtility::getInstance()->get('recipient_default_fields'));
     }
 
-    private function getRequestUri(): string
+    private function getRequestUrl(): string
     {
         return $_SERVER['REQUEST_URI'];
     }
@@ -169,9 +178,9 @@ class RecipientModuleController extends ActionController
     /**
      * @throws RouteNotFoundException
      */
-    private function computeDocHeader(array $fields, array $selectedColumns): void
+    private function computeDocHeader(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
     {
-        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         /** @var ColumnSelectorButton $columnSelectorButton */
         $columnSelectorButton = $buttonBar->makeButton(ColumnSelectorButton::class);
@@ -231,12 +240,50 @@ class RecipientModuleController extends ActionController
      */
     protected function renderUriNewRecord(array $arguments): string
     {
-        $arguments['returnUrl'] = $GLOBALS['TYPO3_REQUEST']->getAttribute('normalizedParams')->getRequestUri();
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        $normalizedParams = $request->getAttribute('normalizedParams');
+        $arguments['returnUrl'] = $normalizedParams->getRequestUrl();
         $params = [
             'edit' => [$arguments['table'] => [$arguments['uid'] ?? ($arguments['pid'] ?? 0) => 'new']],
             'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
+        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
+    }
+
+    public function updateColumnsAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $requestBody = $request->getParsedBody();
+
+        $selectedColumns = $requestBody['selectedColumns'] ?? [];
+        $module = $requestBody['module'] ?? '';
+
+        if (empty($module)) {
+            return $this->getAjaxResponse([
+                'success' => false,
+                'error' => 'Missing required parameter: module',
+            ]);
+        }
+
+        $backendPreference = BackendUserPreferenceService::getInstance();
+        $backendPreference->set('RecipientAjaxSelectedColumns', $selectedColumns);
+        $backendPreference->set('module', $module);
+
+        return $this->getAjaxResponse([
+            'success' => true,
+            'selectedColumns' => $selectedColumns,
+            'message' => 'Column selection updated successfully',
+        ]);
+    }
+
+    /**
+     * Helper method to create JSON AJAX responses
+     */
+    protected function getAjaxResponse(array $data): ResponseInterface
+    {
+        $responseFactory = GeneralUtility::makeInstance(ResponseFactoryInterface::class);
+        $response = $responseFactory->createResponse();
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

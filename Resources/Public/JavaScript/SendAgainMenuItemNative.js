@@ -1,10 +1,10 @@
 /**
- * Module: Fab/Messenger/Media
+ * Module: Fab/Messenger/SendAgainMenuItemNative
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function ($, Modal, Notification) {
-  'use strict';
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
+    'use strict';
 
-  const Messenger = {
+const Messenger = {
     /**
      * Get edit storage URL.
      *
@@ -15,7 +15,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
      * @private
      */
     getEditStorageUrl: function (url, type, searchTerm = '') {
-      const uri = new Uri(url);
+      const uri = new window.Uri(url);
 
       // get element by columnsToSend value and assign to the uri object
       let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
@@ -82,6 +82,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
                   success: function (response) {
                     Notification.success('', response);
                     Modal.dismiss();
+                    window.location.reload();
                   },
                 });
               },
@@ -92,6 +93,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], 
     },
   };
 
-  Messenger.initialize();
-  return Messenger;
+    // Expose globally for compatibility
+    window.MessengerSendAgain = Messenger;
+    window.MessengerSendAgain.initialized = false;
+
+    return Messenger;
 });

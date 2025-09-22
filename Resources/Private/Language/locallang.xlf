@@ -24,6 +24,9 @@
 			<trans-unit id="message">
 				<source>Message</source>
 			</trans-unit>
+			<trans-unit id="data.notFound">
+				<source>Data not found.</source>
+			</trans-unit>
 			<trans-unit id="recipients">
 				<source>Recipients</source>
 			</trans-unit>
@@ -228,9 +231,7 @@
 			<trans-unit id="send_message">
 				<source>Send a message</source>
 			</trans-unit>
-			<trans-unit id="delete.messages.none.selected">
-				<source>No items selected to delete.</source>
-			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

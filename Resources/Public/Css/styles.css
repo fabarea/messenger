@@ -9,7 +9,13 @@ table.table thead .action {
 table.table thead .sorting_desc {
     background: url('sort_desc.png') no-repeat center right;
 }
-
+table tbody .dropdown-tr{
+    border-bottom-width: var(--bs-border-width);
+    --bs-table-bg-type: var(--bs-table-striped-bg);
+    td {
+        box-shadow : none !important;
+    }
+}
 table.table thead .sorting_asc {
     background: url('sort_asc.png') no-repeat center right;
 }
@@ -44,5 +50,187 @@ table.table thead {
 
 .btn-secondary {
     border: 1px solid #bbbbbb;
+}
 
+/* Navigation styles */
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-md-end {
+    align-items: flex-end;
+}
+
+/* Form styles */
+.form-select {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.gap-1 {
+    gap: 0.25rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.w-75 {
+    width: 75%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* Table styles */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.t3-row-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Button styles */
+.btn-default {
+    color: #212529;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+.btn-default:hover {
+    color: #212529;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+}
+
+.border-1 {
+    border-width: 1px !important;
+}
+
+/* Text styles */
+.text-black {
+    color: #000 !important;
+}
+
+.text-decoration-none {
+    text-decoration: none !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
+/* Checkbox styles */
+.select-all,
+.select {
+    margin: 0;
+}
+
+/* Dropdown styles */
+.dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.375rem;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: #1e2125;
+    background-color: #e9ecef;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.border-secondary {
+    border-color: #6c757d !important;
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\Messenger\Exception;
 
 /*
@@ -8,12 +9,4 @@ namespace Fab\Messenger\Exception;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Exception;
-
-/**
- *
- */
-class MissingFileException extends Exception
-{
-
-}
+class MissingFileException extends \Exception {}
