@@ -80,3 +80,49 @@
     0% { background-color: #f8d7da; }
     100% { background-color: transparent; }
 }
+
+table.table thead .sorting {
+    background: url('sort_both.png') no-repeat center right;
+}
+
+table.table thead .action {
+    background: no-repeat center right;
+}
+
+table.table thead .sorting_desc {
+    background: url('sort_desc.png') no-repeat center right;
+}
+
+table.table thead .sorting_asc {
+    background: url('sort_asc.png') no-repeat center right;
+}
+
+table.table thead {
+    cursor: pointer;
+}
+
+.btn {
+    border: none;
+
+    :hover {
+        border: none;
+    }
+}
+
+.btn-sendAgain {
+    background-color: white;
+
+    :hover {
+        background-color: white;
+    }
+}
+
+.dropdown-menu {
+    line-height: 1.45em;
+   font-size: 0.75rem;;
+}
+
+.btn-secondary {
+    border: 1px solid #bbbbbb;
+
+}
