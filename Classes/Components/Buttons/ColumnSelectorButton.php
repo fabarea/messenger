@@ -144,6 +144,7 @@ class ColumnSelectorButton implements ButtonInterface
         );
 
         $view = GeneralUtility::makeInstance(StandaloneView::class);
+        
         $view->setTemplatePathAndFilename(
             ExtensionManagementUtility::extPath('messenger') .
             'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
