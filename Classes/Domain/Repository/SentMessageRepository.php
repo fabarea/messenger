@@ -31,7 +31,7 @@ class SentMessageRepository extends AbstractContentRepository
                     ->eq('uid', $this->getQueryBuilder()->expr()->literal($uid)),
             );
 
-        $messages = $query->execute()->fetchOne();
+        $messages = $query->executeQuery()->fetchOne();
 
         return is_array($messages) ? $messages : [];
     }
@@ -44,7 +44,7 @@ class SentMessageRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where($this->getQueryBuilder()->expr()->in('uid', $uids));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     public function findAll(): array
@@ -52,7 +52,7 @@ class SentMessageRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->select('*')->from($this->tableName);
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     public function findByUuid(string $uuid): array
@@ -67,7 +67,7 @@ class SentMessageRepository extends AbstractContentRepository
                     ->eq('uuid', $this->getQueryBuilder()->expr()->literal($uuid)),
             );
 
-        $messages = $query->execute()->fetchAssociative();
+        $messages = $query->executeQuery()->fetchAssociative();
 
         return is_array($messages) ? $messages : [];
     }
@@ -81,7 +81,7 @@ class SentMessageRepository extends AbstractContentRepository
             ->from($this->tableName)
             ->where('crdate <' . $time);
 
-        $messages = $query->execute()->fetchAssociative();
+        $messages = $query->executeQuery()->fetchAssociative();
         return is_array($messages) ? $messages : [];
     }
 
@@ -92,7 +92,7 @@ class SentMessageRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('crdate < ' . $time);
 
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     public function findByDemand(array $demand = [], array $orderings = [], int $offset = 0, int $limit = 0): array
@@ -129,7 +129,7 @@ class SentMessageRepository extends AbstractContentRepository
             $queryBuilder->setMaxResults($limit);
         }
 
-        return $queryBuilder->execute()->fetchAllAssociative();
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 
     public function countByDemand(array $demand = []): int
@@ -157,7 +157,7 @@ class SentMessageRepository extends AbstractContentRepository
             $queryBuilder->where($queryBuilder->expr()->or(...$constraints));
         }
 
-        return (int)$queryBuilder->execute()->fetchOne();
+        return (int)$queryBuilder->executeQuery()->fetchOne();
     }
 
     public function add(array $message): int
@@ -182,7 +182,7 @@ class SentMessageRepository extends AbstractContentRepository
         $query = $this->getQueryBuilder();
         $query->insert($this->tableName)->values($values);
 
-        $result = $query->execute();
+        $result = $query->executeStatement();
         if (!$result) {
             throw new \RuntimeException('I could not save the message as "sent message"', 1_389_721_852);
         }
@@ -193,13 +193,13 @@ class SentMessageRepository extends AbstractContentRepository
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where('uid = ' . $uid);
-        return $query->execute();
+        return $query->executeStatement();
     }
 
     public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();
         $query->delete($this->tableName)->where($query->expr()->in('uid', $uids));
-        return $query->execute();
+        return $query->executeStatement();
     }
 }

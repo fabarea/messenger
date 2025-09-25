@@ -18,8 +18,18 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class SanitizeViewHelper extends AbstractViewHelper
 {
-    public function render(mixed $item): array|string
+    /**
+     * Initialize arguments.
+     */
+    public function initializeArguments(): void
     {
+        parent::initializeArguments();
+        $this->registerArgument('item', 'mixed', 'The item to sanitize', true);
+    }
+
+    public function render(): array|string
+    {
+        $item = $this->arguments['item'];
         $item = $this->makeItemTraversable($item);
         return $this->convertPropertiesToFields($item);
     }
