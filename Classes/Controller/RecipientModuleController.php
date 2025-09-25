@@ -86,7 +86,7 @@ class RecipientModuleController extends ActionController
 
         $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
 
-        return $moduleTemplate->renderResponse('Index');
+        return $moduleTemplate->renderResponse($this->getTemplateName());
 
     }
 
@@ -285,5 +285,15 @@ class RecipientModuleController extends ActionController
         $response = $responseFactory->createResponse();
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+    protected function getTemplateName(): string
+    {
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        $controllerName = end($classNameParts);
+
+        $controllerName = str_replace('Controller', '', $controllerName);
+
+        return $controllerName . '/Index';
     }
 }

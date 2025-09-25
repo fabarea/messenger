@@ -17,8 +17,18 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class BodyViewHelper extends AbstractViewHelper
 {
-    public function render(string $identifier): ?string
+    /**
+     * Initialize arguments.
+     */
+    public function initializeArguments(): void
     {
+        parent::initializeArguments();
+        $this->registerArgument('identifier', 'string', 'The identifier', true);
+    }
+
+    public function render(): ?string
+    {
+        $identifier = $this->arguments['identifier'];
         return MessageStorage::getInstance()->get($identifier);
     }
 }

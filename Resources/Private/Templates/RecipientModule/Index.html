@@ -1,4 +1,3 @@
-
 <html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
 <f:layout name="Module" />
@@ -8,13 +7,13 @@
             includeJsFiles="{
         0: 'EXT:messenger/Resources/Public/JavaScript/Utils/Uri.js'
     }"
-            includeRequireJsModules="{
-        0: 'TYPO3/CMS/Messenger/Utils/RowsSelection',
-        1: 'TYPO3/CMS/Messenger/SendAgainMenuItemNative',
-        2: 'TYPO3/CMS/Messenger/DataExport',
-        3: 'TYPO3/CMS/Messenger/MassDeletion',
-        4: 'TYPO3/CMS/Messenger/UpdateRecipient',
-        5: 'TYPO3/CMS/Messenger/EnqueueMessages'
+            includeJavaScriptModules="{
+        0: '@fab/messenger/Utils/RowsSelection.js',
+        1: '@fab/messenger/SendAgainMenuItemNative.js',
+        2: '@fab/messenger/DataExport.js',
+        3: '@fab/messenger/MassDeletion.js',
+        4: '@fab/messenger/UpdateRecipient.js',
+        5: '@fab/messenger/EnqueueMessages.js'
     }"
     />
     <f:render arguments="{_all}" partial="List/RecipientListView" />

@@ -90,7 +90,7 @@ abstract class AbstractMessengerController extends ActionController
                 ? $this->request->getArgument('items')
                 : $this->itemsPerPage,
             'direction' => $orderings[key($orderings)],
-            'controller ' => $this->controller,
+            'controller' => $this->controller,
             'action' => $this->action,
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
@@ -102,7 +102,7 @@ abstract class AbstractMessengerController extends ActionController
 
         $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
 
-        return $moduleTemplate->renderResponse('Index');
+        return $moduleTemplate->renderResponse($this->getTemplateName());
     }
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
@@ -316,5 +316,19 @@ abstract class AbstractMessengerController extends ActionController
         $response = $responseFactory->createResponse();
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Get the template name based on the controller name
+     */
+    protected function getTemplateName(): string
+    {
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        $controllerName = end($classNameParts);
+        
+        $controllerName = str_replace('Controller', '', $controllerName);
+        
+        return $controllerName . '/Index';
     }
 }
