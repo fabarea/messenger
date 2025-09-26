@@ -7,7 +7,7 @@ import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
 const MessengerMassDeletion = {
     /**
-     * Get mass deletion storage URL.
+     * Get edit storage URL.
      *
      * @param {string} url
      * @param module
@@ -16,7 +16,8 @@ const MessengerMassDeletion = {
      * @return string
      * @private
      */
-    getMassDeletionStorageUrl: function (url, module, type, searchTerm = '') {
+
+    getMassDeletionUrl: function (url, module, type, searchTerm = '') {
 
         let absoluteUrl;
         if (url.startsWith('/')) {
@@ -50,7 +51,7 @@ const MessengerMassDeletion = {
     initializeMassDeletion: function () {
 
         document.addEventListener('click', function (e) {
-            if (!e.target.classList.contains('btn-delete-selected')) {
+            if (!e.target.classList.contains('btn-mass-delete')) {
                 return;
             }
 
@@ -59,24 +60,26 @@ const MessengerMassDeletion = {
             const button = e.target;
             const module = button.dataset.module;
             const type = button.dataset.dataType;
-            const searchTerm = button.dataset.searchTerm || '';
+            const searchTerm = button.dataset.searchTerm;
+
 
             if (!window.TYPO3 || !window.TYPO3.settings || !window.TYPO3.settings.ajaxUrls) {
                 Notification.error('Error', 'TYPO3 configuration not loaded. Please refresh the page.');
                 return;
             }
 
-            const url = MessengerMassDeletion.getMassDeletionStorageUrl(
-                TYPO3.settings.ajaxUrls.messenger_mass_deletion_confirm,
+            const url = MessengerMassDeletion.getMassDeletionUrl(
+                TYPO3.settings.ajaxUrls.messenger_confirm_mass_delete,
                 module,
                 type,
                 searchTerm,
             );
 
+
             MessengerMassDeletion.modal = Modal.advanced({
                 type: Modal.types.ajax,
-                title: 'Confirm Mass Deletion',
-                severity: top.TYPO3.Severity.warning,
+                title: 'Delete',
+                severity: top.TYPO3.Severity.notice,
                 content: url,
                 buttons: [
                     {
@@ -87,8 +90,8 @@ const MessengerMassDeletion = {
                         },
                     },
                     {
-                        text: 'Delete selected',
-                        btnClass: 'btn btn-danger',
+                        text: 'Delete ',
+                        btnClass: 'btn btn-primary',
                         trigger: function () {
 
                             const modalElement = MessengerMassDeletion.modal.find ? MessengerMassDeletion.modal.find('.modal-content')[0] : MessengerMassDeletion.modal;
@@ -99,40 +102,44 @@ const MessengerMassDeletion = {
                                 console.log('Modal element not found for button disabling');
                             }
 
-                            const deleteUrl = MessengerMassDeletion.getMassDeletionStorageUrl(
-                                TYPO3.settings.ajaxUrls.messenger_mass_deletion_delete,
+                            const deleteUrl = MessengerMassDeletion.getMassDeletionUrl(
+                                TYPO3.settings.ajaxUrls.messenger_mass_delete,
                                 module,
                                 type,
                                 searchTerm,
                             );
 
-                            // Use AjaxRequest for deletion operations
+                            // Try POST method instead of GET for delete operations
                             new AjaxRequest(deleteUrl)
-                                .get()
+                                .post({})
                                 .then(async (response) => {
                                     const data = await response.resolve();
-
-                                    if (typeof data === 'string') {
-                                        Notification.success('Success', data);
-
-                                        // Reload the page to refresh the data
-                                        setTimeout(function() {
-                                            window.location.reload();
-                                        }, 1000);
-
-                                        Modal.dismiss();
-                                    } else {
-                                        throw new Error('Unexpected response format');
-                                    }
+                                    Notification.success('Success', 'Items deleted successfully');
+                                    Modal.dismiss();
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
                                 })
                                 .catch((error) => {
-                                    console.error('Deletion error:', error);
-                                    Notification.error('Error', 'Deletion operation failed. Please try again.');
 
-                                    if (modalElement) {
-                                        const buttons = modalElement.querySelectorAll('.btn');
-                                        buttons.forEach(btn => btn.removeAttribute('disabled'));
-                                    }
+                                    new AjaxRequest(deleteUrl)
+                                        .get()
+                                        .then(async (response) => {
+                                            const data = await response.resolve();
+                                            Notification.success('Success', 'Items deleted successfully');
+                                            Modal.dismiss();
+                                            setTimeout(() => {
+                                                window.location.reload();
+                                            }, 1000);
+                                        })
+                                        .catch((fallbackError) => {
+                                            Notification.error('Error', 'Delete operation failed. Please try again.');
+
+                                            if (modalElement) {
+                                                const buttons = modalElement.querySelectorAll('.btn');
+                                                buttons.forEach(btn => btn.removeAttribute('disabled'));
+                                            }
+                                        });
                                 });
                         },
                     },
@@ -140,12 +147,12 @@ const MessengerMassDeletion = {
             });
         });
     },
-
 };
 
 // Expose globally for compatibility
 window.MessengerMassDeletion = MessengerMassDeletion;
+window.MessengerMassDeletion.initialized = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-    MessengerMassDeletion.initialize();
+    window.MessengerMassDeletion.initialize();
 });
