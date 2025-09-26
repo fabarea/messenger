@@ -9,12 +9,16 @@ class InArrayViewHelper extends AbstractConditionViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('haystack', 'string', 'haystack', true);
-        $this->registerArgument('needle', 'string', 'need', true);
+        $this->registerArgument('haystack', 'array', 'haystack', true);
+        $this->registerArgument('needle', 'string', 'needle', true);
     }
 
     protected static function evaluateCondition($arguments = null): bool
     {
+
+        if (!is_array($arguments['haystack']) || !array_key_exists('needle', $arguments)) {
+            return false;
+        }
         return in_array($arguments['needle'], $arguments['haystack'], true);
     }
 }

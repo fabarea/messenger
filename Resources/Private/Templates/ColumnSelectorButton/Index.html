@@ -15,18 +15,27 @@
                         <f:if condition="{fieldName} != 'hidden'">
                             <li class="checkbox text-black">
                                 <label>
-                                    <f:variable
-                                            name="isChecked"
-                                            value="{m:inArray(haystack:'{selectedColumns}', needle:'{fieldName}', then:'1', else:'0')}"
-                                    />
-                                    <input
-                                            type="checkbox"
-                                            class="check-visible-toggle column-selector-checkbox"
-                                            name="selectedColumns[]"
-                                            value="{fieldName}"
-                                            data-field="{fieldName}"
-                                            {f:if(condition:'{isChecked}' , then:'checked="checked"' , else:'')}
-                                    />
+                                    <f:if condition="{m:inArray(haystack:selectedColumns, needle:fieldName)}">
+                                        <f:then>
+                                            <input
+                                                    type="checkbox"
+                                                    class="check-visible-toggle column-selector-checkbox"
+                                                    name="selectedColumns[]"
+                                                    value="{fieldName}"
+                                                    data-field="{fieldName}"
+                                                    checked="checked"
+                                            />
+                                        </f:then>
+                                        <f:else>
+                                            <input
+                                                    type="checkbox"
+                                                    class="check-visible-toggle column-selector-checkbox"
+                                                    name="selectedColumns[]"
+                                                    value="{fieldName}"
+                                                    data-field="{fieldName}"
+                                            />
+                                        </f:else>
+                                    </f:if>
                                     <f:if condition="{model}">
                                         <f:then>
                                             <f:if condition="{model} == 'fe_users'">
