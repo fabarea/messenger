@@ -9,6 +9,7 @@ namespace Fab\Messenger\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -19,6 +20,9 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
  */
 class MessageDisplayController extends ActionController
 {
+    /**
+     * @throws Exception
+     */
     public function showAction(): \Psr\Http\Message\ResponseInterface
     {
         $result = 'Nothing to show!';

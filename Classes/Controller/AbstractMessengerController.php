@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use Fab\Messenger\Controller\Ajax\ColumnSelectorController;
 
 abstract class AbstractMessengerController extends ActionController
 {
@@ -72,6 +73,7 @@ abstract class AbstractMessengerController extends ActionController
             return !in_array($field, $this->excludedFields);
         });
         $fields = array_merge(['uid'], $fields);
+
         $selectedColumns = $this->computeSelectedColumns();
 
         $pagination = new SimplePagination($paginator);
@@ -90,7 +92,7 @@ abstract class AbstractMessengerController extends ActionController
                 ? $this->request->getArgument('items')
                 : $this->itemsPerPage,
             'direction' => $orderings[key($orderings)],
-            'controller ' => $this->controller,
+            'controller' => $this->controller,
             'action' => $this->action,
             'domainModel' => $this->domainModel,
             'moduleName' => $this->moduleName,
@@ -102,7 +104,7 @@ abstract class AbstractMessengerController extends ActionController
 
         $this->configureDocHeaderForModuleTemplate($moduleTemplate, $fields, $selectedColumns);
 
-        return $moduleTemplate->renderResponse('Index');
+        return $moduleTemplate->renderResponse($this->getTemplateName());
     }
 
     protected function configureDocHeaderForModuleTemplate(ModuleTemplate $moduleTemplate, array $fields, array $selectedColumns): void
@@ -123,7 +125,8 @@ abstract class AbstractMessengerController extends ActionController
                 ->setTableName($this->table)
                 ->setAction('index')
                 ->setController($this->controller)
-                ->setModel($this->domainModel);
+                ->setModel($this->domainModel)
+                ->setRequest($this->request);
 
             $buttonBar->addButton($columnSelectorButton, ButtonBar::BUTTON_POSITION_RIGHT, 1);
         }
@@ -186,27 +189,20 @@ abstract class AbstractMessengerController extends ActionController
         $demand = $this->getDemand();
         return $this->repository->countByDemand($demand);
     }
+    /**
+     * Compute selected columns using the new ColumnSelector system
+     */
     protected function computeSelectedColumns(): array
     {
-        $moduleVersion = explode('/', $this->getRequestUrl());
-        if (count(array_unique($moduleVersion)) !== 1) {
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $this->defaultSelectedColumns);
+        $module = $this->getModuleName($this->moduleName);
+        $selectedColumns = ColumnSelectorController::getSavedColumnSelection($module, $this->table);
+
+        if (empty($selectedColumns)) {
+            $selectedColumns = $this->defaultSelectedColumns;
         }
 
-        $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns') ?? $this->defaultSelectedColumns;
-        if ($this->request->hasArgument('selectedColumns')) {
-            $selectedColumns = $this->request->getArgument('selectedColumns');
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
-        }
-        $storedColumns = BackendUserPreferenceService::getInstance()->get('AjaxSelectedColumns');
-        $module = BackendUserPreferenceService::getInstance()->get('module');
-
-        if ($module !== $this->getModuleName($this->moduleName)) {
-            return $selectedColumns;
-        }
-        if (!empty($storedColumns)) {
-            $selectedColumns = $storedColumns;
+        if (!empty($this->allowedColumns)) {
+            $selectedColumns = array_intersect($selectedColumns, $this->allowedColumns);
         }
 
         return $selectedColumns;
@@ -254,7 +250,8 @@ abstract class AbstractMessengerController extends ActionController
                     'pid' => $pagePid,
                     'uid' => 0,
                 ])
-            );
+            )
+                ->setRequest($this->request);
 
             $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
         }
@@ -316,5 +313,19 @@ abstract class AbstractMessengerController extends ActionController
         $response = $responseFactory->createResponse();
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Get the template name based on the controller name
+     */
+    protected function getTemplateName(): string
+    {
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        $controllerName = end($classNameParts);
+
+        $controllerName = str_replace('Controller', '', $controllerName);
+
+        return $controllerName . '/Index';
     }
 }

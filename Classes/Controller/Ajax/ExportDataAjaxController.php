@@ -86,16 +86,15 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
                 if ($this->dataType === 'recipient-module') {
                     $errorMessage .= ' (recipient_data_type: ' . ConfigurationUtility::getInstance()->get('recipient_data_type') . ')';
                 }
-                return $this->getResponse('Error: ' . $errorMessage);
+                return $this->getResponse(json_encode(['success' => false, 'message' => 'Error: ' . $errorMessage]));
             }
 
             $this->dataExportService = GeneralUtility::makeInstance(DataExportService::class);
             $this->dataExportService->setRepository($this->repository);
-            $this->performExport($dataUids, $this->request->getQueryParams()['format'], $columns);
+            return $this->performExport($dataUids, $this->request->getQueryParams()['format'], $columns);
         } else {
-            return $this->getResponse('Error: No data to export or format not specified');
+            return $this->getResponse(json_encode(['success' => false, 'message' => 'Error: No data to export or format not specified']));
         }
-        return $this->getResponse('Success');
     }
 
     protected function initializeRepository(string $type): void
@@ -124,29 +123,58 @@ final class ExportDataAjaxController extends AbstractMessengerAjaxController
         }
     }
 
-    protected function performExport(array $uids, string $format, array $columns): void
+    protected function performExport(array $uids, string $format, array $columns): ResponseInterface
     {
-        switch ($format) {
-            case 'csv':
-                $this->dataExportService->exportCsv(
-                    $uids,
-                    'export-' . $this->dataType . '-' . $this->date . '.csv',
-                    ',',
-                    '"',
-                    '\\',
-                    $columns,
-                );
-                break;
-            case 'xml':
-                $this->dataExportService->exportXml(
-                    $uids,
-                    'export-' . $this->dataType . '-' . $this->date . '.xml',
-                    $columns,
-                );
-                break;
-            default:
-                $this->getResponse('Error');
+        try {
+            $filename = 'export-' . $this->dataType . '-' . $this->date;
+            $dataSets = $this->repository->findByUids($uids);
+
+            switch ($format) {
+                case 'csv':
+                    $content = $this->generateCsvContent($dataSets, $columns);
+                    return $this->getFile($content, $filename . '.csv', 'text/csv');
+
+                case 'xml':
+                    $content = $this->generateXmlContent($dataSets, $columns);
+                    return $this->getFile($content, $filename . '.xml', 'application/xml');
+
+                default:
+                    return $this->getResponse(json_encode(['success' => false, 'message' => 'Error: Unsupported format']));
+            }
+        } catch (\Exception $e) {
+            return $this->getResponse(json_encode(['success' => false, 'message' => 'Export failed: ' . $e->getMessage()]));
         }
+    }
+
+    protected function generateCsvContent(array $dataSets, array $header, string $delimiter = ',', string $enclosure = '"', string $escape = '\\'): string
+    {
+        $csv = fopen('php://temp', 'r+');
+        fputcsv($csv, $header, $delimiter, $enclosure, $escape);
+        foreach ($dataSets as $dataSet) {
+            $row = [];
+            foreach ($header as $key) {
+                $row[] = $dataSet[$key] ?? '';
+            }
+            fputcsv($csv, $row, $delimiter, $enclosure, $escape);
+        }
+        rewind($csv);
+        $csvContent = stream_get_contents($csv);
+        fclose($csv);
+        return $csvContent;
+    }
+
+    protected function generateXmlContent(array $dataSets, array $header): string
+    {
+        $xml = new \SimpleXMLElement('<?xml version="1.0"?><data></data>');
+        foreach ($dataSets as $dataSet) {
+            $xmlRow = $xml->addChild('row');
+            foreach ($dataSet as $key => $value) {
+                if (in_array($key, $header, true)) {
+                    $xmlRow->addChild($key, htmlspecialchars((string)$value));
+                }
+            }
+        }
+        return $xml->asXML();
     }
 
     protected function getFile(

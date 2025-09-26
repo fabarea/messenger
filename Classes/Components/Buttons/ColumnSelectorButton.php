@@ -15,7 +15,10 @@ use TYPO3\CMS\Backend\Template\Components\Buttons\ButtonInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use Fab\Messenger\Controller\Ajax\ColumnSelectorController;
 
 class ColumnSelectorButton implements ButtonInterface
 {
@@ -34,6 +37,21 @@ class ColumnSelectorButton implements ButtonInterface
     protected string $action = '';
 
     protected string $model = '';
+
+    protected ?ServerRequestInterface $request = null;
+
+
+    public function getRequest(): ServerRequestInterface
+    {
+        return $this->request;
+
+    }
+
+    public function setRequest(?ServerRequestInterface $request): self
+    {
+        $this->request = $request;
+        return $this;
+    }
 
     public function getModel(): string
     {
@@ -130,6 +148,14 @@ class ColumnSelectorButton implements ButtonInterface
 
     public function render(): string
     {
+        // Récupérer les colonnes sauvegardées par l'utilisateur
+        $savedColumns = ColumnSelectorController::getSavedColumnSelection($this->module, $this->tableName);
+
+        // Si des colonnes sont sauvegardées, les utiliser, sinon garder les valeurs par défaut
+        if (!empty($savedColumns)) {
+            $this->selectedColumns = $savedColumns;
+        }
+
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsFile(
             'EXT:messenger/Resources/Public/JavaScript/ColumnSelector.js',
@@ -142,24 +168,24 @@ class ColumnSelectorButton implements ButtonInterface
         $pageRenderer->addCssFile(
             'EXT:messenger/Resources/Public/Css/ColumnSelector.css'
         );
-
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-        $view->setTemplatePathAndFilename(
-            ExtensionManagementUtility::extPath('messenger') .
-            'Resources/Private/Standalone/Components/Buttons/ColumnSelectorButton.html',
+        $viewFactoryData = new ViewFactoryData(
+            templateRootPaths: ['EXT:messenger/Resources/Private/Templates'],
+            partialRootPaths: ['EXT:messenger/Resources/Private/Partials'],
+            layoutRootPaths: ['EXT:messenger/Resources/Private/Layouts'],
+            request: $this->request
         );
 
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $routeName = $this->getAjaxRouteNameForModule($this->module);
+        $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
+        $view = $viewFactory->create($viewFactoryData);
 
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
+        // Utiliser une route AJAX existante de TYPO3 avec des paramètres personnalisés
         try {
-            $ajaxUrl = $uriBuilder->buildUriFromRoute($routeName);
+            $ajaxUrl = $uriBuilder->buildUriFromRoute('record_process');
         } catch (RouteNotFoundException $e) {
-            try {
-                $ajaxUrl = $uriBuilder->buildUriFromRoutePath('/ajax' . $this->getAjaxPathForModule($this->module));
-            } catch (\Exception $fallbackException) {
-                $ajaxUrl = '/typo3/ajax' . $this->getAjaxPathForModule($this->module);
-            }
+            // Fallback vers une URL directe
+            $ajaxUrl = '/typo3/index.php?route=/record/process';
         }
 
         $view->assignMultiple([
@@ -172,7 +198,7 @@ class ColumnSelectorButton implements ButtonInterface
             'model' => $this->model,
             'ajaxUrl' => $ajaxUrl,
         ]);
-        return $view->render();
+        return $view->render($this->getTemplateName());
     }
 
     /**
@@ -205,5 +231,16 @@ class ColumnSelectorButton implements ButtonInterface
         ];
 
         return $pathMap[$module] ?? '/messenger/column-selector/m1';
+    }
+
+    protected function getTemplateName(): string
+    {
+        $className = get_class($this);
+        $classNameParts = explode('\\', $className);
+        $controllerName = end($classNameParts);
+
+        $controllerName = str_replace('Controller', '', $controllerName);
+
+        return $controllerName . '/Index';
     }
 }
