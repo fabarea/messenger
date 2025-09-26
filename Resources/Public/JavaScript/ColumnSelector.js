@@ -27,9 +27,10 @@
                 const checkboxes = columnSelector.querySelectorAll('.column-selector-checkbox');
 
                 if (!ajaxUrl || !module) {
-                    console.warn('Column selector missing required data attributes');
                     return;
                 }
+
+                this.restoreSelectionsFromLocalStorage(module, tableName, checkboxes);
 
                 // Add event listeners to all checkboxes
                 checkboxes.forEach((checkbox) => {
@@ -45,6 +46,27 @@
             });
 
             this.initialized = true;
+        }
+
+        /**
+         * NOUVELLE MÉTHODE : Restaurer les sélections depuis localStorage
+         */
+        restoreSelectionsFromLocalStorage(module, tableName, checkboxes) {
+            try {
+                const storageKey = 'messenger_columns_' + module + '_' + (tableName || 'default');
+                const savedData = localStorage.getItem(storageKey);
+
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    const selectedColumns = parsedData.selectedColumns || [];
+
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = selectedColumns.includes(checkbox.value);
+                    });
+                }
+            } catch (error) {
+                console.warn('Error restoring selections from localStorage:', error);
+            }
         }
 
         /**
@@ -68,60 +90,49 @@
                     this.showSuccessMessage('Column selection updated');
 
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                        const currentUrl = new URL(window.location.href);
+
+                        currentUrl.searchParams.delete('selectedColumns[]');
+
+                        selectedColumns.forEach(column => {
+                            currentUrl.searchParams.append('selectedColumns[]', column);
+                        });
+
+                        window.location.href = currentUrl.toString();
+                    }, 200);
                 } else {
-                    console.error('Column selector update failed:', response.error);
                     this.showErrorMessage(response.error || 'Update failed');
                 }
             }).catch((error) => {
-                console.error('AJAX request failed:', error);
-                this.showErrorMessage('Network error occurred');
+                this.showErrorMessage('Save failed');
             }).finally(() => {
                 this.showLoadingState(checkboxes, false);
             });
         }
 
         /**
-         * Send AJAX request to update columns
+         * Send AJAX request to update columns - SIMPLIFIED VERSION
          */
         sendColumnUpdateRequest(ajaxUrl, data) {
             return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', ajaxUrl, true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                try {
+                    // Créer une clé unique pour ce module/table
+                    const storageKey = 'messenger_columns_' + data.module + '_' + (data.tableName || 'default');
 
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                resolve(response);
-                            } catch (e) {
-                                reject(new Error('Error parsing response: ' + e.message));
-                            }
-                        } else {
-                            reject(new Error('HTTP error: ' + xhr.status));
-                        }
-                    }
-                };
+                    localStorage.setItem(storageKey, JSON.stringify({
+                        selectedColumns: data.selectedColumns,
+                        timestamp: Date.now()
+                    }));
 
-                xhr.onerror = function() {
-                    reject(new Error('Network error'));
-                };
 
-                // Prepare form data
-                const formData = new URLSearchParams();
-                formData.append('module', data.module);
-                if (data.tableName) {
-                    formData.append('tableName', data.tableName);
+                    resolve({
+                        success: true,
+                        message: 'Column selection updated (localStorage)'
+                    });
+
+                } catch (error) {
+                    reject(new Error('Failed to save column selection'));
                 }
-
-                data.selectedColumns.forEach((column) => {
-                    formData.append('selectedColumns[]', column);
-                });
-
-                xhr.send(formData.toString());
             });
         }
 
@@ -174,10 +185,8 @@
         columnSelector.initialize();
     }
 
-    // Listen for reinit events
     document.addEventListener('typo3:columnselector:reinit', () => columnSelector.initialize());
 
-    // Make available globally if needed
     window.MessengerColumnSelector = columnSelector;
 
 })();

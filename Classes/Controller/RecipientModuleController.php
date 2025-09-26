@@ -23,6 +23,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use Fab\Messenger\Controller\Ajax\ColumnSelectorController;
 
 class RecipientModuleController extends ActionController
 {
@@ -132,33 +133,19 @@ class RecipientModuleController extends ActionController
     /**
      * @throws NoSuchArgumentException
      */
+
     protected function computeSelectedColumns(): array
     {
-        $defaultSelectedColumns = array_slice($this->getFields(), 0, 6);
-        $parsedBody = $this->request->getParsedBody();
-        $formData = $parsedBody['tx_messenger_messenger_messengertxmessengerm5'] ?? [];
-        $moduleVersion = explode('/', $this->getRequestUrl());
-        if (count(array_unique($moduleVersion)) !== 1) {
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $defaultSelectedColumns);
-        }
-        $selectedColumns =
-            BackendUserPreferenceService::getInstance()->get('selectedColumns')
-            ?? $defaultSelectedColumns;
-        if (!empty($formData['selectedColumns'])) {
-            $selectedColumns = $formData['selectedColumns'];
-        }
-        if ($this->request->hasArgument('selectedColumns')) {
-            $selectedColumns = $this->request->getArgument('selectedColumns');
-            BackendUserPreferenceService::getInstance()->set('selectedColumns', $selectedColumns);
-        }
-        $storedColumns = BackendUserPreferenceService::getInstance()->get('RecipientAjaxSelectedColumns');
-        $module = BackendUserPreferenceService::getInstance()->get('module');
+        $module = 'tx_messenger_messenger_messengertxmessengerm5'; // Module fixe pour RecipientModule
+        $selectedColumns = ColumnSelectorController::getSavedColumnSelection($module, $this->tableName);
 
-        if (empty($module)) {
-            return $selectedColumns;
+        if (empty($selectedColumns)) {
+            $selectedColumns = array_slice($this->getFields(), 0, 6);
         }
-        if (!empty($storedColumns)) {
-            $selectedColumns = $storedColumns;
+
+        $availableFields = $this->getFields();
+        if (!empty($availableFields)) {
+            $selectedColumns = array_intersect($selectedColumns, $availableFields);
         }
 
         return $selectedColumns;
@@ -190,6 +177,7 @@ class RecipientModuleController extends ActionController
         $columnSelectorButton->setAction('index');
         $columnSelectorButton->setController('RecipientModule');
         $columnSelectorButton->setModel($this->getModel());
+        $columnSelectorButton->setRequest($this->request);
 
         if ($this->showNewButton) {
             $this->addNewButton();
@@ -224,7 +212,8 @@ class RecipientModuleController extends ActionController
                 'pid' => $pagePid,
                 'uid' => 0,
             ]),
-        );
+        )
+            ->setRequest($this->request);
         $buttonBar->addButton($newButton, ButtonBar::BUTTON_POSITION_LEFT, 2);
 
         return $this;
