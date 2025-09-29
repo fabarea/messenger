@@ -3,166 +3,162 @@
  */
 import Modal from '@typo3/backend/modal.js';
 import Notification from '@typo3/backend/notification.js';
+import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
-class MessengerSendAgain {
-    constructor() {
-        this.initialized = false;
-        this.modal = null;
-    }
-
+const MessengerSendAgain = {
     /**
      * Get edit storage URL
+     *
+     * @param {string} url
+     * @param type
+     * @param searchTerm
+     * @return string
+     * @private
      */
-    getEditStorageUrl(url, type, searchTerm = '') {
-        const uri = new URL(url, window.location.origin);
+    getEditStorageUrl: function (url, type, searchTerm = '') {
+
+        if (!url) {
+            console.error('URL is undefined or null');
+            return '';
+        }
+
+        let absoluteUrl;
+        if (url.startsWith('/')) {
+            absoluteUrl = window.location.origin + url;
+        } else {
+            absoluteUrl = url;
+        }
 
         // Get selected items
         const columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
-        const params = new URLSearchParams();
-        params.append('tx_messenger_user_messenger[matches][uid]', columnsToSend.join(','));
-        params.append('dataType', type);
-        params.append('search', searchTerm);
+        const urlObj = new URL(absoluteUrl);
+        const params = urlObj.searchParams;
 
-        uri.search = params.toString();
-        return uri.toString();
-    }
+        params.set('tx_messenger_user_messenger[matches][uid]', columnsToSend.join(','));
+        params.set('dataType', type);
+        params.set('search', searchTerm);
+
+        const finalUrl = urlObj.toString();
+
+        return finalUrl;
+    },
+
+    initialize: function () {
+        this.initializeSendAgain();
+    },
 
     /**
-     * Initialize send again functionality
+     * @return void
      */
-    initialize() {
-        if (this.initialized) return;
+    initializeSendAgain: function () {
 
-        document.addEventListener('click', (e) => {
-            const sendAgainButton = e.target.closest('.btn-sendAgain');
-            if (sendAgainButton) {
-                e.preventDefault();
-                this.handleSendAgainClick(sendAgainButton);
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('btn-sendAgain')) {
+                return;
             }
-        });
 
-        this.initialized = true;
-    }
+            e.preventDefault();
 
-    /**
-     * Handle send again button click
-     */
-    handleSendAgainClick(button) {
-        const type = button.dataset.dataType;
-        const searchTerm = button.dataset.searchTerm || '';
+            const button = e.target;
+            const type = button.dataset.dataType;
+            const searchTerm = button.dataset.searchTerm || '';
 
-        const ajaxUrls = window.TYPO3?.settings?.ajaxUrls || {};
-        const confirmUrl = ajaxUrls.messenger_send_again_confirmation;
-        const sendAgainUrl = ajaxUrls.messenger_send_again;
+            if (!window.TYPO3 || !window.TYPO3.settings || !window.TYPO3.settings.ajaxUrls) {
+                Notification.error('Error', 'TYPO3 configuration not loaded. Please refresh the page.');
+                return;
+            }
 
-        if (!confirmUrl || !sendAgainUrl) {
-            console.error('Send again URLs not found in TYPO3 settings');
-            this.showError('Send again configuration error');
-            return;
-        }
+            // Check if the required AJAX URLs exist
+            if (!TYPO3.settings.ajaxUrls.messenger_send_again_confirmation || !TYPO3.settings.ajaxUrls.messenger_send_again) {
+                console.error('Send again AJAX URLs not found:', TYPO3.settings.ajaxUrls);
+                Notification.error('Error', 'Send again URLs not configured. Please check TYPO3 configuration.');
+                return;
+            }
 
-        const url = this.getEditStorageUrl(confirmUrl, type, searchTerm);
+            const url = MessengerSendAgain.getEditStorageUrl(
+                TYPO3.settings.ajaxUrls.messenger_send_again_confirmation,
+                type,
+                searchTerm,
+            );
 
-        this.modal = Modal.advanced({
-            type: Modal.types.ajax,
-            title: 'Send Again',
-            severity: top.TYPO3.Severity.notice,
-            content: url,
-            buttons: [
-                {
-                    text: 'Cancel',
-                    btnClass: 'btn btn-default',
-                    trigger: () => {
-                        Modal.dismiss();
+            // Check if URL was successfully generated
+            if (!url) {
+                Notification.error('Error', 'Failed to generate send again URL.');
+                return;
+            }
+
+            MessengerSendAgain.modal = Modal.advanced({
+                type: Modal.types.ajax,
+                title: 'Send Again',
+                severity: top.TYPO3.Severity.notice,
+                content: url,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        btnClass: 'btn btn-default',
+                        trigger: function () {
+                            Modal.dismiss();
+                        },
                     },
-                },
-                {
-                    text: 'Send Again',
-                    btnClass: 'btn btn-primary',
-                    trigger: () => {
-                        this.performSendAgain(sendAgainUrl, type, searchTerm);
+                    {
+                        text: 'Send Again',
+                        btnClass: 'btn btn-primary',
+                        trigger: function () {
+
+                            const modalElement = MessengerSendAgain.modal.find ? MessengerSendAgain.modal.find('.modal-content')[0] : MessengerSendAgain.modal;
+                            if (modalElement) {
+                                const buttons = modalElement.querySelectorAll('.btn');
+                                buttons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                            } else {
+                                console.log('Modal element not found for button disabling');
+                            }
+
+                            const sendAgainUrl = MessengerSendAgain.getEditStorageUrl(
+                                TYPO3.settings.ajaxUrls.messenger_send_again,
+                                type,
+                                searchTerm,
+                            );
+
+                            // Use AjaxRequest for send again operations
+                            new AjaxRequest(sendAgainUrl)
+                                .post({})
+                                .then(async (response) => {
+                                    const data = await response.resolve();
+
+                                    if (typeof data === 'string' || data.success !== false) {
+                                        Notification.success('Success', 'Messages sent again successfully');
+
+                                        // Reload the page to refresh the data
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 500);
+
+                                        Modal.dismiss();
+                                    } else {
+                                        throw new Error(data.message || 'Send again failed');
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error('Send again error:', error);
+                                    Notification.error('Error', 'Send again operation failed. Please try again.');
+
+                                    if (modalElement) {
+                                        const buttons = modalElement.querySelectorAll('.btn');
+                                        buttons.forEach(btn => btn.removeAttribute('disabled'));
+                                    }
+                                });
+                        },
                     },
-                },
-            ],
-        });
-    }
-
-    /**
-     * Perform the actual send again operation
-     */
-    async performSendAgain(sendAgainUrl, type, searchTerm) {
-        // Disable buttons during operation
-        const buttons = this.modal.querySelectorAll('.btn');
-        buttons.forEach(btn => btn.disabled = true);
-
-        const finalSendAgainUrl = this.getEditStorageUrl(sendAgainUrl, type, searchTerm);
-
-        try {
-            const response = await fetch(finalSendAgainUrl, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                ],
             });
+        });
+    },
+};
 
-            if (response.ok) {
-                const result = await response.text(); // Send again might return plain text
-                
-                this.showSuccess('Messages sent again successfully');
-                Modal.dismiss();
-                
-                // Reload the page to reflect changes
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
-                
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-        } catch (error) {
-            console.error('Send again error:', error);
-            this.showError('Send again failed: ' + error.message);
-        } finally {
-            // Re-enable buttons
-            buttons.forEach(btn => btn.disabled = false);
-        }
-    }
+// Expose globally for compatibility
+window.MessengerSendAgain = MessengerSendAgain;
 
-    /**
-     * Show success message
-     */
-    showSuccess(message) {
-        if (Notification) {
-            Notification.success('Success', message);
-        } else {
-            console.log('Success: ' + message);
-        }
-    }
-
-    /**
-     * Show error message
-     */
-    showError(message) {
-        if (Notification) {
-            Notification.error('Error', message);
-        } else {
-            alert('Error: ' + message);
-        }
-    }
-}
-
-// Initialize when DOM is ready
-const sendAgain = new MessengerSendAgain();
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => sendAgain.initialize());
-} else {
-    sendAgain.initialize();
-}
-
-// Make available globally
-window.MessengerSendAgain = sendAgain;
-
-export default MessengerSendAgain;
+document.addEventListener('DOMContentLoaded', () => {
+    MessengerSendAgain.initialize();
+});
