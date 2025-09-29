@@ -2,6 +2,7 @@
 
 namespace Fab\Messenger\Controller;
 
+use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Components\Buttons\ColumnSelectorButton;
 use Fab\Messenger\Components\Buttons\NewButton;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
@@ -47,12 +48,14 @@ class RecipientModuleController extends ActionController
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
-        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
+        $this->tableName = 'tx_newsletter_recipient';
+//        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
 
     /**
      * @throws NoSuchArgumentException
      * @throws RouteNotFoundException
+     * @throws Exception
      */
     public function indexAction(): ResponseInterface
     {
@@ -84,6 +87,7 @@ class RecipientModuleController extends ActionController
                 ? $this->request->getArgument('selectedRecords')
                 : [],
         ]);
+
 
         $this->computeDocHeader($moduleTemplate, $this->getFields(), $selectedColumns);
 

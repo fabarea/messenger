@@ -16,12 +16,12 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 
 class RecipientRepository extends AbstractContentRepository
 {
-    protected string $tableName = '';
+    protected string $tableName = 'tx_newsletter_recipient';
 
-    public function __construct()
-    {
-        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
-    }
+//    public function __construct()
+//    {
+//        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
+//    }
 
     /**
      * @throws DBALException
