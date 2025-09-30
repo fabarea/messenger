@@ -48,8 +48,7 @@ class RecipientModuleController extends ActionController
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
         $this->repository = GeneralUtility::makeInstance(RecipientRepository::class);
-        $this->tableName = 'tx_newsletter_recipient';
-//        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
+        $this->tableName = ConfigurationUtility::getInstance()->get('recipient_data_type');
     }
 
     /**
