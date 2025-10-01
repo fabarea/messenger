@@ -108,21 +108,3 @@ table.table thead {
         border: none;
     }
 }
-
-.btn-sendAgain {
-    background-color: white;
-
-    :hover {
-        background-color: white;
-    }
-}
-
-.dropdown-menu {
-    line-height: 1.45em;
-   font-size: 0.75rem;;
-}
-
-.btn-secondary {
-    border: 1px solid #bbbbbb;
-
-}

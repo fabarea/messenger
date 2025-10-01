@@ -212,15 +212,46 @@ table.table thead {
     border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
 }
 
-.btn-secondary,.dropdown-toggle {
+td{
+.btn-secondary, .dropdown-toggle {
     border: 1px solid #bbbbbb;
-    background-color: var(--bs-btn-bg);
+    background-color: #f8f9fa;
 }
-.btn{
+
+}
+
+.dropdown-fields{
+.btn-secondary, .dropdown-toggle {
+    border: 1px solid #bbbbbb;
+    background-color: #eee;
+}
+}
+.btn {
     background-color: var(--bs-btn-bg);
 }
 
 .table {
     background-color: #fafafa;
     border: 1px solid #ccc;
+}
+.btn-sendAgain {
+    background-color: white;
+
+    :hover {
+        background-color: white;
+    }
+}
+
+.dropdown-menu {
+    line-height: 1.45em;
+    font-size: 0.75rem;;
+}
+
+.btn-secondary {
+    border: 1px solid #bbbbbb;
+
+}
+.btn-sm {
+    --typo3-btn-padding-x: .25rem !important;
+
 }
