@@ -7,9 +7,32 @@ use Fab\Messenger\Controller\MessageQueueController;
 use Fab\Messenger\Controller\MessageTemplateController;
 use Fab\Messenger\Controller\RecipientModuleController;
 use Fab\Messenger\Controller\SentMessageModuleController;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-return [
-    'messenger' => [
+$configuration = [];
+try {
+    $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('messenger');
+} catch (Exception $e) {
+    $configuration = [
+        'load_message_template_module' => '0',
+        'load_message_layout_module' => '0',
+        'load_message_sent_module' => '0',
+        'load_message_queue_module' => '0',
+        'load_newsletter_module' => '0',
+    ];
+}
+
+$modules = [];
+
+$hasActiveModule = ($configuration['load_message_template_module'] ?? '0') === '1' ||
+                   ($configuration['load_message_layout_module'] ?? '0') === '1' ||
+                   ($configuration['load_message_sent_module'] ?? '0') === '1' ||
+                   ($configuration['load_message_queue_module'] ?? '0') === '1' ||
+                   ($configuration['load_newsletter_module'] ?? '0') === '1';
+
+if ($hasActiveModule) {
+    $modules['messenger'] = [
         'parent' => '',
         'position' => ['before' => 'user'],
         'access' => 'group,user',
@@ -17,9 +40,11 @@ return [
         'path' => '/module/messenger',
         'iconIdentifier' => 'extensions-messenger-module',
         'labels' => 'LLL:EXT:messenger/Resources/Private/Language/module_messenger.xlf',
-    ],
+    ];
+}
 
-    'messenger_tx_messenger_m2' => [
+if (($configuration['load_message_template_module'] ?? '0') === '1') {
+    $modules['messenger_tx_messenger_m2'] = [
         'parent' => 'messenger',
         'position' => ['after' => '*'],
         'access' => 'admin',
@@ -33,9 +58,11 @@ return [
                 'index',
             ],
         ],
-    ],
+    ];
+}
 
-    'messenger_tx_messenger_m3' => [
+if (($configuration['load_message_layout_module'] ?? '0') === '1') {
+    $modules['messenger_tx_messenger_m3'] = [
         'parent' => 'messenger',
         'position' => ['after' => '*'],
         'access' => 'admin',
@@ -49,9 +76,11 @@ return [
                 'index',
             ],
         ],
-    ],
+    ];
+}
 
-    'messenger_tx_messenger_m1' => [
+if (($configuration['load_message_sent_module'] ?? '0') === '1') {
+    $modules['messenger_tx_messenger_m1'] = [
         'parent' => 'messenger',
         'position' => ['after' => '*'],
         'access' => 'admin',
@@ -65,9 +94,11 @@ return [
                 'index',
             ],
         ],
-    ],
+    ];
+}
 
-    'messenger_tx_messenger_m4' => [
+if (($configuration['load_message_queue_module'] ?? '0') === '1') {
+    $modules['messenger_tx_messenger_m4'] = [
         'parent' => 'messenger',
         'position' => ['after' => '*'],
         'access' => 'admin',
@@ -81,9 +112,11 @@ return [
                 'index',
             ],
         ],
-    ],
+    ];
+}
 
-    'web_tx_messenger_m5' => [
+if (($configuration['load_newsletter_module'] ?? '0') === '1') {
+    $modules['web_tx_messenger_m5'] = [
         'parent' => 'web',
         'position' => ['after' => '*'],
         'access' => 'admin',
@@ -97,5 +130,7 @@ return [
                 'index',
             ],
         ],
-    ],
-];
+    ];
+}
+
+return $modules;
