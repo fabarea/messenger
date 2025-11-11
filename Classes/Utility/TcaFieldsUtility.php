@@ -43,7 +43,8 @@ class TcaFieldsUtility
 
     protected static function filterByBackendUser($fields): array
     {
-        if (!self::getBackendUser()->isAdmin()) {
+        $backendUser = self::getBackendUser();
+        if ($backendUser === null || !$backendUser->isAdmin()) {
             foreach ($fields as $fieldName => $field) {
                 if (!self::hasAccess($fieldName)) {
                     unset($fields[$fieldName]);
@@ -53,13 +54,17 @@ class TcaFieldsUtility
         return $fields;
     }
 
-    protected static function getBackendUser(): BackendUserAuthentication
+    protected static function getBackendUser(): ?BackendUserAuthentication
     {
-        return $GLOBALS['BE_USER'];
+        return $GLOBALS['BE_USER'] ?? null;
     }
 
     protected static function hasAccess(string $fieldName): bool
     {
+        $backendUser = self::getBackendUser();
+        if ($backendUser === null) {
+            return false;
+        }
         $hasAccess = true;
         if (
             self::hasTableAccess() &&
@@ -73,7 +78,8 @@ class TcaFieldsUtility
 
     protected static function hasTableAccess(): bool
     {
-        return self::getBackendUser()->check('tables_modify', self::$tableName);
+        $backendUser = self::getBackendUser();
+        return $backendUser !== null && $backendUser->check('tables_modify', self::$tableName);
     }
 
     /**
