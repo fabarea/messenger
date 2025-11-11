@@ -56,7 +56,7 @@ class ColumnSelectorController
         $backendUser = $GLOBALS['BE_USER'];
 
         if (!$backendUser) {
-            throw new \RuntimeException('No backend user found');
+            throw new \RuntimeException('No backend user found', 1619156934);
         }
 
         $settingsKey = 'messenger.columnSelector.' . md5($module . '.' . $tableName);
