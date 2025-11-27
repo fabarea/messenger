@@ -1,3 +1,7 @@
+## 5.0.0 (2025-11-27)
+
+[FEATURE] compatibility v12
+
 ## 4.1.0 (2022-11-03)
 
 - [FEATURE] PHP 8.1 compatibility
