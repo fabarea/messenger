@@ -1,12 +1,13 @@
 /**
  * Module: Fab/Messenger/DataExport
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
-    'use strict';
+import Modal from '@typo3/backend/modal.js';
+import Notification from '@typo3/backend/notification.js';
+import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
 const MessengerDataExport = {
     /**
-     * Get edit storage URL.
+     * Get export storage URL.
      *
      * @param {string} url
      * @param format
@@ -16,117 +17,116 @@ const MessengerDataExport = {
      * @return string
      * @private
      */
-
     getExportStorageUrl: function (url, format, module, type, searchTerm = '') {
-      const uri = new window.Uri(url);
 
-      // get element by columnsToSend value and assign to the uri object
-      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+        let absoluteUrl;
+        if (url.startsWith('/')) {
+            absoluteUrl = window.location.origin + url;
+        } else {
+            absoluteUrl = url;
+        }
 
-      uri.addQueryParam(
-        'tx_messenger_user_messenger' + '[matches][uid]',
-        columnsToSend.join(',') +
-          '&format=' +
-          format +
-          '&dataType=' +
-          type +
-          '&search=' +
-          searchTerm +
-          '&module=' +
-          module,
-      );
+        let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
 
-      return decodeURIComponent(uri.toString());
+        const urlObj = new URL(absoluteUrl);
+        const params = urlObj.searchParams;
+
+        params.set('tx_messenger_user_messenger[matches][uid]', columnsToSend.join(','));
+        params.append('format', format);
+        params.set('dataType', type);
+        params.set('search', searchTerm);
+        params.set('module', module);
+
+        const finalUrl = urlObj.toString();
+
+        return finalUrl;
     },
 
-    /**
-     * @return void
-     */
     initialize: function () {
-      this.initializeExport();
+        this.initializeDataExport();
     },
 
     /**
      * @return void
      */
+    initializeDataExport: function () {
 
-    initializeExport: function () {
-      $(document).on('click', '.btn-export', function (e) {
-        e.preventDefault();
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('btn-export')) {
+                return;
+            }
 
-        const format = $(this).data('format');
-        const module = $(this).data('module');
-        const type = $(this).data('data-type');
-        const searchTerm = $(this).data('search-term');
+            e.preventDefault();
 
-        const url = MessengerDataExport.getExportStorageUrl(
-          TYPO3.settings.ajaxUrls.messenger_export_data_confirm,
-          format,
-          module,
-          type,
-          searchTerm,
-        );
-        MessengerDataExport.modal = Modal.advanced({
-          type: Modal.types.ajax,
-          title: 'Export as ' + format,
-          severity: top.TYPO3.Severity.notice,
-          content: url,
-          buttons: [
-            {
-              text: 'Cancel',
-              btnClass: 'btn btn-default',
-              trigger: function () {
-                Modal.dismiss();
-              },
-            },
-            {
-              text: 'Export data',
-              btnClass: 'btn btn-primary',
-              trigger: function () {
-                $('.btn', MessengerDataExport.modal).attr('disabled', 'disabled');
-                const exportUrl = MessengerDataExport.getExportStorageUrl(
-                  TYPO3.settings.ajaxUrls.messenger_export_data_export,
-                  format,
-                  module,
-                  type,
-                  searchTerm,
-                );
-                // Ajax request
-                $.ajax({
-                  url: exportUrl,
+            const button = e.target;
+            const format = button.dataset.format;
+            const module = button.dataset.module;
+            const type = button.dataset.dataType;
+            const searchTerm = button.dataset.searchTerm || '';
 
-                  /**
-                   * On success call back
-                   *
-                   * @param response
-                   */
-                  success: function (response) {
-                    if (response) {
-                      window.location.href = MessengerDataExport.getExportStorageUrl(
-                        TYPO3.settings.ajaxUrls.messenger_export_data_export,
-                        format,
-                        module,
-                        type,
-                        searchTerm,
-                      );
-                      Modal.dismiss();
-                    } else {
-                      Notification.error('Error', response);
-                      Modal.dismiss();
-                    }
-                  },
-                });
-              },
-            },
-          ],
+            if (!window.TYPO3 || !window.TYPO3.settings || !window.TYPO3.settings.ajaxUrls) {
+                Notification.error('Error', 'TYPO3 configuration not loaded. Please refresh the page.');
+                return;
+            }
+
+            const url = MessengerDataExport.getExportStorageUrl(
+                TYPO3.settings.ajaxUrls.messenger_export_data_confirm,
+                format,
+                module,
+                type,
+                searchTerm,
+            );
+
+            MessengerDataExport.modal = Modal.advanced({
+                type: Modal.types.ajax,
+                title: `Export as ${format}`,
+                severity: top.TYPO3.Severity.notice,
+                content: url,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        btnClass: 'btn btn-default',
+                        trigger: function () {
+                            Modal.dismiss();
+                        },
+                    },
+                    {
+                        text: 'Export data',
+                        btnClass: 'btn btn-primary',
+                        trigger: function () {
+
+                            const modalElement = MessengerDataExport.modal.find ? MessengerDataExport.modal.find('.modal-content')[0] : MessengerDataExport.modal;
+                            if (modalElement) {
+                                const buttons = modalElement.querySelectorAll('.btn');
+                                buttons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                            } else {
+                                console.log('Modal element not found for button disabling');
+                            }
+
+                            const exportUrl = MessengerDataExport.getExportStorageUrl(
+                                TYPO3.settings.ajaxUrls.messenger_export_data_export,
+                                format,
+                                module,
+                                type,
+                                searchTerm,
+                            );
+
+                            window.location.href = exportUrl;
+
+                            setTimeout(function() {
+                                Modal.dismiss();
+                            }, 500);
+                        },
+                    },
+                ],
+            });
         });
-      });
     },
-  };
 
-    // Expose globally for compatibility
-    window.MessengerDataExport = MessengerDataExport;
-    window.MessengerDataExport.initialized = false;
+};
 
-    return MessengerDataExport;
+window.MessengerDataExport = MessengerDataExport;
+
+document.addEventListener('DOMContentLoaded', () => {
+    MessengerDataExport.initialize();
 });

@@ -1,8 +1,9 @@
 /**
  * Module: Fab/Messenger/MassDeletion
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Notification'], function($, Modal, Notification) {
-    'use strict';
+import Modal from '@typo3/backend/modal.js';
+import Notification from '@typo3/backend/notification.js';
+import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
 const MessengerMassDeletion = {
     /**
@@ -17,88 +18,141 @@ const MessengerMassDeletion = {
      */
 
     getMassDeletionUrl: function (url, module, type, searchTerm = '') {
-      const uri = new window.Uri(url);
 
-      // get element by columnsToSend value and assign to the uri object
-      let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
-      uri.addQueryParam(
-        'tx_messenger_user_messenger' + '[matches][uid]',
-        columnsToSend.join(',') + '&dataType=' + type + '&search=' + searchTerm + '&module=' + module,
-      );
+        let absoluteUrl;
+        if (url.startsWith('/')) {
+            absoluteUrl = window.location.origin + url;
+        } else {
+            absoluteUrl = url;
+        }
 
-      return decodeURIComponent(uri.toString());
+        let columnsToSend = [...document.querySelectorAll('.select:checked')].map((element) => element.value);
+
+        const urlObj = new URL(absoluteUrl);
+        const params = urlObj.searchParams;
+
+        params.set('tx_messenger_user_messenger[matches][uid]', columnsToSend.join(','));
+        params.set('dataType', type);
+        params.set('search', searchTerm);
+        params.set('module', module);
+
+        const finalUrl = urlObj.toString();
+
+        return finalUrl;
     },
 
     initialize: function () {
-      this.initializeMassDeletion();
+        this.initializeMassDeletion();
     },
 
     /**
      * @return void
      */
     initializeMassDeletion: function () {
-      $(document).on('click', '.btn-mass-delete', function (e) {
-        e.preventDefault();
 
-        const module = $(this).data('module');
-        const type = $(this).data('data-type');
-        const searchTerm = $(this).data('search-term');
-        const url = MessengerMassDeletion.getMassDeletionUrl(
-          TYPO3.settings.ajaxUrls.messenger_confirm_mass_delete,
-          module,
-          type,
-          searchTerm,
-        );
-        MessengerMassDeletion.modal = Modal.advanced({
-          type: Modal.types.ajax,
-          title: 'Delete',
-          severity: top.TYPO3.Severity.notice,
-          content: url,
-          buttons: [
-            {
-              text: 'Cancel',
-              btnClass: 'btn btn-default',
-              trigger: function () {
-                Modal.dismiss();
-              },
-            },
-            {
-              text: 'Delete ',
-              btnClass: 'btn btn-primary',
-              trigger: function () {
-                $('.btn', MessengerMassDeletion.modal).attr('disabled', 'disabled');
-                const deleteUrl = MessengerMassDeletion.getMassDeletionUrl(
-                  TYPO3.settings.ajaxUrls.messenger_mass_delete,
-                  module,
-                  type,
-                  searchTerm,
-                );
-                // Ajax request
-                $.ajax({
-                  url: deleteUrl,
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('btn-mass-delete')) {
+                return;
+            }
 
-                  /**
-                   * On success call back
-                   *
-                   * @param response
-                   */
-                  success: function (response) {
-                    Notification.success('', response);
-                    Modal.dismiss();
-                    window.location.reload();
-                  },
-                });
-              },
-            },
-          ],
+            e.preventDefault();
+
+            const button = e.target;
+            const module = button.dataset.module;
+            const type = button.dataset.dataType;
+            const searchTerm = button.dataset.searchTerm;
+
+
+            if (!window.TYPO3 || !window.TYPO3.settings || !window.TYPO3.settings.ajaxUrls) {
+                Notification.error('Error', 'TYPO3 configuration not loaded. Please refresh the page.');
+                return;
+            }
+
+            const url = MessengerMassDeletion.getMassDeletionUrl(
+                TYPO3.settings.ajaxUrls.messenger_confirm_mass_delete,
+                module,
+                type,
+                searchTerm,
+            );
+
+
+            MessengerMassDeletion.modal = Modal.advanced({
+                type: Modal.types.ajax,
+                title: 'Delete',
+                severity: top.TYPO3.Severity.notice,
+                content: url,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        btnClass: 'btn btn-default',
+                        trigger: function () {
+                            Modal.dismiss();
+                        },
+                    },
+                    {
+                        text: 'Delete ',
+                        btnClass: 'btn btn-primary',
+                        trigger: function () {
+
+                            const modalElement = MessengerMassDeletion.modal.find ? MessengerMassDeletion.modal.find('.modal-content')[0] : MessengerMassDeletion.modal;
+                            if (modalElement) {
+                                const buttons = modalElement.querySelectorAll('.btn');
+                                buttons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                            } else {
+                                console.log('Modal element not found for button disabling');
+                            }
+
+                            const deleteUrl = MessengerMassDeletion.getMassDeletionUrl(
+                                TYPO3.settings.ajaxUrls.messenger_mass_delete,
+                                module,
+                                type,
+                                searchTerm,
+                            );
+
+                            // Try POST method instead of GET for delete operations
+                            new AjaxRequest(deleteUrl)
+                                .post({})
+                                .then(async (response) => {
+                                    const data = await response.resolve();
+                                    Notification.success('Success', 'Items deleted successfully');
+                                    Modal.dismiss();
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
+                                })
+                                .catch((error) => {
+
+                                    new AjaxRequest(deleteUrl)
+                                        .get()
+                                        .then(async (response) => {
+                                            const data = await response.resolve();
+                                            Notification.success('Success', 'Items deleted successfully');
+                                            Modal.dismiss();
+                                            setTimeout(() => {
+                                                window.location.reload();
+                                            }, 1000);
+                                        })
+                                        .catch((fallbackError) => {
+                                            Notification.error('Error', 'Delete operation failed. Please try again.');
+
+                                            if (modalElement) {
+                                                const buttons = modalElement.querySelectorAll('.btn');
+                                                buttons.forEach(btn => btn.removeAttribute('disabled'));
+                                            }
+                                        });
+                                });
+                        },
+                    },
+                ],
+            });
         });
-      });
     },
-  };
+};
 
-    // Expose globally for compatibility
-    window.MessengerMassDeletion = MessengerMassDeletion;
-    window.MessengerMassDeletion.initialized = false;
+// Expose globally for compatibility
+window.MessengerMassDeletion = MessengerMassDeletion;
+window.MessengerMassDeletion.initialized = false;
 
-    return MessengerMassDeletion;
+document.addEventListener('DOMContentLoaded', () => {
+    window.MessengerMassDeletion.initialize();
 });
