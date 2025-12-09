@@ -55,7 +55,7 @@ class BodyConverter extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface $configuration
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null): string
+    public function convertFrom($source, string $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null): string
     {
 
         $body = $source;
