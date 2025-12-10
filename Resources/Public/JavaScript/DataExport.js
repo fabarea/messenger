@@ -52,13 +52,12 @@ const MessengerDataExport = {
     initializeDataExport: function () {
 
         document.addEventListener('click', function (e) {
-            if (!e.target.classList.contains('btn-export')) {
+            const button = e.target.closest('.btn-export');
+            if (!button) {
                 return;
             }
 
             e.preventDefault();
-
-            const button = e.target;
             const format = button.dataset.format;
             const module = button.dataset.module;
             const type = button.dataset.dataType;
