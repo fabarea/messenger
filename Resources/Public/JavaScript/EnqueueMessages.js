@@ -157,8 +157,13 @@ const MessengerEnqueueMessages = {
 window.MessengerEnqueueMessages = MessengerEnqueueMessages;
 window.MessengerEnqueueMessages.initialized = false;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.MessengerEnqueueMessages.initialize();
+    });
+} else {
     window.MessengerEnqueueMessages.initialize();
-});
+}
 
 export default MessengerEnqueueMessages;

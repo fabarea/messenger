@@ -153,8 +153,13 @@ const MessengerUpdateRecipient = {
 window.MessengerUpdateRecipient = MessengerUpdateRecipient;
 window.MessengerUpdateRecipient.initialized = false;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.MessengerUpdateRecipient.initialize();
+    });
+} else {
     window.MessengerUpdateRecipient.initialize();
-});
+}
 
 export default MessengerUpdateRecipient;

@@ -158,6 +158,11 @@ const MessengerSendAgain = {
 // Expose globally for compatibility
 window.MessengerSendAgain = MessengerSendAgain;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        MessengerSendAgain.initialize();
+    });
+} else {
     MessengerSendAgain.initialize();
-});
+}

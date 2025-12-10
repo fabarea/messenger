@@ -152,6 +152,11 @@ const MessengerMassDeletion = {
 window.MessengerMassDeletion = MessengerMassDeletion;
 window.MessengerMassDeletion.initialized = false;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.MessengerMassDeletion.initialize();
+    });
+} else {
     window.MessengerMassDeletion.initialize();
-});
+}

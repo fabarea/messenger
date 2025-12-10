@@ -126,6 +126,11 @@ const MessengerDataExport = {
 
 window.MessengerDataExport = MessengerDataExport;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        MessengerDataExport.initialize();
+    });
+} else {
     MessengerDataExport.initialize();
-});
+}
