@@ -51,13 +51,12 @@ const MessengerMassDeletion = {
     initializeMassDeletion: function () {
 
         document.addEventListener('click', function (e) {
-            if (!e.target.classList.contains('btn-mass-delete')) {
+            const button = e.target.closest('.btn-mass-delete');
+            if (!button) {
                 return;
             }
 
             e.preventDefault();
-
-            const button = e.target;
             const module = button.dataset.module;
             const type = button.dataset.dataType;
             const searchTerm = button.dataset.searchTerm;
