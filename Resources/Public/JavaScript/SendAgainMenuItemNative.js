@@ -54,13 +54,12 @@ const MessengerSendAgain = {
     initializeSendAgain: function () {
 
         document.addEventListener('click', function (e) {
-            if (!e.target.classList.contains('btn-sendAgain')) {
+            const button = e.target.closest('.btn-sendAgain');
+            if (!button) {
                 return;
             }
 
             e.preventDefault();
-
-            const button = e.target;
             const type = button.dataset.dataType;
             const searchTerm = button.dataset.searchTerm || '';
 
