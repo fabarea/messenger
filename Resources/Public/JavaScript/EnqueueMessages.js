@@ -51,6 +51,59 @@ const MessengerEnqueueMessages = {
      * Initialize enqueue messages functionality
      * @return void
      */
+    /**
+     * Initialize checkbox handlers in the modal
+     */
+    initializeModalCheckboxes: function () {
+        console.log('Initializing modal checkboxes...');
+
+        // Try different document contexts
+        const contexts = [
+            document,
+            window.parent ? window.parent.document : null,
+            window.top ? window.top.document : null
+        ].filter(Boolean);
+
+        contexts.forEach(doc => {
+            // Handle "Replace message body" checkbox
+            const hasBodyTextCheckbox = doc.getElementById('has-body-text');
+            if (hasBodyTextCheckbox && !hasBodyTextCheckbox.dataset.listenerAttached) {
+                console.log('Found and initializing has-body-text checkbox');
+                hasBodyTextCheckbox.dataset.listenerAttached = 'true';
+
+                hasBodyTextCheckbox.addEventListener('change', function() {
+                    console.log('has-body-text changed to:', this.checked);
+                    const container = doc.getElementById('message-body-container');
+                    if (container) {
+                        container.style.display = this.checked ? 'block' : 'none';
+                        console.log('Toggled message-body-container to:', container.style.display);
+                    } else {
+                        console.error('message-body-container not found in document');
+                    }
+                });
+            }
+
+            // Handle "Send test" checkbox
+            const hasBodyTestCheckbox = doc.getElementById('has-body-test');
+            if (hasBodyTestCheckbox && !hasBodyTestCheckbox.dataset.listenerAttached) {
+                console.log('Found and initializing has-body-test checkbox');
+                hasBodyTestCheckbox.dataset.listenerAttached = 'true';
+
+                hasBodyTestCheckbox.addEventListener('change', function() {
+                    console.log('has-body-test changed to:', this.checked);
+                    const recipientTest = doc.getElementById('recipient-test');
+                    if (recipientTest) {
+                        recipientTest.style.display = this.checked ? 'block' : 'none';
+                        this.value = this.checked ? '1' : '0';
+                        console.log('Toggled recipient-test to:', recipientTest.style.display);
+                    } else {
+                        console.error('recipient-test not found in document');
+                    }
+                });
+            }
+        });
+    },
+
     initializeEnqueueMessages: function () {
         document.addEventListener('click', function (e) {
             const button = e.target.closest('.btn-send-message');
@@ -149,6 +202,28 @@ const MessengerEnqueueMessages = {
                     },
                 ],
             });
+
+            // Initialize checkboxes after modal is shown
+            // Listen for when the modal HTML is loaded
+            const modalElement = MessengerEnqueueMessages.modal;
+            if (modalElement) {
+                // For TYPO3 v11+, listen for modal shown event
+                const checkModalContent = () => {
+                    setTimeout(() => {
+                        MessengerEnqueueMessages.initializeModalCheckboxes();
+                    }, 500);
+                };
+
+                // Try multiple approaches
+                if (modalElement.on) {
+                    modalElement.on('shown.bs.modal', checkModalContent);
+                } else if (modalElement.addEventListener) {
+                    modalElement.addEventListener('shown.bs.modal', checkModalContent);
+                }
+
+                // Also try immediately in case modal is already loaded
+                checkModalContent();
+            }
         });
     },
 };

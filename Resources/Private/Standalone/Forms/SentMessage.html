@@ -48,11 +48,8 @@
                     <input class="p-2 m-1"
                            id="has-body-text"
                            name="body-text"
-                           onchange="this.checked
-                        ? document.getElementById('message-body-container').style = 'display: block'
-                        : document.getElementById('message-body-container').style = 'display: none';
-                        "
-                           type="checkbox" value="1">Replace message body by a free text instead of the page
+                           type="checkbox" value="1"
+                           onclick="var container = document.getElementById('message-body-container'); if(container) { container.style.display = this.checked ? 'block' : 'none'; } console.log('Body text toggled:', this.checked);">Replace message body by a free text instead of the page
                     content.</label>
             </div>
             <div id="message-body-container" style="display: none;">
@@ -69,11 +66,9 @@
             <label for="has-body-test">
                 <input class="p-2 m-1"
                        id="has-body-test"
-                       onchange="this.checked
-               ? (document.getElementById('recipient-test').style.display = 'block', this.value = '1')
-               : (document.getElementById('recipient-test').style.display = 'none', this.value = '0')"
                        type="checkbox"
-                       value="0">Send test</label>
+                       value="0"
+                       onclick="var test = document.getElementById('recipient-test'); if(test) { test.style.display = this.checked ? 'block' : 'none'; this.value = this.checked ? '1' : '0'; } console.log('Send test toggled:', this.checked);">Send test</label>
         </div>
         <div class="form-group" id="recipient-test" style="display: none;">
 
