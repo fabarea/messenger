@@ -53,13 +53,12 @@ const MessengerEnqueueMessages = {
      */
     initializeEnqueueMessages: function () {
         document.addEventListener('click', function (e) {
-            if (!e.target.classList.contains('btn-send-message')) {
+            const button = e.target.closest('.btn-send-message');
+            if (!button) {
                 return;
             }
 
             e.preventDefault();
-
-            const button = e.target;
             const searchTerm = button.dataset.searchTerm || '';
 
             if (!window.TYPO3 || !window.TYPO3.settings || !window.TYPO3.settings.ajaxUrls) {
