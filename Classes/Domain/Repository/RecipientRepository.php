@@ -144,6 +144,15 @@ class RecipientRepository extends AbstractContentRepository
      */
     public function insert(array $values): bool
     {
+        // Add required TYPO3 fields for fe_users table
+        $values['tstamp'] = time();
+        $values['crdate'] = time();
+
+        // Set pid if not already set (required for TYPO3)
+        if (!isset($values['pid'])) {
+            $values['pid'] = 0; // Default to root page
+        }
+
         $result = $this->getQueryBuilder()
             ->insert($this->tableName)->values($values)->executeStatement();
         return (bool)$result;
