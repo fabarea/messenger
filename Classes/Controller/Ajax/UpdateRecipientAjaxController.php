@@ -49,11 +49,9 @@ final class UpdateRecipientAjaxController extends AbstractMessengerAjaxControlle
                 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     if ($deleteExistingRecipients || !$this->repository->exists($email)) {
                         $values = [
-                            'email' => $email,
-                            'username' => $email, // username is required for fe_users
+                            'email' => $email, // username is required for fe_users
                             'first_name' => $firstName,
                             'last_name' => $lastName,
-                            'name' => $firstName . ' ' . $lastName, // full name for display
                         ];
                         $this->repository->insert($values);
                         $created++;
