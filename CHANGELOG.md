@@ -1,3 +1,7 @@
+## 6.0.0 (2026-02-09)
+
+[FEATURE] compatibility v13
+
 ## 5.0.0 (2025-11-27)
 
 [FEATURE] compatibility v12
