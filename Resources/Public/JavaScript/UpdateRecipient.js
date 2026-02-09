@@ -6,6 +6,8 @@ import Notification from '@typo3/backend/notification.js';
 import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
 const MessengerUpdateRecipient = {
+    initialized : false,
+
     /**
      * Get edit recipient URL
      *
@@ -44,6 +46,11 @@ const MessengerUpdateRecipient = {
     },
 
     initialize: function () {
+        if (this.initialized) {
+          return;
+        }
+
+        this.initialized = true;
         this.initializeUpdateRecipient();
     },
 
@@ -151,7 +158,6 @@ const MessengerUpdateRecipient = {
 
 // Expose globally for compatibility
 window.MessengerUpdateRecipient = MessengerUpdateRecipient;
-window.MessengerUpdateRecipient.initialized = false;
 
 // Initialize immediately if DOM is already loaded, otherwise wait for DOMContentLoaded
 if (document.readyState === 'loading') {
