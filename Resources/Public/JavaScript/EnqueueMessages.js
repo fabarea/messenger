@@ -66,7 +66,7 @@ const MessengerEnqueueMessages = {
         }
 
         let foundAny = false;
-        contexts.forEach(doc => {
+        docs.forEach(doc => {
             // Handle "Replace message body" checkbox
             const hasBodyTextCheckbox = doc.getElementById('has-body-text');
             if (hasBodyTextCheckbox && !hasBodyTextCheckbox.dataset.listenerAttached) {
