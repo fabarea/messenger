@@ -19,14 +19,6 @@ class MessengerDequeueTask extends AbstractTask
 {
     public int $itemsPerRun = 300;
 
-    protected ?LoggerInterface $logger;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-    }
-
     public function execute(): bool
     {
         try {
@@ -35,11 +27,11 @@ class MessengerDequeueTask extends AbstractTask
             $totalProcessed = $result['errorCount'] + $result['numberOfSentMessages'];
 
             if ($totalProcessed === 0) {
-                $this->logger->info('Messenger dequeue task completed successfully. No messages in queue to process.');
+                $this->getLogger()->info('Messenger dequeue task completed successfully. No messages in queue to process.');
                 return true;
             }
             if ($result['errorCount'] > 0) {
-                $this->logger->warning(
+                $this->getLogger()->warning(
                     sprintf(
                         'Messenger dequeue task completed with %d errors out of %d processed messages. %d messages sent successfully.',
                         $result['errorCount'],
@@ -48,7 +40,7 @@ class MessengerDequeueTask extends AbstractTask
                     )
                 );
             } else {
-                $this->logger->info(
+                $this->getLogger()->info(
                     sprintf(
                         'Messenger dequeue task completed successfully. %d messages sent.',
                         $result['numberOfSentMessages']
@@ -59,8 +51,7 @@ class MessengerDequeueTask extends AbstractTask
             return true;
 
         } catch (\Exception $e) {
-            $this->logger->log(
-                \TYPO3\CMS\Core\Log\LogLevel::ERROR,
+            $this->getLogger()->error(
                 sprintf(
                     'Messenger dequeue task failed with exception: %s',
                     $e->getMessage()
@@ -77,5 +68,13 @@ class MessengerDequeueTask extends AbstractTask
     protected function getQueueManager(): QueueManager
     {
         return GeneralUtility::makeInstance(QueueManager::class);
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger(): LoggerInterface
+    {
+        return GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
     }
 }
