@@ -5,6 +5,11 @@
 <f:layout name="Default"/>
 
 <f:section name="main">
+    <f:be.pageRenderer
+        includeJavaScriptModules="{
+            0: '@fab/messenger/ComposeForm.js'
+        }"
+    />
 
     <span id="numberOfRecipients" style="display: none">{numberOfRecipients}</span>
 
@@ -54,12 +59,7 @@
                         <label><input type="checkbox"
                                       id="has-body-text"
                                       name="tx_messenger_user_messengerm1[parseMarkdown]"
-                                      value="1"
-                                      onchange="
-                        this.checked
-                        ? document.getElementById('message-body-container').style = 'display: block'
-                        : document.getElementById('message-body-container').style = 'display: none';
-                        ">{f:translate(key: 'message.custom.body')}</label>
+                                      value="1">{f:translate(key: 'message.custom.body')}</label>
                     </div>
                 </f:then>
             </f:if>
