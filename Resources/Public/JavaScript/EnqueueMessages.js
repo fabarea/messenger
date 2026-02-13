@@ -83,6 +83,8 @@ const MessengerEnqueueMessages = {
                         console.error('message-body-container not found in document');
                     }
                 });
+            } else if (hasBodyTextCheckbox && hasBodyTextCheckbox.dataset.listenerAttached) {
+                foundAny = true; // Already initialized
             }
 
             // Handle "Send test" checkbox
@@ -103,12 +105,16 @@ const MessengerEnqueueMessages = {
                         console.error('recipient-test not found in document');
                     }
                 });
+            } else if (hasBodyTestCheckbox && hasBodyTestCheckbox.dataset.listenerAttached) {
+                foundAny = true; // Already initialized
             }
         });
 
         if (!foundAny) {
             console.warn('Modal checkboxes not found in any document context. Retrying in 1 second...');
             setTimeout(() => MessengerEnqueueMessages.initializeModalCheckboxes(), 1000);
+        } else {
+            console.log('Modal checkboxes initialization complete.');
         }
     },
 
