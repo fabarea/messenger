@@ -75,26 +75,5 @@
             <p class="bg-warning p-3 mt-2"> Emails are sent only to test emails if case checked</p>
         </div>
     </form>
-
-    <script>
-(function() {
-    var form = document.getElementById('form-bulk-send');
-    if (!form) return;
-    function handleChange(e) {
-        var target = e.target;
-        if (target.id === 'has-body-text') {
-            var container = document.getElementById('message-body-container');
-            if (container) container.style.display = target.checked ? 'block' : 'none';
-        } else if (target.id === 'has-body-test') {
-            var testEl = document.getElementById('recipient-test');
-            if (testEl) {
-                testEl.style.display = target.checked ? 'block' : 'none';
-                target.value = target.checked ? '1' : '0';
-            }
-        }
-    }
-    form.addEventListener('change', handleChange);
-})();
-    </script>
 </f:section>
 </html>
