@@ -158,6 +158,32 @@ class RecipientRepository extends AbstractContentRepository
         return (bool)$result;
     }
 
+    /**
+     * Update a recipient by email
+     * 
+     * @throws DBALException
+     */
+    public function updateByEmail(string $email, array $values): bool
+    {
+        // Add tstamp for updates
+        $values['tstamp'] = time();
+        
+        // Remove crdate if present (shouldn't be updated)
+        unset($values['crdate']);
+        
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder
+            ->update($this->tableName)
+            ->where($queryBuilder->expr()->eq('email', $queryBuilder->expr()->literal($email)));
+        
+        foreach ($values as $field => $value) {
+            $queryBuilder->set($field, $value);
+        }
+        
+        $result = $queryBuilder->executeStatement();
+        return $result > 0;
+    }
+
     public function deleteByUids(array $uids): int
     {
         $query = $this->getQueryBuilder();

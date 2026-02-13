@@ -31,7 +31,12 @@ final class UpdateRecipientAjaxController extends AbstractMessengerAjaxControlle
      */
     public function saveAction(): ResponseInterface
     {
-        $data = $this->getRequest()->getParsedBody();
+        $request = $this->getRequest();
+        $data = $request->getParsedBody();
+        
+        // Debug: log received data
+        $debugInfo = 'Received data: ' . json_encode($data) . "\n";
+        $debugInfo .= 'Content-Type: ' . ($request->getHeaderLine('Content-Type') ?? 'not set') . "\n";
 
         $deleteExistingRecipients = isset($data['deleteExistingRecipients']) && $data['deleteExistingRecipients'];
         $recipientCsvList = $data['recipientCsvList'] ?? '';
@@ -42,24 +47,36 @@ final class UpdateRecipientAjaxController extends AbstractMessengerAjaxControlle
         $recipients = GeneralUtility::trimExplode("\n", trim($recipientCsvList));
         $counter = count($recipients);
         $created = 0;
+        $updated = 0;
         foreach ($recipients as $recipientCsv) {
             $recipient = GeneralUtility::trimExplode(';', $recipientCsv);
             if (count($recipient) >= 3) {
                 [$email, $firstName, $lastName] = $recipient;
                 if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    if ($deleteExistingRecipients || !$this->repository->exists($email)) {
-                        $values = [
-                            'email' => $email, // username is required for fe_users
-                            'first_name' => $firstName,
-                            'last_name' => $lastName,
-                        ];
+                    $values = [
+                        'email' => $email,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                    ];
+                    
+                    if ($deleteExistingRecipients) {
+                        // If we're deleting existing, just insert
                         $this->repository->insert($values);
                         $created++;
+                    } else {
+                        // Update if exists, insert if not
+                        if ($this->repository->exists($email)) {
+                            $this->repository->updateByEmail($email, $values);
+                            $updated++;
+                        } else {
+                            $this->repository->insert($values);
+                            $created++;
+                        }
                     }
                 }
             }
         }
-        $content = sprintf('Created %s/%s', $created, $counter);
+        $content = sprintf('Created: %s, Updated: %s, Total: %s/%s - Debug: %s', $created, $updated, ($created + $updated), $counter, $debugInfo);
         return $this->getResponse($content);
     }
 }
