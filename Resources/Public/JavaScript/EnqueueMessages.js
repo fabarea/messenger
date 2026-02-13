@@ -64,12 +64,14 @@ const MessengerEnqueueMessages = {
             window.top ? window.top.document : null
         ].filter(Boolean);
 
+        let foundAny = false;
         contexts.forEach(doc => {
             // Handle "Replace message body" checkbox
             const hasBodyTextCheckbox = doc.getElementById('has-body-text');
             if (hasBodyTextCheckbox && !hasBodyTextCheckbox.dataset.listenerAttached) {
-                console.log('Found and initializing has-body-text checkbox');
+                console.log('Found and initializing has-body-text checkbox in', doc === document ? 'current document' : 'parent/top document');
                 hasBodyTextCheckbox.dataset.listenerAttached = 'true';
+                foundAny = true;
 
                 hasBodyTextCheckbox.addEventListener('change', function() {
                     console.log('has-body-text changed to:', this.checked);
@@ -86,8 +88,9 @@ const MessengerEnqueueMessages = {
             // Handle "Send test" checkbox
             const hasBodyTestCheckbox = doc.getElementById('has-body-test');
             if (hasBodyTestCheckbox && !hasBodyTestCheckbox.dataset.listenerAttached) {
-                console.log('Found and initializing has-body-test checkbox');
+                console.log('Found and initializing has-body-test checkbox in', doc === document ? 'current document' : 'parent/top document');
                 hasBodyTestCheckbox.dataset.listenerAttached = 'true';
+                foundAny = true;
 
                 hasBodyTestCheckbox.addEventListener('change', function() {
                     console.log('has-body-test changed to:', this.checked);
@@ -102,6 +105,11 @@ const MessengerEnqueueMessages = {
                 });
             }
         });
+
+        if (!foundAny) {
+            console.warn('Modal checkboxes not found in any document context. Retrying in 1 second...');
+            setTimeout(() => MessengerEnqueueMessages.initializeModalCheckboxes(), 1000);
+        }
     },
 
     initializeEnqueueMessages: function () {
