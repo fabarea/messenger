@@ -9,9 +9,9 @@ namespace Fab\Messenger\Queue;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\SentMessageRepository;
-use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -26,14 +26,14 @@ class QueueManager
         $errorCount = $numberOfSentMessages = 0;
         /** @var array $messengerMessage */
         foreach ($messengerMessages as $messengerMessage) {
-            /** @var MailMessage $message */
+            /** @var Message $message */
             $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
 
             $isSent = $message->send();
             if ($isSent) {
                 $numberOfSentMessages++;
                 $this->getQueueRepository()->remove($messengerMessage);
-                $this->getSentMessageRepository()->add($messengerMessage);
+                // Note: Message->send() already adds to SentMessageRepository, so we don't add it again here
             } else {
                 $errorCount++;
                 ++$messengerMessage['error_count'];
@@ -54,13 +54,13 @@ class QueueManager
         $messengerMessage = $this->getQueueRepository()->findByUid($queuedMessageIdentifier);
 
         if ($messengerMessage) {
-            /** @var MailMessage $message */
+            /** @var Message $message */
             $message = unserialize($messengerMessage['message_serialized'], ['allowed_classes' => true]);
             $isSent = (bool)$message->send();
 
             if ($isSent) {
                 $this->getQueueRepository()->remove($messengerMessage);
-                $this->getSentMessageRepository()->add($messengerMessage);
+                // Note: Message->send() already adds to SentMessageRepository, so we don't add it again here
             } else {
                 ++$messengerMessage['error_count'];
                 $this->getQueueRepository()->update($messengerMessage);
