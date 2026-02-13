@@ -5,6 +5,11 @@
 <f:layout name="Default"/>
 
 <f:section name="main">
+    <f:be.pageRenderer
+        includeJavaScriptModules="{
+            0: '@fab/messenger/ComposeForm.js'
+        }"
+    />
 
     <span id="numberOfRecipients" style="display: none">{numberOfRecipients}</span>
 
