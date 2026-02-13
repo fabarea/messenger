@@ -27,6 +27,7 @@ class MessageDisplayController extends ActionController
     {
         $result = 'Nothing to show!';
         $uuid = $this->request->getParsedBody()['uuid'] ?? $this->request->getQueryParams()['uuid'] ?? null;
+        
         if ($this->isUuidValid($uuid)) {
             $source = (string)$this->request->getParsedBody()['source'] ?? $this->request->getQueryParams()['source'] ?? null;
 
@@ -39,6 +40,7 @@ class MessageDisplayController extends ActionController
                 $result = $message['body'];
             }
         }
+        
         return $this->htmlResponse($result);
     }
 
