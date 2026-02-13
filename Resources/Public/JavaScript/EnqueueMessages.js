@@ -65,34 +65,52 @@ const MessengerEnqueueMessages = {
             docs.push(window.parent.document);
         }
 
-        docs.forEach(doc => {
+        let foundAny = false;
+        contexts.forEach(doc => {
             // Handle "Replace message body" checkbox
             const hasBodyTextCheckbox = doc.getElementById('has-body-text');
             if (hasBodyTextCheckbox && !hasBodyTextCheckbox.dataset.listenerAttached) {
+                console.log('Found and initializing has-body-text checkbox in', doc === document ? 'current document' : 'parent/top document');
                 hasBodyTextCheckbox.dataset.listenerAttached = 'true';
-                hasBodyTextCheckbox.addEventListener('change', function(e) {
-                    e.stopPropagation();
+                foundAny = true;
+
+                hasBodyTextCheckbox.addEventListener('change', function() {
+                    console.log('has-body-text changed to:', this.checked);
                     const container = doc.getElementById('message-body-container');
                     if (container) {
                         container.style.display = this.checked ? 'block' : 'none';
                     }
                 });
+            } else if (hasBodyTextCheckbox && hasBodyTextCheckbox.dataset.listenerAttached) {
+                foundAny = true; // Already initialized
             }
 
             // Handle "Send test" checkbox
             const hasBodyTestCheckbox = doc.getElementById('has-body-test');
             if (hasBodyTestCheckbox && !hasBodyTestCheckbox.dataset.listenerAttached) {
+                console.log('Found and initializing has-body-test checkbox in', doc === document ? 'current document' : 'parent/top document');
                 hasBodyTestCheckbox.dataset.listenerAttached = 'true';
-                hasBodyTestCheckbox.addEventListener('change', function(e) {
-                    e.stopPropagation();
+                foundAny = true;
+
+                hasBodyTestCheckbox.addEventListener('change', function() {
+                    console.log('has-body-test changed to:', this.checked);
                     const recipientTest = doc.getElementById('recipient-test');
                     if (recipientTest) {
                         recipientTest.style.display = this.checked ? 'block' : 'none';
                         this.value = this.checked ? '1' : '0';
                     }
                 });
+            } else if (hasBodyTestCheckbox && hasBodyTestCheckbox.dataset.listenerAttached) {
+                foundAny = true; // Already initialized
             }
         });
+
+        if (!foundAny) {
+            console.warn('Modal checkboxes not found in any document context. Retrying in 1 second...');
+            setTimeout(() => MessengerEnqueueMessages.initializeModalCheckboxes(), 1000);
+        } else {
+            console.log('Modal checkboxes initialization complete.');
+        }
     },
 
     /**
