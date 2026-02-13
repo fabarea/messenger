@@ -107,6 +107,19 @@ class Message
     }
 
     /**
+     * Called when unserializing the object (e.g., from queue).
+     * Reinitializes repositories that cannot be serialized.
+     */
+    public function __wakeup(): void
+    {
+        $this->messageTemplateRepository = GeneralUtility::makeInstance(MessageTemplateRepository::class);
+        $this->messageLayoutRepository = GeneralUtility::makeInstance(MessageLayoutRepository::class);
+        $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
+        // Reset mailMessage to ensure a fresh instance is created
+        $this->mailMessage = null;
+    }
+
+    /**
      * Prepares the emails and queue it.
      */
     public function enqueue(): void
