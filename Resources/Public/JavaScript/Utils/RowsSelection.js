@@ -10,11 +10,15 @@ class MessengerRowsSelection {
     }
 
     deleteItem(element) {
+        // Create a div element and set its HTML content
+        const contentDiv = document.createElement('div');
+        contentDiv.innerHTML = `Are you sure you want to delete this message from <strong>${element.dataset.name}</strong>?<br><br><small class="text-muted">This action cannot be undone.</small>`;
+        
         const modal = Modal.advanced({
             type: Modal.types.default,
             title: 'Delete Message',
             severity: top.TYPO3.Severity.warning,
-            content: document.createElement('div').innerHTML = `Are you sure you want to delete this message from <strong>${element.dataset.name}</strong>?<br><br><small class="text-muted">This action cannot be undone.</small>`,
+            content: contentDiv,
             buttons: [
                 {
                     text: 'Cancel',
