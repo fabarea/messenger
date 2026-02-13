@@ -8,6 +8,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Fab\Messenger\Domain\Model\Message;
 use Fab\Messenger\Domain\Repository\PageRepository;
+use Fab\Messenger\Domain\Repository\QueueRepository;
 use Fab\Messenger\Domain\Repository\RecipientRepository;
 use Fab\Messenger\Exception\InvalidEmailFormatException;
 use Fab\Messenger\Exception\WrongPluginConfigurationException;
@@ -106,9 +107,13 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                     ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
                     ->setTo($this->getTo($recipient));
 
+                // Fix: Serialize the message and add it to queue data directly
+                // to avoid exponential growth when message_serialized is added to the message itself
                 $messageSerialized = serialize($message);
-                $message->setMessageSerialized($messageSerialized)
-                    ->enqueue();
+                $queueRepository = GeneralUtility::makeInstance(QueueRepository::class);
+                $data = $message->toArray();
+                $data['message_serialized'] = $messageSerialized;
+                $queueRepository->add($data);
 
             }
         }
