@@ -1,8 +1,8 @@
 <html
         data-namespace-typo3-fluid="true"
         lang=""
-
-        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers">
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers">
 <f:layout name="Default"/>
 <f:section name="main">
     <f:be.pageRenderer
@@ -15,7 +15,6 @@
                 5: '@fab/messenger/EnqueueMessages.js',
                 6: '@fab/messenger/UpdateRecipient.js'
             }"
-
     />
     <form action="enqueue"
           class="m-2"
@@ -35,12 +34,12 @@
 
         <div class="form-group">
             <label for="messenger-subject">Subject</label>
-            <input class="form-control" id="messenger-subject"
+            <input class="form-control"
+                   id="messenger-subject"
                    name="subject"
                    required="required"
                    type="text"
-                   value="{title}"/>
-
+                   value="__MESSENGER_PAGE_TITLE__"/>
         </div>
         <div class="form-group">
             <div class="checkbox pt-2">
@@ -48,9 +47,8 @@
                     <input class="p-2 m-1"
                            id="has-body-text"
                            name="body-text"
-                           type="checkbox" value="1"
-                           onclick="var container = document.getElementById('message-body-container'); if(container) { container.style.display = this.checked ? 'block' : 'none'; console.log('Container found:', container, 'Display:', container.style.display, 'Computed style:', window.getComputedStyle(container).display); } else { console.error('Container not found!'); }">Replace message body by a free text instead of the page
-                    content.</label>
+                           type="checkbox"
+                           value="1">Replace message body by a free text instead of the page content.</label>
             </div>
             <div id="message-body-container" style="display: none;">
                 <label for="messenger-body">Body</label>
@@ -67,11 +65,9 @@
                 <input class="p-2 m-1"
                        id="has-body-test"
                        type="checkbox"
-                       value="0"
-                           onclick="var test = document.getElementById('recipient-test'); if(test) { test.style.display = this.checked ? 'block' : 'none'; this.value = this.checked ? '1' : '0'; console.log('Test element found:', test, 'Display:', test.style.display, 'Computed style:', window.getComputedStyle(test).display); } else { console.error('Test element not found!'); }">Send test</label>
+                       value="0">Send test</label>
         </div>
         <div class="form-group" id="recipient-test" style="display: none;">
-
             <label for="messenger-recipient-test">Test recipient(s) - max 10 emails</label>
             <input class="form-control" id="messenger-recipient-test"
                    name="recipientList"
@@ -80,6 +76,25 @@
         </div>
     </form>
 
-
+    <script>
+(function() {
+    var form = document.getElementById('form-bulk-send');
+    if (!form) return;
+    function handleChange(e) {
+        var target = e.target;
+        if (target.id === 'has-body-text') {
+            var container = document.getElementById('message-body-container');
+            if (container) container.style.display = target.checked ? 'block' : 'none';
+        } else if (target.id === 'has-body-test') {
+            var testEl = document.getElementById('recipient-test');
+            if (testEl) {
+                testEl.style.display = target.checked ? 'block' : 'none';
+                target.value = target.checked ? '1' : '0';
+            }
+        }
+    }
+    form.addEventListener('change', handleChange);
+})();
+    </script>
 </f:section>
 </html>

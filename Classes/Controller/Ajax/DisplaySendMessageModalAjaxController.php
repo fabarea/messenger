@@ -38,12 +38,18 @@ class DisplaySendMessageModalAjaxController extends AbstractMessengerAjaxControl
         $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
         $view = $viewFactory->create($viewFactoryData);
         $pageContent = $this->pageRepository->findByUid($this->getPageId());
+        $pageTitle = $pageContent['title'] ?? '';
         $view->assignMultiple([
             'senders' => GeneralUtility::makeInstance(SenderProvider::class)->getFormattedPossibleSenders(),
-            'title' => $pageContent['title'] ?? '',
+            'title' => $pageTitle,
+            'emailSubject' => $pageTitle,
         ]);
 
-        return $this->getResponse($view->render($this->getTemplateName()));
+        $html = $view->render($this->getTemplateName());
+        // Inject page title into subject field (Fluid variables may not resolve in this ViewFactory context)
+        $html = str_replace('__MESSENGER_PAGE_TITLE__', htmlspecialchars((string)$pageTitle, ENT_QUOTES, 'UTF-8'), $html);
+
+        return $this->getResponse($html);
 
     }
 
