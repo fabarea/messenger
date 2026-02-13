@@ -110,14 +110,30 @@ const MessengerUpdateRecipient = {
                                 console.log('Modal element not found for button disabling');
                             }
 
-                            const form = window.parent.document.querySelector('#form-update-many-recipients');
+                            // Try to find form in multiple contexts
+                            let form = document.querySelector('#form-update-many-recipients');
+                            if (!form && window.parent && window.parent.document !== document) {
+                                form = window.parent.document.querySelector('#form-update-many-recipients');
+                            }
+                            if (!form && modalElement) {
+                                form = modalElement.querySelector('#form-update-many-recipients');
+                            }
+
                             if (!form) {
+                                console.error('Form not found in any context');
                                 Notification.error('Error', 'Update form not found');
                                 return;
                             }
 
                             const finalSaveUrl = MessengerUpdateRecipient.getEditRecipientUrl(saveUrl, [], searchTerm);
                             const formData = new FormData(form);
+
+                            // Debug: log form data
+                            console.log('Form found:', form);
+                            console.log('Form data entries:');
+                            for (let [key, value] of formData.entries()) {
+                                console.log(`  ${key}: ${value}`);
+                            }
 
                             // Try POST method first
                             fetch(finalSaveUrl, {
