@@ -111,9 +111,9 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
                 // to avoid exponential growth when message_serialized is added to the message itself
                 $messageSerialized = serialize($message);
                 $queueRepository = GeneralUtility::makeInstance(QueueRepository::class);
-                $data = $message->toArray();
-                $data['message_serialized'] = $messageSerialized;
-                $queueRepository->add($data);
+                $queueData = $message->toArray();
+                $queueData['message_serialized'] = $messageSerialized;
+                $queueRepository->add($queueData);
 
             }
         }
@@ -138,11 +138,11 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
         $email = $recipient['email'];
 
         $nameParts = [];
-        if ($recipient['first_name']) {
+        if (!empty($recipient['first_name'])) {
             $nameParts[] = $recipient['first_name'];
         }
 
-        if ($recipient['last_name']) {
+        if (!empty($recipient['last_name'])) {
             $nameParts[] = $recipient['last_name'];
         }
 
