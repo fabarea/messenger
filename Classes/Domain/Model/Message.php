@@ -117,6 +117,9 @@ class Message
         $this->sentMessageRepository = GeneralUtility::makeInstance(SentMessageRepository::class);
         // Reset mailMessage to ensure a fresh instance is created
         $this->mailMessage = null;
+        // Reset processed body and subject to ensure markers are re-processed for each recipient
+        $this->processedBody = '';
+        $this->processedSubject = '';
     }
 
     /**
