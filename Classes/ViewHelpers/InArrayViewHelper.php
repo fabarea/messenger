@@ -15,10 +15,24 @@ class InArrayViewHelper extends AbstractConditionViewHelper
 
     protected static function evaluateCondition($arguments = null): bool
     {
+        $haystack = $arguments['haystack'] ?? [];
+        $needle = $arguments['needle'] ?? '';
 
-        if (!is_array($arguments['haystack']) || !array_key_exists('needle', $arguments)) {
+        if (!is_array($haystack) || $needle === '') {
             return false;
         }
-        return in_array($arguments['needle'], $arguments['haystack'], true);
+
+        return in_array($needle, $haystack, false);
+    }
+    
+    /**
+     * Override render to ensure arguments are properly passed
+     */
+    public function render(): string
+    {
+        if (static::evaluateCondition($this->arguments)) {
+            return $this->renderThenChild();
+        }
+        return $this->renderElseChild();
     }
 }
