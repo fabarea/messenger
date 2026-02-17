@@ -151,9 +151,16 @@ class ColumnSelectorButton implements ButtonInterface
         // Récupérer les colonnes sauvegardées par l'utilisateur
         $savedColumns = ColumnSelectorController::getSavedColumnSelection($this->module, $this->tableName);
 
-        // Si des colonnes sont sauvegardées, les utiliser, sinon garder les valeurs par défaut
+        // Si des colonnes sont sauvegardées, les utiliser
+        // Sinon, garder les valeurs par défaut passées via setSelectedColumns()
         if (!empty($savedColumns)) {
             $this->selectedColumns = $savedColumns;
+        }
+        
+        // S'assurer que les colonnes sélectionnées ne sont jamais vides
+        // Utiliser 'uid' comme fallback minimum
+        if (empty($this->selectedColumns)) {
+            $this->selectedColumns = ['uid'];
         }
 
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
