@@ -57,6 +57,7 @@ class Message
 
     protected array $markers = [];
 
+
     /**
      * @var MessageLayout
      */
@@ -345,6 +346,7 @@ class Message
         $this->to = $addresses;
         return $this;
     }
+
 
     /**
      * Return "cc" addresses.
