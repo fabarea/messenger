@@ -49,6 +49,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 
         $sender = $this->getSender($data);
 
+
         $demandList = $request->getQueryParams()['tx_messenger_user_messengerm5'] ?? '';
         $uids = empty($demandList)
             ? []
@@ -56,6 +57,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
 
         $searchTerm = $request->getQueryParams()['search'] ?? '';
         $content = $this->performEnqueue($uids, $data, $sender, $searchTerm);
+
         return $this->getResponse($content);
     }
 
@@ -85,34 +87,54 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
     {
         $demand = $this->getDemand($uids, $term);
         $recipients = $this->repository->findByDemand($demand);
+        $message = GeneralUtility::makeInstance(Message::class);
+
 
         $numberOfSentEmails = 0;
         $mailingName = 'Mailing #' . $GLOBALS['_SERVER']['REQUEST_TIME'];
+        
         foreach ($recipients as $recipient) {
+
             if (filter_var($recipient['email'], FILTER_VALIDATE_EMAIL)) {
                 $numberOfSentEmails++;
 
+                // CRITICAL FIX: Create a NEW instance for EACH recipient
                 /** @var Message $message */
                 $message = GeneralUtility::makeInstance(Message::class);
+                $message->__construct(); // Explicitly reinitialize to ensure clean state
+                
+                // CRITICAL FIX #2: Force a NEW MailMessage instance
+                // The MailMessage might be cached/shared, so we force recreation
+                // by accessing the property via reflection and setting it to null
+                $reflectionClass = new \ReflectionClass($message);
+                $mailMessageProperty = $reflectionClass->getProperty('mailMessage');
+                $mailMessageProperty->setValue($message, null);
+                
                 $message->setUuid(Algorithms::generateUUID());
                 $markers = $recipient;
+
                 $markers['uuid'] = $message->getUuid();
+
                 $message
                     ->setBody($data['body'])
                     ->setSubject($data['subject'])
                     ->setSender($sender)
                     ->setMailingName($mailingName)
-                    ->assign('recipient', $markers)
+                    ->assign('recipient', $recipient)
                     ->assignMultiple($markers)
                     ->setScheduleDistributionTime($GLOBALS['_SERVER']['REQUEST_TIME'])
                     ->setTo($this->getTo($recipient));
 
-                // Fix: Serialize the message and add it to queue data directly
-                // to avoid exponential growth when message_serialized is added to the message itself
-                $messageSerialized = serialize($message);
+                // CRITICAL FIX #3: Call toArray() FIRST before serializing
+                // toArray() calls prepareMessage() which initializes mailMessage with recipient data
+                // If we serialize before toArray(), the serialized message won't have the correct recipient
                 $queueRepository = GeneralUtility::makeInstance(QueueRepository::class);
                 $queueData = $message->toArray();
+
+                // THEN serialize AFTER toArray() has prepared the message
+                $messageSerialized = serialize($message);
                 $queueData['message_serialized'] = $messageSerialized;
+
                 $queueRepository->add($queueData);
 
             }
@@ -136,6 +158,7 @@ class EnqueueMessageAjaxController extends AbstractMessengerAjaxController
     protected function getTo(array $recipient): array
     {
         $email = $recipient['email'];
+
 
         $nameParts = [];
         if (!empty($recipient['first_name'])) {
