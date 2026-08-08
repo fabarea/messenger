@@ -31,6 +31,31 @@ https://github.com/fabarea/messenger.git
 Flash info about latest development or release
 http://twitter.com/fudriot
 
+Compatibility and Maintenance
+=============================
+
+This package is currently maintained for the following versions:
+
+.. list-table::
+   :header-rows: 1
+
+   * - TYPO3 Version
+     - Package Version
+     - Branch
+     - Maintained
+   * - TYPO3 13.4.x
+     - 6.x
+     - release/6.0.x
+     - Yes
+   * - TYPO3 12.4.x
+     - 5.x
+     - release/5.0.x
+     - No
+   * - TYPO3 11.5.x
+     - 4.x
+     - -
+     - No
+
 Installation
 ============
 

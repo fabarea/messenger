@@ -1,3 +1,13 @@
+## 6.0.1 (2026-08-08)
+
+[BUGFIX] Force a new MailMessage instance when sending
+[BUGFIX] Fix dequeue scheduler and mail show action
+[BUGFIX] Fix recipient update syntax and actions
+[BUGFIX] Fix list/default layouts and JS includes
+[BUGFIX] Fix column selector default checkboxes
+[BUGFIX] Prevent duplicated send messages
+[DOCS] Update TYPO3 compatibility matrix
+
 ## 6.0.0 (2026-02-09)
 
 [FEATURE] compatibility v13
