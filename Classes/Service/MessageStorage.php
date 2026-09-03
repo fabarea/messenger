@@ -38,7 +38,7 @@ class MessageStorage implements SingletonInterface
 
     protected function isFrontendMode(): bool
     {
-        return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
+        return (isset($GLOBALS['TYPO3_REQUEST']) ? ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend() : false);
     }
 
     protected function getFrontendUser(): FrontendUserAuthentication
